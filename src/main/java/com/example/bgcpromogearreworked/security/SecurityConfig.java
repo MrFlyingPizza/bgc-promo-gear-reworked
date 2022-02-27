@@ -12,7 +12,7 @@ public class SecurityConfig extends AADWebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         super.configure(http);
-        http.authorizeRequests().anyRequest().authenticated()
+        http.authorizeRequests().anyRequest().permitAll()
                 .and()
                 .csrf().disable();
     }
