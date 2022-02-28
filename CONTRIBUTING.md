@@ -14,13 +14,9 @@
       separated from the API.
     - Each exposed top-level objects must have its own package under `api`. Top-level objects are objects that are
       exposed to the user to be seen as existing independent of the existence of another object. For example,
-      `api.product`, product is a top-level object by definition.
-    - Each object must have a package each for public and secured endpoints. This is because the data from public
-      request and response can be very different to the data in secured endpoint, and different data needs different
-      DTOs and different processing. For example, the API should only expose to the public the products that are
-      published, which is a subset of the products that are exposed to admins. Admins should have access to all
-      products, not to mention the public cannot delete or modify products. Hence, `api.product.secured` and `
-      api.product.general` (public is a reserved keyword), each with their own services, controllers and DTOs.
+      `api.products`, product is a top-level object by definition. These package names must be plural.
+    - Each exposed object must have its own package, within this package contains its own `dto` package which contains
+      `general` and `secured`. `general` is for public endpoint DTOs, `secured` is for secured endpoint DTOs.
     - Services should only be used by the respective controller and other services serving the same controller,
       therefore service methods must be only package-private or more strict unless it is a helper method.
     - Controller methods must be private because they are limited to handling API requests and returning responses
@@ -82,3 +78,7 @@
     - Controllers cannot return response DTOs that represent objects that are higher level or lower level than the
       object that they are responsible for. For example, product option controller cannot return representations of
       product, and cannot return presentations of option value unless option value is part of a composition.
+    - Treat services as if they have no idea about the security that is being implemented by the controller. All
+      that a service should care about is executing a set of business logic and operate on the database regardless of
+      the responsibilities of the caller controller.
+    - Secured controller begin with `Secured` and public controllers begin with `General`.
