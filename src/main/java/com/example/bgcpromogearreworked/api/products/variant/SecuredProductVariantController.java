@@ -21,27 +21,28 @@ public class SecuredProductVariantController {
     private final ProductVariantMapper mapper;
 
     @PostMapping
-    private ProductVariantResponseDto createProductVariant(@PathVariable Long productId,
-                                                           @Valid ProductVariantCreateDto productVariantCreateDto) throws ProductNotFoundException {
+    private ProductVariantResponse createProductVariant(@PathVariable Long productId,
+                                                        @RequestBody ProductVariantCreate productVariantCreate) throws ProductNotFoundException {
         if (!productService.checkProductExists(productId)) {
             throw new ProductNotFoundException();
         }
-        ProductVariant result = productVariantService.handleProductVariantCreate(productId, productVariantCreateDto);
-        return mapper.productVariantToProductVariantResponseDto(result);
+        productVariantCreate.setProductId(productId);
+        ProductVariant result = productVariantService.handleProductVariantCreate(productVariantCreate);
+        return mapper.toResponse(result);
     }
 
     @GetMapping
-    private ProductVariantsResponseDto getMultipleProductVariants(@PathVariable Long productId) throws ProductNotFoundException {
+    private ProductVariantBatchResponse getMultipleProductVariants(@PathVariable Long productId) throws ProductNotFoundException {
         if (!productService.checkProductExists(productId)) {
             throw new ProductNotFoundException();
         }
         Iterable<ProductVariant> result = productVariantService.handleProductVariantGetMultiple();
-        return mapper.productVariantsToProductVariantsResponseDto(result);
+        return mapper.toBatchResponse(result);
     }
 
     @GetMapping("/{variantId}")
-    private ProductVariantResponseDto getProductVariant(@PathVariable Long productId,
-                                                        @PathVariable Long variantId) throws ProductNotFoundException, ProductVariantNotFoundException {
+    private ProductVariantResponse getProductVariant(@PathVariable Long productId,
+                                                     @PathVariable Long variantId) throws ProductNotFoundException, ProductVariantNotFoundException {
         if (!productService.checkProductExists(productId)) {
             throw new ProductNotFoundException();
         }
@@ -49,17 +50,20 @@ public class SecuredProductVariantController {
             throw new ProductVariantNotFoundException();
         }
         ProductVariant result = productVariantService.handleProductVariantGet(variantId);
-        return mapper.productVariantToProductVariantResponseDto(result);
+        return mapper.toResponse(result);
     }
 
-    @PutMapping
-    private ProductVariantResponseDto updateProductVariant(@PathVariable Long productId,
-                                                           @RequestBody @Valid ProductVariantUpdateDto productVariantUpdateDto) throws ProductNotFoundException, ProductVariantNotFoundException {
+    @PutMapping("/{variantId}")
+    private ProductVariantResponse updateProductVariant(@PathVariable Long productId,
+                                                        @PathVariable Long variantId,
+                                                        @RequestBody ProductVariantUpdate productVariantUpdate) throws ProductNotFoundException, ProductVariantNotFoundException {
         if (!productService.checkProductExists(productId)) {
             throw new ProductNotFoundException();
         }
-        ProductVariant result = productVariantService.handleProductVariantUpdate(productId, productVariantUpdateDto);
-        return mapper.productVariantToProductVariantResponseDto(result);
+        productVariantUpdate.setId(variantId);
+        productVariantUpdate.setProductId(productId);
+        ProductVariant result = productVariantService.handleProductVariantUpdate(productVariantUpdate);
+        return mapper.toResponse(result);
     }
 
 }

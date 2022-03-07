@@ -13,28 +13,14 @@ import java.util.Set;
 @Setter
 public class OptionValue {
     @Id
-    @Column(name = "product_id", nullable = false, insertable = false, updatable = false)
-    private Integer productId;
-
-    @Id
-    @Column(name = "option_name", nullable = false, length = 20, insertable = false, updatable = false)
+    @Column(name = "option_name", nullable = false, length = 20)
     private String name;
 
     @Id
-    @Column(name = "value", nullable = false, length = 20, insertable = false, updatable = false)
+    @Column(name = "value", nullable = false, length = 20)
     private String value;
 
     @ManyToOne
-    @JoinColumn(name = "product_id", insertable = false, updatable = false)
-    private Product product;
-
-    @ManyToOne
-    @JoinColumns({
-            @JoinColumn(name = "product_id"),
-            @JoinColumn(name = "option_name")
-    })
+    @JoinColumn(name = "option_name", insertable = false, updatable = false)
     private Option option;
-
-    @ManyToMany(mappedBy = "optionValues")
-    private Set<ProductVariant> productVariants;
 }

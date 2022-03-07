@@ -6,7 +6,6 @@ import java.io.Serializable;
 
 @Data
 public class OptionValueId implements Serializable {
-    private final Long productId;
-    private final String name;
-    private final String value;
+    private String name;
+    private String value;
 }

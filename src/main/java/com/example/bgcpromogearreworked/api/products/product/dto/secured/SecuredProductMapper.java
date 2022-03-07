@@ -5,17 +5,19 @@ import org.mapstruct.*;
 import org.springframework.data.util.Streamable;
 
 @Mapper(componentModel = "spring")
-public interface SecuredProductMapper {
+public abstract class SecuredProductMapper {
 
-    Product fromCreateDto(ProductCreateDto productCreateDto);
+    @Mapping(source = "categoryId", target = "category.id")
+    public abstract Product fromCreate(ProductCreate productCreate);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    Product fromUpdateDto(ProductUpdateDto productUpdateDto, @MappingTarget Product targetProduct);
+    @Mapping(source = "categoryId", target = "category.id")
+    public abstract Product fromUpdate(ProductUpdate productUpdate, @MappingTarget Product targetProduct);
 
-    default ProductResponseDto toResponseDto(Product product) {
-        return new ProductResponseDto(product);
+    public ProductResponse toResponse(Product product) {
+        return new ProductResponse(product);
     }
-    default ProductBatchResponseDto toBatchResponseDto(Iterable<Product> products) {
-        return new ProductBatchResponseDto(Streamable.of(products).toList());
+    public ProductBatchResponse toBatchResponse(Iterable<Product> products) {
+        return new ProductBatchResponse(Streamable.of(products).toList());
     }
 }

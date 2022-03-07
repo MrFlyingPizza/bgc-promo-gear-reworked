@@ -10,18 +10,18 @@ import org.springframework.data.util.Streamable;
 @Mapper(componentModel = "spring")
 public interface ProductVariantMapper {
 
-    ProductVariant productVariantCreateDtoToProductVariant(Long productId, ProductVariantCreateDto productVariantCreateDto);
+    ProductVariant fromCreate(Long productId, ProductVariantCreate productVariantCreate);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    ProductVariant productVariantUpdateDtoToProductVariant(ProductVariantUpdateDto productVariantUpdateDto,
-                                                                      @MappingTarget ProductVariant productVariant);
+    ProductVariant fromUpdate(ProductVariantUpdate productVariantUpdate,
+                              @MappingTarget ProductVariant productVariant);
 
-    default ProductVariantResponseDto productVariantToProductVariantResponseDto(ProductVariant productVariant) {
-        return new ProductVariantResponseDto(productVariant);
+    default ProductVariantResponse toResponse(ProductVariant productVariant) {
+        return new ProductVariantResponse(productVariant);
     }
 
-    default ProductVariantsResponseDto productVariantsToProductVariantsResponseDto(Iterable<ProductVariant> productVariants) {
-        return new ProductVariantsResponseDto(Streamable.of(productVariants).toList());
+    default ProductVariantBatchResponse toBatchResponse(Iterable<ProductVariant> productVariants) {
+        return new ProductVariantBatchResponse(Streamable.of(productVariants).toList());
     }
 
 }

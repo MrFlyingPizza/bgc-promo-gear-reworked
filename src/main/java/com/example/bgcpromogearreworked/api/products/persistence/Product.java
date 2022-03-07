@@ -1,26 +1,23 @@
 package com.example.bgcpromogearreworked.api.products.persistence;
 
 import com.example.bgcpromogearreworked.api.categories.category.persistence.Category;
+import com.example.bgcpromogearreworked.api.common.auditing.Auditable;
 import com.example.bgcpromogearreworked.api.users.User;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.util.Set;
 
 @Table(name = "product")
 @Entity
 @Getter
 @Setter
-public class Product {
-    @GeneratedValue(strategy = GenerationType.AUTO)
+public class Product extends Auditable<User> {
     @Id
+    @SequenceGenerator(name = "product_id_seq", allocationSize = 1)
+    @GeneratedValue(generator = "product_id_seq")
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -30,11 +27,11 @@ public class Product {
     @Column(name = "brand", length = 60)
     private String brand;
 
-    @Column(name = "category_id")
+    @Column(name = "category_id", insertable = false, updatable = false)
     private Long categoryId;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "category_id", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
     @Lob
@@ -53,10 +50,23 @@ public class Product {
     @Column(name = "is_wait_list_enabled", nullable = false)
     private Boolean isWaitListEnabled = false;
 
-    @OneToMany(mappedBy = "product")
+    @ManyToMany
+    @JoinTable(
+            name = "product_has_option",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "option_name")
+    )
     private Set<Option> options;
 
-    @OneToMany(mappedBy = "product")
+    @ManyToMany
+    @JoinTable(
+            name = "product_variant_has_option_value",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = {
+                    @JoinColumn(name = "option_name"),
+                    @JoinColumn(name = "option_value")
+            }
+    )
     private Set<OptionValue> optionValues;
 
     @OneToMany(mappedBy = "product")
@@ -64,23 +74,5 @@ public class Product {
 
     @OneToMany(mappedBy = "product")
     private Set<ProductImage> images;
-
-    @CreatedDate
-    @Column(name = "created_date")
-    private Instant createdDate;
-
-    @LastModifiedDate
-    @Column(name = "last_modified_date")
-    private Instant lastModifiedDate;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @LastModifiedBy
-    @JoinColumn(name = "last_modified_by")
-    private User lastModifiedBy;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @CreatedBy
-    @JoinColumn(name = "created_by")
-    private User createdBy;
 
 }

@@ -18,34 +18,35 @@ public class SecuredProductController {
     private final SecuredProductMapper mapper;
 
     @PostMapping
-    private ProductResponseDto createProduct(@RequestBody @Valid ProductCreateDto productCreateDto) {
-        Product result = productService.handleProductCreate(productCreateDto);
-        return mapper.toResponseDto(result);
+    private ProductResponse createProduct(@RequestBody ProductCreate productCreate) {
+        Product result = productService.handleProductCreate(productCreate);
+        return mapper.toResponse(result);
     }
 
     @GetMapping("/{productId}")
-    private ProductResponseDto getProduct(@PathVariable Long productId) throws ProductNotFoundException {
+    private ProductResponse getProduct(@PathVariable Long productId) throws ProductNotFoundException {
         if (!productService.checkProductExists(productId)) {
             throw new ProductNotFoundException();
         }
         Product result = productService.handleProductGet(productId);
-        return mapper.toResponseDto(result);
+        return mapper.toResponse(result);
     }
 
     @GetMapping("")
-    private ProductBatchResponseDto getProductBatch() {
+    private ProductBatchResponse getProductBatch() {
         Iterable<Product> result = productService.handleProductBatchGet();
-        return mapper.toBatchResponseDto(result);
+        return mapper.toBatchResponse(result);
     }
 
     @PutMapping("/{productId}")
-    private ProductResponseDto updateProduct(@PathVariable Long productId,
-                                             @RequestBody @Valid ProductUpdateDto productUpdateDto) throws ProductNotFoundException {
+    private ProductResponse updateProduct(@PathVariable Long productId,
+                                          @RequestBody ProductUpdate productUpdate) throws ProductNotFoundException {
         if (!productService.checkProductExists(productId)) {
             throw new ProductNotFoundException();
         }
-        Product result = productService.handleProductUpdate(productId, productUpdateDto);
-        return mapper.toResponseDto(result);
+        productUpdate.setId(productId);
+        Product result = productService.handleProductUpdate(productUpdate);
+        return mapper.toResponse(result);
     }
 
 

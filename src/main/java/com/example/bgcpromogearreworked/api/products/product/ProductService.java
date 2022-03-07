@@ -2,13 +2,17 @@ package com.example.bgcpromogearreworked.api.products.product;
 
 import com.example.bgcpromogearreworked.api.products.persistence.Product;
 import com.example.bgcpromogearreworked.api.products.persistence.ProductRepository;
-import com.example.bgcpromogearreworked.api.products.product.dto.secured.ProductCreateDto;
+import com.example.bgcpromogearreworked.api.products.product.dto.secured.ProductCreate;
 import com.example.bgcpromogearreworked.api.products.product.dto.secured.SecuredProductMapper;
-import com.example.bgcpromogearreworked.api.products.product.dto.secured.ProductUpdateDto;
+import com.example.bgcpromogearreworked.api.products.product.dto.secured.ProductUpdate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
 
 @Service
+@Validated
 @RequiredArgsConstructor
 public class ProductService {
 
@@ -27,15 +31,15 @@ public class ProductService {
         return productRepo.findAll();
     }
 
-    Product handleProductCreate(ProductCreateDto productCreateDto) {
-        Product product = mapper.fromCreateDto(productCreateDto);
-        return productRepo.save(product);
+    Product handleProductCreate(@Valid ProductCreate productCreate) {
+        Product product = mapper.fromCreate(productCreate);
+        return productRepo.saveAndFlush(product);
     }
 
-    Product handleProductUpdate(Long productId, ProductUpdateDto productUpdateDto) {
-        Product product = productRepo.findById(productId).orElseThrow();
-        product = mapper.fromUpdateDto(productUpdateDto, product);
-        return productRepo.save(product);
+    Product handleProductUpdate(@Valid ProductUpdate productUpdate) {
+        Product product = productRepo.findById(productUpdate.getId()).orElseThrow();
+        product = mapper.fromUpdate(productUpdate, product);
+        return productRepo.saveAndFlush(product);
     }
 
 }

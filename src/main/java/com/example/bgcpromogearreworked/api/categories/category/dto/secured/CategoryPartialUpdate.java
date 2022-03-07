@@ -1,0 +1,44 @@
+package com.example.bgcpromogearreworked.api.categories.category.dto.secured;
+
+import com.example.bgcpromogearreworked.api.common.validation.category.annotations.CategoryExists;
+import com.example.bgcpromogearreworked.api.common.validation.category.annotations.CategoryNameUniqueForParent;
+import com.example.bgcpromogearreworked.api.common.validation.category.annotations.CategoryParentNotChild;
+import com.example.bgcpromogearreworked.api.common.validation.category.annotations.CategoryParentNotSelf;
+import com.example.bgcpromogearreworked.api.common.validation.category.groups.CategoryParentFirstCheck;
+import com.example.bgcpromogearreworked.api.common.validation.category.groups.CategoryParentSecondCheck;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.GroupSequence;
+import javax.validation.constraints.Size;
+
+@Getter
+@GroupSequence({CategoryPartialUpdate.class,
+        CategoryParentFirstCheck.class,
+        CategoryParentSecondCheck.class
+})
+@CategoryParentNotSelf(groups = CategoryParentSecondCheck.class)
+@CategoryParentNotChild(groups = CategoryParentSecondCheck.class)
+@CategoryNameUniqueForParent
+public class CategoryPartialUpdate {
+
+    @JsonIgnore
+    @Setter
+    private Long id;
+
+    @Size(min = 1, max = 30)
+    private final String name;
+
+    @CategoryExists(groups = CategoryParentFirstCheck.class)
+    private final Long parentId;
+
+    @JsonCreator
+    CategoryPartialUpdate(@JsonProperty String name, @JsonProperty Long parentId) {
+        this.name = name;
+        this.parentId = parentId;
+    }
+
+}

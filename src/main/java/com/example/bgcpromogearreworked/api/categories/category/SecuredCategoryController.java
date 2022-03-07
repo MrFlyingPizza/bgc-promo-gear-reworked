@@ -2,6 +2,7 @@ package com.example.bgcpromogearreworked.api.categories.category;
 
 import com.example.bgcpromogearreworked.api.categories.category.dto.secured.*;
 import com.example.bgcpromogearreworked.api.categories.category.exceptions.CategoryNotFoundException;
+import com.example.bgcpromogearreworked.api.categories.category.exceptions.CategoryStillReferencedException;
 import com.example.bgcpromogearreworked.api.categories.category.persistence.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -12,35 +13,57 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "/api/secured/categories", produces = MediaType.APPLICATION_JSON_VALUE)
 public class SecuredCategoryController {
 
-    private final CategoryService categoryService;
+    private final CategoryService service;
     private final SecuredCategoryMapper mapper;
 
     @PostMapping
-    private CategoryResponseDto createCategory(@RequestBody CategoryCreateDto categoryCreateDto) {
-        Category result = categoryService.handleCategoryCreate(categoryCreateDto);
-        return mapper.toResponseDto(result);
+    private CategoryResponse createCategory(@RequestBody CategoryCreate categoryCreate) {
+        Category result = service.handleCategoryCreate(categoryCreate);
+        return mapper.toResponse(result);
     }
 
     @GetMapping("/{categoryId}")
-    private CategoryResponseDto getCategory(@PathVariable Long categoryId) throws CategoryNotFoundException {
-        if (!categoryService.checkCategoryExists(categoryId)) {
+    private CategoryResponse getCategory(@PathVariable Long categoryId) {
+        if (!service.checkCategoryExists(categoryId)) {
             throw new CategoryNotFoundException();
         }
-        return mapper.toResponseDto(categoryService.handleCategoryGet(categoryId));
+        return mapper.toResponse(service.handleCategoryGet(categoryId));
     }
 
     @GetMapping
-    private CategoryBatchResponseDto getCategoryBatch() {
-        return mapper.toBatchResponseDto(categoryService.handleCategoryBatchGet());
+    private CategoryBatchResponse getCategoryBatch() {
+        return mapper.toBatchResponse(service.handleCategoryBatchGet());
+    }
+
+    @PatchMapping("/{categoryId}")
+    private CategoryResponse updateCategoryPartial(@PathVariable Long categoryId,
+                                                   @RequestBody CategoryPartialUpdate categoryPartialUpdate) {
+        if (!service.checkCategoryExists(categoryId)) {
+            throw new CategoryNotFoundException();
+        }
+        categoryPartialUpdate.setId(categoryId);
+        return mapper.toResponse(service.handleCategoryPartialUpdate(categoryPartialUpdate));
     }
 
     @PutMapping("/{categoryId}")
-    private CategoryResponseDto updateCategory(@PathVariable Long categoryId,
-                                               @RequestBody CategoryUpdateDto categoryUpdateDto) throws CategoryNotFoundException {
-        if (!categoryService.checkCategoryExists(categoryId)) {
+    private CategoryResponse updateCategory(@PathVariable Long categoryId,
+                                            @RequestBody CategoryUpdate categoryUpdate) {
+        if (!service.checkCategoryExists(categoryId)) {
             throw new CategoryNotFoundException();
         }
-        return mapper.toResponseDto(categoryService.handleCategoryUpdate(categoryId, categoryUpdateDto));
+        categoryUpdate.setId(categoryId);
+        return mapper.toResponse(service.handleCategoryUpdate(categoryUpdate));
+    }
+
+    @DeleteMapping("/{categoryId}")
+    private void deleteCategory(@PathVariable Long categoryId) {
+        if (!service.checkCategoryExists(categoryId)) {
+            throw new CategoryNotFoundException();
+        }
+        if (service.checkCategoryStillReferenced(categoryId)) {
+            throw new CategoryStillReferencedException();
+        }
+        service.handleCategoryDelete(categoryId);
     }
 
 }

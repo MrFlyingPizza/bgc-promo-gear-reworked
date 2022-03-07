@@ -3,13 +3,17 @@ package com.example.bgcpromogearreworked.api.products.variant;
 import com.example.bgcpromogearreworked.api.products.persistence.ProductVariant;
 import com.example.bgcpromogearreworked.api.products.persistence.ProductVariantRepository;
 import com.example.bgcpromogearreworked.api.products.exceptions.ProductVariantNotFoundException;
-import com.example.bgcpromogearreworked.api.products.variant.dto.secured.ProductVariantCreateDto;
+import com.example.bgcpromogearreworked.api.products.variant.dto.secured.ProductVariantCreate;
 import com.example.bgcpromogearreworked.api.products.variant.dto.secured.ProductVariantMapper;
-import com.example.bgcpromogearreworked.api.products.variant.dto.secured.ProductVariantUpdateDto;
+import com.example.bgcpromogearreworked.api.products.variant.dto.secured.ProductVariantUpdate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
 
 @Service
+@Validated
 @RequiredArgsConstructor
 public class ProductVariantService {
 
@@ -20,10 +24,10 @@ public class ProductVariantService {
         return variantRepo.existsByIdAndProductId(variantId, productId);
     }
 
-    ProductVariant handleProductVariantCreate(Long productId,
-                                                         ProductVariantCreateDto productVariantCreateDto) {
-        ProductVariant productVariant = mapper.productVariantCreateDtoToProductVariant(productId, productVariantCreateDto);
-        return variantRepo.save(productVariant);
+    ProductVariant handleProductVariantCreate(@Valid ProductVariantCreate productVariantCreate) {
+        ProductVariant productVariant = mapper.fromCreate(productVariantCreate.getProductId(), productVariantCreate);
+
+        return variantRepo.saveAndFlush(productVariant);
     }
 
     ProductVariant handleProductVariantGet(Long productId) throws ProductVariantNotFoundException {
@@ -34,10 +38,11 @@ public class ProductVariantService {
         return variantRepo.findAll();
     }
 
-    ProductVariant handleProductVariantUpdate(Long productId, ProductVariantUpdateDto productVariantUpdateDto) throws ProductVariantNotFoundException {
-        ProductVariant productVariant = variantRepo.findById(productId).orElseThrow(ProductVariantNotFoundException::new);
-        productVariant = mapper.productVariantUpdateDtoToProductVariant(productVariantUpdateDto, productVariant);
-        return variantRepo.save(productVariant);
+    ProductVariant handleProductVariantUpdate(@Valid ProductVariantUpdate productVariantUpdate) throws ProductVariantNotFoundException {
+        ProductVariant productVariant = variantRepo.findById(productVariantUpdate.getId())
+                .orElseThrow(ProductVariantNotFoundException::new);
+        productVariant = mapper.fromUpdate(productVariantUpdate, productVariant);
+        return variantRepo.saveAndFlush(productVariant);
     }
 
 }
