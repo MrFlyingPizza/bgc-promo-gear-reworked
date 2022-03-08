@@ -1,6 +1,8 @@
 package com.example.bgcpromogearreworked.api.products.product.dto.secured;
 
+import com.example.bgcpromogearreworked.api.options.persistence.OptionValue;
 import com.example.bgcpromogearreworked.api.products.persistence.Product;
+import com.example.bgcpromogearreworked.api.products.persistence.ProductVariant;
 import org.mapstruct.*;
 import org.springframework.data.util.Streamable;
 
@@ -8,16 +10,36 @@ import org.springframework.data.util.Streamable;
 public abstract class SecuredProductMapper {
 
     @Mapping(source = "categoryId", target = "category.id")
-    public abstract Product fromCreate(ProductCreate productCreate);
+    public abstract Product fromCreate(SecuredProductCreate productCreate);
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "categoryId", target = "category.id")
-    public abstract Product fromUpdate(ProductUpdate productUpdate, @MappingTarget Product targetProduct);
+    public abstract Product fromUpdate(SecuredProductUpdate productUpdate, @MappingTarget Product targetProduct);
 
-    public ProductResponse toResponse(Product product) {
-        return new ProductResponse(product);
+    @Mapping(source = "categoryId", target = "category.id")
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    public abstract Product fromPartialUpdate(SecuredProductPartialUpdate productPartialUpdate, @MappingTarget Product targetProduct);
+
+    @Mapping(source = "category.parent.id", target = "category.parentId")
+    @Mapping(source = "category.parent.name", target = "category.parentName")
+    public abstract SecuredProductResponse toResponse(Product product);
+
+    @Mapping(source = "optionValues", target = "options")
+    protected abstract SecuredProductResponse.NestedProductVariant map(ProductVariant productVariant);
+
+    @Mapping(source = "value", target = ".")
+    protected abstract String map(OptionValue optionValue);
+
+    public SecuredProductBatchResponse toBatchResponse(Iterable<Product> products) {
+        return new SecuredProductBatchResponse(Streamable.of(products).map(this::toResponse).toList());
     }
-    public ProductBatchResponse toBatchResponse(Iterable<Product> products) {
-        return new ProductBatchResponse(Streamable.of(products).toList());
+
+    @AfterMapping
+    public void setParentNullIfNoParentId(@MappingTarget Product product) {
+        if (product.getCategory() == null) {
+            return;
+        }
+        if (product.getCategory().getId() == null) {
+            product.setCategory(null);
+        }
     }
 }

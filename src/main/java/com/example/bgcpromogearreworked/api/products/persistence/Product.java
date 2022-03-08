@@ -1,7 +1,9 @@
 package com.example.bgcpromogearreworked.api.products.persistence;
 
-import com.example.bgcpromogearreworked.api.categories.category.persistence.Category;
-import com.example.bgcpromogearreworked.api.common.auditing.Auditable;
+import com.example.bgcpromogearreworked.api.categories.persistence.Category;
+import com.example.bgcpromogearreworked.api.options.persistence.Option;
+import com.example.bgcpromogearreworked.api.options.persistence.OptionValue;
+import com.example.bgcpromogearreworked.api.shared.auditing.Auditable;
 import com.example.bgcpromogearreworked.api.users.User;
 import lombok.Getter;
 import lombok.Setter;

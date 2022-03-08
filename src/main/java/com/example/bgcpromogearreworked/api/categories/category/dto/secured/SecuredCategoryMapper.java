@@ -1,6 +1,6 @@
 package com.example.bgcpromogearreworked.api.categories.category.dto.secured;
 
-import com.example.bgcpromogearreworked.api.categories.category.persistence.Category;
+import com.example.bgcpromogearreworked.api.categories.persistence.Category;
 import org.mapstruct.*;
 import org.springframework.data.util.Streamable;
 
@@ -8,20 +8,19 @@ import org.springframework.data.util.Streamable;
 public abstract class SecuredCategoryMapper {
 
     @Mapping(source = "parentId", target = "parent.id")
-    public abstract Category fromCreate(CategoryCreate categoryCreate);
+    public abstract Category fromCreate(SecuredCategoryCreate categoryCreate);
 
     @Mapping(source = "parentId", target = "parent.id")
-    public abstract Category fromUpdate(CategoryUpdate categoryUpdate, @MappingTarget Category category);
+    public abstract Category fromUpdate(SecuredCategoryUpdate categoryUpdate, @MappingTarget Category category);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "parentId", target = "parent.id")
-    public abstract Category fromPartialUpdate(CategoryPartialUpdate categoryPartialUpdate, @MappingTarget Category category);
+    public abstract Category fromPartialUpdate(SecuredCategoryPartialUpdate categoryPartialUpdate, @MappingTarget Category category);
 
-    @Mapping(source = "subCategories", target = "subcategories")
-    public abstract CategoryResponse toResponse(Category category);
+    public abstract SecuredCategoryResponse toResponse(Category category);
 
-    public CategoryBatchResponse toBatchResponse(Iterable<Category> categories) {
-        return new CategoryBatchResponse(Streamable.of(categories).map(this::toResponse).toList());
+    public SecuredCategoryBatchResponse toBatchResponse(Iterable<Category> categories) {
+        return new SecuredCategoryBatchResponse(Streamable.of(categories).map(this::toResponse).toList());
     }
 
     @AfterMapping

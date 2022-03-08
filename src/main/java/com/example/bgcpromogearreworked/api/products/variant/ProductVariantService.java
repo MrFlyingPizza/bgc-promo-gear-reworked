@@ -15,7 +15,8 @@ import javax.validation.Valid;
 @Service
 @Validated
 @RequiredArgsConstructor
-public class ProductVariantService {
+public class ProductVariantService { // TODO: 2022-03-06 finish
+    // TODO: 2022-03-06 validation: user is allowed to have a single variant with no options, or multiple variants that have value for every option specified by the product
 
     private final ProductVariantRepository variantRepo;
     private final ProductVariantMapper mapper;

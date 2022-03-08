@@ -1,9 +1,9 @@
 package com.example.bgcpromogearreworked.api.categories.category;
 
 import com.example.bgcpromogearreworked.api.categories.category.dto.secured.*;
-import com.example.bgcpromogearreworked.api.categories.category.exceptions.CategoryNotFoundException;
-import com.example.bgcpromogearreworked.api.categories.category.exceptions.CategoryStillReferencedException;
-import com.example.bgcpromogearreworked.api.categories.category.persistence.Category;
+import com.example.bgcpromogearreworked.api.categories.exceptions.CategoryNotFoundException;
+import com.example.bgcpromogearreworked.api.categories.exceptions.CategoryStillReferencedException;
+import com.example.bgcpromogearreworked.api.categories.persistence.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -17,13 +17,13 @@ public class SecuredCategoryController {
     private final SecuredCategoryMapper mapper;
 
     @PostMapping
-    private CategoryResponse createCategory(@RequestBody CategoryCreate categoryCreate) {
+    private SecuredCategoryResponse createCategory(@RequestBody SecuredCategoryCreate categoryCreate) {
         Category result = service.handleCategoryCreate(categoryCreate);
         return mapper.toResponse(result);
     }
 
     @GetMapping("/{categoryId}")
-    private CategoryResponse getCategory(@PathVariable Long categoryId) {
+    private SecuredCategoryResponse getCategory(@PathVariable Long categoryId) {
         if (!service.checkCategoryExists(categoryId)) {
             throw new CategoryNotFoundException();
         }
@@ -31,13 +31,13 @@ public class SecuredCategoryController {
     }
 
     @GetMapping
-    private CategoryBatchResponse getCategoryBatch() {
+    private SecuredCategoryBatchResponse getCategoryBatch() {
         return mapper.toBatchResponse(service.handleCategoryBatchGet());
     }
 
     @PatchMapping("/{categoryId}")
-    private CategoryResponse updateCategoryPartial(@PathVariable Long categoryId,
-                                                   @RequestBody CategoryPartialUpdate categoryPartialUpdate) {
+    private SecuredCategoryResponse updateCategoryPartial(@PathVariable Long categoryId,
+                                                          @RequestBody SecuredCategoryPartialUpdate categoryPartialUpdate) {
         if (!service.checkCategoryExists(categoryId)) {
             throw new CategoryNotFoundException();
         }
@@ -46,8 +46,8 @@ public class SecuredCategoryController {
     }
 
     @PutMapping("/{categoryId}")
-    private CategoryResponse updateCategory(@PathVariable Long categoryId,
-                                            @RequestBody CategoryUpdate categoryUpdate) {
+    private SecuredCategoryResponse updateCategory(@PathVariable Long categoryId,
+                                                   @RequestBody SecuredCategoryUpdate categoryUpdate) {
         if (!service.checkCategoryExists(categoryId)) {
             throw new CategoryNotFoundException();
         }

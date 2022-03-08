@@ -1,12 +1,12 @@
 package com.example.bgcpromogearreworked.api.categories.category;
 
-import com.example.bgcpromogearreworked.api.categories.category.dto.secured.CategoryCreate;
-import com.example.bgcpromogearreworked.api.categories.category.dto.secured.CategoryPartialUpdate;
-import com.example.bgcpromogearreworked.api.categories.category.dto.secured.CategoryUpdate;
+import com.example.bgcpromogearreworked.api.categories.category.dto.secured.SecuredCategoryCreate;
+import com.example.bgcpromogearreworked.api.categories.category.dto.secured.SecuredCategoryPartialUpdate;
+import com.example.bgcpromogearreworked.api.categories.category.dto.secured.SecuredCategoryUpdate;
 import com.example.bgcpromogearreworked.api.categories.category.dto.secured.SecuredCategoryMapper;
-import com.example.bgcpromogearreworked.api.categories.category.exceptions.CategoryNotFoundException;
-import com.example.bgcpromogearreworked.api.categories.category.persistence.Category;
-import com.example.bgcpromogearreworked.api.categories.category.persistence.CategoryRepository;
+import com.example.bgcpromogearreworked.api.categories.exceptions.CategoryNotFoundException;
+import com.example.bgcpromogearreworked.api.categories.persistence.Category;
+import com.example.bgcpromogearreworked.api.categories.persistence.CategoryRepository;
 import com.example.bgcpromogearreworked.api.products.persistence.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ public class CategoryService {
         return productRepo.existsByCategoryId(categoryId);
     }
 
-    Category handleCategoryCreate(@Valid CategoryCreate categoryCreate) {
+    Category handleCategoryCreate(@Valid SecuredCategoryCreate categoryCreate) {
         return categoryRepo.saveAndFlush(mapper.fromCreate(categoryCreate));
     }
 
@@ -42,13 +42,13 @@ public class CategoryService {
         return categoryRepo.findAll();
     }
 
-    Category handleCategoryUpdate(@Valid CategoryUpdate categoryUpdate) {
+    Category handleCategoryUpdate(@Valid SecuredCategoryUpdate categoryUpdate) {
         Long categoryId = categoryUpdate.getId();
         Category category = categoryRepo.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
         return categoryRepo.saveAndFlush(mapper.fromUpdate(categoryUpdate, category));
     }
 
-    Category handleCategoryPartialUpdate(@Valid CategoryPartialUpdate categoryPartialUpdate) {
+    Category handleCategoryPartialUpdate(@Valid SecuredCategoryPartialUpdate categoryPartialUpdate) {
         Long categoryId = categoryPartialUpdate.getId();
         Category category = categoryRepo.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
         return categoryRepo.saveAndFlush(mapper.fromPartialUpdate(categoryPartialUpdate, category));

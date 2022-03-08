@@ -1,0 +1,22 @@
+package com.example.bgcpromogearreworked.api.options.option.dto.secured;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+@Getter
+public class SecuredOptionCreate {
+
+    @Size(min = 1, max = 20)
+    @NotNull
+    private final String name;
+
+    @JsonCreator
+    SecuredOptionCreate(@JsonProperty String name) {
+        this.name = name;
+    }
+
+}

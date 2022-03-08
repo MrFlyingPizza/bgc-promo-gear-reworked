@@ -1,6 +1,7 @@
 package com.example.bgcpromogearreworked.api.products.persistence;
 
-import com.example.bgcpromogearreworked.api.common.auditing.Auditable;
+import com.example.bgcpromogearreworked.api.options.persistence.OptionValue;
+import com.example.bgcpromogearreworked.api.shared.auditing.Auditable;
 import com.example.bgcpromogearreworked.api.users.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,6 +22,9 @@ public class ProductVariant extends Auditable<User> {
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
+
+    @Column(name = "image_id", insertable = false, updatable = false)
+    private Long imageId;
 
     @ManyToOne
     @JoinColumn(name = "image_id")

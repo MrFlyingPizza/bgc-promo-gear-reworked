@@ -1,6 +1,6 @@
 package com.example.bgcpromogearreworked.api.products.variant.dto.secured;
 
-import com.example.bgcpromogearreworked.api.products.persistence.OptionValue;
+import com.example.bgcpromogearreworked.api.options.persistence.OptionValue;
 import com.example.bgcpromogearreworked.api.products.persistence.ProductImage;
 import com.example.bgcpromogearreworked.api.products.persistence.ProductVariant;
 import com.example.bgcpromogearreworked.api.users.User;
