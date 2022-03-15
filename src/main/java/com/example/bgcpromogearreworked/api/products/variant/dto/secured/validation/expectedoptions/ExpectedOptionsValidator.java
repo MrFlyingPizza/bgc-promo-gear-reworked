@@ -4,7 +4,7 @@ import com.example.bgcpromogearreworked.persistence.entities.Option;
 import com.example.bgcpromogearreworked.persistence.entities.ProductRepository;
 import com.example.bgcpromogearreworked.persistence.repositories.OptionValueRepository;
 
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -18,19 +18,14 @@ public abstract class ExpectedOptionsValidator {
                                List<Long> optionValueIds,
                                ProductRepository productRepo,
                                OptionValueRepository optionValueRepo) {
+        HashMap<Option, Boolean> optionsExpected = new HashMap<>();
         Set<Option> expectedOptions = productRepo.findById(productId).orElseThrow().getOptions();
+        expectedOptions.forEach(option -> optionsExpected.put(option, false));
         Set<Option> givenOptions = optionValueIds.stream()
                 .map(id -> optionValueRepo.findById(id).orElseThrow().getOption())
                 .collect(Collectors.toSet());
-        Iterator<Option> givenOptionsIterator = givenOptions.iterator();
-
-        boolean valid = true;
-        while (valid && givenOptionsIterator.hasNext()) {
-            if (!expectedOptions.contains(givenOptionsIterator.next())) {
-                valid = false;
-            }
-        }
-        return valid;
+        givenOptions.forEach(option -> optionsExpected.computeIfPresent(option, (currentOption, present) -> true));
+        return !optionsExpected.containsValue(false);
     }
 
 }
