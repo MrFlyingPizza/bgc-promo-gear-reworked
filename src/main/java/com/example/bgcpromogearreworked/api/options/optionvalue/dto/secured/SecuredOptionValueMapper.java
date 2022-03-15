@@ -31,7 +31,7 @@ public abstract class SecuredOptionValueMapper {
     }
 
     @AfterMapping
-    private void setOptionNullIfNoOptionId(@MappingTarget OptionValue optionValue) {
+    protected void setOptionNullIfNoOptionId(@MappingTarget OptionValue optionValue) {
         if (optionValue.getOption().getId() == null) {
             optionValue.setOption(null);
         }

@@ -1,5 +1,11 @@
 package com.example.bgcpromogearreworked.api.products.variant.dto.secured;
 
+import com.example.bgcpromogearreworked.api.products.variant.dto.secured.validation.optioncountmatch.ExpectedOptionCount;
+import com.example.bgcpromogearreworked.api.products.variant.dto.secured.validation.optionsmatch.ExpectedOptions;
+import com.example.bgcpromogearreworked.api.products.variant.dto.secured.validation.uniqueoptionset.UniqueOptionSet;
+import com.example.bgcpromogearreworked.api.shared.validation.exists.annotations.OptionValueExists;
+import com.example.bgcpromogearreworked.api.shared.validation.groups.FirstValidationGroup;
+import com.example.bgcpromogearreworked.api.shared.validation.groups.SecondValidationGroup;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,10 +14,15 @@ import lombok.Setter;
 import org.hibernate.validator.constraints.Range;
 import org.hibernate.validator.constraints.UniqueElements;
 
+import javax.validation.GroupSequence;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Getter
+@GroupSequence({SecuredProductVariantUpdate.class, FirstValidationGroup.class, SecondValidationGroup.class})
+@ExpectedOptionCount
+@ExpectedOptions(groups = FirstValidationGroup.class)
+@UniqueOptionSet(groups = SecondValidationGroup.class)
 public class SecuredProductVariantUpdate {
 
     @JsonIgnore
@@ -29,7 +40,9 @@ public class SecuredProductVariantUpdate {
     @Range
     private final Integer waitListThreshold;
 
-    private final @NotNull @UniqueElements List<Long> optionValueIds;
+    @NotNull
+    @UniqueElements
+    private final List<@NotNull @OptionValueExists Long> optionValueIds;
 
     @JsonCreator
     SecuredProductVariantUpdate(@JsonProperty Long imageId,

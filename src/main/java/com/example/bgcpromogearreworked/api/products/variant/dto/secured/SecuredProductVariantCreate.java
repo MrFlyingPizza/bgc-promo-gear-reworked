@@ -1,6 +1,9 @@
 package com.example.bgcpromogearreworked.api.products.variant.dto.secured;
 
+import com.example.bgcpromogearreworked.api.products.variant.dto.secured.validation.optioncountmatch.ExpectedOptionCount;
+import com.example.bgcpromogearreworked.api.products.variant.dto.secured.validation.optionsmatch.ExpectedOptions;
 import com.example.bgcpromogearreworked.api.products.variant.dto.secured.validation.uniqueoptionset.UniqueOptionSet;
+import com.example.bgcpromogearreworked.api.shared.validation.exists.annotations.OptionValueExists;
 import com.example.bgcpromogearreworked.api.shared.validation.groups.FirstValidationGroup;
 import com.example.bgcpromogearreworked.api.shared.validation.groups.SecondValidationGroup;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -17,7 +20,9 @@ import java.util.List;
 
 @Getter
 @GroupSequence({SecuredProductVariantCreate.class, FirstValidationGroup.class, SecondValidationGroup.class})
-@UniqueOptionSet
+@ExpectedOptionCount
+@ExpectedOptions(groups = FirstValidationGroup.class)
+@UniqueOptionSet(groups = SecondValidationGroup.class)
 public class SecuredProductVariantCreate {
 
     @JsonIgnore
@@ -31,7 +36,9 @@ public class SecuredProductVariantCreate {
     @Range
     private final Integer waitListThreshold;
 
-    private final @NotNull @UniqueElements List<Long> optionValueIds;
+    @NotNull
+    @UniqueElements
+    private final List<@NotNull @OptionValueExists Long> optionValueIds;
 
     @JsonCreator
     SecuredProductVariantCreate(@JsonProperty Long imageId,

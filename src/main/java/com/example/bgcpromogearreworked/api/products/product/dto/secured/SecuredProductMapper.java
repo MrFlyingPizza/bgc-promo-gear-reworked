@@ -60,7 +60,7 @@ public abstract class SecuredProductMapper {
     }
 
     @AfterMapping
-    public void setParentNullIfNoParentId(@MappingTarget Product product) {
+    protected void setParentNullIfNoParentId(@MappingTarget Product product) {
         if (product.getCategory() == null) {
             return;
         }

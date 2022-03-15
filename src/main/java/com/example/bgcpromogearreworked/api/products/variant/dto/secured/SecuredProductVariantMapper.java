@@ -43,7 +43,7 @@ public abstract class SecuredProductVariantMapper {
     }
 
     @AfterMapping
-    private void setImageNullIfImageIdNull(@MappingTarget ProductVariant productVariant) {
+    protected void setImageNullIfImageIdNull(@MappingTarget ProductVariant productVariant) {
         if (productVariant.getImage().getId() == null) {
             productVariant.setImage(null);
         }
