@@ -1,4 +1,4 @@
-package com.example.bgcpromogearreworked.api.products.variant.dto.secured.validation.optionsmatch;
+package com.example.bgcpromogearreworked.api.products.variant.dto.secured.validation.expectedoptions;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

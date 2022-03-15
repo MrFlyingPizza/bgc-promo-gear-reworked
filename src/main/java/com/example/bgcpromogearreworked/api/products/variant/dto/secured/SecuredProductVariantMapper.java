@@ -1,16 +1,21 @@
 package com.example.bgcpromogearreworked.api.products.variant.dto.secured;
 
+import com.example.bgcpromogearreworked.persistence.entities.OptionValue;
 import com.example.bgcpromogearreworked.persistence.entities.ProductVariant;
+import com.example.bgcpromogearreworked.persistence.repositories.OptionValueRepository;
 import org.mapstruct.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Streamable;
 
 @Mapper(componentModel = "spring")
 public abstract class SecuredProductVariantMapper {
 
-    // TODO: 2022-03-14 finish mapping, check build output warnings
+    @Autowired
+    private OptionValueRepository optionValueRepo;
 
     @Mapping(source = "imageId", target = "image.id")
     @Mapping(source = "productId", target = "product.id")
+    @Mapping(source = "optionValueIds", target = "optionValues")
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "lastModifiedDate", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
@@ -20,6 +25,7 @@ public abstract class SecuredProductVariantMapper {
 
     @Mapping(source = "imageId", target = "image.id")
     @Mapping(source = "productId", target = "product.id")
+    @Mapping(source = "optionValueIds", target = "optionValues")
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "lastModifiedDate", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
@@ -29,6 +35,7 @@ public abstract class SecuredProductVariantMapper {
 
     @Mapping(source = "imageId", target = "image.id")
     @Mapping(source = "productId", target = "product.id")
+    @Mapping(source = "optionValueIds", target = "optionValues")
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "lastModifiedDate", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
@@ -47,6 +54,10 @@ public abstract class SecuredProductVariantMapper {
         if (productVariant.getImage().getId() == null) {
             productVariant.setImage(null);
         }
+    }
+
+    protected OptionValue map(Long optionValueId) {
+        return optionValueRepo.findById(optionValueId).orElseThrow();
     }
 
 }

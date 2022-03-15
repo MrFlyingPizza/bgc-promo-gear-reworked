@@ -1,4 +1,4 @@
-package com.example.bgcpromogearreworked.api.products.variant.dto.secured.validation.optionsmatch;
+package com.example.bgcpromogearreworked.api.products.variant.dto.secured.validation.expectedoptions;
 
 import com.example.bgcpromogearreworked.persistence.entities.Option;
 import com.example.bgcpromogearreworked.persistence.entities.ProductRepository;

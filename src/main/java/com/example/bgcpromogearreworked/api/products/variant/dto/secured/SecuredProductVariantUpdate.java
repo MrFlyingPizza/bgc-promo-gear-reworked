@@ -1,7 +1,7 @@
 package com.example.bgcpromogearreworked.api.products.variant.dto.secured;
 
-import com.example.bgcpromogearreworked.api.products.variant.dto.secured.validation.optioncountmatch.ExpectedOptionCount;
-import com.example.bgcpromogearreworked.api.products.variant.dto.secured.validation.optionsmatch.ExpectedOptions;
+import com.example.bgcpromogearreworked.api.products.variant.dto.secured.validation.expectedoptioncount.ExpectedOptionCount;
+import com.example.bgcpromogearreworked.api.products.variant.dto.secured.validation.expectedoptions.ExpectedOptions;
 import com.example.bgcpromogearreworked.api.products.variant.dto.secured.validation.uniqueoptionset.UniqueOptionSet;
 import com.example.bgcpromogearreworked.api.shared.validation.exists.annotations.OptionValueExists;
 import com.example.bgcpromogearreworked.api.shared.validation.groups.FirstValidationGroup;
