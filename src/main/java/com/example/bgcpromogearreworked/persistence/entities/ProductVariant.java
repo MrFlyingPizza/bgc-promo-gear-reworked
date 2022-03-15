@@ -1,17 +1,18 @@
 package com.example.bgcpromogearreworked.persistence.entities;
 
-import com.example.bgcpromogearreworked.api.shared.auditing.Auditable;
+import com.example.bgcpromogearreworked.persistence.auditing.Auditable;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Set;
 
 @Table(name = "product_variant")
 @Entity
 @Getter
 @Setter
-public class ProductVariant extends Auditable<User> {
+public class ProductVariant extends Auditable implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,9 +36,13 @@ public class ProductVariant extends Auditable<User> {
     @ManyToMany
     @JoinTable(
             name = "product_variant_has_option_value",
-            joinColumns = @JoinColumn(name = "variant_id"),
+            joinColumns = {
+                    @JoinColumn(name = "variant_id", referencedColumnName = "id"),
+                    @JoinColumn(name = "product_id", referencedColumnName = "product_id")
+            },
             inverseJoinColumns = {
-                @JoinColumn(name = "value_id")
+                    @JoinColumn(name = "value_id", referencedColumnName = "id"),
+                    @JoinColumn(name = "option_id", referencedColumnName = "option_id")
             }
     )
     private Set<OptionValue> optionValues;

@@ -1,6 +1,6 @@
 package com.example.bgcpromogearreworked.persistence.entities;
 
-import com.example.bgcpromogearreworked.api.shared.auditing.Auditable;
+import com.example.bgcpromogearreworked.persistence.auditing.Auditable;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +13,7 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-public class Product extends Auditable<User> {
+public class Product extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

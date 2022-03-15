@@ -4,12 +4,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Table(name = "option_value")
 @Entity
 @Getter
 @Setter
-public class OptionValue {
+public class OptionValue implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
