@@ -14,7 +14,7 @@ import java.lang.annotation.*;
 @Documented
 public @interface UniqueNameValue {
 
-    String message() default "{dto_validation.constraints.UniqueOptionNameValuePair}";
+    String message() default "{dto_validation.constraints.UniqueOptionNameValue}";
 
     Class<?>[] groups() default { };
 
