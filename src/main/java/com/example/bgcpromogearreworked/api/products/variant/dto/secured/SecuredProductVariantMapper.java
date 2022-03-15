@@ -44,6 +44,7 @@ public abstract class SecuredProductVariantMapper {
     public abstract ProductVariant fromPartialUpdate(SecuredProductVariantPartialUpdate productVariantPartialUpdate,
                                                      @MappingTarget ProductVariant productVariant);
 
+    @Mapping(source = "optionValues", target = "options")
     public abstract SecuredProductVariantResponse toResponse(ProductVariant productVariant); // TODO: 2022-03-10 implement
     public SecuredProductVariantBatchResponse toBatchResponse(Iterable<ProductVariant> productVariants) {
         return new SecuredProductVariantBatchResponse(Streamable.of(productVariants).map(this::toResponse).toList());
@@ -59,5 +60,9 @@ public abstract class SecuredProductVariantMapper {
     protected OptionValue map(Long optionValueId) {
         return optionValueRepo.findById(optionValueId).orElseThrow();
     }
+
+    @Mapping(source = "option.id", target = "optionId")
+    @Mapping(source = "option.name", target = "name")
+    protected abstract SecuredProductVariantResponse.NestedOptionValue map(OptionValue optionValue);
 
 }

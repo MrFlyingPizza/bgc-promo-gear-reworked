@@ -74,7 +74,6 @@ public abstract class SecuredProductMapper {
 
     @Mapping(source = "option.id", target = "optionId")
     @Mapping(source = "option.name", target = "name")
-    @Mapping(source = "id", target = "valueId")
     protected abstract SecuredProductResponse.NestedProductVariant.NestedOptionValue map(OptionValue optionValue);
 
     protected Option mapOption(Long optionId) {
