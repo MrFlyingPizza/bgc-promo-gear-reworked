@@ -2,7 +2,7 @@ package com.example.bgcpromogearreworked.api.categories.category.dto.secured.val
 
 public abstract class ParentNotSelfValidator {
 
-    protected boolean validate(Long id, Long parentId) {
+    protected static boolean validate(Long id, Long parentId) {
         if (parentId == null) {
             return true;
         }

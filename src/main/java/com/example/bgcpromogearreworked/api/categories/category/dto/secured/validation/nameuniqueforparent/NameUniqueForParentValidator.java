@@ -3,7 +3,7 @@ package com.example.bgcpromogearreworked.api.categories.category.dto.secured.val
 import com.example.bgcpromogearreworked.persistence.repositories.CategoryRepository;
 
 public abstract class NameUniqueForParentValidator {
-    protected boolean validate(String name, Long id, CategoryRepository repo) {
+    protected static boolean validate(String name, Long id, CategoryRepository repo) {
         return !repo.existsByNameAndParentId(name, id);
     }
 }

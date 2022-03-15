@@ -14,7 +14,7 @@ public abstract class ExpectedOptionsValidator {
     // assumes that the list of optionValueIds contain IDs of existing OptionValues
     // assumes that the list of optionValueIds only has unique elements
     // assumes that product exists.
-    protected boolean validate(Long productId,
+    protected static boolean validate(Long productId,
                                List<Long> optionValueIds,
                                ProductRepository productRepo,
                                OptionValueRepository optionValueRepo) {

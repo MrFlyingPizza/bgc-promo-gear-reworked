@@ -4,7 +4,7 @@ import com.example.bgcpromogearreworked.persistence.repositories.OptionRepositor
 
 public abstract class UniqueOptionNameValidator {
 
-    protected boolean validate(String name, OptionRepository repo) {
+    protected static boolean validate(String name, OptionRepository repo) {
         if (name == null) {
             return true;
         }

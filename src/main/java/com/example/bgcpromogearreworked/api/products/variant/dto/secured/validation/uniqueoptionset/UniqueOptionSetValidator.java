@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public abstract class UniqueOptionSetValidator {
 
     // assumes that there are the same number of option values as option that were specified for the product.
-    protected boolean validate(Long productId,
+    protected static boolean validate(Long productId,
                                List<Long> optionValueIds,
                                ProductRepository productRepo,
                                OptionValueRepository optionValueRepo) {

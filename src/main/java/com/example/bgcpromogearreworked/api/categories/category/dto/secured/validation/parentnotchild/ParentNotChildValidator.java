@@ -3,7 +3,7 @@ package com.example.bgcpromogearreworked.api.categories.category.dto.secured.val
 import com.example.bgcpromogearreworked.persistence.repositories.CategoryRepository;
 
 public abstract class ParentNotChildValidator {
-    protected boolean validate(Long parentId, CategoryRepository repo) {
+    protected static boolean validate(Long parentId, CategoryRepository repo) {
         if (parentId == null) {
             return true;
         }
