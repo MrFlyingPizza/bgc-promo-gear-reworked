@@ -5,8 +5,8 @@ import com.example.bgcpromogearreworked.api.options.option.dto.secured.SecuredOp
 import com.example.bgcpromogearreworked.api.options.option.dto.secured.SecuredOptionMapper;
 import com.example.bgcpromogearreworked.api.options.option.dto.secured.SecuredOptionPartialUpdate;
 import com.example.bgcpromogearreworked.api.options.option.dto.secured.SecuredOptionUpdate;
-import com.example.bgcpromogearreworked.api.options.persistence.Option;
-import com.example.bgcpromogearreworked.api.options.persistence.OptionRepository;
+import com.example.bgcpromogearreworked.persistence.entities.Option;
+import com.example.bgcpromogearreworked.persistence.repositories.OptionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -21,16 +21,16 @@ public class OptionService {
     private final OptionRepository optionRepo;
     private final SecuredOptionMapper mapper;
 
-    public boolean checkOptionExists(String optionId) {
-        return optionRepo.existsById(optionId);
+    public boolean checkOptionExists(Long id) {
+        return optionRepo.existsById(id);
     }
 
     Option handleOptionCreate(@Valid SecuredOptionCreate optionCreate) {
         return optionRepo.save(mapper.fromCreate(optionCreate));
     }
 
-    Option handleOptionGet(String optionId) {
-        return optionRepo.findById(optionId).orElseThrow(OptionNotFoundException::new);
+    Option handleOptionGet(Long id) {
+        return optionRepo.findById(id).orElseThrow(OptionNotFoundException::new);
     }
 
     Iterable<Option> handleOptionBatchGet() {

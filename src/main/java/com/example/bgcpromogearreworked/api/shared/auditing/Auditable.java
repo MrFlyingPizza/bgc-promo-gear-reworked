@@ -1,6 +1,6 @@
 package com.example.bgcpromogearreworked.api.shared.auditing;
 
-import com.example.bgcpromogearreworked.api.users.User;
+import com.example.bgcpromogearreworked.persistence.entities.User;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;

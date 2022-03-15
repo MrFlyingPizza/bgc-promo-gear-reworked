@@ -4,7 +4,8 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: true
-
+springdoc:
+  use-fqn: true
 azure:
   storage:
     account-name: bgcpromogearstorage

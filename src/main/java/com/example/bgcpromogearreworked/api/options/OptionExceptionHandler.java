@@ -1,6 +1,7 @@
 package com.example.bgcpromogearreworked.api.options;
 
 import com.example.bgcpromogearreworked.api.options.exceptions.OptionNotFoundException;
+import com.example.bgcpromogearreworked.api.options.exceptions.OptionValueNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -13,6 +14,12 @@ public class OptionExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     private String handleOptionNotFound(OptionNotFoundException exception) {
         return "Option not found.";
+    }
+
+    @ExceptionHandler(OptionValueNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    private String handleOptionValueNotFound(OptionValueNotFoundException exception) {
+        return "Option value not found.";
     }
 
 }

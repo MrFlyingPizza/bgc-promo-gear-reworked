@@ -1,6 +1,6 @@
 package com.example.bgcpromogearreworked.api.products.product;
 
-import com.example.bgcpromogearreworked.api.products.persistence.Product;
+import com.example.bgcpromogearreworked.persistence.entities.Product;
 import com.example.bgcpromogearreworked.api.products.exceptions.ProductNotFoundException;
 import com.example.bgcpromogearreworked.api.products.product.dto.secured.*;
 import lombok.RequiredArgsConstructor;

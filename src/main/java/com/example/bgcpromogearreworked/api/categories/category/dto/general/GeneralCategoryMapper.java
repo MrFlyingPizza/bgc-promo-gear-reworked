@@ -1,6 +1,6 @@
 package com.example.bgcpromogearreworked.api.categories.category.dto.general;
 
-import com.example.bgcpromogearreworked.api.categories.persistence.Category;
+import com.example.bgcpromogearreworked.persistence.entities.Category;
 import org.mapstruct.Mapper;
 import org.springframework.data.util.Streamable;
 

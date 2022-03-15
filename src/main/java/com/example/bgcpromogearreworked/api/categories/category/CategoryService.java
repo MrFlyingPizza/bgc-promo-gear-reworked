@@ -5,9 +5,9 @@ import com.example.bgcpromogearreworked.api.categories.category.dto.secured.Secu
 import com.example.bgcpromogearreworked.api.categories.category.dto.secured.SecuredCategoryUpdate;
 import com.example.bgcpromogearreworked.api.categories.category.dto.secured.SecuredCategoryMapper;
 import com.example.bgcpromogearreworked.api.categories.exceptions.CategoryNotFoundException;
-import com.example.bgcpromogearreworked.api.categories.persistence.Category;
-import com.example.bgcpromogearreworked.api.categories.persistence.CategoryRepository;
-import com.example.bgcpromogearreworked.api.products.persistence.ProductRepository;
+import com.example.bgcpromogearreworked.persistence.entities.Category;
+import com.example.bgcpromogearreworked.persistence.repositories.CategoryRepository;
+import com.example.bgcpromogearreworked.persistence.entities.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;

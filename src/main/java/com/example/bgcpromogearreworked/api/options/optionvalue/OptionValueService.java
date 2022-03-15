@@ -5,47 +5,52 @@ import com.example.bgcpromogearreworked.api.options.optionvalue.dto.secured.Secu
 import com.example.bgcpromogearreworked.api.options.optionvalue.dto.secured.SecuredOptionValueMapper;
 import com.example.bgcpromogearreworked.api.options.optionvalue.dto.secured.SecuredOptionValuePartialUpdate;
 import com.example.bgcpromogearreworked.api.options.optionvalue.dto.secured.SecuredOptionValueUpdate;
-import com.example.bgcpromogearreworked.api.options.persistence.OptionValue;
-import com.example.bgcpromogearreworked.api.options.persistence.OptionValueId;
-import com.example.bgcpromogearreworked.api.options.persistence.OptionValueRepository;
+import com.example.bgcpromogearreworked.persistence.repositories.OptionRepository;
+import com.example.bgcpromogearreworked.persistence.entities.OptionValue;
+import com.example.bgcpromogearreworked.persistence.repositories.OptionValueRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
 
 @Service
+@Validated
 @RequiredArgsConstructor
 public class OptionValueService {
 
     private final OptionValueRepository optionValueRepo;
+    private final OptionRepository optionRepo;
     private final SecuredOptionValueMapper mapper;
 
-    OptionValueId constructId(String name, String value) {
-        return new OptionValueId(name, value);
+    public boolean checkOptionValueExists(Long optionId, Long valueId) {
+        return optionValueRepo.existsByOptionIdAndId(optionId, valueId);
     }
 
-    boolean checkOptionValueExists(OptionValueId optionValueId) {
-        return optionValueRepo.existsById(optionValueId);
+    public boolean checkOptionExists(Long optionId) {
+        return optionRepo.existsById(optionId);
     }
 
-    OptionValue handleOptionValueCreate(SecuredOptionValueCreate optionValueCreate) {
+    OptionValue handleOptionValueCreate(@Valid SecuredOptionValueCreate optionValueCreate) {
         return optionValueRepo.save(mapper.fromCreate(optionValueCreate));
     }
 
-    OptionValue handleOptionValueUpdate(SecuredOptionValueUpdate optionValueUpdate) {
+    OptionValue handleOptionValueUpdate(@Valid SecuredOptionValueUpdate optionValueUpdate) {
         OptionValue optionValue = optionValueRepo.findById(optionValueUpdate.getId()).orElseThrow(OptionValueNotFoundException::new);
         return optionValueRepo.save(mapper.fromUpdate(optionValueUpdate, optionValue));
     }
 
-    OptionValue handleOptionValuePartialUpdate(SecuredOptionValuePartialUpdate optionValuePartialUpdate) {
+    OptionValue handleOptionValuePartialUpdate(@Valid SecuredOptionValuePartialUpdate optionValuePartialUpdate) {
         OptionValue optionValue = optionValueRepo.findById(optionValuePartialUpdate.getId()).orElseThrow(OptionValueNotFoundException::new);
         return optionValueRepo.save(mapper.fromPartialUpdate(optionValuePartialUpdate, optionValue));
     }
 
-    OptionValue handleOptionValueGet(OptionValueId optionValueId) {
-        return optionValueRepo.findById(optionValueId).orElseThrow(OptionValueNotFoundException::new);
+    OptionValue handleOptionValueGet(Long valueId) {
+        return optionValueRepo.findById(valueId).orElseThrow(OptionValueNotFoundException::new);
     }
 
-    Iterable<OptionValue> handleOptionValueBatchGet(String name) {
-        return optionValueRepo.findAllByName(name);
+    Iterable<OptionValue> handleOptionValueBatchGet(Long optionId) {
+        return optionValueRepo.findAllByOptionId(optionId);
     }
 
 }

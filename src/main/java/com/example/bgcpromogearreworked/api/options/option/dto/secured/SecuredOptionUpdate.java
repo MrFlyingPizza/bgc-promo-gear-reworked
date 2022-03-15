@@ -1,5 +1,6 @@
 package com.example.bgcpromogearreworked.api.options.option.dto.secured;
 
+import com.example.bgcpromogearreworked.api.options.option.dto.secured.validation.uniqueoptionname.UniqueOptionName;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,10 +15,11 @@ public class SecuredOptionUpdate {
 
     @JsonIgnore
     @Setter
-    private String id;
+    private Long id;
 
     @Size(min = 1, max = 20)
     @NotNull
+    @UniqueOptionName
     private final String name;
 
     @JsonCreator

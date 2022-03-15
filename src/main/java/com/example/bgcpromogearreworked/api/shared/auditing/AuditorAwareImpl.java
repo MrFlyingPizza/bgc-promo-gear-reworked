@@ -1,7 +1,7 @@
 package com.example.bgcpromogearreworked.api.shared.auditing;
 
-import com.example.bgcpromogearreworked.api.users.User;
-import com.example.bgcpromogearreworked.api.users.UserRepository;
+import com.example.bgcpromogearreworked.persistence.entities.User;
+import com.example.bgcpromogearreworked.persistence.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.Authentication;

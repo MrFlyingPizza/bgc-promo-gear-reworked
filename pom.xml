@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>demo</artifactId>
+    <artifactId>bgc-promo-gear-store-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>demo</name>
-    <description>Demo project for Spring Boot</description>
+    <name>BGC Promo Gear Store API</name>
+    <description>BGC Promo Gear Store API</description>
     <properties>
         <java.version>11</java.version>
         <azure.version>3.13.0</azure.version>

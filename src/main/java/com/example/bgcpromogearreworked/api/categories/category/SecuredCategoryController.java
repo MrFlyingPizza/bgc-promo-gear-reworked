@@ -3,7 +3,6 @@ package com.example.bgcpromogearreworked.api.categories.category;
 import com.example.bgcpromogearreworked.api.categories.category.dto.secured.*;
 import com.example.bgcpromogearreworked.api.categories.exceptions.CategoryNotFoundException;
 import com.example.bgcpromogearreworked.api.categories.exceptions.CategoryStillReferencedException;
-import com.example.bgcpromogearreworked.api.categories.persistence.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +17,7 @@ public class SecuredCategoryController {
 
     @PostMapping
     private SecuredCategoryResponse createCategory(@RequestBody SecuredCategoryCreate categoryCreate) {
-        Category result = service.handleCategoryCreate(categoryCreate);
-        return mapper.toResponse(result);
+        return mapper.toResponse(service.handleCategoryCreate(categoryCreate));
     }
 
     @GetMapping("/{categoryId}")

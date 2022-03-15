@@ -1,11 +1,11 @@
 package com.example.bgcpromogearreworked.api.products.variant;
 
-import com.example.bgcpromogearreworked.api.products.persistence.ProductVariant;
-import com.example.bgcpromogearreworked.api.products.persistence.ProductVariantRepository;
+import com.example.bgcpromogearreworked.persistence.entities.ProductVariant;
+import com.example.bgcpromogearreworked.persistence.repositories.ProductVariantRepository;
 import com.example.bgcpromogearreworked.api.products.exceptions.ProductVariantNotFoundException;
-import com.example.bgcpromogearreworked.api.products.variant.dto.secured.ProductVariantCreate;
-import com.example.bgcpromogearreworked.api.products.variant.dto.secured.ProductVariantMapper;
-import com.example.bgcpromogearreworked.api.products.variant.dto.secured.ProductVariantUpdate;
+import com.example.bgcpromogearreworked.api.products.variant.dto.secured.SecuredProductVariantCreate;
+import com.example.bgcpromogearreworked.api.products.variant.dto.secured.SecuredProductVariantMapper;
+import com.example.bgcpromogearreworked.api.products.variant.dto.secured.SecuredProductVariantUpdate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -19,14 +19,14 @@ public class ProductVariantService { // TODO: 2022-03-06 finish
     // TODO: 2022-03-06 validation: user is allowed to have a single variant with no options, or multiple variants that have value for every option specified by the product
 
     private final ProductVariantRepository variantRepo;
-    private final ProductVariantMapper mapper;
+    private final SecuredProductVariantMapper mapper;
 
     public boolean checkProductVariantExists(long productId, long variantId) {
         return variantRepo.existsByIdAndProductId(variantId, productId);
     }
 
-    ProductVariant handleProductVariantCreate(@Valid ProductVariantCreate productVariantCreate) {
-        ProductVariant productVariant = mapper.fromCreate(productVariantCreate.getProductId(), productVariantCreate);
+    ProductVariant handleProductVariantCreate(@Valid SecuredProductVariantCreate productVariantCreate) {
+        ProductVariant productVariant = mapper.fromCreate(productVariantCreate);
 
         return variantRepo.saveAndFlush(productVariant);
     }
@@ -39,7 +39,7 @@ public class ProductVariantService { // TODO: 2022-03-06 finish
         return variantRepo.findAll();
     }
 
-    ProductVariant handleProductVariantUpdate(@Valid ProductVariantUpdate productVariantUpdate) throws ProductVariantNotFoundException {
+    ProductVariant handleProductVariantUpdate(@Valid SecuredProductVariantUpdate productVariantUpdate) throws ProductVariantNotFoundException {
         ProductVariant productVariant = variantRepo.findById(productVariantUpdate.getId())
                 .orElseThrow(ProductVariantNotFoundException::new);
         productVariant = mapper.fromUpdate(productVariantUpdate, productVariant);

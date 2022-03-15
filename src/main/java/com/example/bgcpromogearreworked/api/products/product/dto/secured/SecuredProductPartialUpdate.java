@@ -1,18 +1,19 @@
 package com.example.bgcpromogearreworked.api.products.product.dto.secured;
 
-import com.example.bgcpromogearreworked.api.shared.validation.category.annotations.CategoryExists;
-import com.example.bgcpromogearreworked.api.products.product.dto.secured.validation.ProductPublishable;
+import com.example.bgcpromogearreworked.api.shared.validation.exists.annotations.CategoryExists;
+import com.example.bgcpromogearreworked.api.shared.validation.exists.annotations.OptionExists;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
-@ProductPublishable
 public class SecuredProductPartialUpdate {
 
     @JsonIgnore
@@ -41,6 +42,9 @@ public class SecuredProductPartialUpdate {
 
     private final Boolean isWaitListEnabled;
 
+    @UniqueElements
+    private final List<@NotNull @OptionExists Long> optionIds;
+
     @JsonCreator
     private SecuredProductPartialUpdate(@JsonProperty String name,
                                         @JsonProperty String brand,
@@ -49,7 +53,8 @@ public class SecuredProductPartialUpdate {
                                         @JsonProperty BigDecimal price,
                                         @JsonProperty Boolean isPublished,
                                         @JsonProperty Boolean isBigItem,
-                                        @JsonProperty Boolean isWaitListEnabled) {
+                                        @JsonProperty Boolean isWaitListEnabled,
+                                        @JsonProperty List<Long> optionIds) {
         this.name = name;
         this.brand = brand;
         this.categoryId = categoryId;
@@ -58,5 +63,6 @@ public class SecuredProductPartialUpdate {
         this.isPublished = isPublished;
         this.isBigItem = isBigItem;
         this.isWaitListEnabled = isWaitListEnabled;
+        this.optionIds = optionIds;
     }
 }

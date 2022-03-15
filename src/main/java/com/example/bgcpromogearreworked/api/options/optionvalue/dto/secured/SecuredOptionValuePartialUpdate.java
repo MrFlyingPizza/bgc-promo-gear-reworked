@@ -1,6 +1,6 @@
 package com.example.bgcpromogearreworked.api.options.optionvalue.dto.secured;
 
-import com.example.bgcpromogearreworked.api.options.persistence.OptionValueId;
+import com.example.bgcpromogearreworked.api.options.optionvalue.dto.secured.validation.uniquenamevalue.UniqueNameValue;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,11 +10,17 @@ import lombok.Setter;
 import javax.validation.constraints.Size;
 
 @Getter
+@UniqueNameValue
 public class SecuredOptionValuePartialUpdate {
 
     @JsonIgnore
     @Setter
-    private OptionValueId id;
+    private Long id;
+
+    @JsonIgnore
+    @Setter
+    private Long optionId;
+
 
     @Size(min = 1, max = 20)
     private final String value;

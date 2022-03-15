@@ -1,7 +1,7 @@
 package com.example.bgcpromogearreworked.api.products.product;
 
-import com.example.bgcpromogearreworked.api.products.persistence.Product;
-import com.example.bgcpromogearreworked.api.products.persistence.ProductRepository;
+import com.example.bgcpromogearreworked.persistence.entities.Product;
+import com.example.bgcpromogearreworked.persistence.entities.ProductRepository;
 import com.example.bgcpromogearreworked.api.products.product.dto.secured.SecuredProductCreate;
 import com.example.bgcpromogearreworked.api.products.product.dto.secured.SecuredProductPartialUpdate;
 import com.example.bgcpromogearreworked.api.products.product.dto.secured.SecuredProductMapper;

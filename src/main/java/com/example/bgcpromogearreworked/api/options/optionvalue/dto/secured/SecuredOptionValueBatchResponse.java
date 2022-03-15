@@ -9,6 +9,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecuredOptionValueBatchResponse {
 
-    private final List<String> values;
+    private final List<SecuredOptionValueResponse> values;
 
 }

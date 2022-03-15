@@ -9,8 +9,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GeneralOptionResponse {
 
+    @Getter
+    @RequiredArgsConstructor
+    static class NestedOptionValue {
+        private final Long id;
+        private final String value;
+    }
+
     private final Long id;
     private final String name;
-    private final List<String> values;
+    private final List<NestedOptionValue> values;
 
 }

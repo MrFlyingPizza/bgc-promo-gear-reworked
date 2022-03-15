@@ -19,12 +19,12 @@ public class SecuredOptionController {
         return mapper.toResponse(service.handleOptionCreate(optionCreate));
     }
 
-    @GetMapping("/{optionName}")
-    private SecuredOptionResponse getOption(@PathVariable String optionName) {
-        if (!service.checkOptionExists(optionName)) {
+    @GetMapping("/{optionId}")
+    private SecuredOptionResponse getOption(@PathVariable Long optionId) {
+        if (!service.checkOptionExists(optionId)) {
             throw new OptionNotFoundException();
         }
-        return mapper.toResponse(service.handleOptionGet(optionName));
+        return mapper.toResponse(service.handleOptionGet(optionId));
     }
 
     @GetMapping
@@ -32,23 +32,25 @@ public class SecuredOptionController {
         return mapper.toBatchResponse(service.handleOptionBatchGet());
     }
 
-    @PutMapping("/{optionName}")
-    private SecuredOptionResponse updateOption(@PathVariable String optionName, @RequestBody SecuredOptionUpdate optionUpdate) {
-        if (!service.checkOptionExists(optionName)) {
+    @PutMapping("/{optionId}")
+    private SecuredOptionResponse updateOption(@PathVariable Long optionId, @RequestBody SecuredOptionUpdate optionUpdate) {
+        if (!service.checkOptionExists(optionId)) {
             throw new OptionNotFoundException();
         }
-        optionUpdate.setId(optionName);
+        optionUpdate.setId(optionId);
         return mapper.toResponse(service.handleOptionUpdate(optionUpdate));
     }
 
-    @PatchMapping("/{optionName}")
-    private SecuredOptionResponse updateOptionPartial(@PathVariable String optionName,
+    @PatchMapping("/{optionId}")
+    private SecuredOptionResponse updateOptionPartial(@PathVariable Long optionId,
                                                       @RequestBody SecuredOptionPartialUpdate optionPartialUpdate) {
-        if (!service.checkOptionExists(optionName)) {
+        if (!service.checkOptionExists(optionId)) {
             throw new OptionNotFoundException();
         }
-        optionPartialUpdate.setId(optionName);
+        optionPartialUpdate.setId(optionId);
         return mapper.toResponse(service.handleOptionPartialUpdate(optionPartialUpdate));
     }
+
+    // TODO: 2022-03-08 implement delete
 
 }

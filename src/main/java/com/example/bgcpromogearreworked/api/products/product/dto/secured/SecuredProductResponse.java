@@ -17,27 +17,31 @@ public class SecuredProductResponse {
 
         private final Long id;
         private final String name;
-        private final Long parentId;
-        private final String parentName;
+        private final NestedCategory parent;
     }
 
     @Getter
     @RequiredArgsConstructor
     static class NestedOption {
-        private final String name;
-        private final List<String> values;
-    }
 
-    @Getter
-    @RequiredArgsConstructor
-    static class NestedOptionValue {
+        private final Long id;
         private final String name;
-        private final String value;
+
     }
 
     @Getter
     @RequiredArgsConstructor
     static class NestedProductVariant {
+
+        @Getter
+        @RequiredArgsConstructor
+        static class NestedOptionValue {
+            private final Long optionId;
+            private final String name;
+            private final Long valueId;
+            private final String value;
+        }
+
         private final Long id;
         private final Long imageId;
         private final Integer waitListThreshold;

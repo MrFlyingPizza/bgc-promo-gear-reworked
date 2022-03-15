@@ -19,12 +19,12 @@ public class GeneralOptionController {
     private final OptionService service;
     private final GeneralOptionMapper mapper;
 
-    @GetMapping("/{optionName}")
-    private GeneralOptionResponse getOption(@PathVariable String optionName) {
-        if (!service.checkOptionExists(optionName)) {
+    @GetMapping("/{optionId}")
+    private GeneralOptionResponse getOption(@PathVariable Long optionId) {
+        if (!service.checkOptionExists(optionId)) {
             throw new OptionNotFoundException();
         }
-        return mapper.toResponse(service.handleOptionGet(optionName));
+        return mapper.toResponse(service.handleOptionGet(optionId));
     }
 
     @GetMapping
