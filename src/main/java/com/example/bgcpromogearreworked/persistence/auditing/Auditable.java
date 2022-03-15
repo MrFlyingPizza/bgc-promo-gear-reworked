@@ -1,7 +1,9 @@
-package com.example.bgcpromogearreworked.api.shared.auditing;
+package com.example.bgcpromogearreworked.persistence.auditing;
 
 import com.example.bgcpromogearreworked.persistence.entities.User;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -13,8 +15,10 @@ import java.time.Instant;
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-@Data
-public abstract class Auditable<U> {
+@Getter
+@Setter
+@NoArgsConstructor
+public abstract class Auditable {
 
     @CreatedDate
     @Column(name = "created_date")

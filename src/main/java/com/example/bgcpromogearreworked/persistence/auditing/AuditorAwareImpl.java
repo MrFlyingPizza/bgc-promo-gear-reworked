@@ -1,4 +1,4 @@
-package com.example.bgcpromogearreworked.api.shared.auditing;
+package com.example.bgcpromogearreworked.persistence.auditing;
 
 import com.example.bgcpromogearreworked.persistence.entities.User;
 import com.example.bgcpromogearreworked.persistence.repositories.UserRepository;
