@@ -7,6 +7,9 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = {
+        VariantCreateExpectedOptionCountValidator.class,
+        VariantUpdateExpectedOptionCountValidator.class,
+        VariantPartialUpdateExpectedOptionCountValidator.class
 })
 @Documented
 public @interface ExpectedOptionCount {
