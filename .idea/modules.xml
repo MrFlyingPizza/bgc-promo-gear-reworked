@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/bgc-promo-gear-frontend/bgc-promo-gear-frontend.iml" filepath="$PROJECT_DIR$/bgc-promo-gear-frontend/bgc-promo-gear-frontend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bgc-promo-gear-backend/bgc-promo-gear-store-api.iml" filepath="$PROJECT_DIR$/bgc-promo-gear-backend/bgc-promo-gear-store-api.iml" />
+    </modules>
+  </component>
+</project>
