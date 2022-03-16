@@ -1,5 +1,6 @@
 package com.example.bgcpromogearreworked.api.products.variant;
 
+import com.example.bgcpromogearreworked.api.products.variant.dto.secured.SecuredProductVariantPartialUpdate;
 import com.example.bgcpromogearreworked.persistence.entities.ProductVariant;
 import com.example.bgcpromogearreworked.persistence.repositories.ProductVariantRepository;
 import com.example.bgcpromogearreworked.api.products.exceptions.ProductVariantNotFoundException;
@@ -31,12 +32,19 @@ public class ProductVariantService { // TODO: 2022-03-06 finish
         return variantRepo.saveAndFlush(productVariant);
     }
 
-    ProductVariant handleProductVariantGet(Long productId) throws ProductVariantNotFoundException {
-        return variantRepo.findById(productId).orElseThrow(ProductVariantNotFoundException::new);
+    ProductVariant handleProductVariantGet(Long variantId) throws ProductVariantNotFoundException {
+        return variantRepo.findById(variantId).orElseThrow(ProductVariantNotFoundException::new);
     }
 
-    Iterable<ProductVariant> handleProductVariantGetMultiple() {
-        return variantRepo.findAll();
+    Iterable<ProductVariant> handleProductVariantBatchGet(Long productId) {
+        return variantRepo.findAllByProductId(productId);
+    }
+
+    ProductVariant handleProductVariantPartialUpdate(@Valid SecuredProductVariantPartialUpdate productVariantPartialUpdate) {
+        ProductVariant productVariant = variantRepo.findById(productVariantPartialUpdate.getId())
+                .orElseThrow(ProductVariantNotFoundException::new);
+        productVariant = mapper.fromPartialUpdate(productVariantPartialUpdate, productVariant);
+        return variantRepo.saveAndFlush(productVariant);
     }
 
     ProductVariant handleProductVariantUpdate(@Valid SecuredProductVariantUpdate productVariantUpdate) throws ProductVariantNotFoundException {

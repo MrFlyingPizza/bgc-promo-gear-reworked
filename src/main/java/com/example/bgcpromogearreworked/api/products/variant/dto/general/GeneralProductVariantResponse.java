@@ -1,22 +1,13 @@
-package com.example.bgcpromogearreworked.api.products.variant.dto.secured;
+package com.example.bgcpromogearreworked.api.products.variant.dto.general;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import java.time.Instant;
 import java.util.List;
 
 @Getter
 @RequiredArgsConstructor
-public class SecuredProductVariantResponse {
-
-    @Getter
-    @RequiredArgsConstructor
-    static class NestedUser {
-        private final Long id;
-        private final String firstName;
-        private final String lastName;
-    }
+public class GeneralProductVariantResponse {
 
     @Getter
     @RequiredArgsConstructor
@@ -47,9 +38,6 @@ public class SecuredProductVariantResponse {
     private final Long imageId;
     private final Integer waitListThreshold;
     private final List<NestedOptionValue> options;
-    private final Instant createdDate;
-    private final Instant lastModifiedDate;
-    private final NestedUser createdBy;
-    private final NestedUser lastModifiedBy;
+
 
 }

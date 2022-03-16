@@ -7,7 +7,7 @@ import com.example.bgcpromogearreworked.api.categories.category.dto.secured.Secu
 import com.example.bgcpromogearreworked.api.categories.exceptions.CategoryNotFoundException;
 import com.example.bgcpromogearreworked.persistence.entities.Category;
 import com.example.bgcpromogearreworked.persistence.repositories.CategoryRepository;
-import com.example.bgcpromogearreworked.persistence.entities.ProductRepository;
+import com.example.bgcpromogearreworked.persistence.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;

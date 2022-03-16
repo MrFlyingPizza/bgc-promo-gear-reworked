@@ -22,7 +22,7 @@ public class SecuredProductController {
     }
 
     @GetMapping("/{productId}")
-    private SecuredProductResponse getProduct(@PathVariable Long productId) throws ProductNotFoundException {
+    private SecuredProductResponse getProduct(@PathVariable Long productId) {
         if (!service.checkProductExists(productId)) {
             throw new ProductNotFoundException();
         }
@@ -30,7 +30,7 @@ public class SecuredProductController {
         return mapper.toResponse(result);
     }
 
-    @GetMapping("")
+    @GetMapping
     private SecuredProductBatchResponse getProductBatch() {
         Iterable<Product> result = service.handleProductBatchGet();
         return mapper.toBatchResponse(result);
@@ -48,7 +48,7 @@ public class SecuredProductController {
 
     @PutMapping("/{productId}")
     private SecuredProductResponse updateProduct(@PathVariable Long productId,
-                                                 @RequestBody SecuredProductUpdate productUpdate) throws ProductNotFoundException {
+                                                 @RequestBody SecuredProductUpdate productUpdate) {
         if (!service.checkProductExists(productId)) {
             throw new ProductNotFoundException();
         }

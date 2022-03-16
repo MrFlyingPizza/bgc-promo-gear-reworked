@@ -6,6 +6,7 @@ import com.example.bgcpromogearreworked.api.products.exceptions.ProductVariantNo
 import com.example.bgcpromogearreworked.api.products.product.ProductService;
 import com.example.bgcpromogearreworked.api.products.variant.dto.secured.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -13,7 +14,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @Valid
 @RestController
-@RequestMapping("/api/secured/products/{productId}/variants")
+@RequestMapping(path = "/api/secured/products/{productId}/variants", produces = MediaType.APPLICATION_JSON_VALUE)
 public class SecuredProductVariantController {
 
     private final ProductVariantService productVariantService;
@@ -22,7 +23,7 @@ public class SecuredProductVariantController {
 
     @PostMapping
     private SecuredProductVariantResponse createProductVariant(@PathVariable Long productId,
-                                                               @RequestBody SecuredProductVariantCreate productVariantCreate) throws ProductNotFoundException {
+                                                               @RequestBody SecuredProductVariantCreate productVariantCreate) {
         if (!productService.checkProductExists(productId)) {
             throw new ProductNotFoundException();
         }
@@ -32,17 +33,17 @@ public class SecuredProductVariantController {
     }
 
     @GetMapping
-    private SecuredProductVariantBatchResponse getMultipleProductVariants(@PathVariable Long productId) throws ProductNotFoundException {
+    private SecuredProductVariantBatchResponse getProductVariantBatch(@PathVariable Long productId) {
         if (!productService.checkProductExists(productId)) {
             throw new ProductNotFoundException();
         }
-        Iterable<ProductVariant> result = productVariantService.handleProductVariantGetMultiple();
+        Iterable<ProductVariant> result = productVariantService.handleProductVariantBatchGet(productId);
         return mapper.toBatchResponse(result);
     }
 
     @GetMapping("/{variantId}")
     private SecuredProductVariantResponse getProductVariant(@PathVariable Long productId,
-                                                            @PathVariable Long variantId) throws ProductNotFoundException, ProductVariantNotFoundException {
+                                                            @PathVariable Long variantId) {
         if (!productService.checkProductExists(productId)) {
             throw new ProductNotFoundException();
         }
@@ -53,10 +54,25 @@ public class SecuredProductVariantController {
         return mapper.toResponse(result);
     }
 
+    @PatchMapping("/{variantId}")
+    private SecuredProductVariantResponse updateProductVariantPartial(@PathVariable Long productId,
+                                                                      @PathVariable Long variantId,
+                                                                      @RequestBody SecuredProductVariantPartialUpdate productVariantPartialUpdate) {
+        if (!productService.checkProductExists(productId)) {
+            throw new ProductNotFoundException();
+        }
+        if (productVariantService.checkProductVariantExists(productId, variantId)) {
+            throw new ProductVariantNotFoundException();
+        }
+        productVariantPartialUpdate.setProductId(productId);
+        productVariantPartialUpdate.setId(variantId);
+        return mapper.toResponse(productVariantService.handleProductVariantPartialUpdate(productVariantPartialUpdate));
+    }
+
     @PutMapping("/{variantId}")
     private SecuredProductVariantResponse updateProductVariant(@PathVariable Long productId,
                                                                @PathVariable Long variantId,
-                                                               @RequestBody SecuredProductVariantUpdate productVariantUpdate) throws ProductNotFoundException, ProductVariantNotFoundException {
+                                                               @RequestBody SecuredProductVariantUpdate productVariantUpdate) {
         if (!productService.checkProductExists(productId)) {
             throw new ProductNotFoundException();
         }

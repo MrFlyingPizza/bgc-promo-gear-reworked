@@ -45,7 +45,7 @@ public abstract class SecuredProductVariantMapper {
                                                      @MappingTarget ProductVariant productVariant);
 
     @Mapping(source = "optionValues", target = "options")
-    public abstract SecuredProductVariantResponse toResponse(ProductVariant productVariant); // TODO: 2022-03-10 implement
+    public abstract SecuredProductVariantResponse toResponse(ProductVariant productVariant);
     public SecuredProductVariantBatchResponse toBatchResponse(Iterable<ProductVariant> productVariants) {
         return new SecuredProductVariantBatchResponse(Streamable.of(productVariants).map(this::toResponse).toList());
     }

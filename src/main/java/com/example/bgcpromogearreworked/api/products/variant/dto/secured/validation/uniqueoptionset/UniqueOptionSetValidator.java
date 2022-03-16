@@ -2,7 +2,7 @@ package com.example.bgcpromogearreworked.api.products.variant.dto.secured.valida
 
 import com.example.bgcpromogearreworked.persistence.entities.OptionValue;
 import com.example.bgcpromogearreworked.persistence.entities.Product;
-import com.example.bgcpromogearreworked.persistence.entities.ProductRepository;
+import com.example.bgcpromogearreworked.persistence.repositories.ProductRepository;
 import com.example.bgcpromogearreworked.persistence.entities.ProductVariant;
 import com.example.bgcpromogearreworked.persistence.repositories.OptionValueRepository;
 

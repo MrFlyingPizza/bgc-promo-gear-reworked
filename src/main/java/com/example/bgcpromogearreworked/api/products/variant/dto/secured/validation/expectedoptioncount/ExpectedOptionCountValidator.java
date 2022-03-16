@@ -1,6 +1,6 @@
 package com.example.bgcpromogearreworked.api.products.variant.dto.secured.validation.expectedoptioncount;
 
-import com.example.bgcpromogearreworked.persistence.entities.ProductRepository;
+import com.example.bgcpromogearreworked.persistence.repositories.ProductRepository;
 
 import java.util.List;
 

@@ -1,7 +1,7 @@
 package com.example.bgcpromogearreworked.api.products.variant.dto.secured.validation.uniqueoptionset;
 
 import com.example.bgcpromogearreworked.api.products.variant.dto.secured.SecuredProductVariantCreate;
-import com.example.bgcpromogearreworked.persistence.entities.ProductRepository;
+import com.example.bgcpromogearreworked.persistence.repositories.ProductRepository;
 import com.example.bgcpromogearreworked.persistence.repositories.OptionValueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
