@@ -8,11 +8,11 @@
         <version>2.6.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.example</groupId>
-    <artifactId>bgc-promo-gear-store-api</artifactId>
+    <groupId>ca.bgcengineering</groupId>
+    <artifactId>bgc-promo-gear-backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>BGC Promo Gear Store API</name>
-    <description>BGC Promo Gear Store API</description>
+    <name>BGC Promo Gear API</name>
+    <description>BGC Promo Gear API</description>
     <properties>
         <java.version>11</java.version>
         <azure.version>3.13.0</azure.version>
