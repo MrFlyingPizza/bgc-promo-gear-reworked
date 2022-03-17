@@ -4,6 +4,6 @@ import com.example.bgcpromogearreworked.persistence.entities.ProductVariant;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProductVariantRepository extends JpaRepository<ProductVariant, Long> {
-    boolean existsByIdAndProductId(long id, long productId);
-    Iterable<ProductVariant> findAllByProductId(long productId);
+    boolean existsByIdAndProductId(Long id, Long productId);
+    Iterable<ProductVariant> findAllByProductId(Long productId);
 }
