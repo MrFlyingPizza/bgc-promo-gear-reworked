@@ -1,7 +1,6 @@
-package com.example.bgcpromogearreworked.api.shared.validation.exists.validators;
+package com.example.bgcpromogearreworked.api.shared.validation.constraints.categoryexists;
 
 import com.example.bgcpromogearreworked.persistence.repositories.CategoryRepository;
-import com.example.bgcpromogearreworked.api.shared.validation.exists.annotations.CategoryExists;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;

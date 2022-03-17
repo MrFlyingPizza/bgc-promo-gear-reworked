@@ -1,7 +1,7 @@
 package com.example.bgcpromogearreworked.api.products.product.dto.secured;
 
-import com.example.bgcpromogearreworked.api.shared.validation.exists.annotations.CategoryExists;
-import com.example.bgcpromogearreworked.api.shared.validation.exists.annotations.OptionExists;
+import com.example.bgcpromogearreworked.api.shared.validation.constraints.categoryexists.CategoryExists;
+import com.example.bgcpromogearreworked.api.shared.validation.constraints.optionexists.OptionExists;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;

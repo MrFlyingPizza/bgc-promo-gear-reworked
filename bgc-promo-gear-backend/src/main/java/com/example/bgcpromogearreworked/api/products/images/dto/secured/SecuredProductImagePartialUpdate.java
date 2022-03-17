@@ -1,5 +1,6 @@
 package com.example.bgcpromogearreworked.api.products.images.dto.secured;
 
+import com.example.bgcpromogearreworked.api.shared.validation.constraints.productexists.ProductExists;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

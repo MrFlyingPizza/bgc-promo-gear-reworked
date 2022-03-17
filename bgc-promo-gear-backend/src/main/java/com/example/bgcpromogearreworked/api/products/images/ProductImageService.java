@@ -10,9 +10,13 @@ import com.example.bgcpromogearreworked.persistence.entities.ProductImage;
 import com.example.bgcpromogearreworked.persistence.repositories.ProductImageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
 
 @Service
 @RequiredArgsConstructor
+@Validated
 public class ProductImageService {
 
     private final ProductImageBlobService blobStorageService;
@@ -23,7 +27,7 @@ public class ProductImageService {
         return imageRepo.existsByProductIdAndId(productId, imageId);
     }
 
-    ProductImage handleProductImageCreate(SecuredProductImageCreate imageCreate) {
+    ProductImage handleProductImageCreate(@Valid SecuredProductImageCreate imageCreate) {
         ProductImageBlobService.ImageBlobResult result = blobStorageService.saveProductImage(imageCreate.getProductId(),
                 imageCreate.getImage());
         if (result == null) { // remove entity if save image blob fails
@@ -43,12 +47,12 @@ public class ProductImageService {
         return imageRepo.findAllByProductId(productId);
     }
 
-    ProductImage handleProductImageUpdate(SecuredProductImageUpdate imageUpdate) {
+    ProductImage handleProductImageUpdate(@Valid SecuredProductImageUpdate imageUpdate) {
         ProductImage image = imageRepo.findById(imageUpdate.getId()).orElseThrow(ProductImageNotFoundException::new);
         return imageRepo.saveAndFlush(mapper.fromUpdate(imageUpdate, image));
     }
 
-    ProductImage handleProductImagePartialUpdate(SecuredProductImagePartialUpdate imagePartialUpdate) {
+    ProductImage handleProductImagePartialUpdate(@Valid SecuredProductImagePartialUpdate imagePartialUpdate) {
         ProductImage image = imageRepo.findById(imagePartialUpdate.getProductId())
                 .orElseThrow(ProductImageNotFoundException::new);
         return imageRepo.saveAndFlush(mapper.fromPartialUpdate(imagePartialUpdate, image));

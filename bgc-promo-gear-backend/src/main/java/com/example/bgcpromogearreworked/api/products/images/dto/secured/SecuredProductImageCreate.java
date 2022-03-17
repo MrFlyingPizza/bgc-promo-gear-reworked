@@ -1,17 +1,25 @@
 package com.example.bgcpromogearreworked.api.products.images.dto.secured;
 
+import com.example.bgcpromogearreworked.api.shared.validation.constraints.validfilecontenttype.ValidFileContentType;
+import com.example.bgcpromogearreworked.api.shared.validation.constraints.validfilesize.ValidFileSize;
+import com.example.bgcpromogearreworked.api.shared.validation.groups.FirstValidationGroup;
+import com.example.bgcpromogearreworked.api.shared.validation.groups.SecondValidationGroup;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.print.attribute.standard.Media;
+import javax.validation.GroupSequence;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Getter
+@GroupSequence({SecuredProductImageCreate.class, FirstValidationGroup.class, SecondValidationGroup.class})
 public class SecuredProductImageCreate {
 
     @JsonIgnore
@@ -21,7 +29,10 @@ public class SecuredProductImageCreate {
     @NotNull
     @JsonIgnore
     @Setter
-    private MultipartFile image; // TODO: 2022-03-16 implement validation for image file
+    @ValidFileContentType(acceptedMediaTypes = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_GIF_VALUE},
+            groups = FirstValidationGroup.class)
+    @ValidFileSize(max = 2000000, groups = SecondValidationGroup.class)
+    private MultipartFile image;
 
     @NotNull
     @Min(1)

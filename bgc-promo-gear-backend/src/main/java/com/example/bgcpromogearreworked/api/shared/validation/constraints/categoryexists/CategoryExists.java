@@ -1,6 +1,4 @@
-package com.example.bgcpromogearreworked.api.shared.validation.exists.annotations;
-
-import com.example.bgcpromogearreworked.api.shared.validation.exists.validators.CategoryExistsValidator;
+package com.example.bgcpromogearreworked.api.shared.validation.constraints.categoryexists;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

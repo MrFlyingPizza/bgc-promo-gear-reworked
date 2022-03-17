@@ -4,7 +4,7 @@ import com.example.bgcpromogearreworked.api.categories.category.dto.secured.vali
 import com.example.bgcpromogearreworked.api.categories.category.dto.secured.validation.parentnotchild.CategoryParentNotChild;
 import com.example.bgcpromogearreworked.api.shared.validation.groups.FirstValidationGroup;
 import com.example.bgcpromogearreworked.api.shared.validation.groups.SecondValidationGroup;
-import com.example.bgcpromogearreworked.api.shared.validation.exists.annotations.CategoryExists;
+import com.example.bgcpromogearreworked.api.shared.validation.constraints.categoryexists.CategoryExists;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

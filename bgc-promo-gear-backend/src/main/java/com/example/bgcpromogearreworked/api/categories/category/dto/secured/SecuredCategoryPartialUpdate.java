@@ -1,6 +1,6 @@
 package com.example.bgcpromogearreworked.api.categories.category.dto.secured;
 
-import com.example.bgcpromogearreworked.api.shared.validation.exists.annotations.CategoryExists;
+import com.example.bgcpromogearreworked.api.shared.validation.constraints.categoryexists.CategoryExists;
 import com.example.bgcpromogearreworked.api.categories.category.dto.secured.validation.nameuniqueforparent.CategoryNameUniqueForParent;
 import com.example.bgcpromogearreworked.api.categories.category.dto.secured.validation.parentnotchild.CategoryParentNotChild;
 import com.example.bgcpromogearreworked.api.categories.category.dto.secured.validation.parentnotself.CategoryParentNotSelf;

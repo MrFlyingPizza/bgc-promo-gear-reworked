@@ -3,7 +3,8 @@ package com.example.bgcpromogearreworked.api.products.variant.dto.secured;
 import com.example.bgcpromogearreworked.api.products.variant.dto.secured.validation.expectedoptioncount.ExpectedOptionCount;
 import com.example.bgcpromogearreworked.api.products.variant.dto.secured.validation.expectedoptions.ExpectedOptions;
 import com.example.bgcpromogearreworked.api.products.variant.dto.secured.validation.uniqueoptionset.UniqueOptionSet;
-import com.example.bgcpromogearreworked.api.shared.validation.exists.annotations.OptionValueExists;
+import com.example.bgcpromogearreworked.api.shared.validation.constraints.optionvalueexists.OptionValueExists;
+import com.example.bgcpromogearreworked.api.shared.validation.constraints.productimageexists.ProductImageExists;
 import com.example.bgcpromogearreworked.api.shared.validation.groups.FirstValidationGroup;
 import com.example.bgcpromogearreworked.api.shared.validation.groups.SecondValidationGroup;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -33,7 +34,7 @@ public class SecuredProductVariantPartialUpdate {
     @Setter
     private Long productId;
 
-    // TODO: 2022-03-10 valid image constraint
+    @ProductImageExists
     private final Long imageId;
 
     @Range

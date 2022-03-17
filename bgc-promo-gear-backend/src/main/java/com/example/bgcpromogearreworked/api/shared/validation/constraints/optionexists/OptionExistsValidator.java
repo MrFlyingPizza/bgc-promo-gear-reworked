@@ -1,7 +1,6 @@
-package com.example.bgcpromogearreworked.api.shared.validation.exists.validators;
+package com.example.bgcpromogearreworked.api.shared.validation.constraints.optionexists;
 
 import com.example.bgcpromogearreworked.persistence.repositories.OptionRepository;
-import com.example.bgcpromogearreworked.api.shared.validation.exists.annotations.OptionExists;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;

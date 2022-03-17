@@ -34,7 +34,6 @@ public abstract class SecuredProductImageMapper {
     public abstract ProductImage fromPartialUpdate(SecuredProductImagePartialUpdate productImagePartialUpdate,
                                                    @MappingTarget ProductImage image);
 
-    @Mapping(source = "product.id", target = "productId")
     public abstract SecuredProductImageResponse toResponse(ProductImage image);
 
     public SecuredProductImageBatchResponse toBatchResponse(Iterable<ProductImage> images) {

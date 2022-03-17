@@ -1,6 +1,4 @@
-package com.example.bgcpromogearreworked.api.shared.validation.exists.annotations;
-
-import com.example.bgcpromogearreworked.api.shared.validation.exists.validators.ProductExistsValidator;
+package com.example.bgcpromogearreworked.api.shared.validation.constraints.productexists;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
