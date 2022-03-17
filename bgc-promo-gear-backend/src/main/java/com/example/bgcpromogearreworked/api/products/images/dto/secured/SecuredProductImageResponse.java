@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecuredProductImageResponse {
 
-    private final Long productId;
+    private final Long id;
     private final String src;
     private final String alt;
     private final Integer position;
