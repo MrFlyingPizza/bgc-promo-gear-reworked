@@ -1,10 +1,10 @@
 package com.example.bgcpromogearreworked.api.products.images.dto.secured;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
-import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Min;
@@ -18,10 +18,10 @@ public class SecuredProductImageCreate {
     @Setter
     private Long productId;
 
+    @NotNull
     @JsonIgnore
     @Setter
-    @NotNull
-    private MultipartFile image;
+    private MultipartFile image; // TODO: 2022-03-16 implement validation for image file
 
     @NotNull
     @Min(1)
@@ -32,10 +32,8 @@ public class SecuredProductImageCreate {
     private final String alt;
 
     @JsonCreator
-    SecuredProductImageCreate(@JsonProperty Integer position,
-                              @JsonProperty String alt) {
+    public SecuredProductImageCreate(@JsonProperty Integer position, @JsonProperty String alt) {
         this.position = position;
         this.alt = alt;
     }
-
 }

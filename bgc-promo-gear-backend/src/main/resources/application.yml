@@ -8,8 +8,10 @@ springdoc:
   use-fqn: true
 azure:
   storage:
+    # all 3 of these values are needed for blob storage client to be auto-configured
     account-name: bgcpromogearstorage
     account-key: s4REQmMNfTN/F1XXlyQEJG7RqR5FKy8Ct1mQlVUSy5ahHXXdLTEc6hWz0+/gH31Y9T58LyVy0FCf+AStyKKJKg==
+    blob-endpoint: https://bgcpromogearstorage.blob.core.windows.net/
 
   activedirectory:
     client-id: 61130a3e-2362-4c44-b86c-c840c0f32ea9

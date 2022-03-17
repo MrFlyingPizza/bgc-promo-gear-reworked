@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Set;
+import java.util.UUID;
 
 @Table(name = "product_image")
 @Entity
@@ -31,4 +32,8 @@ public class ProductImage {
 
     @OneToMany(mappedBy = "image")
     private Set<ProductVariant> productVariants;
+
+    @Column(name = "blob_id", nullable = false)
+    private UUID blobId;
+
 }

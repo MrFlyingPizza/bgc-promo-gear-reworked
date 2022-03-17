@@ -1,34 +1,81 @@
 package com.example.bgcpromogearreworked.api.products.images;
 
-import com.azure.storage.blob.BlobAsyncClient;
-import com.azure.storage.blob.BlobContainerAsyncClient;
-import com.azure.storage.blob.BlobServiceAsyncClient;
+import com.azure.core.util.BinaryData;
+import com.azure.storage.blob.BlobClient;
+import com.azure.storage.blob.BlobContainerClient;
+import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.UUID;
 
 @Service
 public class ProductImageBlobService {
 
-    private final BlobServiceAsyncClient asyncClient;
+    private static final String PRODUCT_IMAGE_CONTAINER_NAME = "product-images";
 
-    private static String buildContainerName(Long productId) {
-        if (productId == null) throw new NullPointerException("Product ID cannot be null when building blob container ID.");
-        return productId.toString();
+    /**
+     * Result after saving an image to blob storage.
+     */
+    @Getter
+    @RequiredArgsConstructor
+    static class ImageBlobResult {
+        private final String url;
+        private final UUID blobId;
     }
+
+    private final BlobContainerClient blobContainerClient;
 
     public ProductImageBlobService(BlobServiceClientBuilder blobServiceClientBuilder) {
-        this.asyncClient = blobServiceClientBuilder.buildAsyncClient();
+        this.blobContainerClient = getProductImageContainerClient(blobServiceClientBuilder.buildClient());
     }
 
-    private BlobContainerAsyncClient getBlobContainerClientByProductId(Long productId) {
-        return asyncClient.getBlobContainerAsyncClient(buildContainerName(productId));
+    /**
+     * Saves an image as a blob to the blob container that has the given productId as the name.
+     * @param productId The ID of the product which the blob container is named by.
+     * @param imageFile The image file to be saved as a blob to the blob container.
+     * @return Returns {@link ImageBlobResult} if successful, otherwise return null.
+     */
+    ImageBlobResult saveProductImage(Long productId, MultipartFile imageFile) {
+        if (productId == null || imageFile == null) {
+            throw new NullPointerException();
+        }
+        if (imageFile.isEmpty()) {
+            throw new RuntimeException("Image file cannot be empty.");
+        }
+        try {
+            UUID imageBlobId = UUID.randomUUID();
+            BlobClient blobClient = blobContainerClient.getBlobClient(buildBlobName(imageBlobId));
+            blobClient.upload(BinaryData.fromBytes(imageFile.getBytes()));
+            return new ImageBlobResult(blobClient.getBlobUrl(), imageBlobId);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
-    // TODO: 2022-03-16 implement blob storage service
-    String saveProductImage(Long productId, MultipartFile imageFile) {
-        imageFile.getOriginalFilename();
-        return null;
+    void deleteProductImage(Long productId, UUID imageBlobId) {
+        if (productId == null || imageBlobId == null) {
+            throw new NullPointerException();
+        }
+        blobContainerClient.getBlobClient(buildBlobName(imageBlobId)).delete();
     }
+
+    private static String buildBlobName(UUID blobId) {
+        return blobId.toString().replace("-","");
+    }
+
+    private static BlobContainerClient getProductImageContainerClient(BlobServiceClient blobServiceClient) {
+        BlobContainerClient blobContainerClient = blobServiceClient.getBlobContainerClient(PRODUCT_IMAGE_CONTAINER_NAME);
+        if (!blobContainerClient.exists()) {
+            blobContainerClient = blobServiceClient.createBlobContainer(PRODUCT_IMAGE_CONTAINER_NAME);
+        }
+        return blobContainerClient;
+    }
+
 
 }

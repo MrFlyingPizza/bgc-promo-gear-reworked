@@ -4,6 +4,7 @@ import com.example.bgcpromogearreworked.api.products.exceptions.ProductNotFoundE
 import com.example.bgcpromogearreworked.api.products.images.dto.secured.*;
 import com.example.bgcpromogearreworked.api.products.product.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,15 +17,15 @@ public class SecuredProductImageController {
     private final ProductService productService;
     private final SecuredProductImageMapper mapper;
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     private SecuredProductImageResponse createProductImage(@PathVariable Long productId,
-                                                           @RequestBody SecuredProductImageCreate imageCreate,
+                                                           @RequestParam String alt,
+                                                           @RequestParam Integer position,
                                                            @RequestPart MultipartFile image) {
         if (!productService.checkProductExists(productId)) {
             throw new ProductNotFoundException();
         }
-        imageCreate.setProductId(productId);
-        imageCreate.setImage(image);
+        SecuredProductImageCreate imageCreate = mapper.toCreate(productId, alt, position, image);
         return mapper.toResponse(imageService.handleProductImageCreate(imageCreate));
     }
 
@@ -72,6 +73,11 @@ public class SecuredProductImageController {
         imagePartialUpdate.setProductId(productId);
         imagePartialUpdate.setId(imageId);
         return mapper.toResponse(imageService.handleProductImagePartialUpdate(imagePartialUpdate));
+    }
+
+    @DeleteMapping("/{imageId}")
+    private void deleteProductImage(@PathVariable Long productId, @PathVariable Long imageId) {
+        imageService.handleProductImageDelete(productId, imageId);
     }
 
 }

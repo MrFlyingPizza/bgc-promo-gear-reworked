@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="JpaBuddyIdeaProjectConfig" migrateIndexesAndConstraints="true">
+  <component name="JpaBuddyIdeaProjectConfig">
     <option name="defaultUnitInitialized" value="true" />
-    <option name="reverseEngineeringLastDbConnectionId" value="d1e628c8-5160-4614-a03d-5d14a11800b2" />
+    <option name="reverseEngineeringLastDbConnectionId" value="dfc95491-fadb-4263-a042-4ce56c2a01c2" />
     <option name="reLastEntityCreationPackage" value="src/main/java/com/example/bgcpromogearreworked/persistence/entities" />
-    <option name="newEntityIdStrategy" />
-    <option name="reIgnoreSlowDbConnections">
-      <ignoreDs id="d1e628c8-5160-4614-a03d-5d14a11800b2" />
-    </option>
   </component>
 </project>

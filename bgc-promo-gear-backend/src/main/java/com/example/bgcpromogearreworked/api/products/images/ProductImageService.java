@@ -1,6 +1,7 @@
 package com.example.bgcpromogearreworked.api.products.images;
 
 import com.example.bgcpromogearreworked.api.products.exceptions.ProductImageNotFoundException;
+import com.example.bgcpromogearreworked.api.products.exceptions.ProductImageSaveFailedException;
 import com.example.bgcpromogearreworked.api.products.images.dto.secured.SecuredProductImageCreate;
 import com.example.bgcpromogearreworked.api.products.images.dto.secured.SecuredProductImageMapper;
 import com.example.bgcpromogearreworked.api.products.images.dto.secured.SecuredProductImagePartialUpdate;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ProductImageService {
 
+    private final ProductImageBlobService blobStorageService;
     private final ProductImageRepository imageRepo;
     private final SecuredProductImageMapper mapper;
 
@@ -22,9 +24,15 @@ public class ProductImageService {
     }
 
     ProductImage handleProductImageCreate(SecuredProductImageCreate imageCreate) {
-        // TODO: 2022-03-16 integrate blob storage here
-        //return imageRepo.save(mapper.fromCreate(imageCreate, ));
-        return null;
+        ProductImageBlobService.ImageBlobResult result = blobStorageService.saveProductImage(imageCreate.getProductId(),
+                imageCreate.getImage());
+        if (result == null) { // remove entity if save image blob fails
+            throw new ProductImageSaveFailedException();
+        }
+        ProductImage productImage = mapper.fromCreate(imageCreate);
+        productImage.setSrc(result.getUrl());
+        productImage.setBlobId(result.getBlobId());
+        return imageRepo.saveAndFlush(productImage);
     }
 
     ProductImage handleProductImageGet(Long imageId) {
@@ -37,13 +45,19 @@ public class ProductImageService {
 
     ProductImage handleProductImageUpdate(SecuredProductImageUpdate imageUpdate) {
         ProductImage image = imageRepo.findById(imageUpdate.getId()).orElseThrow(ProductImageNotFoundException::new);
-        return imageRepo.save(mapper.fromUpdate(imageUpdate, image));
+        return imageRepo.saveAndFlush(mapper.fromUpdate(imageUpdate, image));
     }
 
     ProductImage handleProductImagePartialUpdate(SecuredProductImagePartialUpdate imagePartialUpdate) {
         ProductImage image = imageRepo.findById(imagePartialUpdate.getProductId())
                 .orElseThrow(ProductImageNotFoundException::new);
-        return imageRepo.save(mapper.fromPartialUpdate(imagePartialUpdate, image));
+        return imageRepo.saveAndFlush(mapper.fromPartialUpdate(imagePartialUpdate, image));
+    }
+
+    void handleProductImageDelete(Long productId, Long imageId) {
+        ProductImage image = imageRepo.findById(imageId).orElseThrow(ProductImageNotFoundException::new);
+        blobStorageService.deleteProductImage(productId, image.getBlobId());
+        imageRepo.delete(image);
     }
 
 }

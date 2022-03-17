@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="bgcpromogearreworked@bgcpromogear-test-database.postgres.database.azure.com" uuid="d1e628c8-5160-4614-a03d-5d14a11800b2">
+    <data-source source="LOCAL" name="bgcpromogearreworked@bgcpromogear-test-database.postgres.database.azure.com" uuid="dfc95491-fadb-4263-a042-4ce56c2a01c2">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
