@@ -13,16 +13,12 @@
           <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct-processor/1.4.2.Final/mapstruct-processor-1.4.2.Final.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct/1.4.2.Final/mapstruct-1.4.2.Final.jar" />
         </processorPath>
-        <module name="bgc-promo-gear-backend" />
+        <module name="bgc-promo-gear-reworked" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="bgc-promo-gear-reworked" target="11" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="bgc-promo-gear-backend" options="-parameters" />
       <module name="bgc-promo-gear-reworked" options="-parameters" />
     </option>
   </component>
