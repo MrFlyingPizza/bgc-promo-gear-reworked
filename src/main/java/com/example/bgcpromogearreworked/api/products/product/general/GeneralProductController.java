@@ -1,11 +1,12 @@
-package com.example.bgcpromogearreworked.api.products.product;
+package com.example.bgcpromogearreworked.api.products.product.general;
 
 import com.example.bgcpromogearreworked.api.products.exceptions.ProductNotFoundException;
-import com.example.bgcpromogearreworked.api.products.product.dto.general.GeneralProductBatchResponse;
-import com.example.bgcpromogearreworked.api.products.product.dto.general.GeneralProductMapper;
-import com.example.bgcpromogearreworked.api.products.product.dto.general.GeneralProductResponse;
+import com.example.bgcpromogearreworked.api.products.product.general.dto.GeneralProductBatchResponse;
+import com.example.bgcpromogearreworked.api.products.product.general.dto.GeneralProductMapper;
+import com.example.bgcpromogearreworked.api.products.product.general.dto.GeneralProductResponse;
 import com.example.bgcpromogearreworked.persistence.entities.Product;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.util.Streamable;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/api/products", produces = MediaType.APPLICATION_JSON_VALUE)
 public class GeneralProductController {
 
-    private final ProductService service;
+    private final GeneralProductService service;
     private final GeneralProductMapper mapper;
 
     @GetMapping("/{productId}")
@@ -31,7 +32,7 @@ public class GeneralProductController {
 
     @GetMapping
     private GeneralProductBatchResponse getProductBatch() {
-        Iterable<Product> result = service.handleProductBatchGet();
+        Streamable<Product> result = service.handleProductBatchGet();
         return mapper.toBatchResponse(result);
     }
 

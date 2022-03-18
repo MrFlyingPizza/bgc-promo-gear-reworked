@@ -1,10 +1,12 @@
-package com.example.bgcpromogearreworked.api.products.product.dto.secured;
+package com.example.bgcpromogearreworked.api.products.product.secured.dto;
 
 import com.example.bgcpromogearreworked.api.shared.validation.constraints.categoryexists.CategoryExists;
 import com.example.bgcpromogearreworked.api.shared.validation.constraints.optionexists.OptionExists;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.validator.constraints.UniqueElements;
 
 import javax.validation.constraints.*;
@@ -12,7 +14,11 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
-public class SecuredProductCreate {
+public class SecuredProductUpdate {
+
+    @JsonIgnore
+    @Setter
+    private Long id;
 
     @NotNull
     @Size(min = 1, max = 60)
@@ -35,7 +41,6 @@ public class SecuredProductCreate {
     private final BigDecimal price;
 
     @NotNull
-    @AssertFalse
     private final Boolean isPublished;
 
     @NotNull
@@ -49,7 +54,7 @@ public class SecuredProductCreate {
     private final List<@NotNull @OptionExists Long> optionIds;
 
     @JsonCreator
-    private SecuredProductCreate(@JsonProperty String name,
+    private SecuredProductUpdate(@JsonProperty String name,
                                  @JsonProperty String brand,
                                  @JsonProperty Long categoryId,
                                  @JsonProperty String description,

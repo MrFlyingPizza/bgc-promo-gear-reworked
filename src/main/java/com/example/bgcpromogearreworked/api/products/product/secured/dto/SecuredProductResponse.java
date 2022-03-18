@@ -1,4 +1,4 @@
-package com.example.bgcpromogearreworked.api.products.product.dto.secured;
+package com.example.bgcpromogearreworked.api.products.product.secured.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

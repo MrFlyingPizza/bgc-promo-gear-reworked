@@ -1,4 +1,4 @@
-package com.example.bgcpromogearreworked.api.products.product.dto.secured;
+package com.example.bgcpromogearreworked.api.products.product.secured.dto;
 
 import com.example.bgcpromogearreworked.api.shared.validation.constraints.categoryexists.CategoryExists;
 import com.example.bgcpromogearreworked.api.shared.validation.constraints.optionexists.OptionExists;

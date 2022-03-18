@@ -1,4 +1,4 @@
-package com.example.bgcpromogearreworked.api.products.product.dto.general;
+package com.example.bgcpromogearreworked.api.products.product.general.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

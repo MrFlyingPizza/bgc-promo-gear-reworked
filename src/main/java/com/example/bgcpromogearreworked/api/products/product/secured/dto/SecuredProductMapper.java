@@ -1,4 +1,4 @@
-package com.example.bgcpromogearreworked.api.products.product.dto.secured;
+package com.example.bgcpromogearreworked.api.products.product.secured.dto;
 
 import com.example.bgcpromogearreworked.persistence.entities.*;
 import com.example.bgcpromogearreworked.persistence.repositories.CategoryRepository;
@@ -55,8 +55,8 @@ public abstract class SecuredProductMapper {
 
     public abstract SecuredProductResponse toResponse(Product product);
 
-    public SecuredProductBatchResponse toBatchResponse(Iterable<Product> products) {
-        return new SecuredProductBatchResponse(Streamable.of(products).map(this::toResponse).toList());
+    public SecuredProductBatchResponse toBatchResponse(Streamable<Product> products) {
+        return new SecuredProductBatchResponse(products.map(this::toResponse).toList());
     }
 
     @AfterMapping

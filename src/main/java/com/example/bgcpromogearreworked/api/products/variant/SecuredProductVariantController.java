@@ -1,10 +1,10 @@
 package com.example.bgcpromogearreworked.api.products.variant;
 
-import com.example.bgcpromogearreworked.persistence.entities.ProductVariant;
 import com.example.bgcpromogearreworked.api.products.exceptions.ProductNotFoundException;
 import com.example.bgcpromogearreworked.api.products.exceptions.ProductVariantNotFoundException;
 import com.example.bgcpromogearreworked.api.products.product.ProductService;
 import com.example.bgcpromogearreworked.api.products.variant.dto.secured.*;
+import com.example.bgcpromogearreworked.persistence.entities.ProductVariant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;

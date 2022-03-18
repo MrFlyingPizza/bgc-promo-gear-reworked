@@ -1,52 +1,52 @@
 package com.example.bgcpromogearreworked.api.products.product;
 
+import com.example.bgcpromogearreworked.api.products.exceptions.ProductNotFoundException;
 import com.example.bgcpromogearreworked.persistence.entities.Product;
 import com.example.bgcpromogearreworked.persistence.repositories.ProductRepository;
-import com.example.bgcpromogearreworked.api.products.product.dto.secured.SecuredProductCreate;
-import com.example.bgcpromogearreworked.api.products.product.dto.secured.SecuredProductPartialUpdate;
-import com.example.bgcpromogearreworked.api.products.product.dto.secured.SecuredProductMapper;
-import com.example.bgcpromogearreworked.api.products.product.dto.secured.SecuredProductUpdate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 @Service
-@Validated
 @RequiredArgsConstructor
 public class ProductService {
 
-    private final ProductRepository productRepo;
-    private final SecuredProductMapper mapper;
+    private final ProductRepository repo;
 
-    public boolean checkProductExists(long productId) {
-        return productRepo.existsById(productId);
+    public boolean checkProductExists(Long productId) {
+        return repo.existsById(productId);
     }
 
-    Product handleProductGet(Long productId) {
-        return productRepo.findById(productId).orElseThrow();
+    public Product getProduct(Long productId) throws ProductNotFoundException {
+        return repo.findById(productId).orElseThrow(ProductNotFoundException::new);
     }
 
-    Iterable<Product> handleProductBatchGet() {
-        return productRepo.findAll();
+    public Streamable<Product> getProducts() {
+        return Streamable.of(repo.findAll());
     }
 
-    Product handleProductCreate(@Valid SecuredProductCreate productCreate) {
-        Product product = mapper.fromCreate(productCreate);
-        return productRepo.saveAndFlush(product);
+    public Product createProduct(Product product) {
+        return repo.saveAndFlush(product);
     }
 
-    Product handleProductPartialUpdate(@Valid SecuredProductPartialUpdate productPartialUpdate) {
-        Product product = productRepo.findById(productPartialUpdate.getId()).orElseThrow();
-        product = mapper.fromPartialUpdate(productPartialUpdate, product);
-        return productRepo.saveAndFlush(product);
+    public <T> Product createProduct(T source, Function<T, Product> mapper) {
+        return repo.saveAndFlush(mapper.apply(source));
     }
 
-    Product handleProductUpdate(@Valid SecuredProductUpdate productUpdate) {
-        Product product = productRepo.findById(productUpdate.getId()).orElseThrow();
-        product = mapper.fromUpdate(productUpdate, product);
-        return productRepo.saveAndFlush(product);
+    public <T> Product updateProduct(Long productId, T source, BiFunction<T, Product, Product> mapper) throws ProductNotFoundException {
+        Product product = repo.findById(productId).orElseThrow(ProductNotFoundException::new);
+        return repo.saveAndFlush(mapper.apply(source, product));
+    }
+
+    public void deleteProduct(Long productId) {
+        repo.deleteById(productId);
+    }
+
+    public void deleteProduct(Product product) {
+        repo.delete(product);
     }
 
 }

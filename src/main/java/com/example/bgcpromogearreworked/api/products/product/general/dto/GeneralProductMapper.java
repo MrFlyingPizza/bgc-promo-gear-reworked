@@ -1,4 +1,4 @@
-package com.example.bgcpromogearreworked.api.products.product.dto.general;
+package com.example.bgcpromogearreworked.api.products.product.general.dto;
 
 import com.example.bgcpromogearreworked.persistence.entities.OptionValue;
 import com.example.bgcpromogearreworked.persistence.entities.Product;
@@ -12,8 +12,8 @@ public abstract class GeneralProductMapper {
 
     public abstract GeneralProductResponse toResponse(Product product);
 
-    public GeneralProductBatchResponse toBatchResponse(Iterable<Product> products) {
-        return new GeneralProductBatchResponse(Streamable.of(products).map(this::toResponse).toList());
+    public GeneralProductBatchResponse toBatchResponse(Streamable<Product> products) {
+        return new GeneralProductBatchResponse(products.map(this::toResponse).toList());
     }
 
     @Mapping(source = "optionValues", target = "options")

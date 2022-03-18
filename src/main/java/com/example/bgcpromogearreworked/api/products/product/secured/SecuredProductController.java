@@ -1,9 +1,10 @@
-package com.example.bgcpromogearreworked.api.products.product;
+package com.example.bgcpromogearreworked.api.products.product.secured;
 
+import com.example.bgcpromogearreworked.api.products.product.secured.dto.*;
 import com.example.bgcpromogearreworked.persistence.entities.Product;
 import com.example.bgcpromogearreworked.api.products.exceptions.ProductNotFoundException;
-import com.example.bgcpromogearreworked.api.products.product.dto.secured.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.util.Streamable;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "/api/secured/products", produces = MediaType.APPLICATION_JSON_VALUE)
 public class SecuredProductController {
 
-    private final ProductService service;
+    private final SecuredProductService service;
     private final SecuredProductMapper mapper;
 
     @PostMapping
@@ -32,7 +33,7 @@ public class SecuredProductController {
 
     @GetMapping
     private SecuredProductBatchResponse getProductBatch() {
-        Iterable<Product> result = service.handleProductBatchGet();
+        Streamable<Product> result = service.handleProductBatchGet();
         return mapper.toBatchResponse(result);
     }
 
