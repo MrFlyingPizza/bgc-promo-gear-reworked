@@ -33,8 +33,8 @@ public class ProductVariant extends Auditable implements Serializable {
     @Column(name = "wait_list_threshold")
     private Integer waitListThreshold;
 
-    @Column(name = "\"isSelectable\"", nullable = false)
-    private Boolean isSelectable;
+    @Column(name = "\"is_valid\"", nullable = false)
+    private Boolean isValid;
 
     @ManyToMany
     @JoinTable(

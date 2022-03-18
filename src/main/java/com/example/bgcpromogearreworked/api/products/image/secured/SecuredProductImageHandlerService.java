@@ -1,0 +1,56 @@
+package com.example.bgcpromogearreworked.api.products.image.secured;
+
+import com.example.bgcpromogearreworked.api.products.exceptions.ProductImageSaveFailedException;
+import com.example.bgcpromogearreworked.api.products.image.ProductImageBlobService;
+import com.example.bgcpromogearreworked.api.products.image.ProductImageService;
+import com.example.bgcpromogearreworked.api.products.image.secured.dto.SecuredProductImageCreate;
+import com.example.bgcpromogearreworked.api.products.image.secured.dto.SecuredProductImageMapper;
+import com.example.bgcpromogearreworked.api.products.image.secured.dto.SecuredProductImagePartialUpdate;
+import com.example.bgcpromogearreworked.api.products.image.secured.dto.SecuredProductImageUpdate;
+import com.example.bgcpromogearreworked.persistence.entities.ProductImage;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
+
+@Service
+@Validated
+@RequiredArgsConstructor
+public class SecuredProductImageHandlerService {
+
+    private final ProductImageService imageService;
+    private final ProductImageBlobService blobStorageService;
+    private final SecuredProductImageMapper mapper;
+
+
+    ProductImage handleProductImageCreate(@Valid SecuredProductImageCreate imageCreate) {
+        ProductImageBlobService.ImageBlobResult result = blobStorageService.saveProductImage(imageCreate.getProductId(),
+                imageCreate.getImage());
+        if (result == null) { // remove entity if save image blob fails
+            throw new ProductImageSaveFailedException();
+        }
+        return imageService.createProductImage(mapper.fromCreate(imageCreate, result.getUrl(), result.getBlobId()));
+    }
+
+    ProductImage handleProductImageGet(Long imageId) {
+        return imageService.getProductImage(imageId);
+    }
+
+    Iterable<ProductImage> handleProductImageBatchGet(Long productId) {
+        return imageService.getProductImages(productId);
+    }
+
+    ProductImage handleProductImageUpdate(@Valid SecuredProductImageUpdate imageUpdate) {
+        return imageService.updateProductImage(imageUpdate.getId(), imageUpdate, mapper::fromUpdate);
+    }
+
+    ProductImage handleProductImagePartialUpdate(@Valid SecuredProductImagePartialUpdate imagePartialUpdate) {
+        return imageService.updateProductImage(imagePartialUpdate.getId(), imagePartialUpdate, mapper::fromPartialUpdate);
+    }
+
+    void handleProductImageDelete(Long imageId) {
+        imageService.deleteProductImage(imageId);
+    }
+
+}

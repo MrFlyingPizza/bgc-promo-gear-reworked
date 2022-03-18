@@ -1,57 +1,73 @@
 package com.example.bgcpromogearreworked.api.products.variant;
 
-import com.example.bgcpromogearreworked.api.products.variant.dto.secured.SecuredProductVariantPartialUpdate;
+import com.example.bgcpromogearreworked.api.products.exceptions.ProductVariantNotFoundException;
 import com.example.bgcpromogearreworked.persistence.entities.ProductVariant;
 import com.example.bgcpromogearreworked.persistence.repositories.ProductVariantRepository;
-import com.example.bgcpromogearreworked.api.products.exceptions.ProductVariantNotFoundException;
-import com.example.bgcpromogearreworked.api.products.variant.dto.secured.SecuredProductVariantCreate;
-import com.example.bgcpromogearreworked.api.products.variant.dto.secured.SecuredProductVariantMapper;
-import com.example.bgcpromogearreworked.api.products.variant.dto.secured.SecuredProductVariantUpdate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
 
 @Service
-@Validated
 @RequiredArgsConstructor
-public class ProductVariantService { // TODO: 2022-03-06 finish
-    // TODO: 2022-03-06 validation: user is allowed to have a single variant with no options, or multiple variants that have value for every option specified by the product
+public class ProductVariantService {
 
     private final ProductVariantRepository variantRepo;
-    private final SecuredProductVariantMapper mapper;
 
-    public boolean checkProductVariantExists(long productId, long variantId) {
-        return variantRepo.existsByIdAndProductId(variantId, productId);
+    public boolean checkProductVariantExists(Long variantId) {
+        return variantRepo.existsById(variantId);
+    }
+    public boolean checkProductVariantExistsOnProduct(Long productId, Long variantId) {
+        return variantRepo.existsByProductIdAndId(productId, variantId);
     }
 
-    ProductVariant handleProductVariantCreate(@Valid SecuredProductVariantCreate productVariantCreate) {
-        ProductVariant productVariant = mapper.fromCreate(productVariantCreate);
-
-        return variantRepo.saveAndFlush(productVariant);
-    }
-
-    ProductVariant handleProductVariantGet(Long variantId) throws ProductVariantNotFoundException {
+    public ProductVariant getProductVariant(Long variantId) throws ProductVariantNotFoundException {
         return variantRepo.findById(variantId).orElseThrow(ProductVariantNotFoundException::new);
     }
 
-    Iterable<ProductVariant> handleProductVariantBatchGet(Long productId) {
+    public Streamable<ProductVariant> getProductVariants(Long productId) {
         return variantRepo.findAllByProductId(productId);
     }
 
-    ProductVariant handleProductVariantPartialUpdate(@Valid SecuredProductVariantPartialUpdate productVariantPartialUpdate) {
-        ProductVariant productVariant = variantRepo.findById(productVariantPartialUpdate.getId())
-                .orElseThrow(ProductVariantNotFoundException::new);
-        productVariant = mapper.fromPartialUpdate(productVariantPartialUpdate, productVariant);
-        return variantRepo.saveAndFlush(productVariant);
+    public ProductVariant createProductVariant(ProductVariant variant) {
+        if (variant.getId() != null) {
+            throw new RuntimeException("Product variant ID must be null.");
+        }
+        return variantRepo.saveAndFlush(variant);
     }
 
-    ProductVariant handleProductVariantUpdate(@Valid SecuredProductVariantUpdate productVariantUpdate) throws ProductVariantNotFoundException {
-        ProductVariant productVariant = variantRepo.findById(productVariantUpdate.getId())
-                .orElseThrow(ProductVariantNotFoundException::new);
-        productVariant = mapper.fromUpdate(productVariantUpdate, productVariant);
-        return variantRepo.saveAndFlush(productVariant);
+    public <T> ProductVariant createProductVariant(T source, Function<T, ProductVariant> mapper) {
+        ProductVariant variant = mapper.apply(source);
+        if (variant.getId() != null) {
+            throw new RuntimeException("Product variant ID must be null.");
+        }
+        return variantRepo.saveAndFlush(variant);
+    }
+
+    public ProductVariant updateProductVariant(ProductVariant variant) {
+        if (variant.getId() == null) {
+            throw new RuntimeException("Product variant ID must not be null.");
+        }
+        return variantRepo.saveAndFlush(variant);
+    }
+
+    public <T> ProductVariant updateProductVariant(Long variantId, T source, BiFunction<T, ProductVariant, ProductVariant> mapper) {
+        ProductVariant variant = mapper.apply(source, variantRepo.findById(variantId).orElseThrow(ProductVariantNotFoundException::new));
+        if (!variant.getId().equals(variantId)) {
+            throw new RuntimeException("Mapper function is forbidden to modify product variant ID.");
+        }
+        return variantRepo.saveAndFlush(variant);
+    }
+
+    public void deleteProductVariant(Long variantId) {
+        variantRepo.deleteById(variantId);
+    }
+
+    public void deleteProductVariant(ProductVariant variant) {
+        variantRepo.delete(variant);
     }
 
 }

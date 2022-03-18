@@ -1,6 +1,7 @@
 package com.example.bgcpromogearreworked.api.products.product.general;
 
 import com.example.bgcpromogearreworked.api.products.exceptions.ProductNotFoundException;
+import com.example.bgcpromogearreworked.api.products.product.ProductService;
 import com.example.bgcpromogearreworked.api.products.product.general.dto.GeneralProductBatchResponse;
 import com.example.bgcpromogearreworked.api.products.product.general.dto.GeneralProductMapper;
 import com.example.bgcpromogearreworked.api.products.product.general.dto.GeneralProductResponse;
@@ -18,21 +19,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/api/products", produces = MediaType.APPLICATION_JSON_VALUE)
 public class GeneralProductController {
 
-    private final GeneralProductService service;
+    private final ProductService productService;
+    private final GeneralProductHandlerService handlerService;
     private final GeneralProductMapper mapper;
 
     @GetMapping("/{productId}")
     private GeneralProductResponse getProduct(@PathVariable Long productId) {
-        if (!service.checkProductExists(productId)) {
+        if (!productService.checkProductExists(productId)) {
             throw new ProductNotFoundException();
         }
-        Product result = service.handleProductGet(productId);
+        Product result = handlerService.handleProductGet(productId);
         return mapper.toResponse(result);
     }
 
     @GetMapping
     private GeneralProductBatchResponse getProductBatch() {
-        Streamable<Product> result = service.handleProductBatchGet();
+        Streamable<Product> result = handlerService.handleProductBatchGet();
         return mapper.toBatchResponse(result);
     }
 

@@ -57,10 +57,6 @@ public class GeneralProductResponse {
     private final String name;
     private final String brand;
     private final String description;
-    private final BigDecimal price;
-    private final Boolean isPublished;
-    private final Boolean isBigItem;
-    private final Boolean isWaitListEnabled;
     private final NestedCategory category;
     private final List<NestedProductVariant> variants;
     private final List<NestedProductImage> images;
