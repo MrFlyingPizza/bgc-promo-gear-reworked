@@ -13,10 +13,9 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-
 @Service
 @RequiredArgsConstructor
-public abstract class ProductService {
+public class ProductService {
 
     private final ProductRepository repo;
     private final ProductVariantService variantService;
