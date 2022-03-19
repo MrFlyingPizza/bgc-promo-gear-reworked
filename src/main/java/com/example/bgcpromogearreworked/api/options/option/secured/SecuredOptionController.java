@@ -1,4 +1,4 @@
-package com.example.bgcpromogearreworked.api.options.option;
+package com.example.bgcpromogearreworked.api.options.option.secured;
 
 import com.example.bgcpromogearreworked.api.options.exceptions.OptionNotFoundException;
 import com.example.bgcpromogearreworked.api.options.option.dto.secured.*;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/api/secured/options", produces = MediaType.APPLICATION_JSON_VALUE)
 public class SecuredOptionController {
 
-    private final OptionService service;
+    private final SecuredOptionHandlerService service;
     private final SecuredOptionMapper mapper;
 
     @PostMapping

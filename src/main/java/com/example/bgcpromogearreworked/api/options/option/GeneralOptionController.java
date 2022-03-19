@@ -4,6 +4,7 @@ import com.example.bgcpromogearreworked.api.options.exceptions.OptionNotFoundExc
 import com.example.bgcpromogearreworked.api.options.option.dto.general.GeneralOptionBatchResponse;
 import com.example.bgcpromogearreworked.api.options.option.dto.general.GeneralOptionMapper;
 import com.example.bgcpromogearreworked.api.options.option.dto.general.GeneralOptionResponse;
+import com.example.bgcpromogearreworked.api.options.option.secured.SecuredOptionHandlerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/api/options", produces = MediaType.APPLICATION_JSON_VALUE)
 public class GeneralOptionController {
 
-    private final OptionService service;
+    private final SecuredOptionHandlerService service;
     private final GeneralOptionMapper mapper;
 
     @GetMapping("/{optionId}")

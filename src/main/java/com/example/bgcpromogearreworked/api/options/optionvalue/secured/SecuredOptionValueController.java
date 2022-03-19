@@ -1,7 +1,9 @@
-package com.example.bgcpromogearreworked.api.options.optionvalue;
+package com.example.bgcpromogearreworked.api.options.optionvalue.secured;
 
 import com.example.bgcpromogearreworked.api.options.exceptions.OptionNotFoundException;
 import com.example.bgcpromogearreworked.api.options.exceptions.OptionValueNotFoundException;
+import com.example.bgcpromogearreworked.api.options.option.OptionService;
+import com.example.bgcpromogearreworked.api.options.optionvalue.OptionValueService;
 import com.example.bgcpromogearreworked.api.options.optionvalue.dto.secured.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -11,66 +13,68 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/secured/options/{optionId}/values")
 public class SecuredOptionValueController {
 
-    private final OptionValueService service;
+    private final OptionService optionService;
+    private final OptionValueService valueService;
+    private final SecuredOptionValueHandlerService handlerService;
     private final SecuredOptionValueMapper mapper;
 
     @PostMapping
     private SecuredOptionValueResponse createOptionValue(@PathVariable Long optionId,
                                                          @RequestBody SecuredOptionValueCreate optionValueCreate) {
-        if (!service.checkOptionExists(optionId)) {
+        if (!optionService.checkOptionExists(optionId)) {
             throw new OptionNotFoundException();
         }
         optionValueCreate.setOptionId(optionId);
-        return mapper.toResponse(service.handleOptionValueCreate(optionValueCreate));
+        return mapper.toResponse(handlerService.handleOptionValueCreate(optionValueCreate));
     }
 
     @GetMapping("/{valueId}")
     private SecuredOptionValueResponse getOptionValue(@PathVariable Long optionId, @PathVariable Long valueId) {
-        if (!service.checkOptionExists(optionId)) {
+        if (!optionService.checkOptionExists(optionId)) {
             throw new OptionNotFoundException();
         }
-        if (!service.checkOptionValueExists(optionId, valueId)) {
+        if (!valueService.checkOptionValueExists(optionId, valueId)) {
             throw new OptionValueNotFoundException();
         }
-        return mapper.toResponse(service.handleOptionValueGet(valueId));
+        return mapper.toResponse(handlerService.handleOptionValueGet(valueId));
     }
 
     @GetMapping
     private SecuredOptionValueBatchResponse getOptionValueBatch(@PathVariable Long optionId) {
-        if (!service.checkOptionExists(optionId)) {
+        if (!optionService.checkOptionExists(optionId)) {
             throw new OptionNotFoundException();
         }
-        return mapper.toBatchResponse(service.handleOptionValueBatchGet(optionId));
+        return mapper.toBatchResponse(handlerService.handleOptionValueBatchGet(optionId));
     }
 
     @PutMapping("/{valueId}")
     private SecuredOptionValueResponse updateOptionValue(@PathVariable Long optionId,
                                                          @PathVariable Long valueId,
                                                          @RequestBody SecuredOptionValueUpdate optionValueUpdate) {
-        if (!service.checkOptionExists(optionId)) {
+        if (!optionService.checkOptionExists(optionId)) {
             throw new OptionNotFoundException();
         }
-        if (!service.checkOptionValueExists(optionId, valueId)) {
+        if (!valueService.checkOptionValueExists(optionId, valueId)) {
             throw new OptionValueNotFoundException();
         }
         optionValueUpdate.setOptionId(optionId);
         optionValueUpdate.setId(valueId);
-        return mapper.toResponse(service.handleOptionValueUpdate(optionValueUpdate));
+        return mapper.toResponse(handlerService.handleOptionValueUpdate(optionValueUpdate));
     }
 
     @PatchMapping("/{valueId}")
     private SecuredOptionValueResponse updateOptionValuePartial(@PathVariable Long optionId,
                                                                 @PathVariable Long valueId,
                                                                 @RequestBody SecuredOptionValuePartialUpdate optionValuePartialUpdate) {
-        if (!service.checkOptionExists(optionId)) {
+        if (!optionService.checkOptionExists(optionId)) {
             throw new OptionNotFoundException();
         }
-        if (!service.checkOptionValueExists(optionId, valueId)) {
+        if (!valueService.checkOptionValueExists(optionId, valueId)) {
             throw new OptionValueNotFoundException();
         }
         optionValuePartialUpdate.setOptionId(optionId);
         optionValuePartialUpdate.setId(valueId);
-        return mapper.toResponse(service.handleOptionValuePartialUpdate(optionValuePartialUpdate));
+        return mapper.toResponse(handlerService.handleOptionValuePartialUpdate(optionValuePartialUpdate));
     }
     // TODO: 2022-03-08 implement delete
 }

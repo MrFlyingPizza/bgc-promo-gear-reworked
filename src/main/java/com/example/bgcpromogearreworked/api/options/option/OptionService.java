@@ -1,52 +1,47 @@
 package com.example.bgcpromogearreworked.api.options.option;
 
 import com.example.bgcpromogearreworked.api.options.exceptions.OptionNotFoundException;
-import com.example.bgcpromogearreworked.api.options.option.dto.secured.SecuredOptionCreate;
-import com.example.bgcpromogearreworked.api.options.option.dto.secured.SecuredOptionMapper;
-import com.example.bgcpromogearreworked.api.options.option.dto.secured.SecuredOptionPartialUpdate;
-import com.example.bgcpromogearreworked.api.options.option.dto.secured.SecuredOptionUpdate;
 import com.example.bgcpromogearreworked.persistence.entities.Option;
 import com.example.bgcpromogearreworked.persistence.repositories.OptionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
+import java.util.function.Function;
 
 @Service
-@Validated
 @RequiredArgsConstructor
 public class OptionService {
 
     private final OptionRepository optionRepo;
-    private final SecuredOptionMapper mapper;
 
-    public boolean checkOptionExists(Long id) {
-        return optionRepo.existsById(id);
+    public boolean checkOptionExists(Long optionId) {
+        return optionRepo.existsById(optionId);
     }
 
-    Option handleOptionCreate(@Valid SecuredOptionCreate optionCreate) {
-        return optionRepo.save(mapper.fromCreate(optionCreate));
+    public Option getOption(Long optionId) {
+        return optionRepo.findById(optionId).orElseThrow(OptionNotFoundException::new);
     }
 
-    Option handleOptionGet(Long id) {
-        return optionRepo.findById(id).orElseThrow(OptionNotFoundException::new);
+    public Streamable<Option> getOptions() {
+        return Streamable.of(optionRepo.findAll());
     }
 
-    Iterable<Option> handleOptionBatchGet() {
-        return optionRepo.findAll();
+    public Option createOption(Option option) {
+        if (option.getId() != null) {
+            throw new RuntimeException("Option ID must be null.");
+        }
+        return optionRepo.saveAndFlush(option);
     }
 
-    Option handleOptionUpdate(@Valid SecuredOptionUpdate optionUpdate) {
-        Option option = optionRepo.findById(optionUpdate.getId()).orElseThrow(OptionNotFoundException::new);
-        option = mapper.fromUpdate(optionUpdate, option);
-        return optionRepo.save(option);
+    public <T> Option createOption(T source, Function<T, Option> mapper) {
+        return createOption(mapper.apply(source));
     }
 
-    Option handleOptionPartialUpdate(@Valid SecuredOptionPartialUpdate optionPartialUpdate) {
-        Option option = optionRepo.findById(optionPartialUpdate.getId()).orElseThrow(OptionNotFoundException::new);
-        option = mapper.fromPartialUpdate(optionPartialUpdate, option);
-        return optionRepo.save(option);
+    public <T> Option updateOption(Option option) {
+        if (option.getId() == null) {
+            throw new RuntimeException("Option ID must not be null.");
+        }
     }
 
 }
