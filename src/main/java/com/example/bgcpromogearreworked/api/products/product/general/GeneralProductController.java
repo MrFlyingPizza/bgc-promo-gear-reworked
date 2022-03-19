@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/products", produces = MediaType.APPLICATION_JSON_VALUE)
-public class GeneralProductController {
+class GeneralProductController {
 
     private final ProductService productService;
     private final GeneralProductHandlerService handlerService;
@@ -34,7 +36,7 @@ public class GeneralProductController {
 
     @GetMapping
     private GeneralProductBatchResponse getProductBatch() {
-        Streamable<Product> result = handlerService.handleProductBatchGet();
+        List<Product> result = handlerService.handleProductBatchGet();
         return mapper.toBatchResponse(result);
     }
 

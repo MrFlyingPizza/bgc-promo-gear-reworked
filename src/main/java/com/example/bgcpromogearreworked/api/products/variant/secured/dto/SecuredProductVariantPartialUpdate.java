@@ -37,6 +37,8 @@ public class SecuredProductVariantPartialUpdate {
     @ProductImageExists
     private final Long imageId;
 
+    private final Boolean isInUse;
+
     @Range
     private final Integer waitListThreshold;
 
@@ -45,9 +47,11 @@ public class SecuredProductVariantPartialUpdate {
 
     @JsonCreator
     public SecuredProductVariantPartialUpdate(@JsonProperty Long imageId,
+                                              @JsonProperty Boolean isInUse,
                                               @JsonProperty Integer waitListThreshold,
                                               @JsonProperty List<Long> optionValueIds) {
         this.imageId = imageId;
+        this.isInUse = isInUse;
         this.waitListThreshold = waitListThreshold;
         this.optionValueIds = optionValueIds;
     }

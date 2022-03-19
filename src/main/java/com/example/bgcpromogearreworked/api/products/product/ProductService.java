@@ -1,14 +1,14 @@
 package com.example.bgcpromogearreworked.api.products.product;
 
 import com.example.bgcpromogearreworked.api.products.exceptions.ProductNotFoundException;
-import com.example.bgcpromogearreworked.api.products.variant.ProductVariantService;
 import com.example.bgcpromogearreworked.persistence.entities.Option;
 import com.example.bgcpromogearreworked.persistence.entities.Product;
 import com.example.bgcpromogearreworked.persistence.repositories.ProductRepository;
+import com.example.bgcpromogearreworked.persistence.repositories.ProductVariantRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -18,58 +18,53 @@ import java.util.function.Function;
 public class ProductService {
 
     private final ProductRepository repo;
-    private final ProductVariantService variantService;
+    private final ProductVariantRepository variantRepo;
 
     public boolean checkProductExists(Long productId) {
+        assert productId != null;
         return repo.existsById(productId);
     }
 
     public Product getProduct(Long productId) throws ProductNotFoundException {
+        assert productId != null;
         return repo.findById(productId).orElseThrow(ProductNotFoundException::new);
     }
 
-    public Streamable<Product> getProducts() {
-        return Streamable.of(repo.findAll());
+    public List<Product> getProducts() {
+        return repo.findAll();
     }
 
     public <T> Product createProduct(T source, Function<T, Product> mapper) {
+        assert source != null && mapper != null;
         Product product = mapper.apply(source);
-        if (product.getId() != null) {
-            throw new RuntimeException("Product ID must be null.");
-        }
+        assert product.getId() == null;
         return repo.saveAndFlush(product);
     }
 
-    public <T> Product updateProduct(Long productId, T source, BiFunction<T, Product, Product> mapper) throws ProductNotFoundException {
+    public <T> Product updateProduct(Long productId, T source, BiFunction<T, Product, Product> mapper) {
+        assert productId != null && source != null && mapper != null;
         Product original = repo.findById(productId).orElseThrow(ProductNotFoundException::new);
+
         Set<Option> originalOptions = original.getOptions();
-        Product product = mapper.apply(source, original);
-        if (!product.getId().equals(productId)) {
-            throw new RuntimeException("Mapper function is forbidden to modify product ID.");
+
+        Product updated = mapper.apply(source, original);
+        assert updated.getId().equals(productId);
+
+        if (!originalOptions.equals(updated.getOptions())) {
+            invalidateProductVariants(updated);
         }
-        if (checkOptionsUpdated(originalOptions, product.getOptions())) {
-            invalidateProductVariants(product);
-        }
-        return repo.saveAndFlush(mapper.apply(source, product));
+        return repo.saveAndFlush(mapper.apply(source, updated));
     }
 
     public void deleteProduct(Long productId) {
+        assert productId != null;
         repo.deleteById(productId);
     }
 
-    public void deleteProduct(Product product) {
-        repo.delete(product);
-    }
-
-    private boolean checkOptionsUpdated(Set<Option> current, Set<Option> updated) {
-        return current.equals(updated);
-    }
-
     private void invalidateProductVariants(Product product) {
-        product.getVariants().forEach(variant -> {
-            variant.setIsValid(false);
-            variantService.updateProductVariant(variant);
-        });
+        assert product != null;
+        product.getVariants().forEach(variant -> variant.setIsInUse(false));
+        variantRepo.saveAllAndFlush(product.getVariants());
     }
 
 }

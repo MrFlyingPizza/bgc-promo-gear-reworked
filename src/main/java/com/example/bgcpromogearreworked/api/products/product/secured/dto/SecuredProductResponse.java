@@ -45,7 +45,7 @@ public class SecuredProductResponse {
         private final Long id;
         private final Long imageId;
         private final Integer waitListThreshold;
-        private final Boolean isValid;
+        private final Boolean isInUse;
         private final List<NestedOptionValue> options;
         private final Instant createdDate;
         private final Instant lastModifiedDate;

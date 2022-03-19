@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/products/{productId}/images")
-public class GeneralProductImageController {
+class GeneralProductImageController {
 
     private final GeneralProductImageHandlerService handlerService;
     private final ProductService productService;

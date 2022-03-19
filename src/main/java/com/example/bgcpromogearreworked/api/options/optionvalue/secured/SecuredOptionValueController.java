@@ -4,14 +4,14 @@ import com.example.bgcpromogearreworked.api.options.exceptions.OptionNotFoundExc
 import com.example.bgcpromogearreworked.api.options.exceptions.OptionValueNotFoundException;
 import com.example.bgcpromogearreworked.api.options.option.OptionService;
 import com.example.bgcpromogearreworked.api.options.optionvalue.OptionValueService;
-import com.example.bgcpromogearreworked.api.options.optionvalue.dto.secured.*;
+import com.example.bgcpromogearreworked.api.options.optionvalue.secured.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/secured/options/{optionId}/values")
-public class SecuredOptionValueController {
+class SecuredOptionValueController {
 
     private final OptionService optionService;
     private final OptionValueService valueService;
@@ -33,7 +33,7 @@ public class SecuredOptionValueController {
         if (!optionService.checkOptionExists(optionId)) {
             throw new OptionNotFoundException();
         }
-        if (!valueService.checkOptionValueExists(optionId, valueId)) {
+        if (!valueService.checkOptionValueExistsOnOption(optionId, valueId)) {
             throw new OptionValueNotFoundException();
         }
         return mapper.toResponse(handlerService.handleOptionValueGet(valueId));
@@ -54,7 +54,7 @@ public class SecuredOptionValueController {
         if (!optionService.checkOptionExists(optionId)) {
             throw new OptionNotFoundException();
         }
-        if (!valueService.checkOptionValueExists(optionId, valueId)) {
+        if (!valueService.checkOptionValueExistsOnOption(optionId, valueId)) {
             throw new OptionValueNotFoundException();
         }
         optionValueUpdate.setOptionId(optionId);
@@ -69,7 +69,7 @@ public class SecuredOptionValueController {
         if (!optionService.checkOptionExists(optionId)) {
             throw new OptionNotFoundException();
         }
-        if (!valueService.checkOptionValueExists(optionId, valueId)) {
+        if (!valueService.checkOptionValueExistsOnOption(optionId, valueId)) {
             throw new OptionValueNotFoundException();
         }
         optionValuePartialUpdate.setOptionId(optionId);

@@ -7,6 +7,9 @@ import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Streamable;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Mapper(componentModel = "spring")
 public abstract class SecuredProductMapper {
 
@@ -55,8 +58,8 @@ public abstract class SecuredProductMapper {
 
     public abstract SecuredProductResponse toResponse(Product product);
 
-    public SecuredProductBatchResponse toBatchResponse(Streamable<Product> products) {
-        return new SecuredProductBatchResponse(products.map(this::toResponse).toList());
+    public SecuredProductBatchResponse toBatchResponse(List<Product> products) {
+        return new SecuredProductBatchResponse(products.stream().map(this::toResponse).collect(Collectors.toList()));
     }
 
     @AfterMapping

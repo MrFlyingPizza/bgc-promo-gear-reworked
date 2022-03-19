@@ -19,7 +19,7 @@ public class ProductVariant extends Auditable implements Serializable {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
 
@@ -33,8 +33,8 @@ public class ProductVariant extends Auditable implements Serializable {
     @Column(name = "wait_list_threshold")
     private Integer waitListThreshold;
 
-    @Column(name = "\"is_valid\"", nullable = false)
-    private Boolean isValid;
+    @Column(name = "is_in_use", nullable = false)
+    private Boolean isInUse;
 
     @ManyToMany
     @JoinTable(

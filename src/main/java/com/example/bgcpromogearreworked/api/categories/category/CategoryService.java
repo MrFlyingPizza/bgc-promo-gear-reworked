@@ -1,61 +1,58 @@
 package com.example.bgcpromogearreworked.api.categories.category;
 
-import com.example.bgcpromogearreworked.api.categories.category.dto.secured.SecuredCategoryCreate;
-import com.example.bgcpromogearreworked.api.categories.category.dto.secured.SecuredCategoryPartialUpdate;
-import com.example.bgcpromogearreworked.api.categories.category.dto.secured.SecuredCategoryUpdate;
-import com.example.bgcpromogearreworked.api.categories.category.dto.secured.SecuredCategoryMapper;
 import com.example.bgcpromogearreworked.api.categories.exceptions.CategoryNotFoundException;
 import com.example.bgcpromogearreworked.persistence.entities.Category;
 import com.example.bgcpromogearreworked.persistence.repositories.CategoryRepository;
 import com.example.bgcpromogearreworked.persistence.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
-@RequiredArgsConstructor
-@Validated
 @Service
+@RequiredArgsConstructor
 public class CategoryService {
 
     private final CategoryRepository categoryRepo;
     private final ProductRepository productRepo;
-    private final SecuredCategoryMapper mapper;
 
-    public boolean checkCategoryExists(long categoryId) {
+    public boolean checkCategoryExists(Long categoryId) {
+        assert categoryId != null;
         return categoryRepo.existsById(categoryId);
     }
-    public boolean checkCategoryStillReferenced(long categoryId) {
+
+    public boolean checkCategoryReferenced(Long categoryId) {
+        assert categoryId != null;
         return productRepo.existsByCategoryId(categoryId);
     }
 
-    Category handleCategoryCreate(@Valid SecuredCategoryCreate categoryCreate) {
-        return categoryRepo.saveAndFlush(mapper.fromCreate(categoryCreate));
-    }
-
-    Category handleCategoryGet(Long categoryId) {
+    public Category getCategory(Long categoryId) {
+        assert categoryId != null;
         return categoryRepo.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
     }
 
-    Iterable<Category> handleCategoryBatchGet() {
+    public List<Category> getCategories() {
         return categoryRepo.findAll();
     }
 
-    Category handleCategoryUpdate(@Valid SecuredCategoryUpdate categoryUpdate) {
-        Long categoryId = categoryUpdate.getId();
-        Category category = categoryRepo.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
-        return categoryRepo.saveAndFlush(mapper.fromUpdate(categoryUpdate, category));
+    public <T> Category createCategory(T source, Function<T, Category> mapper) {
+        assert source != null && mapper != null;
+        Category category = mapper.apply(source);
+        assert category.getId() == null;
+        return category;
     }
 
-    Category handleCategoryPartialUpdate(@Valid SecuredCategoryPartialUpdate categoryPartialUpdate) {
-        Long categoryId = categoryPartialUpdate.getId();
-        Category category = categoryRepo.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
-        return categoryRepo.saveAndFlush(mapper.fromPartialUpdate(categoryPartialUpdate, category));
+    public <T> Category updateCategory(Long categoryId, T source, BiFunction<T, Category, Category> mapper) {
+        assert categoryId != null && source != null && mapper != null;
+        Category category = mapper.apply(source, categoryRepo.findById(categoryId).orElseThrow(CategoryNotFoundException::new));
+        assert category.getId().equals(categoryId);
+        return category;
     }
 
-    void handleCategoryDelete(Long categoryId) {
+    public void deleteCategory(Long categoryId) {
+        assert categoryId != null;
         categoryRepo.deleteById(categoryId);
     }
-
 }

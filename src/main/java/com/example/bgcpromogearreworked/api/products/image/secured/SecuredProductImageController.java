@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/secured/products/{productId}/images")
-public class SecuredProductImageController {
+class SecuredProductImageController {
 
     private final ProductService productService;
     private final ProductImageService imageService;

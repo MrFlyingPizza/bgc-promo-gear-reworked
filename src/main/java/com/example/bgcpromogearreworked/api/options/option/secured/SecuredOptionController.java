@@ -1,7 +1,8 @@
 package com.example.bgcpromogearreworked.api.options.option.secured;
 
 import com.example.bgcpromogearreworked.api.options.exceptions.OptionNotFoundException;
-import com.example.bgcpromogearreworked.api.options.option.dto.secured.*;
+import com.example.bgcpromogearreworked.api.options.option.OptionService;
+import com.example.bgcpromogearreworked.api.options.option.secured.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -9,14 +10,15 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/secured/options", produces = MediaType.APPLICATION_JSON_VALUE)
-public class SecuredOptionController {
+class SecuredOptionController {
 
-    private final SecuredOptionHandlerService service;
+    private final OptionService service;
+    private final SecuredOptionHandlerService handlerService;
     private final SecuredOptionMapper mapper;
 
     @PostMapping
     private SecuredOptionResponse createOption(@RequestBody SecuredOptionCreate optionCreate) {
-        return mapper.toResponse(service.handleOptionCreate(optionCreate));
+        return mapper.toResponse(handlerService.handleOptionCreate(optionCreate));
     }
 
     @GetMapping("/{optionId}")
@@ -24,12 +26,12 @@ public class SecuredOptionController {
         if (!service.checkOptionExists(optionId)) {
             throw new OptionNotFoundException();
         }
-        return mapper.toResponse(service.handleOptionGet(optionId));
+        return mapper.toResponse(handlerService.handleOptionGet(optionId));
     }
 
     @GetMapping
     private SecuredOptionBatchResponse getOptionBatch() {
-        return mapper.toBatchResponse(service.handleOptionBatchGet());
+        return mapper.toBatchResponse(handlerService.handleOptionBatchGet());
     }
 
     @PutMapping("/{optionId}")
@@ -38,7 +40,7 @@ public class SecuredOptionController {
             throw new OptionNotFoundException();
         }
         optionUpdate.setId(optionId);
-        return mapper.toResponse(service.handleOptionUpdate(optionUpdate));
+        return mapper.toResponse(handlerService.handleOptionUpdate(optionUpdate));
     }
 
     @PatchMapping("/{optionId}")
@@ -48,7 +50,7 @@ public class SecuredOptionController {
             throw new OptionNotFoundException();
         }
         optionPartialUpdate.setId(optionId);
-        return mapper.toResponse(service.handleOptionPartialUpdate(optionPartialUpdate));
+        return mapper.toResponse(handlerService.handleOptionPartialUpdate(optionPartialUpdate));
     }
 
     // TODO: 2022-03-08 implement delete

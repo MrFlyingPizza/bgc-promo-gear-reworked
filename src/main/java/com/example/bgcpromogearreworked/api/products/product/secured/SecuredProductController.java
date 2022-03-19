@@ -9,10 +9,12 @@ import org.springframework.data.util.Streamable;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/secured/products", produces = MediaType.APPLICATION_JSON_VALUE)
-public class SecuredProductController {
+class SecuredProductController {
 
     private final ProductService productService;
     private final SecuredProductHandlerService handlerService;
@@ -35,7 +37,7 @@ public class SecuredProductController {
 
     @GetMapping
     private SecuredProductBatchResponse getProductBatch() {
-        Streamable<Product> result = handlerService.handleProductBatchGet();
+        List<Product> result = handlerService.handleProductBatchGet();
         return mapper.toBatchResponse(result);
     }
 

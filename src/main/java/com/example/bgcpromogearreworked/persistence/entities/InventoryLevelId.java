@@ -1,10 +1,14 @@
 package com.example.bgcpromogearreworked.persistence.entities;
 
-import lombok.Data;
+import lombok.*;
 
 import java.io.Serializable;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
 public class InventoryLevelId implements Serializable {
     private Long locationId;
     private Long variantId;

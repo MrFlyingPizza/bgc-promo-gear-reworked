@@ -1,19 +1,18 @@
 package com.example.bgcpromogearreworked.api.products.variant.secured;
 
-import com.example.bgcpromogearreworked.api.products.variant.ProductVariantService;
-import com.example.bgcpromogearreworked.api.products.variant.secured.dto.SecuredProductVariantPartialUpdate;
-import com.example.bgcpromogearreworked.persistence.entities.ProductVariant;
-import com.example.bgcpromogearreworked.persistence.repositories.ProductVariantRepository;
 import com.example.bgcpromogearreworked.api.products.exceptions.ProductVariantNotFoundException;
+import com.example.bgcpromogearreworked.api.products.variant.ProductVariantService;
 import com.example.bgcpromogearreworked.api.products.variant.secured.dto.SecuredProductVariantCreate;
 import com.example.bgcpromogearreworked.api.products.variant.secured.dto.SecuredProductVariantMapper;
+import com.example.bgcpromogearreworked.api.products.variant.secured.dto.SecuredProductVariantPartialUpdate;
 import com.example.bgcpromogearreworked.api.products.variant.secured.dto.SecuredProductVariantUpdate;
+import com.example.bgcpromogearreworked.persistence.entities.ProductVariant;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Service
 @Validated
@@ -31,7 +30,7 @@ class SecuredProductVariantHandlerService {
         return service.getProductVariant(variantId);
     }
 
-    Streamable<ProductVariant> handleProductVariantBatchGet(Long productId) {
+    List<ProductVariant> handleProductVariantBatchGet(Long productId) {
         return service.getProductVariants(productId);
     }
 

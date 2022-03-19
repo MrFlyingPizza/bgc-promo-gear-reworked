@@ -5,7 +5,9 @@ import org.mapstruct.*;
 import org.springframework.data.util.Streamable;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public abstract class SecuredProductImageMapper {
@@ -36,8 +38,8 @@ public abstract class SecuredProductImageMapper {
 
     public abstract SecuredProductImageResponse toResponse(ProductImage image);
 
-    public SecuredProductImageBatchResponse toBatchResponse(Iterable<ProductImage> images) {
-        return new SecuredProductImageBatchResponse(Streamable.of(images).map(this::toResponse).toList());
+    public SecuredProductImageBatchResponse toBatchResponse(List<ProductImage> images) {
+        return new SecuredProductImageBatchResponse(images.stream().map(this::toResponse).collect(Collectors.toList()));
     }
 
     @AfterMapping

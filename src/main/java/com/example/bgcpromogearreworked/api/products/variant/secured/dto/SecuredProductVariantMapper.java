@@ -7,6 +7,9 @@ import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Streamable;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Mapper(componentModel = "spring")
 public abstract class SecuredProductVariantMapper {
 
@@ -46,8 +49,9 @@ public abstract class SecuredProductVariantMapper {
 
     @Mapping(source = "optionValues", target = "options")
     public abstract SecuredProductVariantResponse toResponse(ProductVariant productVariant);
-    public SecuredProductVariantBatchResponse toBatchResponse(Iterable<ProductVariant> productVariants) {
-        return new SecuredProductVariantBatchResponse(Streamable.of(productVariants).map(this::toResponse).toList());
+
+    public SecuredProductVariantBatchResponse toBatchResponse(List<ProductVariant> productVariants) {
+        return new SecuredProductVariantBatchResponse(productVariants.stream().map(this::toResponse).collect(Collectors.toList()));
     }
 
     @AfterMapping

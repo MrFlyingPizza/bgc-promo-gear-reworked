@@ -6,8 +6,8 @@ import com.example.bgcpromogearreworked.persistence.entities.ProductVariant;
 import org.mapstruct.BeforeMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.data.util.Streamable;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
@@ -15,14 +15,14 @@ public abstract class GeneralProductMapper {
 
     public abstract GeneralProductResponse toResponse(Product product);
 
-    public GeneralProductBatchResponse toBatchResponse(Streamable<Product> products) {
-        return new GeneralProductBatchResponse(products.map(this::toResponse).toList());
+    public GeneralProductBatchResponse toBatchResponse(List<Product> products) {
+        return new GeneralProductBatchResponse(products.stream().map(this::toResponse).collect(Collectors.toList()));
     }
 
     // only include valid product variants
     @BeforeMapping
     protected void removeInvalidProductVariants(Product product) {
-        product.setVariants(product.getVariants().stream().filter(ProductVariant::getIsValid).collect(Collectors.toSet()));
+        product.setVariants(product.getVariants().stream().filter(ProductVariant::getIsInUse).collect(Collectors.toSet()));
     }
 
     @Mapping(source = "optionValues", target = "options")

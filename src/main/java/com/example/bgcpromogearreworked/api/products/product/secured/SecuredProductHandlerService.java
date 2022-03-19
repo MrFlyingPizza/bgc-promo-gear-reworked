@@ -7,16 +7,16 @@ import com.example.bgcpromogearreworked.api.products.product.secured.dto.Secured
 import com.example.bgcpromogearreworked.api.products.product.secured.dto.SecuredProductUpdate;
 import com.example.bgcpromogearreworked.persistence.entities.Product;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Service
 @Validated
 @RequiredArgsConstructor
-public class SecuredProductHandlerService {
+class SecuredProductHandlerService {
 
     private final SecuredProductMapper mapper;
     private final ProductService productService;
@@ -25,7 +25,7 @@ public class SecuredProductHandlerService {
         return productService.getProduct(productId);
     }
 
-    Streamable<Product> handleProductBatchGet() {
+    List<Product> handleProductBatchGet() {
         return productService.getProducts();
     }
 

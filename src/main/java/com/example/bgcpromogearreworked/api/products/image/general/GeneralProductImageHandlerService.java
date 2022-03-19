@@ -3,12 +3,13 @@ package com.example.bgcpromogearreworked.api.products.image.general;
 import com.example.bgcpromogearreworked.api.products.image.ProductImageService;
 import com.example.bgcpromogearreworked.persistence.entities.ProductImage;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class GeneralProductImageHandlerService {
+class GeneralProductImageHandlerService {
 
     private final ProductImageService imageService;
 
@@ -16,7 +17,7 @@ public class GeneralProductImageHandlerService {
         return imageService.getProductImage(imageId);
     }
 
-    Streamable<ProductImage> handleProductImageBatchGet(Long productId) {
+    List<ProductImage> handleProductImageBatchGet(Long productId) {
         return imageService.getProductImages(productId);
     }
 

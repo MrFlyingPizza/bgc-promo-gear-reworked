@@ -13,11 +13,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Service
 @Validated
 @RequiredArgsConstructor
-public class SecuredProductImageHandlerService {
+class SecuredProductImageHandlerService {
 
     private final ProductImageService imageService;
     private final ProductImageBlobService blobStorageService;
@@ -30,14 +31,14 @@ public class SecuredProductImageHandlerService {
         if (result == null) { // remove entity if save image blob fails
             throw new ProductImageSaveFailedException();
         }
-        return imageService.createProductImage(mapper.fromCreate(imageCreate, result.getUrl(), result.getBlobId()));
+        return imageService.createProductImage(imageCreate, source -> mapper.fromCreate(source, result.getUrl(), result.getBlobId()));
     }
 
     ProductImage handleProductImageGet(Long imageId) {
         return imageService.getProductImage(imageId);
     }
 
-    Iterable<ProductImage> handleProductImageBatchGet(Long productId) {
+    List<ProductImage> handleProductImageBatchGet(Long productId) {
         return imageService.getProductImages(productId);
     }
 

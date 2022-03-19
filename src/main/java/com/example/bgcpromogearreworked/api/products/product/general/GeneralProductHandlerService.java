@@ -8,10 +8,12 @@ import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.List;
+
 @Service
 @Validated
 @RequiredArgsConstructor
-public class GeneralProductHandlerService {
+class GeneralProductHandlerService {
 
     private final ProductService productService;
     private final GeneralProductMapper mapper;
@@ -20,7 +22,7 @@ public class GeneralProductHandlerService {
         return productService.getProduct(productId);
     }
 
-    Streamable<Product> handleProductBatchGet() {
+    List<Product> handleProductBatchGet() {
         return productService.getProducts();
     }
 

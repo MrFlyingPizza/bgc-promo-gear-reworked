@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Valid
 @RestController
@@ -39,7 +40,7 @@ class SecuredProductVariantController {
         if (!productService.checkProductExists(productId)) {
             throw new ProductNotFoundException();
         }
-        Iterable<ProductVariant> result = handlerService.handleProductVariantBatchGet(productId);
+        List<ProductVariant> result = handlerService.handleProductVariantBatchGet(productId);
         return mapper.toBatchResponse(result);
     }
 

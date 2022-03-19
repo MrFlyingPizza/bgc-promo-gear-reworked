@@ -37,6 +37,8 @@ public class SecuredProductVariantUpdate {
     @ProductImageExists
     private final Long imageId;
 
+    private final Boolean isInUse;
+
     @NotNull
     @Range
     private final Integer waitListThreshold;
@@ -47,9 +49,11 @@ public class SecuredProductVariantUpdate {
 
     @JsonCreator
     SecuredProductVariantUpdate(@JsonProperty Long imageId,
+                                @JsonProperty Boolean isInUse,
                                 @JsonProperty Integer waitListThreshold,
                                 @JsonProperty List<Long> optionValueIds) {
         this.imageId = imageId;
+        this.isInUse = isInUse;
         this.waitListThreshold = waitListThreshold;
         this.optionValueIds = optionValueIds;
     }

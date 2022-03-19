@@ -8,7 +8,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 public class VariantUpdateExpectedOptionCountValidator extends ExpectedOptionCountValidator
-        implements ConstraintValidator<ExpectedOptionCount, SecuredProductVariantUpdate> {
+        implements ConstraintValidator<ExpectedOptionCount, SecuredProductVariantUpdate> { // TODO: 2022-03-19 check if patch works with this 
 
     @Autowired
     private ProductRepository productRepo;
