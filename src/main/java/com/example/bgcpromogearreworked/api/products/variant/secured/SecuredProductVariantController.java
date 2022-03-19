@@ -50,7 +50,7 @@ class SecuredProductVariantController {
         if (!productService.checkProductExists(productId)) {
             throw new ProductNotFoundException();
         }
-        if (variantService.checkProductVariantExistsOnProduct(productId, variantId)) {
+        if (!variantService.checkProductVariantExistsOnProduct(productId, variantId)) {
             throw new ProductVariantNotFoundException();
         }
         ProductVariant result = handlerService.handleProductVariantGet(variantId);
@@ -64,7 +64,7 @@ class SecuredProductVariantController {
         if (!productService.checkProductExists(productId)) {
             throw new ProductNotFoundException();
         }
-        if (variantService.checkProductVariantExistsOnProduct(productId, variantId)) {
+        if (!variantService.checkProductVariantExistsOnProduct(productId, variantId)) {
             throw new ProductVariantNotFoundException();
         }
         productVariantPartialUpdate.setProductId(productId);
