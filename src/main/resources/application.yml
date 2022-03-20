@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://bgcpromogear-test-database.postgres.database.azure.com:5432/bgcpromogearreworked?user=dbadmin&password=Q7t5UWaZsJ2k5zGZ&sslmode=require
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: true
+springdoc:
+  use-fqn: true
+azure:
+  storage:
+    # all 3 of these values are needed for blob storage client to be auto-configured
+    account-name: bgcpromogearstorage
+    account-key: s4REQmMNfTN/F1XXlyQEJG7RqR5FKy8Ct1mQlVUSy5ahHXXdLTEc6hWz0+/gH31Y9T58LyVy0FCf+AStyKKJKg==
+    blob-endpoint: https://bgcpromogearstorage.blob.core.windows.net/
+
+  activedirectory:
+    client-id: 61130a3e-2362-4c44-b86c-c840c0f32ea9
+    tenant-id: 8ec578ae-91c9-4c17-b0ed-c2767953b320
+    client-secret: cS67Q~crEh_NQJqKv~3Y~JLVrjqU~Db6kEjwt

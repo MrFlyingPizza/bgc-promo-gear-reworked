@@ -1,0 +1,25 @@
+package com.example.bgcpromogearreworked.api.products.variant.secured.dto.validation.expectedoptioncount;
+
+import com.example.bgcpromogearreworked.api.products.variant.secured.dto.SecuredProductVariantPartialUpdate;
+import com.example.bgcpromogearreworked.persistence.repositories.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+
+public class VariantPartialUpdateExpectedOptionCountValidator extends ExpectedOptionCountValidator
+        implements ConstraintValidator<ExpectedOptionCount, SecuredProductVariantPartialUpdate> {
+
+    @Autowired
+    private ProductRepository productRepo;
+
+    @Override
+    public boolean isValid(SecuredProductVariantPartialUpdate productVariantPartialUpdate, ConstraintValidatorContext constraintValidatorContext) {
+        if (productVariantPartialUpdate.getOptionValueIds() == null && !productVariantPartialUpdate.getIsInUse()) {
+            return true;
+        }
+        return validate(productVariantPartialUpdate.getOptionValueIds(),
+                productVariantPartialUpdate.getProductId(),
+                productRepo);
+    }
+}
