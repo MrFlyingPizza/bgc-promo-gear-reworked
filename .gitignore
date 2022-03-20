@@ -23,5 +23,13 @@
 hs_err_pid*
 # node modules
 /frontend/node_modules/
+
+
 /.idea/workspace.xml
 /.idea/dataSources/
+/.idea/libraries/
+/.idea/compiler.xml
+/.idea/jpa-buddy.xml
+/.idea/modules.xml
+/.idea/vcs.xml
+/.idea/dataSources.local.xml
