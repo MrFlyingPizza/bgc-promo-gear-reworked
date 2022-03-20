@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-class SecuredInventoryLevelHandlerService {
+public class SecuredInventoryLevelHandlerService {
 
     private final InventoryLevelService inventoryLevelService;
     private final SecuredInventoryLevelMapper mapper;

@@ -23,7 +23,7 @@ public class SecuredOptionUpdate {
     private final String name;
 
     @JsonCreator
-    SecuredOptionUpdate(@JsonProperty String name) {
+    SecuredOptionUpdate(@JsonProperty("name") String name) {
         this.name = name;
     }
 }

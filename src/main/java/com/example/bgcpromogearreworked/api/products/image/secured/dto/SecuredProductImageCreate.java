@@ -42,7 +42,7 @@ public class SecuredProductImageCreate {
     private final String alt;
 
     @JsonCreator
-    public SecuredProductImageCreate(@JsonProperty Integer position, @JsonProperty String alt) {
+    public SecuredProductImageCreate(@JsonProperty("position") Integer position, @JsonProperty("alt") String alt) {
         this.position = position;
         this.alt = alt;
     }

@@ -1,6 +1,5 @@
 package com.example.bgcpromogearreworked.api.inventorylevels.inventorylevel.secured.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

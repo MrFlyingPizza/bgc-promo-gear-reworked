@@ -27,7 +27,7 @@ public class SecuredOptionValueUpdate {
     private final String value;
 
     @JsonCreator
-    SecuredOptionValueUpdate(@JsonProperty String value) {
+    SecuredOptionValueUpdate(@JsonProperty("value") String value) {
         this.value = value;
     }
 }

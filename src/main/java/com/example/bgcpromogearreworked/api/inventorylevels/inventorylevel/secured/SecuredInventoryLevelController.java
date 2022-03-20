@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/secured/inventory_levels")
 @RequiredArgsConstructor
-class SecuredInventoryLevelController {
+public class SecuredInventoryLevelController {
 
     private final InventoryLevelService service;
     private final SecuredInventoryLevelHandlerService handlerService;

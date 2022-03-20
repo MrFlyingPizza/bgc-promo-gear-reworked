@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 @Validated
 @RequiredArgsConstructor
-class GeneralProductHandlerService {
+public class GeneralProductHandlerService {
 
     private final ProductService productService;
     private final GeneralProductMapper mapper;

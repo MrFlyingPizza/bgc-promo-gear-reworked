@@ -29,9 +29,9 @@ public class SecuredInventoryLevelPartialUpdate {
     private final Integer notifyThreshold;
 
     @JsonCreator
-    public SecuredInventoryLevelPartialUpdate(@JsonProperty Integer availableQuantity,
-                                              @JsonProperty Integer reservedQuantity,
-                                              @JsonProperty Integer notifyThreshold) {
+    SecuredInventoryLevelPartialUpdate(@JsonProperty("availableQuantity") Integer availableQuantity,
+                                       @JsonProperty("reservedQuantity") Integer reservedQuantity,
+                                       @JsonProperty("notifyThreshold") Integer notifyThreshold) {
         this.availableQuantity = availableQuantity;
         this.reservedQuantity = reservedQuantity;
         this.notifyThreshold = notifyThreshold;

@@ -18,7 +18,7 @@ import java.util.List;
 @Service
 @Validated
 @RequiredArgsConstructor
-class SecuredProductImageHandlerService {
+public class SecuredProductImageHandlerService {
 
     private final ProductImageService imageService;
     private final ProductImageBlobService blobStorageService;

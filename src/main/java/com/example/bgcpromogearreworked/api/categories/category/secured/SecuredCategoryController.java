@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(path = "/api/secured/categories", produces = MediaType.APPLICATION_JSON_VALUE)
-class SecuredCategoryController {
+public class SecuredCategoryController {
 
     private final CategoryService service;
     private final SecuredCategoryHandlerService handlerService;

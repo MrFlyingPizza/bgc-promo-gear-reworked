@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Validated
 @Service
-class SecuredCategoryHandlerService {
+public class SecuredCategoryHandlerService {
 
     private final CategoryService categoryService;
     private final SecuredCategoryMapper mapper;

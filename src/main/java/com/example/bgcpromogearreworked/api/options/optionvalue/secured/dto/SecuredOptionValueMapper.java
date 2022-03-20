@@ -16,14 +16,14 @@ public abstract class SecuredOptionValueMapper {
     @Autowired
     private OptionRepository optionRepo;
 
-    @Mapping(source = "optionId", target = "option")
+    @Mapping(source = "optionId", target = "option.id")
     @Mapping(target = "id", ignore = true)
     public abstract OptionValue fromCreate(SecuredOptionValueCreate optionValueCreate);
 
-    @Mapping(source = "optionId", target = "option")
+    @Mapping(source = "optionId", target = "option.id")
     public abstract OptionValue fromUpdate(SecuredOptionValueUpdate optionValueUpdate, @MappingTarget OptionValue optionValue);
 
-    @Mapping(source = "optionId", target = "option")
+    @Mapping(source = "optionId", target = "option.id")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     public abstract OptionValue fromPartialUpdate(SecuredOptionValuePartialUpdate optionValuePartialUpdate, @MappingTarget OptionValue optionValue);
 
@@ -35,13 +35,15 @@ public abstract class SecuredOptionValueMapper {
 
     @AfterMapping
     protected void setOptionNullIfNoOptionId(@MappingTarget OptionValue optionValue) {
-        if (optionValue.getOption().getId() == null) {
-            optionValue.setOption(null);
+        if (optionValue.getOption() == null) {
+            return;
         }
-    }
-
-    protected Option map(Long optionId) {
-        return optionRepo.getById(optionId);
+        Long optionId = optionValue.getOption().getId();
+        if (optionId == null) {
+            optionValue.setOption(null);
+        } else {
+            optionValue.setOption(optionRepo.getById(optionId));
+        }
     }
 
 }

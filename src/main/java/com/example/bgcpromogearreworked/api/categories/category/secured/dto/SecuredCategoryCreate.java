@@ -27,7 +27,7 @@ public class SecuredCategoryCreate {
     private final Long parentId;
 
     @JsonCreator
-    SecuredCategoryCreate(@JsonProperty String name, @JsonProperty Long parentId) {
+    SecuredCategoryCreate(@JsonProperty("name") String name, @JsonProperty("productId") Long parentId) {
         this.name = name;
         this.parentId = parentId;
     }

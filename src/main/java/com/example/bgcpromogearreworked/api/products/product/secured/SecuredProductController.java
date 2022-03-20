@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/secured/products", produces = MediaType.APPLICATION_JSON_VALUE)
-class SecuredProductController {
+public class SecuredProductController {
 
     private final ProductService productService;
     private final SecuredProductHandlerService handlerService;

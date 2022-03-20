@@ -16,7 +16,7 @@ import java.util.List;
 @Service
 @Validated
 @RequiredArgsConstructor
-class SecuredProductHandlerService {
+public class SecuredProductHandlerService {
 
     private final SecuredProductMapper mapper;
     private final ProductService productService;

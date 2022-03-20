@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/secured/options/{optionId}/values")
-class SecuredOptionValueController {
+public class SecuredOptionValueController {
 
     private final OptionService optionService;
     private final OptionValueService valueService;

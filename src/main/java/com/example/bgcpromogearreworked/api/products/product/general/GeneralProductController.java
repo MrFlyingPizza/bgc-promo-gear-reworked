@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/products", produces = MediaType.APPLICATION_JSON_VALUE)
-class GeneralProductController {
+public class GeneralProductController {
 
     private final ProductService productService;
     private final GeneralProductHandlerService handlerService;

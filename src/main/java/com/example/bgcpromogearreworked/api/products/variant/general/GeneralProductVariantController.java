@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/products/{productId}/variants", produces = MediaType.APPLICATION_JSON_VALUE)
-class GeneralProductVariantController {
+public class GeneralProductVariantController {
 
     private final ProductService productService;
     private final ProductVariantService variantService;

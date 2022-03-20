@@ -9,7 +9,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-class GeneralCategoryHandlerService {
+public class GeneralCategoryHandlerService {
 
     private final CategoryService categoryService;
 

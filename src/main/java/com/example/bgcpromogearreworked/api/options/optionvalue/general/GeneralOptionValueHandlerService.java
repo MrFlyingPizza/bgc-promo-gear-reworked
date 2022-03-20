@@ -11,7 +11,7 @@ import java.util.List;
 @Service
 @Validated
 @RequiredArgsConstructor
-class GeneralOptionValueHandlerService {
+public class GeneralOptionValueHandlerService {
 
     private final OptionValueService valueService;
 

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/options", produces = MediaType.APPLICATION_JSON_VALUE)
-class GeneralOptionController {
+public class GeneralOptionController {
 
     private final OptionService service;
     private final GeneralOptionHandlerService handlerService;

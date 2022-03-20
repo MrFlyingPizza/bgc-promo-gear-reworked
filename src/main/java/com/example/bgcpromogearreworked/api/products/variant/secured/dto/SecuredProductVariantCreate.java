@@ -45,10 +45,10 @@ public class SecuredProductVariantCreate {
     private final List<@NotNull @OptionValueExists Long> optionValueIds;
 
     @JsonCreator
-    SecuredProductVariantCreate(@JsonProperty Long imageId,
-                                @JsonProperty Integer waitListThreshold,
-                                @JsonProperty Boolean isInUse,
-                                @JsonProperty List<Long> optionValueIds) {
+    SecuredProductVariantCreate(@JsonProperty("imageId") Long imageId,
+                                @JsonProperty("waitListThreshold") Integer waitListThreshold,
+                                @JsonProperty("isInUse") Boolean isInUse,
+                                @JsonProperty("optionValueIds") List<Long> optionValueIds) {
         this.imageId = imageId;
         this.waitListThreshold = waitListThreshold;
         this.isInUse = isInUse;

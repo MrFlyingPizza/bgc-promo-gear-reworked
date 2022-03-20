@@ -17,7 +17,7 @@ public class SecuredOptionCreate {
     private final String name;
 
     @JsonCreator
-    SecuredOptionCreate(@JsonProperty String name) {
+    SecuredOptionCreate(@JsonProperty("name") String name) {
         this.name = name;
     }
 

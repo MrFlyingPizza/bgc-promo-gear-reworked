@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/secured/products/{productId}/variants", produces = MediaType.APPLICATION_JSON_VALUE)
-class SecuredProductVariantController {
+public class SecuredProductVariantController {
 
     private final SecuredProductVariantHandlerService handlerService;
     private final ProductService productService;

@@ -41,14 +41,14 @@ public class CategoryService {
         assert source != null && mapper != null;
         Category category = mapper.apply(source);
         assert category.getId() == null;
-        return category;
+        return categoryRepo.saveAndFlush(category);
     }
 
     public <T> Category updateCategory(Long categoryId, T source, BiFunction<T, Category, Category> mapper) {
         assert categoryId != null && source != null && mapper != null;
         Category category = mapper.apply(source, categoryRepo.findById(categoryId).orElseThrow(CategoryNotFoundException::new));
         assert category.getId().equals(categoryId);
-        return category;
+        return categoryRepo.saveAndFlush(category);
     }
 
     public void deleteCategory(Long categoryId) {

@@ -46,10 +46,10 @@ public class SecuredProductVariantPartialUpdate {
     private final List<@NotNull @OptionValueExists Long> optionValueIds;
 
     @JsonCreator
-    public SecuredProductVariantPartialUpdate(@JsonProperty Long imageId,
-                                              @JsonProperty Boolean isInUse,
-                                              @JsonProperty Integer waitListThreshold,
-                                              @JsonProperty List<Long> optionValueIds) {
+    public SecuredProductVariantPartialUpdate(@JsonProperty("imageId") Long imageId,
+                                              @JsonProperty("waitListThreshold") Integer waitListThreshold,
+                                              @JsonProperty("isInUse") Boolean isInUse,
+                                              @JsonProperty("optionValueIds") List<Long> optionValueIds) {
         this.imageId = imageId;
         this.isInUse = isInUse;
         this.waitListThreshold = waitListThreshold;

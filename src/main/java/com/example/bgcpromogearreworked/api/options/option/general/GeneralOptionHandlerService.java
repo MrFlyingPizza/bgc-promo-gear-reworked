@@ -9,7 +9,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-class GeneralOptionHandlerService {
+public class GeneralOptionHandlerService {
 
     private final OptionService optionService;
 

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/secured/options", produces = MediaType.APPLICATION_JSON_VALUE)
-class SecuredOptionController {
+public class SecuredOptionController {
 
     private final OptionService service;
     private final SecuredOptionHandlerService handlerService;

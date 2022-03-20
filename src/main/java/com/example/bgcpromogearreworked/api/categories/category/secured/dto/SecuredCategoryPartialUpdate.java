@@ -33,7 +33,7 @@ public class SecuredCategoryPartialUpdate {
     private final Long parentId;
 
     @JsonCreator
-    SecuredCategoryPartialUpdate(@JsonProperty String name, @JsonProperty Long parentId) {
+    SecuredCategoryPartialUpdate(@JsonProperty("name") String name, @JsonProperty("productId") Long parentId) {
         this.name = name;
         this.parentId = parentId;
     }

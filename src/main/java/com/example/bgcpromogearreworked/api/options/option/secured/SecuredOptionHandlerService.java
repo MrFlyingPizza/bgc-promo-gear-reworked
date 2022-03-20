@@ -16,7 +16,7 @@ import java.util.List;
 @Service
 @Validated
 @RequiredArgsConstructor
-class SecuredOptionHandlerService {
+public class SecuredOptionHandlerService {
 
     private final OptionService service;
     private final SecuredOptionMapper mapper;

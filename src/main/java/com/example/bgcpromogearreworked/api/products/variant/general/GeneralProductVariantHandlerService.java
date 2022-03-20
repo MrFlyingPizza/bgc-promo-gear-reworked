@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-class GeneralProductVariantHandlerService {
+public class GeneralProductVariantHandlerService {
 
     private final GeneralProductVariantMapper mapper;
     private final ProductVariantService variantService;

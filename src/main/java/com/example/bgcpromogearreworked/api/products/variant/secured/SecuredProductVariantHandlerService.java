@@ -17,7 +17,7 @@ import java.util.List;
 @Service
 @Validated
 @RequiredArgsConstructor
-class SecuredProductVariantHandlerService {
+public class SecuredProductVariantHandlerService {
 
     private final SecuredProductVariantMapper mapper;
     private final ProductVariantService service;
