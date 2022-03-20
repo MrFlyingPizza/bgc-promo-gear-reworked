@@ -31,7 +31,7 @@ public class SecuredInventoryLevelController {
     @GetMapping
     private SecuredInventoryLevelBatchResponse getInventoryLevelBatch(@QuerydslPredicate(root = InventoryLevel.class) Predicate predicate,
                                                                       Pageable pageable) {
-        return mapper.toBatchResponse(handlerService.handleInventoryLevelBatchGet(predicate, pageable).getContent());
+        return mapper.toBatchResponse(handlerService.handleInventoryLevelBatchGet(predicate, pageable));
     }
 
     @PutMapping("/{locationId}/{variantId}")

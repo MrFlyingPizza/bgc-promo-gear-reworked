@@ -10,8 +10,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @Service
+@Validated
 @RequiredArgsConstructor
 public class SecuredInventoryLevelHandlerService {
 
@@ -26,14 +31,18 @@ public class SecuredInventoryLevelHandlerService {
         return inventoryLevelService.getInventoryLevels(predicate, pageable);
     }
 
-    InventoryLevel handleInventoryLevelUpdate(SecuredInventoryLevelUpdate inventoryLevelUpdate) {
+    List<InventoryLevel> handleInventoryLevelBatchGet() {
+        return inventoryLevelService.getInventoryLevels();
+    }
+
+    InventoryLevel handleInventoryLevelUpdate(@Valid SecuredInventoryLevelUpdate inventoryLevelUpdate) {
         return inventoryLevelService.updateInventoryLevel(inventoryLevelUpdate.getLocationId(),
                 inventoryLevelUpdate.getVariantId(),
                 inventoryLevelUpdate,
                 mapper::fromUpdate);
     }
 
-    InventoryLevel handleInventoryLevelPartialUpdate(SecuredInventoryLevelPartialUpdate inventoryLevelPartialUpdate) {
+    InventoryLevel handleInventoryLevelPartialUpdate(@Valid SecuredInventoryLevelPartialUpdate inventoryLevelPartialUpdate) {
         return inventoryLevelService.updateInventoryLevel(inventoryLevelPartialUpdate.getLocationId(),
                 inventoryLevelPartialUpdate.getVariantId(),
                 inventoryLevelPartialUpdate,

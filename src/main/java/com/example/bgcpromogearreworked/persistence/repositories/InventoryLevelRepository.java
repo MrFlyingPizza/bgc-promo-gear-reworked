@@ -6,4 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 public interface InventoryLevelRepository extends JpaRepository<InventoryLevel, InventoryLevelId>, QuerydslPredicateExecutor<InventoryLevel> {
+
+    boolean existsByLocationId(Long locationId);
+
 }

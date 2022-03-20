@@ -6,6 +6,7 @@ import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.blob.models.BlobHttpHeaders;
+import com.azure.storage.blob.models.PublicAccessType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -89,6 +90,7 @@ public class ProductImageBlobService {
     private static BlobContainerClient getProductImageContainerClient(BlobServiceClient blobServiceClient) {
         BlobContainerClient blobContainerClient = blobServiceClient.getBlobContainerClient(PRODUCT_IMAGE_CONTAINER_NAME);
         if (!blobContainerClient.exists()) {
+            // create the container automatically but does not set the access type
             blobContainerClient = blobServiceClient.createBlobContainer(PRODUCT_IMAGE_CONTAINER_NAME);
         }
         return blobContainerClient;

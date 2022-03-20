@@ -9,4 +9,5 @@ import java.util.UUID;
 public interface UserRepository extends JpaRepository<User, Long>, QuerydslPredicateExecutor<User> {
 
     User findByOid(UUID oid);
+    boolean existsByOfficeId(Long officeId);
 }

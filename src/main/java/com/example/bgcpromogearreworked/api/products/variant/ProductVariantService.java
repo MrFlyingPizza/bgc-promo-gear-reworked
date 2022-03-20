@@ -62,7 +62,7 @@ public class ProductVariantService {
             level.setLocationId(location.getId());
             level.setAvailableQuantity(0);
             level.setReservedQuantity(0);
-            level.setNotifyThreshold(0);
+            level.setNotifyThreshold(0); // TODO: 2022-03-20 look into configs for default this value
             inventoryLevelRepo.saveAndFlush(level);
         }
     }

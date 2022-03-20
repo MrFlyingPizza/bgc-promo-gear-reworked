@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class InventoryLevelExceptionHandler {
 
-    @ExceptionHandler(InventoryLevelNotFoundException.class)
+    @ExceptionHandler({InventoryLevelNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     private String handleInventoryLevelNotFound(InventoryLevelNotFoundException exception) {
         return "Inventory level could not be found.";

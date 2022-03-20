@@ -1,9 +1,7 @@
 package com.example.bgcpromogearreworked.api.inventorylevels.inventorylevel.secured.dto;
 
 import com.example.bgcpromogearreworked.persistence.entities.InventoryLevel;
-import com.example.bgcpromogearreworked.persistence.entities.OfficeLocation;
 import com.example.bgcpromogearreworked.persistence.entities.OptionValue;
-import com.example.bgcpromogearreworked.persistence.repositories.InventoryLevelRepository;
 import com.example.bgcpromogearreworked.persistence.repositories.OfficeLocationRepository;
 import com.example.bgcpromogearreworked.persistence.repositories.ProductVariantRepository;
 import org.mapstruct.AfterMapping;
@@ -11,8 +9,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
@@ -34,8 +32,15 @@ public abstract class SecuredInventoryLevelMapper {
     @Mapping(source = "variant.product.id", target = "variant.productId")
     public abstract SecuredInventoryLevelResponse toResponse(InventoryLevel inventoryLevel);
 
-    public SecuredInventoryLevelBatchResponse toBatchResponse(List<InventoryLevel> inventoryLevels) {
-        return new SecuredInventoryLevelBatchResponse(inventoryLevels.stream().map(this::toResponse).collect(Collectors.toList()));
+    public SecuredInventoryLevelBatchResponse toBatchResponse(Page<InventoryLevel> page) {
+        return new SecuredInventoryLevelBatchResponse(page.getContent().stream().map(this::toResponse).collect(Collectors.toList()),
+                page.getTotalPages(),
+                page.getNumber(),
+                page.isFirst(),
+                page.isLast(),
+                page.getNumberOfElements(),
+                page.getTotalElements(),
+                page.getSort().isSorted());
     }
 
     @AfterMapping
