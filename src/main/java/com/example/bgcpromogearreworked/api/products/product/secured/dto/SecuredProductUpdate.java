@@ -1,5 +1,6 @@
 package com.example.bgcpromogearreworked.api.products.product.secured.dto;
 
+import com.example.bgcpromogearreworked.api.products.product.secured.dto.validation.publishablewithvariant.PublishableWithVariant;
 import com.example.bgcpromogearreworked.api.shared.validation.constraints.categoryexists.CategoryExists;
 import com.example.bgcpromogearreworked.api.shared.validation.constraints.optionexists.OptionExists;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -14,6 +15,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
+@PublishableWithVariant
 public class SecuredProductUpdate {
 
     @JsonIgnore

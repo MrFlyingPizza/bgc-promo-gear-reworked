@@ -12,7 +12,8 @@ public class OptionExistsValidator implements ConstraintValidator<OptionExists, 
     private OptionRepository repo;
 
     @Override
-    public boolean isValid(Long id, ConstraintValidatorContext constraintValidatorContext) {
-        return repo.existsById(id);
+    public boolean isValid(Long optionId, ConstraintValidatorContext constraintValidatorContext) {
+        if (optionId == null) return true;
+        return repo.existsById(optionId);
     }
 }

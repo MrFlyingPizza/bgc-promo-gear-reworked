@@ -15,6 +15,9 @@ public class VariantPartialUpdateExpectedOptionCountValidator extends ExpectedOp
 
     @Override
     public boolean isValid(SecuredProductVariantPartialUpdate productVariantPartialUpdate, ConstraintValidatorContext constraintValidatorContext) {
+        if (productVariantPartialUpdate.getOptionValueIds() == null && !productVariantPartialUpdate.getIsInUse()) {
+            return true;
+        }
         return validate(productVariantPartialUpdate.getOptionValueIds(),
                 productVariantPartialUpdate.getProductId(),
                 productRepo);

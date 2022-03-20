@@ -6,11 +6,12 @@ import com.example.bgcpromogearreworked.api.options.option.OptionService;
 import com.example.bgcpromogearreworked.api.options.optionvalue.OptionValueService;
 import com.example.bgcpromogearreworked.api.options.optionvalue.secured.dto.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/secured/options/{optionId}/values")
+@RequestMapping(value = "/api/secured/options/{optionId}/values", produces = MediaType.APPLICATION_JSON_VALUE)
 public class SecuredOptionValueController {
 
     private final OptionService optionService;

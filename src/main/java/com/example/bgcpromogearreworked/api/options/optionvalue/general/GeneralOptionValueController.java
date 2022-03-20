@@ -8,6 +8,7 @@ import com.example.bgcpromogearreworked.api.options.optionvalue.general.dto.Gene
 import com.example.bgcpromogearreworked.api.options.optionvalue.general.dto.GeneralOptionValueMapper;
 import com.example.bgcpromogearreworked.api.options.optionvalue.general.dto.GeneralOptionValueResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api/options/{optionId}/values")
+@RequestMapping(value = "/api/options/{optionId}/values", produces = MediaType.APPLICATION_JSON_VALUE)
 public class GeneralOptionValueController {
 
     private final OptionValueService valueService;

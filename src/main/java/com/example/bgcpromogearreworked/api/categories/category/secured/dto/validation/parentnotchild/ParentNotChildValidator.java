@@ -4,9 +4,7 @@ import com.example.bgcpromogearreworked.persistence.repositories.CategoryReposit
 
 public abstract class ParentNotChildValidator {
     protected static boolean validate(Long parentId, CategoryRepository repo) {
-        if (parentId == null) {
-            return true;
-        }
+        if (parentId == null) return true;
         return repo.getById(parentId).getParent() == null;
     }
 }

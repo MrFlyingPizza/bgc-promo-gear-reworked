@@ -8,10 +8,11 @@ import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/secured/inventory_levels")
+@RequestMapping(value = "/api/secured/inventory_levels", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class SecuredInventoryLevelController {
 

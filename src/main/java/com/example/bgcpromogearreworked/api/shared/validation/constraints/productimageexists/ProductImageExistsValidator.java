@@ -13,6 +13,7 @@ public class ProductImageExistsValidator implements ConstraintValidator<ProductI
 
     @Override
     public boolean isValid(Long imageId, ConstraintValidatorContext constraintValidatorContext) {
+        if (imageId == null) return true;
         return imageRepo.existsById(imageId);
     }
 }

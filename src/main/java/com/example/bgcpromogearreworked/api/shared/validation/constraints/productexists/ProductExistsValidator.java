@@ -13,6 +13,7 @@ public class ProductExistsValidator implements ConstraintValidator<ProductExists
 
     @Override
     public boolean isValid(Long productId, ConstraintValidatorContext constraintValidatorContext) {
+        if (productId == null) return true;
         return productRepo.existsById(productId);
     }
 }

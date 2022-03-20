@@ -24,10 +24,10 @@ public class ValidFileContentTypeValidator implements ConstraintValidator<ValidF
             return true;
         }
         Iterator<String> iter = Arrays.stream(this.acceptedMediaTypes).iterator();
-        boolean valid = true;
-        while (iter.hasNext() && valid) {
-            if (!Objects.equals(file.getContentType(), iter.next())) {
-                valid = false;
+        boolean valid = false;
+        while (iter.hasNext() && !valid) {
+            if (Objects.equals(file.getContentType(), iter.next())) {
+                valid = true;
             }
         }
         return valid;
