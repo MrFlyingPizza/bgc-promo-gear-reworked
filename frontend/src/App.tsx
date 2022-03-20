@@ -1,20 +1,57 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
-import {AppBar, Container, Menu, Toolbar, Typography} from "@mui/material";
+import StoreAppBar from "./StoreAppBar";
+import {Button, Card, CardActions, CardContent, Container, Grid, Typography} from "@mui/material";
 
 function App() {
-  return (
-      <AppBar position={"static"}>
-        <Container maxWidth={"xl"}>
-          <Toolbar>
-            <Typography variant={"h6"} noWrap component={"div"}>
-
-            </Typography>
-          </Toolbar>
-        </Container>
-      </AppBar>
-  )
+    return (
+        <React.Fragment>
+            <StoreAppBar>
+            </StoreAppBar>,
+            <Grid container spacing={4}>
+                <Grid item xs={3}>
+                </Grid>
+                <Grid item xs={2}>
+                    <Card>
+                        <CardContent sx={{minHeight: 200, maxHeight: 200, maxWidth: 100}}>
+                            <Typography>
+                                Some text here
+                            </Typography>
+                        </CardContent>
+                        <CardActions>
+                            <Button size="small">Learn More</Button>
+                        </CardActions>
+                    </Card>
+                </Grid>
+                <Grid item xs={2}>
+                    <Card>
+                        <CardContent sx={{minHeight: 200, maxHeight: 200}}>
+                            <Typography>
+                                Some text here
+                            </Typography>
+                        </CardContent>
+                        <CardActions>
+                            <Button size="small">Learn More</Button>
+                        </CardActions>
+                    </Card>
+                </Grid>
+                <Grid item xs={2}>
+                    <Card>
+                        <CardContent sx={{minHeight: 200, maxHeight: 200}}>
+                            <Typography>
+                                Some text here
+                            </Typography>
+                        </CardContent>
+                        <CardActions>
+                            <Button size="small">Learn More</Button>
+                        </CardActions>
+                    </Card>
+                </Grid>
+                <Grid item xs={3}>
+                </Grid>
+            </Grid>
+        </React.Fragment>
+    )
 }
 
 export default App;

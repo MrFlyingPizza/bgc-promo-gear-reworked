@@ -8,7 +8,6 @@ import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @SpringBootApplication
-@EnableWebMvc
 @EnableSpringDataWebSupport
 @OpenAPIDefinition(info = @Info(title = "BGC Promo Gear Store REST API", version = "3.0", description = "REST API to enable BGC Promo Gear store functionality and promo gear team services."))
 public class BgcPromoGearReworkedApplication {
