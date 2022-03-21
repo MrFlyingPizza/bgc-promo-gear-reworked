@@ -8,6 +8,7 @@ import com.example.bgcpromogearreworked.persistence.repositories.ProductVariantR
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -45,7 +46,7 @@ public class ProductService {
         assert productId != null && source != null && mapper != null;
         Product original = repo.findById(productId).orElseThrow(ProductNotFoundException::new);
 
-        Set<Option> originalOptions = original.getOptions();
+        Set<Option> originalOptions = new HashSet<>(original.getOptions());
 
         Product updated = mapper.apply(source, original);
         assert updated.getId().equals(productId);
