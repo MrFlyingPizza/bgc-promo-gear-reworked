@@ -9,11 +9,7 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = {
-        SecuredOfficeCreateUniqueOfficeNameValidator.class,
-        SecuredOfficeUpdateUniqueOfficeNameValidator.class,
-        SecuredOfficePartialUpdateUniqueOfficeNameValidator.class
-})
+@Constraint(validatedBy = UniqueOfficeNameValidator.class)
 public @interface UniqueOfficeName {
 
     String message() default "{dto_validation.constraints.UniqueOfficeName}";
