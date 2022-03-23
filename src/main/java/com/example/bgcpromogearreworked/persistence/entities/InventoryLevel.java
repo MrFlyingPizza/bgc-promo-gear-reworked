@@ -37,6 +37,8 @@ public class InventoryLevel {
     @Column(name = "notify_threshold", nullable = false)
     private Integer notifyThreshold;
 
+    // TODO: 2022-03-21 add formula for needed stock
+
     @Column(name = "last_manually_modified_date")
     private Instant lastManuallyModifiedDate;
 
