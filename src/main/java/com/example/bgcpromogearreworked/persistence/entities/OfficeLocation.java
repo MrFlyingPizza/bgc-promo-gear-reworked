@@ -16,6 +16,7 @@ import java.time.Instant;
 @Setter
 public class OfficeLocation {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -49,12 +50,12 @@ public class OfficeLocation {
     private Instant lastModifiedDate;
 
     @CreatedBy
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by")
     private User createdBy;
 
     @LastModifiedBy
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "last_modified_by")
     private User lastModifiedBy;
 }
