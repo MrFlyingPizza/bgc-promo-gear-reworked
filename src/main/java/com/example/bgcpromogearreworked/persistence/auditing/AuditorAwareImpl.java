@@ -29,7 +29,7 @@ public class AuditorAwareImpl implements AuditorAware<User> {
         if (authentication.getPrincipal() instanceof OidcUser) {
             OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
             UUID oid = UUID.fromString(oidcUser.getClaim("oid"));
-            return Optional.of(repo.findByOid(oid));
+            return repo.findByOid(oid);
         }
         return Optional.empty();
     }
