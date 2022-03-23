@@ -133,6 +133,11 @@
             <artifactId>querydsl-jpa</artifactId>
             <version>${querydsl.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-identity</artifactId>
+            <version>1.4.0</version>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>
