@@ -12,11 +12,11 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 @Service
-public class UserInfoService extends AADOAuth2UserService {
+public class MSGraphSyncedUserService extends AADOAuth2UserService {
 
     private final GraphServiceClient graphClient;
 
-    public UserInfoService(AADAuthenticationProperties properties, GraphServiceClient graphClient) {
+    public MSGraphSyncedUserService(AADAuthenticationProperties properties, GraphServiceClient graphClient) {
         super(properties);
         this.graphClient = graphClient;
     }
