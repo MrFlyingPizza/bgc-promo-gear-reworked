@@ -32,10 +32,10 @@ public class User {
     @Column(name = "credit", nullable = false, precision = 131089)
     private BigDecimal credit;
 
-    @Column(name = "last_big_item")
-    private Instant lastBigItem;
+    @Column(name = "last_big_item_date")
+    private Instant lastBigItemDate;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "office_id", nullable = false)
     private OfficeLocation office;
 }
