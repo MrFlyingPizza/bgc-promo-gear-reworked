@@ -14,8 +14,7 @@ public class SecuredProductVariantResponse {
     @RequiredArgsConstructor
     static class NestedUser {
         private final Long id;
-        private final String firstName;
-        private final String lastName;
+        private final String displayName;
     }
 
     @Getter

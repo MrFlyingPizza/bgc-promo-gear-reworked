@@ -45,7 +45,7 @@ public class InventoryLevelService {
         InventoryLevel level = mapper.apply(source, inventoryLevelRepo.findById(
                 new InventoryLevelId(locationId, variantId)).orElseThrow(InventoryLevelNotFoundException::new));
         assert level.getLocationId().equals(locationId) && level.getVariantId().equals(variantId);
-        return inventoryLevelRepo.saveAndFlush(level);
+        return inventoryLevelRepo.saveAndFlush(level); // TODO: 2022-03-23 put in last manually updated user
     }
 
 }

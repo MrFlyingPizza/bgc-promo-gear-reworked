@@ -3,6 +3,7 @@ package com.example.bgcpromogearreworked.api.inventorylevels.inventorylevel.secu
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.time.Instant;
 import java.util.List;
 
 @Getter
@@ -35,7 +36,16 @@ public class SecuredInventoryLevelResponse {
         private final List<NestedOptionValue> options;
     }
 
+    @Getter
+    @RequiredArgsConstructor
+    static class NestedUser {
+        private final Long id;
+        private final String displayName;
+    }
+
     private final NestedVariant variant;
     private final NestedLocation location;
+    private final Instant lastManuallyModifiedDate;
+    private final NestedUser lastManuallyModifiedBy;
 
 }
