@@ -21,7 +21,7 @@ public class Category {
 
     @Column(name = "name", length = 30)
     private String name;
-
+    // TODO: 2022-03-25 look into separating the foreign key column and the join column to better support lazy loading
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Category parent;
