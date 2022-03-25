@@ -5,7 +5,6 @@ import com.example.bgcpromogearreworked.persistence.entities.ProductVariant;
 import com.example.bgcpromogearreworked.persistence.repositories.OptionValueRepository;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Streamable;
 
 import java.util.List;
 import java.util.stream.Collectors;
