@@ -10,11 +10,23 @@ import java.util.stream.Collectors;
 public abstract class SecuredOfficeLocationMapper {
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdDate", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "lastModifiedDate", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
     public abstract OfficeLocation fromCreate(SecuredOfficeLocationCreate officeLocationCreate);
 
+    @Mapping(target = "createdDate", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "lastModifiedDate", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
     public abstract OfficeLocation fromUpdate(SecuredOfficeLocationUpdate officeLocationUpdate,
                                               @MappingTarget OfficeLocation officeLocation);
 
+    @Mapping(target = "createdDate", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "lastModifiedDate", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     public abstract OfficeLocation fromPartialUpdate(SecuredOfficeLocationPartialUpdate officeLocationPartialUpdate,
                                                      @MappingTarget OfficeLocation officeLocation);

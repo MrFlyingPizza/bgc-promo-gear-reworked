@@ -53,8 +53,8 @@ public class OfficeLocationService {
         assert location != null;
         variantRepo.findAll().forEach(variant -> {
             InventoryLevel inventoryLevel = new InventoryLevel();
-            inventoryLevel.setLocation(location);
-            inventoryLevel.setVariant(variant);
+            inventoryLevel.setLocationId(location.getId());
+            inventoryLevel.setVariantId(variant.getId());
             inventoryLevel.setNotifyThreshold(0); // TODO: 2022-03-20 look into making configs for this value
             inventoryLevel.setReservedQuantity(0);
             inventoryLevel.setAvailableQuantity(0);

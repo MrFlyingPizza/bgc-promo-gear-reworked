@@ -1,5 +1,6 @@
 package com.example.bgcpromogearreworked.api.users.user.general;
 
+import com.example.bgcpromogearreworked.api.shared.utils.Utils;
 import com.example.bgcpromogearreworked.api.users.exceptions.UserNotAuthenticatedException;
 import com.example.bgcpromogearreworked.api.users.user.general.dto.GeneralUserMapper;
 import com.example.bgcpromogearreworked.api.users.user.general.dto.GeneralUserResponse;
@@ -23,14 +24,10 @@ public class GeneralUserController {
 
     @GetMapping
     private GeneralUserResponse getUser(@AuthenticationPrincipal OidcUser oidcUser) {
-        if (oidcUser == null) {
+        UUID oid = Utils.oidFromOidcUser(oidcUser);
+        if (oid == null) {
             throw new UserNotAuthenticatedException();
         }
-        String oidString = oidcUser.getClaim("oid");
-        if (oidString == null) {
-            throw new UserNotAuthenticatedException();
-        }
-        UUID oid = UUID.fromString(oidString);
         return mapper.toResponse(handlerService.handleGetUser(oid));
     }
 
