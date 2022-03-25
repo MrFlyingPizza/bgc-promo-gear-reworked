@@ -37,7 +37,7 @@ public class SecuredProductUpdate {
     private final String description;
 
     @NotNull
-    @Digits(integer = 10, fraction = 2)
+    @Digits(integer = 8, fraction = 2)
     @DecimalMin(value = "0.00")
     @DecimalMax(value = "99999999.99")
     private final BigDecimal price;
