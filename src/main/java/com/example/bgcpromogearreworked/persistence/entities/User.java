@@ -8,12 +8,13 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
-@Table(name = "\"user\"")
-@Entity
 @Getter
 @Setter
+@Entity
+@Table(name = "\"user\"", indexes = {
+        @Index(name = "user_oid_uindex", columnList = "oid", unique = true)
+})
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -22,17 +23,19 @@ public class User {
     @Column(name = "oid", nullable = false)
     private UUID oid;
 
-    @Column(name = "display_name", length = 256)
-    private String displayName;
-
-    @Column(name = "credit", nullable = false, precision = 131089)
+    @Column(name = "credit", nullable = false, precision = 10, scale = 2)
     private BigDecimal credit;
+
+    @Column(name = "owed_credit", nullable = false, precision = 10, scale = 2)
+    private BigDecimal owedCredit;
 
     @Column(name = "last_big_item_date")
     private Instant lastBigItemDate;
 
+    @Column(name = "display_name", length = 256)
+    private String displayName;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "office_id")
     private OfficeLocation office;
-
 }

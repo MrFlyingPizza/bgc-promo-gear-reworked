@@ -1,15 +1,54 @@
 package com.example.bgcpromogearreworked.api.users.user.secured;
 
+import com.example.bgcpromogearreworked.api.users.exceptions.UserNotFoundException;
+import com.example.bgcpromogearreworked.api.users.user.UserService;
+import com.example.bgcpromogearreworked.api.users.user.secured.dto.*;
+import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/api/secured/users", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class SecuredUserController {
 
-// TODO: 2022-03-23 implement 
+    private final UserService service;
+    private final SecuredUserHandlerService handlerService;
+    private final SecuredUserMapper mapper;
+
+    @GetMapping("/{userId}")
+    private SecuredUserResponse getUser(@PathVariable Long userId) {
+        if (!service.checkUserExists(userId)) {
+            throw new UserNotFoundException();
+        }
+        return mapper.toResponse(handlerService.handleUserGet(userId));
+    }
+
+    @GetMapping
+    private SecuredUserBatchResponse getUserBatch(@QuerydslPredicate Predicate predicate, Pageable pageable) {
+        return mapper.toBatchResponse(handlerService.handleUserBatchGet(predicate, pageable));
+    }
+
+    @PutMapping("/{userId}")
+    private SecuredUserResponse updateUser(@PathVariable Long userId, @RequestBody SecuredUserUpdate userUpdate) {
+        if (!service.checkUserExists(userId)) {
+            throw new UserNotFoundException();
+        }
+        userUpdate.setId(userId);
+        return mapper.toResponse(handlerService.handleUserUpdate(userUpdate));
+    }
+
+    @PatchMapping("/{userId}")
+    private SecuredUserResponse updateUserPartial(@PathVariable Long userId,
+                                                  @RequestBody SecuredUserPartialUpdate userPartialUpdate) {
+        if (!service.checkUserExists(userId)) {
+            throw new UserNotFoundException();
+        }
+        userPartialUpdate.setId(userId);
+        return mapper.toResponse(handlerService.handleUserPartialUpdate(userPartialUpdate));
+    }
 
 }

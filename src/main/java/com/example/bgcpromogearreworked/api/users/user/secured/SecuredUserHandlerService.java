@@ -2,11 +2,18 @@ package com.example.bgcpromogearreworked.api.users.user.secured;
 
 import com.example.bgcpromogearreworked.api.users.user.UserService;
 import com.example.bgcpromogearreworked.api.users.user.secured.dto.SecuredUserMapper;
+import com.example.bgcpromogearreworked.api.users.user.secured.dto.SecuredUserPartialUpdate;
 import com.example.bgcpromogearreworked.api.users.user.secured.dto.SecuredUserUpdate;
 import com.example.bgcpromogearreworked.persistence.entities.User;
+import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
+import java.util.UUID;
 
 @Service
 @Validated
@@ -18,10 +25,17 @@ public class SecuredUserHandlerService {
 
     User handleUserGet(Long userId) {
         return service.getUser(userId);
-    };
+    }
 
-    User handleUserUpdate(SecuredUserUpdate userUpdate) {
+    User handleUserUpdate(@Valid SecuredUserUpdate userUpdate) {
         return service.updateUser(userUpdate.getId(), userUpdate, mapper::fromUpdate);
     }
-// TODO: 2022-03-24 finish implement
+
+    User handleUserPartialUpdate(@Valid SecuredUserPartialUpdate userPartialUpdate) {
+        return service.updateUser(userPartialUpdate.getId(), userPartialUpdate, mapper::fromPartialUpdate);
+    }
+
+    Page<User> handleUserBatchGet(Predicate predicate, Pageable pageable) {
+        return service.getUsers(predicate, pageable);
+    }
 }

@@ -1,5 +1,39 @@
 package com.example.bgcpromogearreworked.api.users.user.secured.dto;
 
+import com.example.bgcpromogearreworked.api.shared.validation.constraints.officelocationexists.OfficeLocationExists;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Digits;
+import java.math.BigDecimal;
+import java.time.Instant;
+
+@Getter
 public class SecuredUserPartialUpdate {
-    // TODO: 2022-03-23 implement
+    @JsonIgnore
+    @Setter
+    private Long id;
+
+    @DecimalMin("0.00")
+    @DecimalMin("99999999.99")
+    @Digits(integer = 8, fraction = 2)
+    private final BigDecimal credit;
+
+    private final Instant lastBigItemDate;
+
+    @OfficeLocationExists
+    private final Long officeId;
+
+    @JsonCreator
+    SecuredUserPartialUpdate(@JsonProperty("credit") BigDecimal credit,
+                             @JsonProperty("lastBigItemDate") Instant lastBigItemDate,
+                             @JsonProperty("officeId") Long officeId) {
+        this.credit = credit;
+        this.lastBigItemDate = lastBigItemDate;
+        this.officeId = officeId;
+    }
 }

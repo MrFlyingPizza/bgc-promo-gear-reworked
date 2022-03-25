@@ -18,6 +18,10 @@ public class UserService { // TODO: 2022-03-21 app registration and handle login
 
     private final UserRepository userRepo;
 
+    public boolean checkUserExists(Long userId) {
+        return userRepo.existsById(userId);
+    }
+
     public User getUser(Long userId) {
         assert userId != null;
         return userRepo.findById(userId).orElseThrow(UserNotFoundException::new);
