@@ -4,6 +4,8 @@ import com.example.bgcpromogearreworked.api.inventorylevels.inventorylevel.Inven
 import com.example.bgcpromogearreworked.api.inventorylevels.inventorylevel.secured.dto.SecuredInventoryLevelMapper;
 import com.example.bgcpromogearreworked.api.inventorylevels.inventorylevel.secured.dto.SecuredInventoryLevelPartialUpdate;
 import com.example.bgcpromogearreworked.api.inventorylevels.inventorylevel.secured.dto.SecuredInventoryLevelUpdate;
+import com.example.bgcpromogearreworked.api.users.exceptions.UserNotFoundException;
+import com.example.bgcpromogearreworked.api.users.user.UserService;
 import com.example.bgcpromogearreworked.persistence.entities.InventoryLevel;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import java.time.Clock;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Validated
@@ -21,6 +25,7 @@ import java.util.List;
 public class SecuredInventoryLevelHandlerService {
 
     private final InventoryLevelService inventoryLevelService;
+    private final UserService userService;
     private final SecuredInventoryLevelMapper mapper;
 
     InventoryLevel handleInventoryLevelGet(Long locationId, Long variantId) {
@@ -35,14 +40,22 @@ public class SecuredInventoryLevelHandlerService {
         return inventoryLevelService.getInventoryLevels();
     }
 
-    InventoryLevel handleInventoryLevelUpdate(@Valid SecuredInventoryLevelUpdate inventoryLevelUpdate) {
+    InventoryLevel handleInventoryLevelUpdate(@Valid SecuredInventoryLevelUpdate inventoryLevelUpdate, UUID oid) {
+        try {
+            inventoryLevelUpdate.setLastManuallyModifiedById(userService.getUser(oid).getId());
+        } catch (UserNotFoundException ignored) { }
+        inventoryLevelUpdate.setLastManuallyModifiedDate(Clock.systemUTC().instant());
         return inventoryLevelService.updateInventoryLevel(inventoryLevelUpdate.getLocationId(),
                 inventoryLevelUpdate.getVariantId(),
                 inventoryLevelUpdate,
                 mapper::fromUpdate);
     }
 
-    InventoryLevel handleInventoryLevelPartialUpdate(@Valid SecuredInventoryLevelPartialUpdate inventoryLevelPartialUpdate) {
+    InventoryLevel handleInventoryLevelPartialUpdate(@Valid SecuredInventoryLevelPartialUpdate inventoryLevelPartialUpdate, UUID oid) {
+        try {
+            inventoryLevelPartialUpdate.setLastManuallyModifiedById(userService.getUser(oid).getId());
+        } catch (UserNotFoundException ignored) { }
+        inventoryLevelPartialUpdate.setLastManuallyModifiedDate(Clock.systemUTC().instant());
         return inventoryLevelService.updateInventoryLevel(inventoryLevelPartialUpdate.getLocationId(),
                 inventoryLevelPartialUpdate.getVariantId(),
                 inventoryLevelPartialUpdate,

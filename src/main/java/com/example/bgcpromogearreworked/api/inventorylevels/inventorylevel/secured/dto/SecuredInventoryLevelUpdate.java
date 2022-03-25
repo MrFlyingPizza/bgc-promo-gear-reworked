@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.time.Instant;
 
 @Getter
 public class SecuredInventoryLevelUpdate {
@@ -31,6 +32,14 @@ public class SecuredInventoryLevelUpdate {
     @NotNull
     @Min(-1)
     private final Integer notifyThreshold;
+
+    @JsonIgnore
+    @Setter
+    private Instant lastManuallyModifiedDate;
+
+    @JsonIgnore
+    @Setter
+    private Long lastManuallyModifiedById;
 
     @JsonCreator
     SecuredInventoryLevelUpdate(@JsonProperty("availableQuantity") Integer availableQuantity,

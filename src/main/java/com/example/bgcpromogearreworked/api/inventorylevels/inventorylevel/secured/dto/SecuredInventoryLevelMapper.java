@@ -4,12 +4,10 @@ import com.example.bgcpromogearreworked.persistence.entities.InventoryLevel;
 import com.example.bgcpromogearreworked.persistence.entities.OptionValue;
 import com.example.bgcpromogearreworked.persistence.repositories.OfficeLocationRepository;
 import com.example.bgcpromogearreworked.persistence.repositories.ProductVariantRepository;
-import org.mapstruct.AfterMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.stream.Collectors;
 
@@ -22,16 +20,27 @@ public abstract class SecuredInventoryLevelMapper {
     @Autowired
     private OfficeLocationRepository locationRepo;
 
+    @Mapping(source = "lastManuallyModifiedById", target = "lastManuallyModifiedBy.id")
+    @Mapping(target = "variant", ignore = true)
+    @Mapping(target = "location", ignore = true)
     public abstract InventoryLevel fromUpdate(SecuredInventoryLevelUpdate inventoryLevelUpdate,
                                               @MappingTarget InventoryLevel inventoryLevel);
 
+    @Mapping(source = "lastManuallyModifiedById", target = "lastManuallyModifiedBy.id",
+            nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "variant", ignore = true)
+    @Mapping(target = "location", ignore = true)
     public abstract InventoryLevel fromPartialUpdate(SecuredInventoryLevelPartialUpdate inventoryLevelPartialUpdate,
                                                      @MappingTarget InventoryLevel inventoryLevel);
 
     @Mapping(source = "variant.product.name", target = "variant.productName")
     @Mapping(source = "variant.product.id", target = "variant.productId")
+    @Mapping(source = "variant.optionValues", target = "variant.options")
+    @Transactional
     public abstract SecuredInventoryLevelResponse toResponse(InventoryLevel inventoryLevel);
 
+    @Transactional
     public SecuredInventoryLevelBatchResponse toBatchResponse(Page<InventoryLevel> page) {
         return new SecuredInventoryLevelBatchResponse(page.getContent().stream().map(this::toResponse).collect(Collectors.toList()),
                 page.getTotalPages(),

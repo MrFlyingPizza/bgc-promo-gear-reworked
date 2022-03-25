@@ -43,6 +43,9 @@ public class SecuredInventoryLevelResponse {
         private final String displayName;
     }
 
+    private final Integer availableQuantity;
+    private final Integer reservedQuantity;
+    private final Integer notifyThreshold;
     private final NestedVariant variant;
     private final NestedLocation location;
     private final Instant lastManuallyModifiedDate;

@@ -3,13 +3,18 @@ package com.example.bgcpromogearreworked.api.inventorylevels.inventorylevel.secu
 import com.example.bgcpromogearreworked.api.inventorylevels.exceptions.InventoryLevelNotFoundException;
 import com.example.bgcpromogearreworked.api.inventorylevels.inventorylevel.InventoryLevelService;
 import com.example.bgcpromogearreworked.api.inventorylevels.inventorylevel.secured.dto.*;
+import com.example.bgcpromogearreworked.api.shared.utils.Utils;
 import com.example.bgcpromogearreworked.persistence.entities.InventoryLevel;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/api/secured/inventory_levels", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -37,25 +42,27 @@ public class SecuredInventoryLevelController {
     @PutMapping("/{locationId}/{variantId}")
     private SecuredInventoryLevelResponse updateInventoryLevel(@PathVariable Long locationId,
                                                                @PathVariable Long variantId,
-                                                               @RequestBody SecuredInventoryLevelUpdate inventoryLevelUpdate) {
+                                                               @RequestBody SecuredInventoryLevelUpdate inventoryLevelUpdate,
+                                                               @AuthenticationPrincipal OidcUser oidcUser) {
         if (!service.checkInventoryLevelExists(locationId, variantId)) {
             throw new InventoryLevelNotFoundException();
         }
         inventoryLevelUpdate.setLocationId(locationId);
         inventoryLevelUpdate.setVariantId(variantId);
-        return mapper.toResponse(handlerService.handleInventoryLevelUpdate(inventoryLevelUpdate));
+        return mapper.toResponse(handlerService.handleInventoryLevelUpdate(inventoryLevelUpdate, Utils.oidFromOidcUser(oidcUser)));
     }
 
     @PatchMapping("/{locationId}/{variantId}")
     private SecuredInventoryLevelResponse updateInventoryLevelPartial(@PathVariable Long locationId,
                                                                       @PathVariable Long variantId,
-                                                                      @RequestBody SecuredInventoryLevelPartialUpdate inventoryLevelPartialUpdate) {
+                                                                      @RequestBody SecuredInventoryLevelPartialUpdate inventoryLevelPartialUpdate,
+                                                                      @AuthenticationPrincipal OidcUser oidcUser) {
         if (!service.checkInventoryLevelExists(locationId, variantId)) {
             throw new InventoryLevelNotFoundException();
         }
         inventoryLevelPartialUpdate.setLocationId(locationId);
         inventoryLevelPartialUpdate.setVariantId(variantId);
-        return mapper.toResponse(handlerService.handleInventoryLevelPartialUpdate(inventoryLevelPartialUpdate));
+        return mapper.toResponse(handlerService.handleInventoryLevelPartialUpdate(inventoryLevelPartialUpdate, Utils.oidFromOidcUser(oidcUser)));
     }
 
 }
