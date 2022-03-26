@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public abstract class SecuredUserMapper {
-    // TODO: 2022-03-24 finish implement
+
     @Autowired
     private OfficeLocationRepository locationRepo;
 

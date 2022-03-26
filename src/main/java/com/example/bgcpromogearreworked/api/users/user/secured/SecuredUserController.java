@@ -3,6 +3,7 @@ package com.example.bgcpromogearreworked.api.users.user.secured;
 import com.example.bgcpromogearreworked.api.users.exceptions.UserNotFoundException;
 import com.example.bgcpromogearreworked.api.users.user.UserService;
 import com.example.bgcpromogearreworked.api.users.user.secured.dto.*;
+import com.example.bgcpromogearreworked.persistence.entities.User;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +29,8 @@ public class SecuredUserController {
     }
 
     @GetMapping
-    private SecuredUserBatchResponse getUserBatch(@QuerydslPredicate Predicate predicate, Pageable pageable) {
+    private SecuredUserBatchResponse getUserBatch(@QuerydslPredicate(root = User.class) Predicate predicate,
+                                                  Pageable pageable) {
         return mapper.toBatchResponse(handlerService.handleUserBatchGet(predicate, pageable));
     }
 

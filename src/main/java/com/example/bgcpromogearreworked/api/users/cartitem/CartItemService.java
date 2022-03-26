@@ -1,6 +1,6 @@
-package com.example.bgcpromogearreworked.api.carts.cart;
+package com.example.bgcpromogearreworked.api.users.cartitem;
 
-import com.example.bgcpromogearreworked.api.carts.exceptions.CartItemNotFoundException;
+import com.example.bgcpromogearreworked.api.users.exceptions.UserCartItemNotFoundException;
 import com.example.bgcpromogearreworked.persistence.entities.CartItem;
 import com.example.bgcpromogearreworked.persistence.entities.CartItemId;
 import com.example.bgcpromogearreworked.persistence.repositories.CartItemRepository;
@@ -13,7 +13,7 @@ import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
-public class CartService { // TODO: 2022-03-21 implement handler services and controller
+public class CartItemService {
 
     private final CartItemRepository cartItemRepo;
 
@@ -24,6 +24,10 @@ public class CartService { // TODO: 2022-03-21 implement handler services and co
         return id;
     }
 
+    public boolean checkCartItemExists(Long userId, Long variantId) {
+        return cartItemRepo.existsById(buildId(userId, variantId));
+    }
+
     public List<CartItem> getCartItems(Long userId) {
         assert userId != null;
         return cartItemRepo.findAllByUserId(userId);
@@ -31,7 +35,7 @@ public class CartService { // TODO: 2022-03-21 implement handler services and co
 
     public CartItem getCartItem(Long userId, Long variantId) {
         assert userId != null && variantId != null;
-        return cartItemRepo.findById(buildId(userId, variantId)).orElseThrow(CartItemNotFoundException::new);
+        return cartItemRepo.findById(buildId(userId, variantId)).orElseThrow(UserCartItemNotFoundException::new);
     }
 
     public <T> CartItem createCartItem(T source, Function<T, CartItem> mapper) {
@@ -41,7 +45,7 @@ public class CartService { // TODO: 2022-03-21 implement handler services and co
 
     public <T> CartItem updateCartItem(Long userId, Long variantId, T source, BiFunction<T, CartItem, CartItem> mapper) {
         assert userId != null && variantId != null && source != null && mapper != null;
-        CartItem cartItem = mapper.apply(source, cartItemRepo.findById(buildId(userId, variantId)).orElseThrow(CartItemNotFoundException::new));
+        CartItem cartItem = mapper.apply(source, cartItemRepo.findById(buildId(userId, variantId)).orElseThrow(UserCartItemNotFoundException::new));
         assert userId.equals(cartItem.getUser().getId()) && variantId.equals(cartItem.getVariant().getId());
         return cartItemRepo.save(cartItem);
     }

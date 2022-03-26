@@ -18,6 +18,10 @@ public class UserService { // TODO: 2022-03-21 app registration and handle login
 
     private final UserRepository userRepo;
 
+    public boolean checkUserExists(UUID oid) {
+        return userRepo.existsByOid(oid);
+    }
+
     public boolean checkUserExists(Long userId) {
         return userRepo.existsById(userId);
     }
