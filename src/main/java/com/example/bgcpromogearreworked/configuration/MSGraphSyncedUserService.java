@@ -31,7 +31,7 @@ public class MSGraphSyncedUserService extends AADOAuth2UserService {
 
     @Override
     public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
-        User graphUser = graphClient.users(userRequest.getIdToken().getClaim("oid")).buildRequest().get()   ;
+        User graphUser = graphClient.users(userRequest.getIdToken().getClaim("oid")).buildRequest().get();
         if (graphUser == null) {
             throw new OAuth2AuthenticationException("Could not obtain the information for the user to be authenticated.");
         }
