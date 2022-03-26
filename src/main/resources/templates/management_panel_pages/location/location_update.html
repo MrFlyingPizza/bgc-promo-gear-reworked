@@ -1,0 +1,238 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{management_panel_layout.html}">
+<head>
+  <title>Update Location</title>
+</head>
+<div layout:fragment="content">
+  <!-- Heading -->
+  <h2>Update Location</h2>
+
+  <!-- Return to viewing locations -->
+  <button class="btn btn-outline-primary" onclick="location.href='/management/location/'">
+    Return to Locations
+  </button>
+
+  <p class="text-center">Note: Only fill in the fields you like to be changed</p>
+
+  <div class="container mt-5">
+    <!--  Form to update location  -->
+    <form th:action="'/management/api/location/'+${location?.getID()}" method="post" class="row g-3" id="update-location-form">
+      <div class="col-12">
+        <label for="name" class="form-label">Location Name:</label>
+        <input type="text" class="form-control" id="name" name="name" th:placeholder="${location?.getName()}">
+        <div class="form-text">e.g, Vancouver Office, Calgary Office</div>
+      </div>
+      <div class="col-md-4">
+        <label for="country" class="form-label">Country:</label>
+        <input type="text" class="form-control" id="country" name="country" th:placeholder="${location?.getCountry()}">
+      </div>
+      <div class="col-md-4">
+        <label for="province" class="form-label">State/Province:</label>
+        <input type="text" class="form-control" id="province" name="province" th:placeholder="${location?.getProvince()}">
+      </div>
+      <div class="col-md-4">
+        <label for="city" class="form-label">City:</label>
+        <input type="text" class="form-control" id="city" name="city" th:placeholder="${location?.getCity()}">
+      </div>
+      <div class="col-md-8">
+        <label for="street-address-one" class="form-label">Street Address 1:</label>
+        <input type="text" class="form-control" id="street-address-one"
+               name="street-address-one" th:placeholder="${location?.getStreetAddress1()}">
+      </div>
+      <div class="col-md-4">
+        <label for="postal-code" class="form-label">Postal Code:</label>
+        <input type="text" class="form-control" id="postal-code"
+               name="postal-code" th:placeholder="${location?.getPostalCode()}">
+      </div>
+      <div class="col-12">
+        <label for="street-address-two" class="form-label">Street Address 2:</label>
+        <input type="text" class="form-control" id="street-address-two"
+               name="street-address-two" th:placeholder="${location?.getStreetAddress2()}">
+      </div>
+      <div class="col-md-12">
+        <!--   Update Location Button     -->
+        <input class="btn btn-outline-primary" id="submit-update-location" type="button"
+               th:attr="onclick=|get_currently_stored_location('${location?.getID()}')|" value="Submit Update" disabled>
+        <!-- Delete Location Button -->
+        <input class="btn btn-outline-primary" id="submit-delete-location" type="button"
+               value="Delete" data-bs-toggle="modal" data-bs-target="#confirm-delete-location-modal">
+      </div>
+
+      <!-- Show the user a popup modal allowing them to confirm the info they are trying to update -->
+      <div class="modal fade" id="confirm-location-update-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Confirm Update</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              Are you sure to make the following changes to location?
+              <table class="table">
+                <tr>
+                  <th>Attribute</th>
+                  <th>Currently Stored Value</th>
+                  <th>New Value</th>
+                </tr>
+                <tr id="name-row">
+                  <td style="font-weight: bold">Name</td>
+                  <td id="currently-stored-name"></td>
+                  <td id="display-new-name"></td>
+                </tr>
+                <tr id="country-row">
+                  <td style="font-weight: bold">Country</td>
+                  <td id="currently-stored-country"></td>
+                  <td id="display-new-country"></td>
+                </tr>
+                <tr id="province-row">
+                  <td style="font-weight: bold">State/Province</td>
+                  <td id="currently-stored-province"></td>
+                  <td id="display-new-province"></td>
+                </tr>
+                <tr id="city-row">
+                  <td style="font-weight: bold">City</td>
+                  <td id="currently-stored-city"></td>
+                  <td id="display-new-city"></td>
+                </tr>
+                <tr id="address-one-row">
+                  <td style="font-weight: bold">Street Address 1</td>
+                  <td id="currently-stored-address-one"></td>
+                  <td id="display-new-address-one"></td>
+                </tr>
+                <tr id="address-two-row">
+                  <td style="font-weight: bold">Street Address 2</td>
+                  <td id="currently-stored-address-two"></td>
+                  <td id="display-new-address-two"></td>
+                </tr>
+                <tr id="postal-code-row">
+                  <td style="font-weight: bold">Postal Code</td>
+                  <td id="currently-stored-postal-code"></td>
+                  <td id="display-new-postal-code"></td>
+                </tr>
+              </table>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+              <input class="btn btn-outline-primary" type="submit" value="Update">
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <!--  UPDATE SUCCESS/FAIL POPUP MODALS  -->
+    <div class="modal fade" id="update-location-success-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Complete</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Successfully Updated</span><br>
+            <i class="fa fa-check-circle-o rubberBand animated" style="font-size: 100px;color: rgb(122, 214, 94);height: 41px;"></i>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-outline-primary" href="/management/location">Return to Locations</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="update-fail-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Failed to Update</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Update Failed</span><br>
+            <i class="fa fa-close rubberBand animated" style="font-size: 100px;color: rgb(242, 15, 0);height: 41px;"></i><br>
+            <p class="text-start" id="update-fail-message"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--  DELETE CONFIRM/SUCCESS/FAIL POPUP MODALS  -->
+    <div class="modal fade" id="confirm-delete-location-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Confirm Delete</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Are you sure you want to delete this location?</span><br>
+            <span style="font-size: 35px;font-weight: bold;">(THIS CANNOT BE UNDONE!)</span>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+            <button class="btn btn-outline-primary" th:attr="onclick=|delete_location('${location?.getID()}')|">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="delete-location-success-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Complete</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Successfully Deleted</span><br>
+            <i class="fa fa-check-circle-o rubberBand animated" style="font-size: 100px;color: rgb(122, 214, 94);height: 41px;"></i>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-outline-primary" href="/management/location">Return to Locations</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="delete-location-fail-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Failed to Delete</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Delete Failed</span><br>
+            <i class="fa fa-close rubberBand animated" style="font-size: 100px;color: rgb(242, 15, 0);height: 41px;"></i><br>
+            <p class="text-start" id="delete-fail-message"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--  Upon press of submit update button, an AJAX get request is done to get the current information
+          of the location they are trying to update. If that request fails, display this popup modal-->
+    <div class="modal fade" id="get-stored-location-fail-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Failed to Get Stored Location</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Data Retrieval Failed</span><br>
+            <i class="fa fa-close rubberBand animated" style="font-size: 100px;color: rgb(242, 15, 0);height: 41px;"></i><br>
+            <p class="text-start" id="get-stored-location-fail-message"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script th:src="@{/javascript/management/location/location_update.js}"></script>
+  </div>
+</div>
+</html>

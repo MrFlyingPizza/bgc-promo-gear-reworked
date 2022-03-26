@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{front_layout.html}">
+<head>
+    <title>Marketplace</title>
+</head>
+
+<div layout:fragment="content">
+    <div class="card-store-container" style="padding: 0px 0px;margin-top: 20px;margin-bottom: 20px;">
+        <div class="card shadow-sm" style="margin: 18px;">
+            <div class="card-body" style="padding: 18px 40px 0px;">
+                <div class="align-items-stretch front-content" style="font-family: 'Poppins', sans-serif;">
+                    <div class="d-flex flex-column" id="store-container">
+                        <div class="d-flex" id="top-container">
+                            <div id="empty-space"></div>
+                            <div>
+                                <div id="breadcrumb-container">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><a class="no-style-link" href="#"><span>Promotional Gear</span></a></li>
+                                        <li class="breadcrumb-item"><a class="no-style-link" href="#"><span>All</span></a></li>
+                                    </ol>
+                                </div>
+                                <div class="d-flex flex-wrap" id="filter-container">
+                                    <div class="filter-buttons">
+                                        <div class="filter-label" style="font-size: 11px;"><span style="font-size: inherit;">Size:</span></div><button class="btn btn-outline-primary btn-sm button-filter" id="filter-1" type="button">XS</button><button class="btn btn-outline-primary btn-sm button-filter" id="filter-2" type="button">S</button><button class="btn btn-outline-primary btn-sm button-filter" id="filter-3" type="button">M</button><button class="btn btn-outline-primary btn-sm button-filter" id="filter-4" type="button">L</button><button class="btn btn-outline-primary btn-sm button-filter" id="filter-5" type="button">XL</button>
+                                    </div>
+                                    <div class="filter-buttons">
+                                        <div class="filter-label" style="font-size: 11px;"><span style="font-size: inherit;">Gender:</span></div><button class="btn btn-outline-primary btn-sm button-filter" id="filter-6" type="button">Unisex</button><button class="btn btn-outline-primary btn-sm button-filter" id="filter-7" type="button">Men</button><button class="btn btn-outline-primary btn-sm button-filter" id="filter-8" type="button">Women</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex" id="bottom-container">
+                            <div id="category-container"><span style="font-weight: bold;">Categories</span>
+                                <div id="categories">
+                                    <div id="category-group-1" class="category-group"><a class="no-style-link" href="#"><span id="category1" class="category_name">Apparel (36)</span></a>
+                                        <div class="d-flex flex-column subcategory-group"><a class="no-style-link" href="#"><span>Hats (9)</span></a><a class="no-style-link" href="#"><span>Accessories (3)</span></a><a class="no-style-link" href="#"><span>Sweaters (4)</span></a><a class="no-style-link" href="#"><span>Jackets (7)</span></a></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="gallery-container">
+                                <a th:href="'/store/product/?id='+${product.getID()}" th:each="product : ${products}"
+                                   style="text-decoration: none; color: black">
+                                    <div class="product-container">
+                                        <div class="image_container"><img id="product1_image" class="product-image" th:src="@{/images/Temporary/Gamma-MX-Hoody-Glitch.jpg}"></div>
+                                        <div class="product_name_container">
+                                            <span id="product1_name" class="product_name">
+                                                <br>
+                                                <strong th:text="${product?.getBrand()} + ' ' + ${product?.getName()}"></strong>
+                                                <br>
+                                            </span>
+                                        </div>
+                                        <div class="product_description_container">
+                                            <div class="description_text" th:text="${product?.getDescription()}"></div>
+                                        </div>
+                                    </div>
+                                </a>
+
+                                <!--                                <div class="product-container">-->
+                                <!--                                    <div class="image_container"><img id="product1_image" class="product-image" th:src="@{/images/Temporary/Gamma-MX-Hoody-Glitch.jpg}"></div>-->
+                                <!--                                    <div class="product_name_container"><span id="product1_name" class="product_name"><br><strong>Gamma MX Hoody Winter Jacket Men's</strong><br></span></div>-->
+                                <!--                                </div>-->
+                                <!--                                <div class="product-container">-->
+                                <!--                                    <div class="image_container"><img id="product1_image-3" class="product-image" th:src="@{/images/Temporary/Gamma-MX-Hoody-Glitch.jpg}"></div>-->
+                                <!--                                    <div class="product_name_container"><span id="product1_name-3" class="product_name"><br><strong>Gamma MX Hoody Winter Jacket Men's</strong><br></span></div>-->
+                                <!--                                </div>-->
+                                <!--                                <div class="product-container">-->
+                                <!--                                    <div class="image_container"><img id="product1_image-2" class="product-image" th:src="@{/images/Temporary/Gamma-MX-Hoody-Glitch.jpg}"></div>-->
+                                <!--                                    <div class="product_name_container"><span id="product1_name-2" class="product_name"><br><strong>Gamma MX Hoody Winter Jacket Men's</strong><br></span></div>-->
+                                <!--                                </div>-->
+                                <!--                                <div class="product-container">-->
+                                <!--                                    <div class="image_container"><img id="product1_image-1" class="product-image" th:src="@{/images/Temporary/Gamma-MX-Hoody-Glitch.jpg}"></div>-->
+                                <!--                                    <div class="product_name_container"><span id="product1_name-1" class="product_name"><br><strong>Gamma MX Hoody Winter Jacket Men's</strong><br></span></div>-->
+                                <!--                                </div>-->
+                                <!--                                <div class="product-container">-->
+                                <!--                                    <div class="image_container"><img id="product1_image-8" class="product-image" th:src="@{/images/Temporary/Gamma-MX-Hoody-Glitch.jpg}"></div>-->
+                                <!--                                    <div class="product_name_container"><span id="product1_name-8" class="product_name"><br><strong>Gamma MX Hoody Winter Jacket Men's</strong><br></span></div>-->
+                                <!--                                </div>-->
+                                <!--                                <div class="product-container">-->
+                                <!--                                    <div class="image_container"><img id="product1_image-9" class="product-image" th:src="@{/images/Temporary/Gamma-MX-Hoody-Glitch.jpg}"></div>-->
+                                <!--                                    <div class="product_name_container"><span id="product1_name-9" class="product_name"><br><strong>Gamma MX Hoody Winter Jacket Men's</strong><br></span></div>-->
+                                <!--                                </div>-->
+                                <!--                                <div class="product-container">-->
+                                <!--                                    <div class="image_container"><img id="product1_image-10" class="product-image" th:src="@{/images/Temporary/Gamma-MX-Hoody-Glitch.jpg}"></div>-->
+                                <!--                                    <div class="product_name_container"><span id="product1_name-10" class="product_name"><br><strong>Gamma MX Hoody Winter Jacket Men's</strong><br></span></div>-->
+                                <!--                                </div>-->
+                                <!--                                <div class="product-container">-->
+                                <!--                                    <div class="image_container"><img id="product1_image-11" class="product-image" th:src="@{/images/Temporary/Gamma-MX-Hoody-Glitch.jpg}"></div>-->
+                                <!--                                    <div class="product_name_container"><span id="product1_name-11" class="product_name"><br><strong>Gamma MX Hoody Winter Jacket Men's</strong><br></span></div>-->
+                                <!--                                </div>-->
+                                <!--                                <div class="product-container">-->
+                                <!--                                    <div class="image_container"><img id="product1_image-4" class="product-image" th:src="@{/images/Temporary/Gamma-MX-Hoody-Glitch.jpg}"></div>-->
+                                <!--                                    <div class="product_name_container"><span id="product1_name-4" class="product_name"><br><strong>Gamma MX Hoody Winter Jacket Men's</strong><br></span></div>-->
+                                <!--                                </div>-->
+                                <!--                                <div class="product-container">-->
+                                <!--                                    <div class="image_container"><img id="product1_image-5" class="product-image" th:src="@{/images/Temporary/Gamma-MX-Hoody-Glitch.jpg}"></div>-->
+                                <!--                                    <div class="product_name_container"><span id="product1_name-5" class="product_name"><br><strong>Gamma MX Hoody Winter Jacket Men's</strong><br></span></div>-->
+                                <!--                                </div>-->
+                                <!--                                <div class="product-container">-->
+                                <!--                                    <div class="image_container"><img id="product1_image-7" class="product-image" th:src="@{/images/Temporary/Gamma-MX-Hoody-Glitch.jpg}"></div>-->
+                                <!--                                    <div class="product_name_container"><span id="product1_name-7" class="product_name"><br><strong>Gamma MX Hoody Winter Jacket Men's</strong><br></span></div>-->
+                                <!--                                </div>-->
+                                <!--                                <div class="product-container">-->
+                                <!--                                    <div class="image_container"><img id="product1_image-6" class="product-image" th:src="@{/images/Temporary/Gamma-MX-Hoody-Glitch.jpg}"></div>-->
+                                <!--                                    <div class="product_name_container"><span id="product1_name-6" class="product_name"><br><strong>Gamma MX Hoody Winter Jacket Men's</strong><br></span></div>-->
+                                <!--                                </div>-->
+                            </div>
+                        </div>
+                        <nav class="d-xl-flex justify-content-xl-end">
+                            <ul class="pagination">
+                                <li class="page-item"><a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">«</span></a></li>
+                                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link" href="#">4</a></li>
+                                <li class="page-item"><a class="page-link" href="#">5</a></li>
+                                <li class="page-item"><a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">»</span></a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

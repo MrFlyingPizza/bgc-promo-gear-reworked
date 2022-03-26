@@ -1,0 +1,156 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{management_panel_layout.html}">
+<head>
+    <title>Products</title>
+</head>
+<div layout:fragment="content">
+    <!--  Heading  -->
+    <h2>Products</h2>
+
+    <!--  Go to create a new product page  -->
+    <button class="btn btn-outline-primary" onclick="location.href='/management/product/create'">
+        Create a New Product
+    </button>
+
+<!--    <button class="btn btn-outline-primary" onclick="location.href='/management/category'">-->
+<!--        Categories-->
+<!--    </button>-->
+
+<!--    <button class="btn btn-outline-primary" onclick="location.href='/management/attribute_group'">-->
+<!--        Attributes-->
+<!--    </button>-->
+
+    <!--  Displaying product groups in a table  -->
+    <div class="card shadow" style="margin: 20px;">
+        <div class="card-header py-3" style="background: rgb(248,248,252);">
+            <p class="m-0 fw-bold" style="color: #36366f;">Product Info</p>
+        </div>
+        <div class="card-body">
+
+            <div id="length_search_row" class="row">
+                <div id="length_input" class="col-sm-12 col-md-5"></div>
+                <div id="search_input" class="col-sm-12 col-md-7"></div>
+
+            </div>
+
+            <div class="d-flex flex-row flex-wrap table-bar">
+
+
+                <div class="filter-buttons">
+                    <div class="filter-label" style="font-size: 11px;"><span style="font-size: inherit;">Is Product Published?:</span></div>
+                    <div class="d-flex flex-wrap">
+                        <div class="radio-buttons">
+                            <input type="radio" class="btn-check" name="options" id="option1" autocomplete="off" onclick="location.href='/management/product'"/>
+                            <label class="btn btn-outline-primary button-filter" for="option1">All</label>
+                            <a th:href="@{/product}"></a>
+                        </div>
+                        <div class="radio-buttons">
+                            <input type="radio" class="btn-check" name="options" id="option2" autocomplete="off" onclick="location.href='/management/product?isPub=1'"/>
+                            <label class="btn btn-outline-primary button-filter" for="option2">Published Only</label>
+                            <a th:href="@{/product(isPub='1')}"></a>
+                        </div>
+                        <div class="radio-buttons">
+                            <input type="radio" class="btn-check" name="options" id="option3" autocomplete="off" onclick="location.href='/management/product?isPub=0'"/>
+                            <label class="btn btn-outline-primary button-filter" for="option3">Non-Published Only</label>
+                            <a th:href="@{/product(isPub='0')}"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="table-responsive table mt-2" id="dataTable-1" role="grid" aria-describedby="dataTable_info">
+                <table class="table my-0" id="dataTable">
+                    <thead>
+                    <tr>
+                        <th scope="col">Product ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Brand</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Published</th>
+                        <th scope="col">Big Item</th>
+                        <th scope="col">Waitlistable</th>
+                        <th scope="col">Edit</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="product : ${products}">
+                        <th scope="row" th:text="${product?.getID()} ?: 'N/A'"></th>
+                        <td th:text="${product?.getName()} ?: 'N/A'"></td>
+                        <td th:text="${product?.getBrand()} ?: 'N/A'"></td>
+                        <td th:text="${product?.getPrice() != null} ? '$' + ${#numbers.formatDecimal(product?.getPrice(), 0, 'COMMA', 2, 'POINT')} : 'N/A'"></td>
+                        <td th:switch="${product?.getIsPublished()}">
+                            <p th:case="true">Yes</p>
+                            <p th:case="false">No</p>
+                            <p th:case="*">N/A</p>
+                        </td>
+                        <td th:switch="${product?.getIsBigItem()}">
+                            <p th:case="true">Yes</p>
+                            <p th:case="false">No</p>
+                            <p th:case="*">N/A</p>
+                        </td>
+                        <td th:switch="${product?.getIsWaitlistable()}">
+                            <p th:case="true">Yes</p>
+                            <p th:case="false">No</p>
+                            <p th:case="*">N/A</p>
+                        </td>
+                        <td>
+                            <a class="btn btn-primary rounded-pill text-decoration-none" th:href="'/management/product/update?id='+${product?.getID()}">EDIT</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <td><strong>Product ID</strong></td>
+                        <td><strong>Name</strong></td>
+                        <td><strong>Brand</strong></td>
+                        <td><strong>Price</strong></td>
+                        <td><strong>Published</strong></td>
+                        <td><strong>Big Item</strong></td>
+                        <td><strong>Waitlistable</strong></td>
+                        <td><strong>Edit</strong></td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div th:if="${#lists.isEmpty(products)}">
+        No Existing Products
+    </div>
+
+    <script>
+        $(document).ready( function () {
+
+            //Using DataTable
+            var table = $('#dataTable').DataTable( {
+
+                "lengthMenu": [ [15, 25, 50, 100, -1], [15, 25, 50, 100, "All"] ],
+                language : {
+                    sLengthMenu: "Show&nbsp _MENU_", // changing label for page length filter
+                    search: "_INPUT_",               // changing label for search filter
+                    searchPlaceholder: "Search..."   // changing search filter placeholder
+                }
+            } );
+            $('#dataTable_filter').appendTo('#search_input'); // adding search filter to div
+            $('#dataTable_length').appendTo('#length_input'); // adding length filter to div
+            $('#dataTable_wrapper').find('div:first').remove(); //remove empty row holding previous filters
+
+
+            $.urlParam = function(name){
+                var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+                if (results==null) {
+                    return null;
+                }
+                return decodeURI(results[1]) || 0;
+            }
+
+            if($.urlParam('isPub') == 0){
+                $("#option3").prop("checked", true);
+            } else if($.urlParam('isPub') == 1){
+                $("#option2").prop("checked", true);
+            } else{
+                $("#option1").prop("checked", true);
+            }
+
+        } );
+    </script>
+</div>
+</html>

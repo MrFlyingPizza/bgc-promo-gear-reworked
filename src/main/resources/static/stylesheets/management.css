@@ -1,0 +1,17 @@
+/*General CSS file for management*/
+
+.content-insert{
+    /*keeps footer at bottom*/
+    min-height: calc(100% - 185px);
+}
+
+
+/*Smaller Button with less padding*/
+.btn-compact {
+    width: fit-content;
+    padding: 0 4px;
+    font-size: 14px;
+    margin: 0 2px;
+    margin-bottom: 3px;
+    flex: 1;
+}

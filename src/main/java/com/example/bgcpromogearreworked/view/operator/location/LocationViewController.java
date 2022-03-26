@@ -1,0 +1,33 @@
+package com.example.bgcpromogearreworked.view.operator.location;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+@Controller
+@RequestMapping("/management/location")
+public class LocationViewController {
+
+    /**
+     * Handle request to get all locations and attaches to model for location viewing.
+     * @param model model
+     * @return html page for viewing locations
+     */
+    @GetMapping(path = {"", "view"})
+    public String showViewLocations(Model model) {
+        return "management_panel_pages/location/location_view";
+    }
+
+    @GetMapping("/create")
+    public String showCreateLocation() {
+        return "management_panel_pages/location/location_create";
+    }
+
+    @GetMapping("/update")
+    public String showUpdateLocation(Model model, @RequestParam int id) {
+        return "management_panel_pages/location/location_update";
+    }
+}

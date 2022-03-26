@@ -1,0 +1,26 @@
+/* || GENERAL STYLES - defaults for types */
+
+:root {
+    --bgc-color-primary: #010080;
+    --bgc-color-secondary: #101010;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+}
+
+header {
+    width: 100%;
+    min-height: 50vh;
+    background-image: url(../images/BGC+Engineering32.jpg);
+    background-size: cover;
+}
+
+/* || UTILITIES - generally useful css */
+
+/* || SITEWIDE - styling that is used everywhere */
+
+/* || MANAGEMENT - styling that is shared across all of management panels */
+
+/* || STORE - styling that is shared across all of store pages */

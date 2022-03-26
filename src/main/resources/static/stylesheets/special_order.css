@@ -1,0 +1,25 @@
+.tableContainer{
+    margin-left: 20px;
+}
+
+.detailsContainer{
+    max-width: 1240px;
+}
+
+.productsContainer{
+    max-width: 1100px;
+    margin-left: 30px;
+}
+
+.buttonsContainer{
+    padding-top: 20px;
+    margin-left: 17px;
+}
+
+.space{
+    margin-bottom: 10px;
+}
+
+.tableHeader th{
+    border-bottom: 1px solid #d7d7d7;
+}

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" style="height: fit-content;">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Employee</title>
+    <!--  STYLESHEETS  -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat&amp;display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins&amp;display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Work+Sans&amp;display=swap">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" th:href="@{/stylesheets/fonts/fontawesome5-overrides.min.css}">
+    <link rel="stylesheet" th:href="@{/stylesheets/store/Features-Boxed.css}">
+    <link rel="stylesheet" th:href="@{/stylesheets/store/Footer-Dark.css}">
+    <link rel="stylesheet" th:href="@{/stylesheets/store/Highlight-Phone.css}">
+    <link rel="stylesheet" th:href="@{/stylesheets/store/Navigation-Clean.css}">
+    <link rel="stylesheet" th:href="@{/stylesheets/store/Navigation-with-Buttons.css}">
+    <link rel="stylesheet" th:href="@{/stylesheets/store/styles.css}">
+    <!-- JQUERY -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+            crossorigin="anonymous"></script>
+
+    <title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE">Employee</title>
+</head>
+<body style="background: rgb(248,248,252);">
+    <nav th:replace="fragments/store/header :: header"></nav>
+    <div layout:fragment="content"></div>
+    <div th:replace="fragments/store/footer :: footer"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
