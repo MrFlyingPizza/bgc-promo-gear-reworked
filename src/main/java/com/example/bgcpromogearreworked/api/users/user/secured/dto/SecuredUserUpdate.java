@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
@@ -22,10 +23,17 @@ public class SecuredUserUpdate {
 
     @NotNull
     @DecimalMin("0.00")
-    @DecimalMin("99999999.99")
+    @DecimalMax("99999999.99")
     @Digits(integer = 8, fraction = 2)
     private final BigDecimal credit;
 
+    @NotNull
+    @DecimalMin("0.00")
+    @DecimalMax("99999999.99")
+    @Digits(integer = 8, fraction = 2)
+    private final BigDecimal owedCredit;
+
+    @NotNull
     private final Instant lastBigItemDate;
 
     @NotNull
@@ -34,9 +42,11 @@ public class SecuredUserUpdate {
 
     @JsonCreator
     SecuredUserUpdate(@JsonProperty("credit") BigDecimal credit,
+                      @JsonProperty("owedCredit") BigDecimal owedCredit,
                       @JsonProperty("lastBigItemDate") Instant lastBigItemDate,
                       @JsonProperty("officeId") Long officeId) {
         this.credit = credit;
+        this.owedCredit = owedCredit;
         this.lastBigItemDate = lastBigItemDate;
         this.officeId = officeId;
     }
