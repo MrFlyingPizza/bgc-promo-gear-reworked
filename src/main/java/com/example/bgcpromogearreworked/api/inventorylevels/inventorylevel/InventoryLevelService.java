@@ -15,7 +15,7 @@ import java.util.function.BiFunction;
 
 @Service
 @RequiredArgsConstructor
-public class InventoryLevelService {
+public class InventoryLevelService { // TODO: 2022-03-26 make inventory levels a lower domain object of locations
 
     private final InventoryLevelRepository inventoryLevelRepo;
 
