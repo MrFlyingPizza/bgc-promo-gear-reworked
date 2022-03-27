@@ -11,14 +11,15 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 @RequiredArgsConstructor
 public class WebSecurityConfig extends AADWebSecurityConfigurerAdapter {
 
-    private final MSGraphSyncedUserService MSGraphSyncedUserService;
+    private final MSGraphSyncedUserService oidcUserService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .anyRequest().authenticated()
                 .and().csrf().disable()
-                .oauth2Login().userInfoEndpoint().oidcUserService(MSGraphSyncedUserService);
+                .oauth2Login().userInfoEndpoint().oidcUserService(oidcUserService)
+        ;
     }
 
 }

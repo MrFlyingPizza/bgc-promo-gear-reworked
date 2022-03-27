@@ -27,7 +27,7 @@ public class User {
     private BigDecimal credit;
 
     @Column(name = "owed_credit", nullable = false, precision = 10, scale = 2)
-    private BigDecimal owedCredit;
+    private BigDecimal owedCredit = BigDecimal.ZERO;
 
     @Column(name = "last_big_item_date")
     private Instant lastBigItemDate;
