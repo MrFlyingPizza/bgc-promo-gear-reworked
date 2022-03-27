@@ -1,6 +1,6 @@
-package com.example.bgcpromogearreworked.api.officelocations.inventorylevel;
+package com.example.bgcpromogearreworked.api.inventorylevels.inventorylevel;
 
-import com.example.bgcpromogearreworked.api.officelocations.exceptions.InventoryLevelNotFoundException;
+import com.example.bgcpromogearreworked.api.inventorylevels.exceptions.InventoryLevelNotFoundException;
 import com.example.bgcpromogearreworked.persistence.entities.InventoryLevel;
 import com.example.bgcpromogearreworked.persistence.entities.InventoryLevelId;
 import com.example.bgcpromogearreworked.persistence.repositories.InventoryLevelRepository;

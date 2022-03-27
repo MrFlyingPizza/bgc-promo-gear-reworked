@@ -1,12 +1,13 @@
-package com.example.bgcpromogearreworked.api.officelocations.inventorylevel.secured;
+package com.example.bgcpromogearreworked.api.inventorylevels.inventorylevel.secured;
 
-import com.example.bgcpromogearreworked.api.officelocations.inventorylevel.InventoryLevelService;
-import com.example.bgcpromogearreworked.api.officelocations.inventorylevel.secured.dto.SecuredInventoryLevelMapper;
-import com.example.bgcpromogearreworked.api.officelocations.inventorylevel.secured.dto.SecuredInventoryLevelPartialUpdate;
-import com.example.bgcpromogearreworked.api.officelocations.inventorylevel.secured.dto.SecuredInventoryLevelUpdate;
+import com.example.bgcpromogearreworked.api.inventorylevels.inventorylevel.InventoryLevelService;
+import com.example.bgcpromogearreworked.api.inventorylevels.inventorylevel.secured.dto.SecuredInventoryLevelMapper;
+import com.example.bgcpromogearreworked.api.inventorylevels.inventorylevel.secured.dto.SecuredInventoryLevelPartialUpdate;
+import com.example.bgcpromogearreworked.api.inventorylevels.inventorylevel.secured.dto.SecuredInventoryLevelUpdate;
 import com.example.bgcpromogearreworked.api.users.exceptions.UserNotFoundException;
 import com.example.bgcpromogearreworked.api.users.user.UserService;
 import com.example.bgcpromogearreworked.persistence.entities.InventoryLevel;
+import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,8 +31,8 @@ public class SecuredInventoryLevelHandlerService {
         return inventoryLevelService.getInventoryLevel(locationId, variantId);
     }
 
-    Page<InventoryLevel> handleInventoryLevelBatchGet(Long locationId, Pageable pageable) {
-        return inventoryLevelService.getInventoryLevels(locationId, pageable);
+    Page<InventoryLevel> handleInventoryLevelBatchGet(Predicate predicate, Pageable pageable) {
+        return inventoryLevelService.getInventoryLevels(predicate, pageable);
     }
 
     InventoryLevel handleInventoryLevelUpdate(@Valid SecuredInventoryLevelUpdate inventoryLevelUpdate, UUID oid) {

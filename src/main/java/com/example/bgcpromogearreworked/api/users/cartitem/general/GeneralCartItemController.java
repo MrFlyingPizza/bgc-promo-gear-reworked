@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "/api/users/cart_items", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/users/me/cart_items", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class GeneralCartItemController {
 
