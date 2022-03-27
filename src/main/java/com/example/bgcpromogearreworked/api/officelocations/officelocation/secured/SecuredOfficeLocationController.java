@@ -58,4 +58,6 @@ public class SecuredOfficeLocationController {
         officeLocationPartialUpdate.setId(locationId);
         return mapper.toResponse(handlerService.handleOfficeLocationPartialUpdate(officeLocationPartialUpdate));
     }
+
+    // TODO: 2022-03-26 implement delete mapping
 }

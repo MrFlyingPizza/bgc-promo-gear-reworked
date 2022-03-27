@@ -1,4 +1,4 @@
-package com.example.bgcpromogearreworked.api.inventorylevels.exceptions;
+package com.example.bgcpromogearreworked.api.officelocations.exceptions;
 
 public class InventoryLevelNotFoundException extends RuntimeException {
 

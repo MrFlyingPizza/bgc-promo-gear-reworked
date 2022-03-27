@@ -1,4 +1,4 @@
-package com.example.bgcpromogearreworked.api.inventorylevels.inventorylevel.secured.dto;
+package com.example.bgcpromogearreworked.api.officelocations.inventorylevel.secured.dto;
 
 import com.example.bgcpromogearreworked.persistence.entities.InventoryLevel;
 import com.example.bgcpromogearreworked.persistence.entities.OptionValue;
