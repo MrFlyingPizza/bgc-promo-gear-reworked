@@ -23,6 +23,7 @@ public abstract class SecuredInventoryLevelMapper {
     @Mapping(source = "lastManuallyModifiedById", target = "lastManuallyModifiedBy.id")
     @Mapping(target = "variant", ignore = true)
     @Mapping(target = "location", ignore = true)
+    @Mapping(target = "neededQuantity", ignore = true)
     public abstract InventoryLevel fromUpdate(SecuredInventoryLevelUpdate inventoryLevelUpdate,
                                               @MappingTarget InventoryLevel inventoryLevel);
 
@@ -31,12 +32,14 @@ public abstract class SecuredInventoryLevelMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "variant", ignore = true)
     @Mapping(target = "location", ignore = true)
+    @Mapping(target = "neededQuantity", ignore = true)
     public abstract InventoryLevel fromPartialUpdate(SecuredInventoryLevelPartialUpdate inventoryLevelPartialUpdate,
                                                      @MappingTarget InventoryLevel inventoryLevel);
 
     @Mapping(source = "variant.product.name", target = "variant.productName")
     @Mapping(source = "variant.product.id", target = "variant.productId")
     @Mapping(source = "variant.optionValues", target = "variant.options")
+    @Mapping(source = "variant.product.category", target = "variant.category")
     @Transactional
     public abstract SecuredInventoryLevelResponse toResponse(InventoryLevel inventoryLevel);
 

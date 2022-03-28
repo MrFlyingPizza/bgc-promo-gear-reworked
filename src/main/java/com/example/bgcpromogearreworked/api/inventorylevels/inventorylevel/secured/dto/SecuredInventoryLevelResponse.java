@@ -23,6 +23,14 @@ public class SecuredInventoryLevelResponse {
 
         @Getter
         @RequiredArgsConstructor
+        static class NestedCategory {
+            private final Long id;
+            private final String name;
+            private final NestedCategory parent;
+        }
+
+        @Getter
+        @RequiredArgsConstructor
         static class NestedOptionValue {
             private final Long id;
             private final Long optionId;
@@ -33,6 +41,7 @@ public class SecuredInventoryLevelResponse {
         private final Long id;
         private final Long productId;
         private final String productName;
+        private final NestedCategory category;
         private final List<NestedOptionValue> options;
     }
 
