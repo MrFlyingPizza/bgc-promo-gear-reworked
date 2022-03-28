@@ -37,6 +37,9 @@ public class InventoryLevel {
     @Column(name = "reserved_quantity", nullable = false)
     private Integer reservedQuantity;
 
+    @Column(name = "needed_quantity", nullable = false)
+    private Integer neededQuantity;
+
     @Column(name = "notify_threshold", nullable = false)
     private Integer notifyThreshold;
 
