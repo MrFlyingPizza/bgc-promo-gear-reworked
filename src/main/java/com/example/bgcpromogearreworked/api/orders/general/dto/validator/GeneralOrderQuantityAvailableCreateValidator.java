@@ -8,6 +8,7 @@ import javax.validation.ConstraintValidatorContext;
 
 public class GeneralOrderQuantityAvailableCreateValidator implements ConstraintValidator<OrderItemAvailable, GeneralOrderCreate.NestedOrderItem> {
 
+
     // TODO: 2022-03-27 finish implement
     @Override
     public boolean isValid(GeneralOrderCreate.NestedOrderItem orderItem, ConstraintValidatorContext context) {

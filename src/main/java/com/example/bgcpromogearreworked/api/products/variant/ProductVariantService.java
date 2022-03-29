@@ -25,6 +25,11 @@ public class ProductVariantService {
     private final InventoryLevelRepository inventoryLevelRepo;
     private final OfficeLocationRepository officeLocationRepo;
 
+    public boolean checkProductVariantExists(Long variantId) {
+        assert variantId != null;
+        return variantRepo.existsById(variantId);
+    }
+
     public boolean checkProductVariantExistsOnProduct(Long productId, Long variantId) {
         assert productId != null && variantId != null;
         return variantRepo.existsByProductIdAndId(productId, variantId);

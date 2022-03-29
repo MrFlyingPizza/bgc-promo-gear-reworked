@@ -2,6 +2,7 @@ package com.example.bgcpromogearreworked.api.orders;
 
 import com.example.bgcpromogearreworked.persistence.entities.Order;
 import com.example.bgcpromogearreworked.persistence.repositories.CartItemRepository;
+import com.example.bgcpromogearreworked.persistence.repositories.InventoryLevelRepository;
 import com.example.bgcpromogearreworked.persistence.repositories.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ public class OrderService {
 
     private final OrderRepository orderRepo;
     private final CartItemRepository cartItemRepo;
+    private final InventoryLevelRepository inventoryRepo;
 
     @Transactional
     public <T> Order createOrder(T source, Function<T, Order> mapper) {

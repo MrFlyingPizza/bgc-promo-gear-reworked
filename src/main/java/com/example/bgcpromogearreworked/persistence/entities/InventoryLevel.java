@@ -40,6 +40,8 @@ public class InventoryLevel {
     @Column(name = "needed_quantity", nullable = false)
     private Integer neededQuantity;
 
+    @Formula("(SELECT sum(available_quantity))")
+
     @Column(name = "notify_threshold", nullable = false)
     private Integer notifyThreshold;
 

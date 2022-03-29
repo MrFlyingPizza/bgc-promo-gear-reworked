@@ -23,6 +23,7 @@ public abstract class SecuredProductVariantMapper {
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "lastModifiedBy", ignore = true)
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "globalInventoryLevel", ignore = true)
     public abstract ProductVariant fromCreate(SecuredProductVariantCreate productVariantCreate);
 
     @Mapping(source = "imageId", target = "image.id")
@@ -32,6 +33,7 @@ public abstract class SecuredProductVariantMapper {
     @Mapping(target = "lastModifiedDate", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "lastModifiedBy", ignore = true)
+    @Mapping(target = "globalInventoryLevel", ignore = true)
     public abstract ProductVariant fromUpdate(SecuredProductVariantUpdate productVariantUpdate,
                                               @MappingTarget ProductVariant productVariant);
 
@@ -42,6 +44,7 @@ public abstract class SecuredProductVariantMapper {
     @Mapping(target = "lastModifiedDate", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "lastModifiedBy", ignore = true)
+    @Mapping(target = "globalInventoryLevel", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     public abstract ProductVariant fromPartialUpdate(SecuredProductVariantPartialUpdate productVariantPartialUpdate,
                                                      @MappingTarget ProductVariant productVariant);
