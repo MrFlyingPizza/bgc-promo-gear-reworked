@@ -35,5 +35,5 @@ public abstract class GeneralCartItemMapper {
     @Mapping(source = "option.id", target = "optionId")
     @Mapping(source = "option.name", target = "name")
     protected abstract GeneralCartItemResponse.NestedOptionValue map(OptionValue optionValue);
-
+    // TODO: 2022-03-27 add mapping for ids to entities
 }

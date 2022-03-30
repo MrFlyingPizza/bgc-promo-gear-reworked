@@ -16,7 +16,6 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import java.time.Clock;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -34,10 +33,6 @@ public class SecuredInventoryLevelHandlerService {
 
     Page<InventoryLevel> handleInventoryLevelBatchGet(Predicate predicate, Pageable pageable) {
         return inventoryLevelService.getInventoryLevels(predicate, pageable);
-    }
-
-    List<InventoryLevel> handleInventoryLevelBatchGet() {
-        return inventoryLevelService.getInventoryLevels();
     }
 
     InventoryLevel handleInventoryLevelUpdate(@Valid SecuredInventoryLevelUpdate inventoryLevelUpdate, UUID oid) {

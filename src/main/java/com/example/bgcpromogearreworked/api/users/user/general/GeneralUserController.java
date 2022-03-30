@@ -23,7 +23,7 @@ public class GeneralUserController {
     private final GeneralUserHandlerService handlerService;
     private final GeneralUserMapper mapper;
 
-    @GetMapping
+    @GetMapping("/me")
     private GeneralUserResponse getUser(@AuthenticationPrincipal OidcUser oidcUser) {
         if (oidcUser == null) {
             throw new UserNotAuthenticatedException();

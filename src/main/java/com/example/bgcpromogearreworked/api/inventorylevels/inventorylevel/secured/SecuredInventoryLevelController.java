@@ -1,8 +1,10 @@
 package com.example.bgcpromogearreworked.api.inventorylevels.inventorylevel.secured;
 
 import com.example.bgcpromogearreworked.api.inventorylevels.exceptions.InventoryLevelNotFoundException;
+import com.example.bgcpromogearreworked.api.officelocations.exceptions.OfficeLocationNotFoundException;
 import com.example.bgcpromogearreworked.api.inventorylevels.inventorylevel.InventoryLevelService;
 import com.example.bgcpromogearreworked.api.inventorylevels.inventorylevel.secured.dto.*;
+import com.example.bgcpromogearreworked.api.officelocations.officelocation.OfficeLocationService;
 import com.example.bgcpromogearreworked.api.shared.utils.Utils;
 import com.example.bgcpromogearreworked.persistence.entities.InventoryLevel;
 import com.querydsl.core.types.Predicate;
@@ -14,19 +16,22 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
-
 @RestController
-@RequestMapping(value = "/api/secured/inventory_levels", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/secured/inventory_levels",
+        produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class SecuredInventoryLevelController {
 
     private final InventoryLevelService service;
+    private final OfficeLocationService locationService;
     private final SecuredInventoryLevelHandlerService handlerService;
     private final SecuredInventoryLevelMapper mapper;
 
     @GetMapping("/{locationId}/{variantId}")
     private SecuredInventoryLevelResponse getInventoryLevel(@PathVariable Long locationId, @PathVariable Long variantId) {
+        if (!locationService.checkOfficeLocationExists(locationId)) {
+            throw new OfficeLocationNotFoundException();
+        }
         if (!service.checkInventoryLevelExists(locationId, variantId)) {
             throw new InventoryLevelNotFoundException();
         }
@@ -44,6 +49,9 @@ public class SecuredInventoryLevelController {
                                                                @PathVariable Long variantId,
                                                                @RequestBody SecuredInventoryLevelUpdate inventoryLevelUpdate,
                                                                @AuthenticationPrincipal OidcUser oidcUser) {
+        if (!locationService.checkOfficeLocationExists(locationId)) {
+            throw new OfficeLocationNotFoundException();
+        }
         if (!service.checkInventoryLevelExists(locationId, variantId)) {
             throw new InventoryLevelNotFoundException();
         }
@@ -57,6 +65,9 @@ public class SecuredInventoryLevelController {
                                                                       @PathVariable Long variantId,
                                                                       @RequestBody SecuredInventoryLevelPartialUpdate inventoryLevelPartialUpdate,
                                                                       @AuthenticationPrincipal OidcUser oidcUser) {
+        if (!locationService.checkOfficeLocationExists(locationId)) {
+            throw new OfficeLocationNotFoundException();
+        }
         if (!service.checkInventoryLevelExists(locationId, variantId)) {
             throw new InventoryLevelNotFoundException();
         }

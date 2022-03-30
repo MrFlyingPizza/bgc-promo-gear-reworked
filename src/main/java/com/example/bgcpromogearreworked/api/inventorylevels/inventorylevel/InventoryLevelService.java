@@ -6,7 +6,8 @@ import com.example.bgcpromogearreworked.persistence.entities.InventoryLevelId;
 import com.example.bgcpromogearreworked.persistence.repositories.InventoryLevelRepository;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,7 +16,7 @@ import java.util.function.BiFunction;
 
 @Service
 @RequiredArgsConstructor
-public class InventoryLevelService { // TODO: 2022-03-26 make inventory levels a lower domain object of locations
+public class InventoryLevelService {
 
     private final InventoryLevelRepository inventoryLevelRepo;
 
@@ -42,6 +43,12 @@ public class InventoryLevelService { // TODO: 2022-03-26 make inventory levels a
     }
 
     @Transactional
+    public Page<InventoryLevel> getInventoryLevels(Long locationId, Pageable pageable) {
+        assert locationId != null && pageable != null;
+        return inventoryLevelRepo.findAllByLocationId(locationId, pageable);
+    }
+
+    @Transactional
     public <T> InventoryLevel updateInventoryLevel(Long locationId,
                                                    Long variantId,
                                                    T source,
@@ -50,7 +57,7 @@ public class InventoryLevelService { // TODO: 2022-03-26 make inventory levels a
         InventoryLevel level = mapper.apply(source, inventoryLevelRepo.findById(
                 new InventoryLevelId(locationId, variantId)).orElseThrow(InventoryLevelNotFoundException::new));
         assert level.getLocationId().equals(locationId) && level.getVariantId().equals(variantId);
-        return inventoryLevelRepo.saveAndFlush(level); // TODO: 2022-03-23 put in last manually updated user
+        return inventoryLevelRepo.saveAndFlush(level);
     }
 
 }

@@ -2,6 +2,7 @@ package com.example.bgcpromogearreworked.persistence.entities;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 import java.time.Instant;
@@ -36,10 +37,13 @@ public class InventoryLevel {
     @Column(name = "reserved_quantity", nullable = false)
     private Integer reservedQuantity;
 
+    @Column(name = "needed_quantity", nullable = false)
+    private Integer neededQuantity;
+
+    @Formula("(SELECT sum(available_quantity))")
+
     @Column(name = "notify_threshold", nullable = false)
     private Integer notifyThreshold;
-
-    // TODO: 2022-03-21 add formula for needed stock
 
     @Column(name = "last_manually_modified_date")
     private Instant lastManuallyModifiedDate;

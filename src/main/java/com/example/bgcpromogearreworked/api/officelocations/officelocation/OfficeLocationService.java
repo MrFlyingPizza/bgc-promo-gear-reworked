@@ -23,12 +23,7 @@ public class OfficeLocationService {
 
     private final ProductVariantRepository variantRepo;
     private final OfficeLocationRepository locationRepo;
-    private final UserRepository userRepo;
     private final InventoryLevelRepository inventoryRepo;
-
-    public boolean checkOfficeLocationReferenced(Long locationId) {
-        return userRepo.existsByOfficeId(locationId) || inventoryRepo.existsByLocationId(locationId);
-    }
 
     public boolean checkOfficeLocationExists(Long locationId) {
         assert locationId != null;
