@@ -30,7 +30,6 @@ public class InventoryLevel {
     @JoinColumn(name = "location_id", nullable = false, updatable = false, insertable = false)
     private OfficeLocation location;
 
-
     @Column(name = "available_quantity", nullable = false)
     private Integer availableQuantity;
 
@@ -39,8 +38,6 @@ public class InventoryLevel {
 
     @Column(name = "needed_quantity", nullable = false)
     private Integer neededQuantity;
-
-    @Formula("(SELECT sum(available_quantity))")
 
     @Column(name = "notify_threshold", nullable = false)
     private Integer notifyThreshold;
