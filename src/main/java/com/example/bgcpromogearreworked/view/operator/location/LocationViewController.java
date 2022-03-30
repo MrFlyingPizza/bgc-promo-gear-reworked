@@ -1,5 +1,6 @@
 package com.example.bgcpromogearreworked.view.operator.location;
 
+import com.example.bgcpromogearreworked.api.officelocations.officelocation.OfficeLocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,6 +11,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping("/management/location")
 public class LocationViewController {
+
+
+    private final OfficeLocationService service;
+
+    @Autowired
+    public LocationViewController(OfficeLocationService service) {
+        this.service = service;
+    }
 
     /**
      * Handle request to get all locations and attaches to model for location viewing.
@@ -27,7 +36,8 @@ public class LocationViewController {
     }
 
     @GetMapping("/update")
-    public String showUpdateLocation(Model model, @RequestParam int id) {
+    public String showUpdateLocation(Model model, @RequestParam long id) {
+        model.addAttribute("location", service.getOfficeLocation(id));
         return "management_panel_pages/location/location_update";
     }
 }

@@ -15,43 +15,43 @@
 
   <div class="container mt-5">
     <!--  Form to update location  -->
-    <form th:action="'/management/api/location/'+${location?.getID()}" method="post" class="row g-3" id="update-location-form">
+    <form th:action="'/api/secured/office_locations/'+${location?.id}" method="post" class="row g-3" id="update-location-form">
       <div class="col-12">
         <label for="name" class="form-label">Location Name:</label>
-        <input type="text" class="form-control" id="name" name="name" th:placeholder="${location?.getName()}">
+        <input type="text" class="form-control" id="name" name="name" th:placeholder="${location?.name}">
         <div class="form-text">e.g, Vancouver Office, Calgary Office</div>
       </div>
       <div class="col-md-4">
         <label for="country" class="form-label">Country:</label>
-        <input type="text" class="form-control" id="country" name="country" th:placeholder="${location?.getCountry()}">
+        <input type="text" class="form-control" id="country" name="country" th:placeholder="${location?.country}">
       </div>
       <div class="col-md-4">
         <label for="province" class="form-label">State/Province:</label>
-        <input type="text" class="form-control" id="province" name="province" th:placeholder="${location?.getProvince()}">
+        <input type="text" class="form-control" id="province" name="province" th:placeholder="${location?.state}">
       </div>
       <div class="col-md-4">
         <label for="city" class="form-label">City:</label>
-        <input type="text" class="form-control" id="city" name="city" th:placeholder="${location?.getCity()}">
+        <input type="text" class="form-control" id="city" name="city" th:placeholder="${location?.city}">
       </div>
       <div class="col-md-8">
         <label for="street-address-one" class="form-label">Street Address 1:</label>
         <input type="text" class="form-control" id="street-address-one"
-               name="street-address-one" th:placeholder="${location?.getStreetAddress1()}">
+               name="street-address-one" th:placeholder="${location?.addressLine1}">
       </div>
       <div class="col-md-4">
         <label for="postal-code" class="form-label">Postal Code:</label>
         <input type="text" class="form-control" id="postal-code"
-               name="postal-code" th:placeholder="${location?.getPostalCode()}">
+               name="postal-code" th:placeholder="${location?.zipCode}">
       </div>
       <div class="col-12">
         <label for="street-address-two" class="form-label">Street Address 2:</label>
         <input type="text" class="form-control" id="street-address-two"
-               name="street-address-two" th:placeholder="${location?.getStreetAddress2()}">
+               name="street-address-two" th:placeholder="${location?.addressLine2}">
       </div>
       <div class="col-md-12">
         <!--   Update Location Button     -->
         <input class="btn btn-outline-primary" id="submit-update-location" type="button"
-               th:attr="onclick=|get_currently_stored_location('${location?.getID()}')|" value="Submit Update" disabled>
+               th:attr="onclick=|get_currently_stored_location('${location?.id}')|" value="Submit Update" disabled>
         <!-- Delete Location Button -->
         <input class="btn btn-outline-primary" id="submit-delete-location" type="button"
                value="Delete" data-bs-toggle="modal" data-bs-target="#confirm-delete-location-modal">
@@ -170,7 +170,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
-            <button class="btn btn-outline-primary" th:attr="onclick=|delete_location('${location?.getID()}')|">Delete</button>
+            <button class="btn btn-outline-primary" th:attr="onclick=|delete_location('${location?.id}')|">Delete</button>
           </div>
         </div>
       </div>

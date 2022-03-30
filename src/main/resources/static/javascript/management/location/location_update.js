@@ -36,10 +36,10 @@ $("#country").change(function (){
 })
 $("#province").change(function (){
     if($("#province").val().trim() === ""){
-        delete updateData['province'];
+        delete updateData['state'];
     }
     else{
-        updateData['province'] = $("#province").val().trim();
+        updateData['state'] = $("#province").val().trim();
     }
     check_button_activation();
 })
@@ -54,28 +54,28 @@ $("#city").change(function (){
 })
 $("#street-address-one").change(function (){
     if($("#street-address-one").val().trim() === ""){
-        delete updateData['streetAddress1'];
+        delete updateData['addressLine1'];
     }
     else{
-        updateData['streetAddress1'] = $("#street-address-one").val().trim();
+        updateData['addressLine1'] = $("#street-address-one").val().trim();
     }
     check_button_activation();
 })
 $("#postal-code").change(function (){
     if($("#postal-code").val().trim() === ""){
-        delete updateData['postalCode'];
+        delete updateData['zipCode'];
     }
     else{
-        updateData['postalCode'] = $("#postal-code").val().trim();
+        updateData['zipCode'] = $("#postal-code").val().trim();
     }
     check_button_activation();
 })
 $("#street-address-two").change(function (){
     if($("#street-address-two").val().trim() === ""){
-        delete updateData['streetAddress2'];
+        delete updateData['addressLine2'];
     }
     else{
-        updateData['streetAddress2'] = $("#street-address-two").val().trim();
+        updateData['addressLine2'] = $("#street-address-two").val().trim();
     }
     check_button_activation();
 })
@@ -116,11 +116,11 @@ function display_new_details(){
 function display_currently_stored_values(currentData){
     $('#currently-stored-name').text(currentData['name']);
     $('#currently-stored-country').text(currentData['country']);
-    $('#currently-stored-province').text(currentData['province']);
+    $('#currently-stored-province').text(currentData['state']);
     $('#currently-stored-city').text(currentData['city']);
-    $('#currently-stored-address-one').text(currentData['streetAddress1']);
-    $('#currently-stored-postal-code').text(currentData['postalCode']);
-    $('#currently-stored-address-two').text(currentData['streetAddress2']);
+    $('#currently-stored-address-one').text(currentData['addressLine1']);
+    $('#currently-stored-postal-code').text(currentData['zipCode']);
+    $('#currently-stored-address-two').text(currentData['addressLine2']);
 }
 
 /**
@@ -140,7 +140,7 @@ function hide_rows(){
     else{
         $("#country-row").css("display", "none");
     }
-    if(('province' in updateData)){
+    if(('state' in updateData)){
         $("#province-row").css("display", "");
     }
     else{
@@ -152,19 +152,19 @@ function hide_rows(){
     else{
         $("#city-row").css("display", "none");
     }
-    if(('streetAddress1' in updateData)){
+    if(('addressLine1' in updateData)){
         $("#address-one-row").css("display", "");
     }
     else{
         $("#address-one-row").css("display", "none");
     }
-    if(('streetAddress2' in updateData)){
+    if(('addressLine2' in updateData)){
         $("#address-two-row").css("display", "");
     }
     else{
         $("#address-two-row").css("display", "none");
     }
-    if(('postalCode' in updateData)){
+    if(('zipCode' in updateData)){
         $("#postal-code-row").css("display", "");
     }
     else{
@@ -202,13 +202,7 @@ function display_confirm_update_modal(currentData){
 function get_currently_stored_location(id){
     $.ajax({
         type: "GET",
-        url: '/management/api/location/'.concat(id.toString()),
-        beforeSend: function(xhr) {
-            xhr.setRequestHeader(
-                $('meta[name=_csrf_header]').attr('content'),
-                $('meta[name=_csrf]').attr('content')
-            )
-        },
+        url: '/api/office_locations/'.concat(id.toString()),
         success: function(data)
         {
             display_confirm_update_modal(data);
@@ -225,20 +219,14 @@ $('#update-location-form').submit(
     function (e) {
         e.preventDefault();
 
-        const form = $(this);
+        const form = $('#update-location-form');
         const url = form.attr('action');
 
         $.ajax({
-            type: "PUT",
+            type: "PATCH",
             url: url,
             contentType: "application/json",
             data: JSON.stringify(updateData), // serializes the form's elements.
-            beforeSend: function(xhr) {
-                xhr.setRequestHeader(
-                    $('meta[name=_csrf_header]').attr('content'),
-                    $('meta[name=_csrf]').attr('content')
-                )
-            },
             success: function()
             {
                 $('#confirm-location-update-modal').modal('hide');
@@ -265,13 +253,7 @@ $('#update-location-form').submit(
 function delete_location(id){
     $.ajax({
         type: "DELETE",
-        url: '/management/api/location/'.concat(id.toString()),
-        beforeSend: function(xhr) {
-            xhr.setRequestHeader(
-                $('meta[name=_csrf_header]').attr('content'),
-                $('meta[name=_csrf]').attr('content')
-            )
-        },
+        url: '/api/secured/office_locations/'.concat(id.toString()),
         success: function()
         {
             $('#confirm-delete-location-modal').modal('hide');
