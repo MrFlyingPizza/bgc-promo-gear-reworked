@@ -23,7 +23,8 @@ public class GlobalInventoryLevel {
     @Transient
     private Integer apparentQuantity;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "globalInventoryLevel")
+    @OneToOne
+    @JoinColumn(name = "variant_id")
     private ProductVariant variant;
 
     @PostLoad

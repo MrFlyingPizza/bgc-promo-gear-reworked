@@ -50,8 +50,7 @@ public class ProductVariant extends Auditable implements Serializable {
     )
     private Set<OptionValue> optionValues;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id")
+    @OneToOne(mappedBy = "variant")
     private GlobalInventoryLevel globalInventoryLevel;
 
 }
