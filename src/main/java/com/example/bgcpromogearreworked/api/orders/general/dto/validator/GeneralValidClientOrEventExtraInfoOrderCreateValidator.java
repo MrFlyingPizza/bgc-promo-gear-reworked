@@ -11,8 +11,8 @@ public class GeneralValidClientOrEventExtraInfoOrderCreateValidator implements C
 
     @Override
     public boolean isValid(GeneralOrderCreate orderCreate, ConstraintValidatorContext context) {
-        Order.OrderType orderType = orderCreate.getType();
-        if (orderType == Order.OrderType.CLIENT || orderType == Order.OrderType.EVENT) {
+        Order.Type type = orderCreate.getType();
+        if (type == Order.Type.CLIENT || type == Order.Type.EVENT) {
             return orderCreate.getExtraInfo() != null;
         }
         return true;

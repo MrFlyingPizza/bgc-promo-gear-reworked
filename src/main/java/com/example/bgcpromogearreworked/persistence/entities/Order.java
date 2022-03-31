@@ -14,7 +14,7 @@ import java.util.Set;
 @Setter
 public class Order {
 
-    public enum OrderStatus {
+    public enum Status {
 
         SUBMITTED("submitted"),
         PROCESSING("processing"),
@@ -22,16 +22,16 @@ public class Order {
         WAIT_LIST("waitlisted"),
         REJECTED("cancelled");
 
-        OrderStatus(String value) {
+        Status(String value) {
         }
     }
 
-    public enum OrderType {
+    public enum Type {
         REGULAR("regular"),
         CLIENT("client"),
         EVENT("event");
 
-        OrderType(String value) {
+        Type(String value) {
         }
     }
 
@@ -52,10 +52,10 @@ public class Order {
     private User recipient;
 
     @Column(name = "status", nullable = false)
-    private OrderStatus status;
+    private Status status;
 
     @Column(name = "type", nullable = false)
-    private OrderType type;
+    private Type type;
 
     @Column(name = "total_cost", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalCost;

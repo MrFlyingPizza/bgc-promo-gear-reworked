@@ -53,7 +53,7 @@ public class GeneralOrderCreate {
     private Long recipientId;
 
     @NotNull
-    private final Order.OrderType type;
+    private final Order.Type type;
 
     @Size(max = 500)
     @NotNull
@@ -72,7 +72,7 @@ public class GeneralOrderCreate {
     @JsonCreator
     GeneralOrderCreate(@JsonProperty("comments") String comments,
                        @JsonProperty("locationId") Long locationId,
-                       @JsonProperty("type") Order.OrderType type,
+                       @JsonProperty("type") Order.Type type,
                        @JsonProperty("extraInfo") NestedOrderExtraInfo extraInfo) {
         this.comments = comments;
         this.locationId = locationId;

@@ -21,8 +21,8 @@ public class GeneralOrderResponse {
     private final String submitter;
     private final String fulfiller;
     private final String recipient;
-    private final Order.OrderStatus status;
-    private final Order.OrderType type;
+    private final Order.Status status;
+    private final Order.Type type;
     private final String submitterComments;
     private final String fulfillerComments;
     private final NestedOfficeLocation office;
