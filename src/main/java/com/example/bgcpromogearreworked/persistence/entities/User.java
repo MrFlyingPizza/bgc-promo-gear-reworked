@@ -37,5 +37,5 @@ public class User {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "office_id")
-    private OfficeLocation office;
+    private OfficeLocation location;
 }

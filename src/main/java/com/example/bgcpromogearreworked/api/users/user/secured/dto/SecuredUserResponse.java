@@ -24,6 +24,6 @@ public class SecuredUserResponse {
     private final BigDecimal owedCredit;
     private final Instant lastBigItemDate;
     private final String displayName;
-    private final NestedOfficeLocation office;
+    private final NestedOfficeLocation location;
 
 }

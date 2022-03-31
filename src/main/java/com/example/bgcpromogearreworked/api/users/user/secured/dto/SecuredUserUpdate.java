@@ -38,16 +38,16 @@ public class SecuredUserUpdate {
 
     @NotNull
     @OfficeLocationExists
-    private final Long officeId;
+    private final Long locationId;
 
     @JsonCreator
     SecuredUserUpdate(@JsonProperty("credit") BigDecimal credit,
                       @JsonProperty("owedCredit") BigDecimal owedCredit,
                       @JsonProperty("lastBigItemDate") Instant lastBigItemDate,
-                      @JsonProperty("officeId") Long officeId) {
+                      @JsonProperty("locationId") Long locationId) {
         this.credit = credit;
         this.owedCredit = owedCredit;
         this.lastBigItemDate = lastBigItemDate;
-        this.officeId = officeId;
+        this.locationId = locationId;
     }
 }

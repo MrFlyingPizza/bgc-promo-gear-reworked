@@ -25,7 +25,7 @@ public class GeneralOrderResponse {
     private final Order.Type type;
     private final String submitterComments;
     private final String fulfillerComments;
-    private final NestedOfficeLocation office;
+    private final NestedOfficeLocation location;
     private final Instant completedDate;
 // TODO: 2022-03-27 finish implement
 }
