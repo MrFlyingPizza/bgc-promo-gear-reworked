@@ -89,5 +89,5 @@ public class Order {
     private BigDecimal owedCredit;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
-    private Set<OrderItem> orderItem = new java.util.LinkedHashSet<>();
+    private Set<OrderItem> orderItems = new java.util.LinkedHashSet<>();
 }
