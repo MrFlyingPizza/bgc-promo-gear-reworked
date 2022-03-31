@@ -11,5 +11,5 @@ public interface UserRepository extends JpaRepository<User, Long>, QuerydslPredi
 
     Optional<User> findByOid(UUID oid);
     boolean existsByOid(UUID id);
-    boolean existsByOfficeId(Long officeId);
+    boolean existsByLocationId(Long locationId);
 }
