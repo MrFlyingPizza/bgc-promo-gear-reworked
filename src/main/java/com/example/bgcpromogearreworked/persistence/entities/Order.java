@@ -57,9 +57,6 @@ public class Order {
     @Column(name = "type", nullable = false)
     private Type type;
 
-    @Column(name = "total_cost", nullable = false, precision = 10, scale = 2)
-    private BigDecimal totalCost;
-
     @Column(name = "submitter_comments", nullable = false, length = 500)
     private String submitterComments = "";
 
@@ -88,6 +85,6 @@ public class Order {
     @Column(name = "owed_credit", nullable = false, precision = 10, scale = 2)
     private BigDecimal owedCredit;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "order")
     private Set<OrderItem> orderItems = new java.util.LinkedHashSet<>();
 }

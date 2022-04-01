@@ -42,7 +42,7 @@ public class SecuredInventoryLevelUpdate {
     private Long lastManuallyModifiedById;
 
     @JsonCreator
-    SecuredInventoryLevelUpdate(@JsonProperty("availableQuantity") Integer availableQuantity,
+    public SecuredInventoryLevelUpdate(@JsonProperty("availableQuantity") Integer availableQuantity,
                                 @JsonProperty("reservedQuantity") Integer reservedQuantity,
                                 @JsonProperty("notifyThreshold") Integer notifyThreshold) {
         this.availableQuantity = availableQuantity;

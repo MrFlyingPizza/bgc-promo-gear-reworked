@@ -49,15 +49,15 @@ public class SecuredProductCreate {
     private final List<@NotNull @OptionExists Long> optionIds;
 
     @JsonCreator
-    private SecuredProductCreate(@JsonProperty("name") String name,
-                                 @JsonProperty("brand") String brand,
-                                 @JsonProperty("categoryId") Long categoryId,
-                                 @JsonProperty("description") String description,
-                                 @JsonProperty("price") BigDecimal price,
-                                 @JsonProperty("isPublished") Boolean isPublished,
-                                 @JsonProperty("isBigItem") Boolean isBigItem,
-                                 @JsonProperty("isWaitListEnabled") Boolean isWaitListEnabled,
-                                 @JsonProperty("optionIds") List<Long> optionIds) {
+    public SecuredProductCreate(@JsonProperty("name") String name,
+                                @JsonProperty("brand") String brand,
+                                @JsonProperty("categoryId") Long categoryId,
+                                @JsonProperty("description") String description,
+                                @JsonProperty("price") BigDecimal price,
+                                @JsonProperty("isPublished") Boolean isPublished,
+                                @JsonProperty("isBigItem") Boolean isBigItem,
+                                @JsonProperty("isWaitListEnabled") Boolean isWaitListEnabled,
+                                @JsonProperty("optionIds") List<Long> optionIds) {
         this.name = name;
         this.brand = brand;
         this.categoryId = categoryId;

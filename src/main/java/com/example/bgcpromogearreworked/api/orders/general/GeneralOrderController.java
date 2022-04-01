@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/orders/")
+@RequestMapping("/api/orders")
 public class GeneralOrderController {
 
     private final SessionUserDetailsHelperService userDetailsHelperService;
@@ -25,7 +25,6 @@ public class GeneralOrderController {
     private final GeneralOrderHandlerService handlerService;
     private final GeneralOrderMapper mapper;
 
-    // TODO: 2022-03-27 finish implement
     @PostMapping
     private GeneralOrderResponse createOrder(@RequestBody GeneralOrderCreate orderCreate,
                                              @AuthenticationPrincipal OidcUser oidcUser) {

@@ -27,7 +27,6 @@ public abstract class GeneralOrderMapper {
     @Mapping(source = "comments", target = "submitterComments")
     @Mapping(target = "fulfillerComments", ignore = true)
     @Mapping(target = "fulfiller", ignore = true)
-    @Mapping(target = "totalCost", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdDate", ignore = true)
@@ -44,6 +43,7 @@ public abstract class GeneralOrderMapper {
     @Mapping(source = "recipient.displayName", target = "recipient")
     public abstract GeneralOrderResponse toResponse(Order order);
 
+    @Mapping(source = "variant.product.price", target = "price")
     public abstract List<GeneralOrderCreate.NestedOrderItem> cartItemsToOrderItems(List<CartItem> cartItems);
 
     protected User userFromId(Long id) {

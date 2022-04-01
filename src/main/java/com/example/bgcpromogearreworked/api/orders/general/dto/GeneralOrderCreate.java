@@ -2,6 +2,7 @@ package com.example.bgcpromogearreworked.api.orders.general.dto;
 
 import com.example.bgcpromogearreworked.api.orders.constraints.ValidClientOrEventExtraInfo;
 import com.example.bgcpromogearreworked.api.shared.validation.constraints.officelocationexists.OfficeLocationExists;
+import com.example.bgcpromogearreworked.api.shared.validation.constraints.productvariantexists.ProductVariantExists;
 import com.example.bgcpromogearreworked.persistence.entities.Order;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -10,8 +11,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.Future;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 
@@ -34,13 +37,19 @@ public class GeneralOrderCreate {
 
     @Getter
     public static class NestedOrderItem {
+        @ProductVariantExists
         private final Long variantId;
+        @Min(1)
         private final Integer quantity;
+
+        private final BigDecimal price;
         @JsonCreator
         NestedOrderItem(@JsonProperty("variantId") Long variantId,
-                        @JsonProperty("quantity") Integer quantity) {
+                        @JsonProperty("quantity") Integer quantity,
+                        @JsonProperty("price") BigDecimal price) {
             this.variantId = variantId;
             this.quantity = quantity;
+            this.price = price;
         }
     }
 
@@ -70,7 +79,7 @@ public class GeneralOrderCreate {
     private List<NestedOrderItem> items;
 
     @JsonCreator
-    GeneralOrderCreate(@JsonProperty("comments") String comments,
+    public GeneralOrderCreate(@JsonProperty("comments") String comments,
                        @JsonProperty("locationId") Long locationId,
                        @JsonProperty("type") Order.Type type,
                        @JsonProperty("extraInfo") NestedOrderExtraInfo extraInfo) {

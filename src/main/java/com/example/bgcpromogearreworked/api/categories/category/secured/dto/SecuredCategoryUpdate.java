@@ -35,7 +35,7 @@ public class SecuredCategoryUpdate {
     private final Long parentId;
 
     @JsonCreator
-    SecuredCategoryUpdate(@JsonProperty("name") String name, @JsonProperty("parentId") Long parentId) {
+    public SecuredCategoryUpdate(@JsonProperty("name") String name, @JsonProperty("parentId") Long parentId) {
         this.name = name;
         this.parentId = parentId;
     }
