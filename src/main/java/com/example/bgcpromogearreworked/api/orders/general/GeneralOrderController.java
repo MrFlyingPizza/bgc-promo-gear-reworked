@@ -32,7 +32,7 @@ public class GeneralOrderController {
         Long userId = userDetailsHelperService.processAuthenticatedUser(oidcUser);
         orderCreate.setRecipientId(userId);
         orderCreate.setSubmitterId(userId);
-        orderCreate.setItems(mapper.map(cartItemService.getCartItems(userId)));
+        orderCreate.setItems(mapper.cartItemsToOrderItems(cartItemService.getCartItems(userId)));
         return null;
     }
 
