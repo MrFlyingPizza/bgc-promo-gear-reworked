@@ -1,5 +1,6 @@
 package com.example.bgcpromogearreworked.persistence.entities;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,4 +32,14 @@ public class OrderItem {
     @ManyToOne
     @JoinColumn(name = "order_id", insertable = false, updatable = false)
     private Order order;
+
+    @Transient
+    @Setter(AccessLevel.PRIVATE)
+    private BigDecimal cost;
+
+    @PostLoad
+    private void calculateCost() {
+        this.cost = price.multiply(BigDecimal.valueOf(quantity));
+    }
+
 }

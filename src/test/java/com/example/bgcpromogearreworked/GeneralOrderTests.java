@@ -1,4 +1,4 @@
- package com.example.bgcpromogearreworked.test;
+ package com.example.bgcpromogearreworked;
 
  import org.junit.jupiter.api.Test;
  import org.springframework.beans.factory.annotation.Autowired;

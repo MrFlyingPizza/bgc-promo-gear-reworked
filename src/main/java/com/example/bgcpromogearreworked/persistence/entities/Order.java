@@ -1,5 +1,6 @@
 package com.example.bgcpromogearreworked.persistence.entities;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -67,6 +68,9 @@ public class Order {
     @JoinColumn(name = "location_id", nullable = false)
     private OfficeLocation location;
 
+    @Column(name = "owed_credit")
+    private BigDecimal owedCredit;
+
     @Column(name = "created_date")
     private Instant createdDate;
 
@@ -82,9 +86,21 @@ public class Order {
     @Column(name = "completed_date")
     private Instant completedDate;
 
-    @Column(name = "owed_credit", nullable = false, precision = 10, scale = 2)
-    private BigDecimal owedCredit;
+    @OneToOne(mappedBy = "order", cascade = {CascadeType.PERSIST})
+    private OrderExtraInfo extraInfo;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
     private Set<OrderItem> orderItems = new java.util.LinkedHashSet<>();
+
+    @Transient
+    @Setter(AccessLevel.PRIVATE)
+    private BigDecimal totalCost;
+
+    @PostLoad
+    private void calculateTotalCost() {
+        for (OrderItem orderItem : orderItems) {
+            this.totalCost = this.totalCost.add(orderItem.getCost());
+        }
+    }
+
 }

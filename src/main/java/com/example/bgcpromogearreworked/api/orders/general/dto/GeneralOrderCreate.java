@@ -7,8 +7,7 @@ import com.example.bgcpromogearreworked.persistence.entities.Order;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.Min;
@@ -19,16 +18,20 @@ import java.time.Instant;
 import java.util.List;
 
 @Getter
+@Builder(toBuilder = true)
 @ValidClientOrEventExtraInfo
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class GeneralOrderCreate {
 
     @Getter
+    @Builder(toBuilder = true)
     public static class NestedOrderExtraInfo {
         @Size(min = 1, max = 256)
         private final String recipientInfo;
         @Future
         private final Instant requiredDate;
-        NestedOrderExtraInfo(@JsonProperty("recipientInfo") String recipientInfo,
+
+        public NestedOrderExtraInfo(@JsonProperty("recipientInfo") String recipientInfo,
                              @JsonProperty("requiredDate") Instant requiredDate) {
             this.recipientInfo = recipientInfo;
             this.requiredDate = requiredDate;
@@ -36,6 +39,7 @@ public class GeneralOrderCreate {
     }
 
     @Getter
+    @Builder(toBuilder = true)
     public static class NestedOrderItem {
         @ProductVariantExists
         private final Long variantId;
@@ -43,10 +47,11 @@ public class GeneralOrderCreate {
         private final Integer quantity;
 
         private final BigDecimal price;
+
         @JsonCreator
-        NestedOrderItem(@JsonProperty("variantId") Long variantId,
-                        @JsonProperty("quantity") Integer quantity,
-                        @JsonProperty("price") BigDecimal price) {
+        public NestedOrderItem(@JsonProperty("variantId") Long variantId,
+                               @JsonProperty("quantity") Integer quantity,
+                               @JsonProperty("price") BigDecimal price) {
             this.variantId = variantId;
             this.quantity = quantity;
             this.price = price;
@@ -60,6 +65,10 @@ public class GeneralOrderCreate {
     @Setter
     @JsonIgnore
     private Long recipientId;
+
+    @Setter
+    @JsonIgnore
+    private Order.Status status;
 
     @NotNull
     private final Order.Type type;
@@ -80,9 +89,9 @@ public class GeneralOrderCreate {
 
     @JsonCreator
     public GeneralOrderCreate(@JsonProperty("comments") String comments,
-                       @JsonProperty("locationId") Long locationId,
-                       @JsonProperty("type") Order.Type type,
-                       @JsonProperty("extraInfo") NestedOrderExtraInfo extraInfo) {
+                              @JsonProperty("locationId") Long locationId,
+                              @JsonProperty("type") Order.Type type,
+                              @JsonProperty("extraInfo") NestedOrderExtraInfo extraInfo) {
         this.comments = comments;
         this.locationId = locationId;
         this.type = type;

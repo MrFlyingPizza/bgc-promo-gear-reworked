@@ -11,6 +11,7 @@ import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public abstract class GeneralOrderMapper {
@@ -35,13 +36,16 @@ public abstract class GeneralOrderMapper {
     @Mapping(target = "lastModifiedBy", ignore = true)
     @Mapping(target = "completedDate", ignore = true)
     @Mapping(target = "owedCredit", ignore = true)
-    @Mapping(target = "orderItems", ignore = true)
     public abstract Order fromCreate(GeneralOrderCreate orderCreate);
 
     @Mapping(source = "submitter.displayName", target = "submitter")
     @Mapping(source = "fulfiller.displayName", target = "fulfiller")
     @Mapping(source = "recipient.displayName", target = "recipient")
     public abstract GeneralOrderResponse toResponse(Order order);
+
+    public GeneralOrderBatchResponse toBatchResponse(List<Order> orders) {
+        return new GeneralOrderBatchResponse(orders.stream().map(this::toResponse).collect(Collectors.toList()));
+    }
 
     @Mapping(source = "variant.product.price", target = "price")
     public abstract List<GeneralOrderCreate.NestedOrderItem> cartItemsToOrderItems(List<CartItem> cartItems);
@@ -54,5 +58,4 @@ public abstract class GeneralOrderMapper {
         return locationRepo.getById(id);
     }
 
-// TODO: 2022-03-27 finish implement
 }
