@@ -26,6 +26,7 @@ public abstract class GeneralOrderMapper {
     @Mapping(source = "recipientId", target = "recipient")
     @Mapping(source = "locationId", target = "location")
     @Mapping(source = "comments", target = "submitterComments")
+    @Mapping(source = "items", target = "orderItems")
     @Mapping(target = "fulfillerComments", ignore = true)
     @Mapping(target = "fulfiller", ignore = true)
     @Mapping(target = "status", ignore = true)
@@ -36,6 +37,10 @@ public abstract class GeneralOrderMapper {
     @Mapping(target = "lastModifiedBy", ignore = true)
     @Mapping(target = "completedDate", ignore = true)
     @Mapping(target = "owedCredit", ignore = true)
+    @Mapping(target = "extraInfo.orderId", ignore = true)
+    @Mapping(target = "extraInfo.order", ignore = true)
+    @Mapping(target = "orderItems[].orderId", ignore = true)
+    @Mapping(target = "orderItems[].order", ignore = true)
     public abstract Order fromCreate(GeneralOrderCreate orderCreate);
 
     @Mapping(source = "submitter.displayName", target = "submitter")
