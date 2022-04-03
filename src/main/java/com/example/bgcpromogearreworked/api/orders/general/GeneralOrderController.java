@@ -2,9 +2,11 @@ package com.example.bgcpromogearreworked.api.orders.general;
 
 import com.example.bgcpromogearreworked.api.orders.OrderService;
 import com.example.bgcpromogearreworked.api.orders.exceptions.NoCartItemException;
+import com.example.bgcpromogearreworked.api.orders.exceptions.OrderNotFoundException;
 import com.example.bgcpromogearreworked.api.orders.general.dto.GeneralOrderBatchResponse;
 import com.example.bgcpromogearreworked.api.orders.general.dto.GeneralOrderCreate;
 import com.example.bgcpromogearreworked.api.orders.general.dto.GeneralOrderMapper;
+import com.example.bgcpromogearreworked.api.orders.general.dto.GeneralOrderResponse;
 import com.example.bgcpromogearreworked.api.shared.authentication.SessionUserDetailsHelperService;
 import com.example.bgcpromogearreworked.api.users.cartitem.CartItemService;
 import com.example.bgcpromogearreworked.persistence.entities.CartItem;
@@ -45,6 +47,15 @@ public class GeneralOrderController {
     private GeneralOrderBatchResponse getOrderBatch(@AuthenticationPrincipal OidcUser oidcUser) {
         Long userId = userDetailsHelperService.processAuthenticatedUser(oidcUser);
         return mapper.toBatchResponse(handlerService.handleOrderBatchGet(userId));
+    }
+
+    @GetMapping("/{orderId}")
+    private GeneralOrderResponse getOrder(@PathVariable Long orderId, @AuthenticationPrincipal OidcUser oidcUser) {
+        Long userId = userDetailsHelperService.processAuthenticatedUser(oidcUser);
+        if (!service.checkOrderExistsOnUser(userId, orderId)) {
+            throw new OrderNotFoundException();
+        }
+        return mapper.toResponse(handlerService.handleOrderGet(userId, orderId));
     }
 
 }

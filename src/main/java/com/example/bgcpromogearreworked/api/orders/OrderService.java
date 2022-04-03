@@ -20,8 +20,12 @@ public class OrderService {
     private final OrderRepository orderRepo;
     private final InventoryLevelRepository inventoryRepo;
 
-    public boolean checkOrderExist(Long orderId) {
+    public boolean checkOrderExists(Long orderId) {
         return orderRepo.existsById(orderId);
+    }
+
+    public boolean checkOrderExistsOnUser(Long userId, Long orderId) {
+        return orderRepo.existsBySubmitterIdAndId(userId, orderId);
     }
 
     private interface QuantityUpdateCallback {
@@ -64,6 +68,12 @@ public class OrderService {
     public List<Order> getOrders(Long userId) {
         assert userId != null;
         return orderRepo.findAllBySubmitterId(userId);
+    }
+
+    @Transactional
+    public Order getOrder(Long userId, Long orderId) {
+        assert userId != null && orderId != null;
+        return orderRepo.findBySubmitterIdAndId(userId, orderId);
     }
 
 }

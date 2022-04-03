@@ -71,4 +71,9 @@ public class GeneralOrderHandlerService {
         return service.getOrders(userId);
     }
 
+    @Transactional
+    Order handleOrderGet(Long userId, Long orderId) {
+        return service.getOrder(userId, orderId);
+    }
+
 }
