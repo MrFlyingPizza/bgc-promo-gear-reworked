@@ -11,7 +11,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(indexes = {
+@Table(name = "\"user\"", indexes = {
         @Index(name = "user_oid_uindex", columnList = "oid", unique = true)
 })
 public class User {
