@@ -19,6 +19,8 @@ public class WebSecurityConfig extends AADWebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and().csrf().disable()
                 .oauth2Login().userInfoEndpoint().oidcUserService(oidcUserService)
+                .and().and()
+                .headers().frameOptions().sameOrigin()
         ;
     }
 

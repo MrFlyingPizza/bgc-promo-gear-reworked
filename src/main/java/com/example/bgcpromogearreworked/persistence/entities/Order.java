@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Set;
 
-@Table(name = "\"order\"")
+@Table
 @Entity
 @Getter
 @Setter
