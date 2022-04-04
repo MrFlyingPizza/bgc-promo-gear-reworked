@@ -14,16 +14,16 @@ public abstract class SecuredCategoryMapper {
     @Autowired
     private CategoryRepository categoryRepo;
 
-    @Mapping(source = "parentId", target = "parent.id")
+    @Mapping(source = "parentId", target = "parent")
     @Mapping(target = "subcategories", ignore = true)
     @Mapping(target = "id", ignore = true)
     public abstract Category fromCreate(SecuredCategoryCreate categoryCreate);
 
-    @Mapping(source = "parentId", target = "parent.id")
+    @Mapping(source = "parentId", target = "parent")
     @Mapping(target = "subcategories", ignore = true)
     public abstract Category fromUpdate(SecuredCategoryUpdate categoryUpdate, @MappingTarget Category category);
 
-    @Mapping(source = "parentId", target = "parent.id")
+    @Mapping(source = "parentId", target = "parent")
     @Mapping(target = "subcategories", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     public abstract Category fromPartialUpdate(SecuredCategoryPartialUpdate categoryPartialUpdate, @MappingTarget Category category);
@@ -34,16 +34,7 @@ public abstract class SecuredCategoryMapper {
         return new SecuredCategoryBatchResponse(categories.stream().map(this::toResponse).collect(Collectors.toList()));
     }
 
-    @AfterMapping
-    protected void mapCategoryFromRepoOrNull(@MappingTarget Category category) {
-        if (category.getParent() == null) {
-            return;
-        }
-        Long id = category.getParent().getId();
-        if (id == null) {
-            category.setParent(null);
-        } else {
-            category.setParent(categoryRepo.getById(category.getParent().getId()));
-        }
+    protected Category map(Long categoryId) {
+        return categoryRepo.getById(categoryId);
     }
 }

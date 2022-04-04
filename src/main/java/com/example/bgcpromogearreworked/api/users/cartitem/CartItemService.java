@@ -41,7 +41,12 @@ public class CartItemService {
 
     public <T> CartItem createCartItem(T source, Function<T, CartItem> mapper) {
         assert source != null && mapper != null;
-        return cartItemRepo.save(mapper.apply(source));
+        CartItem newCartItem = cartItemRepo.save(mapper.apply(source));
+        return cartItemRepo.saveAndFlush(cartItemRepo.findById(buildId(newCartItem.getUserId(),
+                newCartItem.getVariantId())).map(existing -> {
+                    existing.setQuantity(existing.getQuantity() + newCartItem.getQuantity());
+                    return existing;
+                }).orElse(newCartItem));
     }
 
     public <T> CartItem updateCartItem(Long userId, Long variantId, T source, BiFunction<T, CartItem, CartItem> mapper) {
