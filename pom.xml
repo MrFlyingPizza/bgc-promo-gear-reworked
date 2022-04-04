@@ -14,6 +14,9 @@
     <name>BGC Promo Gear API</name>
     <description>BGC Promo Gear API</description>
     <properties>
+        <skipTests>
+            true
+        </skipTests>
         <java.version>11</java.version>
         <azure.version>3.13.0</azure.version>
         <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
@@ -172,6 +175,14 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M6</version>
+                <configuration>
+                    <skipTests>${skipTests}</skipTests>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
