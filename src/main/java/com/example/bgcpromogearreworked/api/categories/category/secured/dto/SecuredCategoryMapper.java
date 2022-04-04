@@ -14,12 +14,12 @@ public abstract class SecuredCategoryMapper {
     @Autowired
     private CategoryRepository categoryRepo;
 
-    @Mapping(source = "parentId", target = "parent")
+    @Mapping(source = "parentId", target = "parent", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "subcategories", ignore = true)
     @Mapping(target = "id", ignore = true)
     public abstract Category fromCreate(SecuredCategoryCreate categoryCreate);
 
-    @Mapping(source = "parentId", target = "parent")
+    @Mapping(source = "parentId", target = "parent", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "subcategories", ignore = true)
     public abstract Category fromUpdate(SecuredCategoryUpdate categoryUpdate, @MappingTarget Category category);
 
