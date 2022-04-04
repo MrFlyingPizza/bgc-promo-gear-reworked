@@ -49,6 +49,6 @@ public abstract class GeneralCartItemMapper {
     protected abstract GeneralCartItemResponse.NestedOptionValue map(OptionValue optionValue);
 
     protected ProductVariant map(Long variantId) {
-        return variantRepo.getById(variantId);
+        return variantId != null && variantId != 0 ? variantRepo.getById(variantId) : null;
     }
 }
