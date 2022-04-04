@@ -6,6 +6,7 @@ import com.example.bgcpromogearreworked.persistence.entities.CartItemId;
 import com.example.bgcpromogearreworked.persistence.repositories.CartItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.function.BiFunction;
@@ -55,6 +56,7 @@ public class CartItemService {
         cartItemRepo.deleteById(buildId(userId, variantId));
     }
 
+    @Transactional
     public void deleteCartItems(Long userId) {
         assert userId != null;
         cartItemRepo.deleteAllByUserId(userId);

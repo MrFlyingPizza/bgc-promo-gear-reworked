@@ -16,6 +16,7 @@ public abstract class GeneralCartItemMapper {
     @Mapping(target = "variant", ignore = true)
     public abstract CartItem fromCreate(GeneralCartItemCreate cartItemCreate);
 
+    @Transactional
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "variant", ignore = true)
     public abstract CartItem fromUpdate(GeneralCartItemUpdate cartItemCreate, @MappingTarget CartItem cartItem);
