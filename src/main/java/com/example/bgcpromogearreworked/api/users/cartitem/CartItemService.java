@@ -41,7 +41,7 @@ public class CartItemService {
 
     public <T> CartItem createCartItem(T source, Function<T, CartItem> mapper) {
         assert source != null && mapper != null;
-        CartItem newCartItem = cartItemRepo.save(mapper.apply(source));
+        CartItem newCartItem = mapper.apply(source);
         return cartItemRepo.saveAndFlush(cartItemRepo.findById(buildId(newCartItem.getUserId(),
                 newCartItem.getVariantId())).map(existing -> {
                     existing.setQuantity(existing.getQuantity() + newCartItem.getQuantity());
