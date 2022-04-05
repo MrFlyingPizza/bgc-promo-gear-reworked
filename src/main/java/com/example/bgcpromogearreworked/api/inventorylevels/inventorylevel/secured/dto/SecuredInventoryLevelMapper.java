@@ -1,9 +1,9 @@
 package com.example.bgcpromogearreworked.api.inventorylevels.inventorylevel.secured.dto;
 
-import com.example.bgcpromogearreworked.persistence.entities.InventoryLevel;
-import com.example.bgcpromogearreworked.persistence.entities.OptionValue;
+import com.example.bgcpromogearreworked.persistence.entities.*;
 import com.example.bgcpromogearreworked.persistence.repositories.OfficeLocationRepository;
 import com.example.bgcpromogearreworked.persistence.repositories.ProductVariantRepository;
+import com.example.bgcpromogearreworked.persistence.repositories.UserRepository;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,18 +20,20 @@ public abstract class SecuredInventoryLevelMapper {
     @Autowired
     private OfficeLocationRepository locationRepo;
 
-    @Mapping(source = "lastManuallyModifiedById", target = "lastManuallyModifiedBy.id")
-    @Mapping(target = "variant", ignore = true)
-    @Mapping(target = "location", ignore = true)
+    @Autowired
+    private UserRepository userRepo;
+
+    @Mapping(source = "variantId", target = "variant")
+    @Mapping(source = "locationId", target = "location")
+    @Mapping(source = "lastManuallyModifiedById", target = "lastManuallyModifiedBy")
     @Mapping(target = "neededQuantity", ignore = true)
     public abstract InventoryLevel fromUpdate(SecuredInventoryLevelUpdate inventoryLevelUpdate,
                                               @MappingTarget InventoryLevel inventoryLevel);
 
-    @Mapping(source = "lastManuallyModifiedById", target = "lastManuallyModifiedBy.id",
-            nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
+    @Mapping(source = "variantId", target = "variant")
+    @Mapping(source = "locationId", target = "location")
+    @Mapping(source = "lastManuallyModifiedById", target = "lastManuallyModifiedBy")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "variant", ignore = true)
-    @Mapping(target = "location", ignore = true)
     @Mapping(target = "neededQuantity", ignore = true)
     public abstract InventoryLevel fromPartialUpdate(SecuredInventoryLevelPartialUpdate inventoryLevelPartialUpdate,
                                                      @MappingTarget InventoryLevel inventoryLevel);
@@ -55,33 +57,19 @@ public abstract class SecuredInventoryLevelMapper {
                 page.getSort().isSorted());
     }
 
-    @AfterMapping
-    protected void mapProductVariantFromRepoOrNull(@MappingTarget InventoryLevel inventoryLevel) {
-        if (inventoryLevel.getVariant() == null) {
-            return;
-        }
-        Long variantId = inventoryLevel.getVariant().getId();
-        if (variantId == null) {
-            inventoryLevel.setVariant(null);
-        } else {
-            inventoryLevel.setVariant(variantRepo.getById(variantId));
-        }
-    }
-
-    @AfterMapping
-    protected void mapOfficeLocationFromRepoOrNull(@MappingTarget InventoryLevel inventoryLevel) {
-        if (inventoryLevel.getLocation() == null) {
-            return;
-        }
-        Long locationId = inventoryLevel.getLocation().getId();
-        if (locationId == null) {
-            inventoryLevel.setLocation(null);
-        } else {
-            inventoryLevel.setLocation(locationRepo.getById(locationId));
-        }
-    }
-
     @Mapping(source = "option.id", target = "optionId")
     @Mapping(source = "option.name", target = "name")
     protected abstract SecuredInventoryLevelResponse.NestedVariant.NestedOptionValue map(OptionValue optionValue);
+
+    protected ProductVariant mapVariantFromId(Long variantId) {
+        return variantId != null && variantId != 0 ? variantRepo.getById(variantId) : null;
+    }
+
+    protected OfficeLocation mapLocationFromId(Long locationId) {
+        return locationId != null && locationId != 0 ? locationRepo.getById(locationId) : null;
+    }
+
+    protected User mapUserFromId(Long userId) {
+        return userId != null && userId != 0 ? userRepo.getById(userId) : null;
+    }
 }
