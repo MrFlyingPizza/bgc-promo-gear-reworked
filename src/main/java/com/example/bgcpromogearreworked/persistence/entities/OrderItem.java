@@ -28,18 +28,16 @@ public class OrderItem {
     @Column(name = "price", nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
-    @Id
     @ManyToOne
     @JoinColumn(name = "order_id", insertable = false, updatable = false)
     private Order order;
 
-    @Transient
-    @Setter(AccessLevel.PRIVATE)
-    private BigDecimal cost;
+    @ManyToOne
+    @JoinColumn(name = "variant_id", insertable = false, updatable = false)
+    private ProductVariant variant;
 
-    @PostLoad
-    private void calculateCost() {
-        this.cost = price.multiply(BigDecimal.valueOf(quantity));
+    public BigDecimal getCost() {
+        return price.multiply(BigDecimal.valueOf(quantity));
     }
 
 }

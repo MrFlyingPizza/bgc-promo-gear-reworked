@@ -93,15 +93,12 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
     private Set<OrderItem> orderItems = new java.util.LinkedHashSet<>();
 
-    @Transient
-    @Setter(AccessLevel.PRIVATE)
-    private BigDecimal totalCost;
-
-    @PostLoad
-    private void calculateTotalCost() {
+    public BigDecimal getTotalCost() {
+        BigDecimal totalCost = BigDecimal.ZERO;
         for (OrderItem orderItem : orderItems) {
-            this.totalCost = this.totalCost.add(orderItem.getCost());
+            totalCost = totalCost.add(orderItem.getCost());
         }
+        return totalCost;
     }
 
 }
