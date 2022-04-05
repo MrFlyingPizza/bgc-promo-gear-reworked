@@ -28,7 +28,10 @@ public class GlobalInventoryLevel {
     private ProductVariant variant;
 
     @PostLoad
+    @PostUpdate
+    @PostPersist
     private void calculateApparentQuantity() {
+        System.out.println(variant.getWaitListThreshold());
         this.apparentQuantity = totalAvailableQuantity - totalNeededQuantity - variant.getWaitListThreshold();
     }
 }

@@ -1,5 +1,6 @@
 package com.example.bgcpromogearreworked.api.orders;
 
+import com.example.bgcpromogearreworked.api.orders.exceptions.OrderNotFoundException;
 import com.example.bgcpromogearreworked.persistence.entities.InventoryLevel;
 import com.example.bgcpromogearreworked.persistence.entities.InventoryLevelId;
 import com.example.bgcpromogearreworked.persistence.entities.Order;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 @Service
@@ -29,28 +31,61 @@ public class OrderService {
     }
 
     private interface QuantityUpdateCallback {
-        void apply(InventoryLevel inventoryLevel, Integer quantity);
+        void apply(InventoryLevel inventoryLevel, Order.Status previousStatus, Integer quantity);
     }
 
-    private void processInventoryQuantities(Order order) {
+    private void processInventoryQuantities(Order order, Order.Status previousStatus) {
         Long locationId = order.getLocation().getId();
-        QuantityUpdateCallback quantityUpdateCallback;
+        QuantityUpdateCallback quantityUpdateCallback = null;
         switch (order.getStatus()) {
             case WAIT_LIST:
-                quantityUpdateCallback = (inventoryLevel, quantity) -> inventoryLevel.setNeededQuantity(inventoryLevel.getNeededQuantity() + quantity);
+                if (previousStatus == null) {
+                    quantityUpdateCallback = (inventoryLevel, previous, quantity) ->
+                            inventoryLevel.setNeededQuantity(inventoryLevel.getNeededQuantity() + quantity);
+                }
                 break;
             case SUBMITTED:
-                quantityUpdateCallback = (inventoryLevel, quantity) -> inventoryLevel.setAvailableQuantity(inventoryLevel.getAvailableQuantity() - quantity);
+                quantityUpdateCallback = (inventoryLevel, previous, quantity) -> {
+                    if (previous == Order.Status.WAIT_LIST) {
+                        inventoryLevel.setNeededQuantity(inventoryLevel.getNeededQuantity() - quantity);
+                    }
+                    inventoryLevel.setAvailableQuantity(inventoryLevel.getAvailableQuantity() - quantity);
+                    inventoryLevel.setReservedQuantity(inventoryLevel.getReservedQuantity() + quantity);
+                };
+                break;
+            case PROCESSING:
+                break;
+            case COMPLETED:
+                if (previousStatus == Order.Status.PROCESSING || previousStatus == Order.Status.SUBMITTED) {
+                    quantityUpdateCallback = (inventoryLevel, previous, quantity) ->
+                            inventoryLevel.setReservedQuantity(inventoryLevel.getReservedQuantity() - quantity);
+                } else {
+                    quantityUpdateCallback = (inventoryLevel, previousStatus1, quantity) ->
+                            inventoryLevel.setAvailableQuantity(inventoryLevel.getAvailableQuantity() - quantity);
+                }
+                break;
+            case CANCELLED:
+                if (previousStatus == Order.Status.WAIT_LIST) {
+
+                } else if (previousStatus == Order.Status.SUBMITTED) {
+
+                } else if (previousStatus == Order.Status.PROCESSING) {
+
+                }
                 break;
             default:
                 throw new RuntimeException(String.format("Unexpected status when processing inventory quantities: %s",
                         order.getStatus()));
         }
 
+        if (quantityUpdateCallback == null) {
+            return;
+        }
+
         for (OrderItem orderItem : order.getOrderItems()) {
             InventoryLevelId id = new InventoryLevelId(locationId, orderItem.getVariantId());
             InventoryLevel inventoryLevel = inventoryRepo.findById(id).orElseThrow();
-            quantityUpdateCallback.apply(inventoryLevel, orderItem.getQuantity());
+            quantityUpdateCallback.apply(inventoryLevel, previousStatus, orderItem.getQuantity());
             inventoryRepo.save(inventoryLevel);
         }
     }
@@ -60,8 +95,15 @@ public class OrderService {
         assert source != null && mapper != null;
         Order order = mapper.apply(source);
         assert order.getId() == null;
-        processInventoryQuantities(order);
+        processInventoryQuantities(order, null);
         return orderRepo.saveAndFlush(order);
+    }
+
+    @Transactional
+    public <T> Order updateOrder(Long orderId, T source, BiFunction<T, Order, Order> mapper) {
+        assert orderId != null && source != null && mapper != null;
+        Order order = orderRepo.findById(orderId).orElseThrow(OrderNotFoundException::new);
+        return null;
     }
 
     @Transactional

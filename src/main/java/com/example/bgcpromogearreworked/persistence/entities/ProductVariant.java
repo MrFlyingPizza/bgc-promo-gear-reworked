@@ -30,7 +30,7 @@ public class ProductVariant extends Auditable implements Serializable {
     @JoinColumn(name = "image_id")
     private ProductImage image;
 
-    @Column(name = "wait_list_threshold")
+    @Column(name = "wait_list_threshold", nullable = false)
     private Integer waitListThreshold;
 
     @Column(name = "is_in_use", nullable = false)

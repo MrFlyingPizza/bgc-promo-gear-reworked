@@ -21,7 +21,7 @@ public class Order {
         PROCESSING("processing"),
         COMPLETED("completed"),
         WAIT_LIST("waitlisted"),
-        REJECTED("cancelled");
+        CANCELLED("cancelled");
 
         Status(String value) {
         }
