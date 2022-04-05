@@ -13,14 +13,14 @@ public class GeneralOrderResponse {
 
     @Getter
     @RequiredArgsConstructor
-    static class NestedOfficeLocation {
+    public static class NestedOfficeLocation {
         private final Long id;
         private final String name;
     }
 
     @Getter
     @RequiredArgsConstructor
-    static class NestedOrderItem {
+    public static class NestedOrderItem {
 
         @Getter
         @RequiredArgsConstructor
@@ -57,5 +57,6 @@ public class GeneralOrderResponse {
     private final String fulfillerComments;
     private final NestedOfficeLocation location;
     private final Instant completedDate;
+    private final List<NestedOrderItem> items;
 // TODO: 2022-03-27 finish implement
 }

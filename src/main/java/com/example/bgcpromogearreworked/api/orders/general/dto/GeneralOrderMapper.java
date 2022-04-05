@@ -1,9 +1,6 @@
 package com.example.bgcpromogearreworked.api.orders.general.dto;
 
-import com.example.bgcpromogearreworked.persistence.entities.CartItem;
-import com.example.bgcpromogearreworked.persistence.entities.OfficeLocation;
-import com.example.bgcpromogearreworked.persistence.entities.Order;
-import com.example.bgcpromogearreworked.persistence.entities.User;
+import com.example.bgcpromogearreworked.persistence.entities.*;
 import com.example.bgcpromogearreworked.persistence.repositories.OfficeLocationRepository;
 import com.example.bgcpromogearreworked.persistence.repositories.UserRepository;
 import org.mapstruct.Mapper;
@@ -46,6 +43,7 @@ public abstract class GeneralOrderMapper {
     @Mapping(source = "submitter.displayName", target = "submitter")
     @Mapping(source = "fulfiller.displayName", target = "fulfiller")
     @Mapping(source = "recipient.displayName", target = "recipient")
+    @Mapping(source = "orderItems", target = "items")
     public abstract GeneralOrderResponse toResponse(Order order);
 
     public GeneralOrderBatchResponse toBatchResponse(List<Order> orders) {
@@ -54,6 +52,18 @@ public abstract class GeneralOrderMapper {
 
     @Mapping(source = "variant.product.price", target = "price")
     public abstract List<GeneralOrderCreate.NestedOrderItem> cartItemsToOrderItems(List<CartItem> cartItems);
+
+    @Mapping(source = "variant.id", target = "variantId")
+    @Mapping(source = "variant.product.id", target = "productId")
+    @Mapping(source = "variant.product.name", target = "productName")
+    @Mapping(source = "variant.image", target = "image")
+    @Mapping(source = "variant.optionValues", target = "options")
+    protected abstract GeneralOrderResponse.NestedOrderItem map(OrderItem orderItem);
+
+    @Mapping(source = "id", target = "valueId")
+    @Mapping(source = "option.id", target = "optionId")
+    @Mapping(source = "option.name", target = "name")
+    protected abstract GeneralOrderResponse.NestedOrderItem.NestedOptionValue map(OptionValue optionValue);
 
     protected User userFromId(Long id) {
         return userRepo.getById(id);
