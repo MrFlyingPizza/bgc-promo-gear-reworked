@@ -20,18 +20,11 @@ public class GlobalInventoryLevel {
     @Column(name = "total_needed_quantity")
     private Integer totalNeededQuantity;
 
-    @Transient
-    private Integer apparentQuantity;
-
     @OneToOne
     @JoinColumn(name = "variant_id")
     private ProductVariant variant;
 
-    @PostLoad
-    @PostUpdate
-    @PostPersist
-    private void calculateApparentQuantity() {
-        System.out.println(variant.getWaitListThreshold());
-        this.apparentQuantity = totalAvailableQuantity - totalNeededQuantity - variant.getWaitListThreshold();
+    public Integer getApparentQuantity() {
+        return totalAvailableQuantity - totalNeededQuantity - variant.getWaitListThreshold();
     }
 }
