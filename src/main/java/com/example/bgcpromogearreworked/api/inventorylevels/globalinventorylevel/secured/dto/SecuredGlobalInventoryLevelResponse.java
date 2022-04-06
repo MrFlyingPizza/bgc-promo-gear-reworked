@@ -33,6 +33,7 @@ public class SecuredGlobalInventoryLevelResponse {
         private final Long id;
         private final Long productId;
         private final String productName;
+        private final Integer waitListThreshold;
         private final NestedCategory category;
         private final List<NestedOptionValue> options;
     }
