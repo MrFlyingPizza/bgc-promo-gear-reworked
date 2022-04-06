@@ -20,7 +20,7 @@ public class OrderInventoryManagerService {
         final Long locationId = order.getLocation().getId();
 
         InventoryModifier modifier = modifierSupplier.get(order.getStatus(), previousStatus);
-
+        // TODO: 2022-04-06 implement fully
         for (OrderItem orderItem : order.getOrderItems()) {
             InventoryLevelId id = new InventoryLevelId(locationId, orderItem.getVariantId());
             InventoryLevel inventoryLevel = inventoryRepo.findById(id).orElseThrow();
