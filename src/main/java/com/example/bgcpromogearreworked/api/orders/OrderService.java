@@ -1,7 +1,6 @@
 package com.example.bgcpromogearreworked.api.orders;
 
 import com.example.bgcpromogearreworked.api.orders.exceptions.OrderNotFoundException;
-import com.example.bgcpromogearreworked.api.orders.inventorymanagement.OrderInventoryManagerService;
 import com.example.bgcpromogearreworked.persistence.entities.Order;
 import com.example.bgcpromogearreworked.persistence.repositories.InventoryLevelRepository;
 import com.example.bgcpromogearreworked.persistence.repositories.OrderRepository;
@@ -45,7 +44,7 @@ public class OrderService {
         final Order.Status previousStatus = order.getStatus();
         Order updatedOrder = mapper.apply(source, order);
         assert order.getId().equals(orderId);
-        inventoryManager.manage(order, previousStatus);
+        inventoryManager.manage(order, null);
         return orderRepo.saveAndFlush(updatedOrder);
     }
 
