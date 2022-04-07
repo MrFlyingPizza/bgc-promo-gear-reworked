@@ -1,17 +1,20 @@
 package com.example.bgcpromogearreworked.persistence.entities;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Table(name = "\"order\"")
 @Entity
 @Getter
 @Setter
+@Builder(toBuilder = true)
+@AllArgsConstructor
+@NoArgsConstructor
 public class Order {
 
     public enum Status {
@@ -19,7 +22,7 @@ public class Order {
         SUBMITTED("submitted"),
         PROCESSING("processing"),
         COMPLETED("completed"),
-        WAIT_LIST("waitlisted"),
+        WAIT_LIST("wait_listed"),
         CANCELLED("cancelled");
 
         Status(String value) {
@@ -90,7 +93,7 @@ public class Order {
     private OrderExtraInfo extraInfo;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
-    private Set<OrderItem> orderItems = new java.util.LinkedHashSet<>();
+    private Set<OrderItem> orderItems = new LinkedHashSet<>();
 
     public BigDecimal getTotalCost() {
         BigDecimal totalCost = BigDecimal.ZERO;

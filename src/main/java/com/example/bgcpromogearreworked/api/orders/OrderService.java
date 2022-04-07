@@ -41,10 +41,10 @@ public class OrderService {
     public <T> Order updateOrder(Long orderId, T source, BiFunction<T, Order, Order> mapper) {
         assert orderId != null && source != null && mapper != null;
         Order order = orderRepo.findById(orderId).orElseThrow(OrderNotFoundException::new);
-        final Order.Status previousStatus = order.getStatus();
+        Order previousOrder = order.toBuilder().build();
         Order updatedOrder = mapper.apply(source, order);
         assert order.getId().equals(orderId);
-        inventoryManager.manage(order, null);
+        inventoryManager.manage(order, previousOrder);
         return orderRepo.saveAndFlush(updatedOrder);
     }
 
