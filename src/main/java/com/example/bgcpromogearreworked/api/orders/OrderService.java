@@ -17,7 +17,6 @@ import java.util.function.Function;
 public class OrderService {
 
     private final OrderRepository orderRepo;
-    private final InventoryLevelRepository inventoryRepo;
     private final OrderInventoryManagerService inventoryManager;
 
     public boolean checkOrderExists(Long orderId) {
