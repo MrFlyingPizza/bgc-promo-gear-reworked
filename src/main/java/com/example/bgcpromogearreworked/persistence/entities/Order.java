@@ -18,23 +18,22 @@ import java.util.Set;
 public class Order {
 
     public enum Status {
+        SUBMITTED((short) 0),
+        PROCESSING((short) 1),
+        COMPLETED((short) 2),
+        WAIT_LIST((short) 3),
+        CANCELLED((short) 4);
 
-        SUBMITTED("submitted"),
-        PROCESSING("processing"),
-        COMPLETED("completed"),
-        WAIT_LIST("wait_listed"),
-        CANCELLED("cancelled");
-
-        Status(String value) {
+        Status(short value) {
         }
     }
 
     public enum Type {
-        REGULAR("regular"),
-        CLIENT("client"),
-        EVENT("event");
+        REGULAR((short) 0),
+        CLIENT((short) 1),
+        EVENT((short) 2);
 
-        Type(String value) {
+        Type(short value) {
         }
     }
 
@@ -56,9 +55,11 @@ public class Order {
     private User recipient;
 
     @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.ORDINAL)
     private Status status;
 
     @Column(name = "type", nullable = false)
+    @Enumerated(EnumType.ORDINAL)
     private Type type;
 
     @Column(name = "submitter_comments", nullable = false, length = 500)
@@ -89,7 +90,7 @@ public class Order {
     @Column(name = "completed_date")
     private Instant completedDate;
 
-    @OneToOne(mappedBy = "order", cascade = {CascadeType.PERSIST})
+    @OneToOne(mappedBy = "order", cascade = CascadeType.PERSIST)
     private OrderExtraInfo extraInfo;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
