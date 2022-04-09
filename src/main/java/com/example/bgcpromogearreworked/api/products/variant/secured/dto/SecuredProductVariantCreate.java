@@ -45,7 +45,7 @@ public class SecuredProductVariantCreate {
     private final List<@NotNull @OptionValueExists Long> optionValueIds;
 
     @JsonCreator
-    SecuredProductVariantCreate(@JsonProperty("imageId") Long imageId,
+    public SecuredProductVariantCreate(@JsonProperty("imageId") Long imageId,
                                 @JsonProperty("waitListThreshold") Integer waitListThreshold,
                                 @JsonProperty("isInUse") Boolean isInUse,
                                 @JsonProperty("optionValueIds") List<Long> optionValueIds) {

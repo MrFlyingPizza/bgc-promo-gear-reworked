@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.function.BiFunction;
@@ -50,13 +51,11 @@ public class OfficeLocationService {
             InventoryLevel inventoryLevel = new InventoryLevel();
             inventoryLevel.setLocationId(location.getId());
             inventoryLevel.setVariantId(variant.getId());
-            inventoryLevel.setNotifyThreshold(0); // TODO: 2022-03-20 look into making configs for this value
-            inventoryLevel.setReservedQuantity(0);
-            inventoryLevel.setAvailableQuantity(0);
             inventoryRepo.saveAndFlush(inventoryLevel);
         });
     }
 
+    @Transactional
     public <T> OfficeLocation createOfficeLocation(T source, Function<T, OfficeLocation> mapper) {
         assert source != null && mapper != null;
         OfficeLocation officeLocation = mapper.apply(source);

@@ -6,6 +6,7 @@ import com.example.bgcpromogearreworked.persistence.entities.CartItemId;
 import com.example.bgcpromogearreworked.persistence.repositories.CartItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.function.BiFunction;
@@ -40,7 +41,12 @@ public class CartItemService {
 
     public <T> CartItem createCartItem(T source, Function<T, CartItem> mapper) {
         assert source != null && mapper != null;
-        return cartItemRepo.save(mapper.apply(source));
+        CartItem newCartItem = mapper.apply(source);
+        return cartItemRepo.saveAndFlush(cartItemRepo.findById(buildId(newCartItem.getUserId(),
+                newCartItem.getVariantId())).map(existing -> {
+                    existing.setQuantity(existing.getQuantity() + newCartItem.getQuantity());
+                    return existing;
+                }).orElse(newCartItem));
     }
 
     public <T> CartItem updateCartItem(Long userId, Long variantId, T source, BiFunction<T, CartItem, CartItem> mapper) {
@@ -55,6 +61,7 @@ public class CartItemService {
         cartItemRepo.deleteById(buildId(userId, variantId));
     }
 
+    @Transactional
     public void deleteCartItems(Long userId) {
         assert userId != null;
         cartItemRepo.deleteAllByUserId(userId);

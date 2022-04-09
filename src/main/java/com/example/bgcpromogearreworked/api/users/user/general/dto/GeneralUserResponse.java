@@ -15,6 +15,6 @@ public class GeneralUserResponse {
     }
 
     private final String displayName;
-    private final NestedOfficeLocation office;
+    private final NestedOfficeLocation location;
 
 }

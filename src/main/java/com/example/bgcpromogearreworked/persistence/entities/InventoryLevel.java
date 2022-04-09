@@ -2,7 +2,6 @@ package com.example.bgcpromogearreworked.persistence.entities;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 import java.time.Instant;
@@ -30,20 +29,17 @@ public class InventoryLevel {
     @JoinColumn(name = "location_id", nullable = false, updatable = false, insertable = false)
     private OfficeLocation location;
 
-
-    @Column(name = "available_quantity", nullable = false)
-    private Integer availableQuantity;
+    @Column(name = "available_quantity", nullable = false) // TODO: 2022-04-03 look into making configs for these values
+    private Integer availableQuantity = 0;
 
     @Column(name = "reserved_quantity", nullable = false)
-    private Integer reservedQuantity;
+    private Integer reservedQuantity = 0;
 
     @Column(name = "needed_quantity", nullable = false)
-    private Integer neededQuantity;
-
-    @Formula("(SELECT sum(available_quantity))")
+    private Integer neededQuantity = 0;
 
     @Column(name = "notify_threshold", nullable = false)
-    private Integer notifyThreshold;
+    private Integer notifyThreshold = 0;
 
     @Column(name = "last_manually_modified_date")
     private Instant lastManuallyModifiedDate;

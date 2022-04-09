@@ -14,7 +14,7 @@ import java.util.function.BiFunction;
 
 @Service
 @RequiredArgsConstructor
-public class UserService { // TODO: 2022-03-21 app registration and handle logins and user info
+public class UserService {
 
     private final UserRepository userRepo;
 

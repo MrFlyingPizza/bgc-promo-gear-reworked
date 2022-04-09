@@ -1,6 +1,7 @@
 package com.example.bgcpromogearreworked.api.users;
 
 import com.example.bgcpromogearreworked.api.users.exceptions.UserAuthenticationClaimInvalidException;
+import com.example.bgcpromogearreworked.api.users.exceptions.UserCartItemNotFoundException;
 import com.example.bgcpromogearreworked.api.users.exceptions.UserNotFoundException;
 import com.example.bgcpromogearreworked.api.users.exceptions.UserNotAuthenticatedException;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,12 @@ public class UserExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     private String handleUserAuthClaimInvalid(UserAuthenticationClaimInvalidException exception) {
         return "The authentication claims of the current user is invalid.";
+    }
+
+    @ExceptionHandler(UserCartItemNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    private String handleUserCartItemNotFound(UserCartItemNotFoundException exception) {
+        return "User cart item could not be found.";
     }
 
 }

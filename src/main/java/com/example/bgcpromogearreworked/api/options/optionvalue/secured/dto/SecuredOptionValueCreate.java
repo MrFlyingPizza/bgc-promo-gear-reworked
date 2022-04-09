@@ -23,7 +23,7 @@ public class SecuredOptionValueCreate {
     private final String value;
 
     @JsonCreator
-    SecuredOptionValueCreate(@JsonProperty("value") String value) {
+    public SecuredOptionValueCreate(@JsonProperty("value") String value) {
         this.value = value;
     }
 }

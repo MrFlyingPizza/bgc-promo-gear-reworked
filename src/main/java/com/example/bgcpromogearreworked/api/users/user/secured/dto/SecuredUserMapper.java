@@ -14,12 +14,12 @@ public abstract class SecuredUserMapper {
     @Autowired
     private OfficeLocationRepository locationRepo;
 
-    @Mapping(source = "officeId", target = "office.id")
+    @Mapping(source = "locationId", target = "location.id")
     @Mapping(target = "oid", ignore = true)
     @Mapping(target = "displayName", ignore = true)
     public abstract User fromUpdate(SecuredUserUpdate userUpdate, @MappingTarget User user);
 
-    @Mapping(source = "officeId", target = "office.id")
+    @Mapping(source = "locationId", target = "location.id")
     @Mapping(target = "oid", ignore = true)
     @Mapping(target = "displayName", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
@@ -40,21 +40,21 @@ public abstract class SecuredUserMapper {
 
     @AfterMapping
     protected void mapOfficeLocationPartialUpdateZeroAsNull(SecuredUserPartialUpdate userPartialUpdate, @MappingTarget User user) {
-        if (userPartialUpdate.getOfficeId() == 0) {
-            user.setOffice(null);
+        if (userPartialUpdate.getLocationId() == 0) {
+            user.setLocation(null);
         }
     }
 
     @AfterMapping
     protected void mapOfficeLocationFromRepoOrNull(@MappingTarget User user) {
-        if (user.getOffice() == null) {
+        if (user.getLocation() == null) {
             return;
         }
-        Long officeId = user.getOffice().getId();
+        Long officeId = user.getLocation().getId();
         if (officeId == null) {
-            user.setOffice(null);
+            user.setLocation(null);
         } else {
-            user.setOffice(locationRepo.getById(officeId));
+            user.setLocation(locationRepo.getById(officeId));
         }
     }
 

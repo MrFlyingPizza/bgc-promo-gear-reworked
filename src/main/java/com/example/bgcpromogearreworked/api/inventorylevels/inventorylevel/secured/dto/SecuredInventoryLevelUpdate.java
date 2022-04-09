@@ -26,10 +26,6 @@ public class SecuredInventoryLevelUpdate {
     private final Integer availableQuantity;
 
     @NotNull
-    @Min(0)
-    private final Integer reservedQuantity;
-
-    @NotNull
     @Min(-1)
     private final Integer notifyThreshold;
 
@@ -42,11 +38,9 @@ public class SecuredInventoryLevelUpdate {
     private Long lastManuallyModifiedById;
 
     @JsonCreator
-    SecuredInventoryLevelUpdate(@JsonProperty("availableQuantity") Integer availableQuantity,
-                                @JsonProperty("reservedQuantity") Integer reservedQuantity,
-                                @JsonProperty("notifyThreshold") Integer notifyThreshold) {
+    public SecuredInventoryLevelUpdate(@JsonProperty("availableQuantity") Integer availableQuantity,
+                                       @JsonProperty("notifyThreshold") Integer notifyThreshold) {
         this.availableQuantity = availableQuantity;
-        this.reservedQuantity = reservedQuantity;
         this.notifyThreshold = notifyThreshold;
     }
 }

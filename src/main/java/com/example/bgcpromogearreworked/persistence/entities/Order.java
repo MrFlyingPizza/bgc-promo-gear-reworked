@@ -1,41 +1,45 @@
 package com.example.bgcpromogearreworked.persistence.entities;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Table(name = "\"order\"")
 @Entity
 @Getter
 @Setter
+@Builder(toBuilder = true)
+@AllArgsConstructor
+@NoArgsConstructor
 public class Order {
 
-    public enum OrderStatus {
+    public enum Status {
 
         SUBMITTED("submitted"),
         PROCESSING("processing"),
         COMPLETED("completed"),
-        WAIT_LIST("waitlisted"),
-        REJECTED("cancelled");
+        WAIT_LIST("wait_listed"),
+        CANCELLED("cancelled");
 
-        OrderStatus(String value) {
+        Status(String value) {
         }
     }
 
-    public enum OrderType {
+    public enum Type {
         REGULAR("regular"),
         CLIENT("client"),
         EVENT("event");
 
-        OrderType(String value) {
+        Type(String value) {
         }
     }
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -52,13 +56,10 @@ public class Order {
     private User recipient;
 
     @Column(name = "status", nullable = false)
-    private OrderStatus status;
+    private Status status;
 
     @Column(name = "type", nullable = false)
-    private OrderType type;
-
-    @Column(name = "total_cost", nullable = false, precision = 10, scale = 2)
-    private BigDecimal totalCost;
+    private Type type;
 
     @Column(name = "submitter_comments", nullable = false, length = 500)
     private String submitterComments = "";
@@ -69,6 +70,9 @@ public class Order {
     @ManyToOne(optional = false)
     @JoinColumn(name = "location_id", nullable = false)
     private OfficeLocation location;
+
+    @Column(name = "owed_credit")
+    private BigDecimal owedCredit;
 
     @Column(name = "created_date")
     private Instant createdDate;
@@ -85,9 +89,18 @@ public class Order {
     @Column(name = "completed_date")
     private Instant completedDate;
 
-    @Column(name = "owed_credit", nullable = false, precision = 10, scale = 2)
-    private BigDecimal owedCredit;
+    @OneToOne(mappedBy = "order", cascade = {CascadeType.PERSIST})
+    private OrderExtraInfo extraInfo;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
-    private Set<OrderItem> orderItem = new java.util.LinkedHashSet<>();
+    private Set<OrderItem> orderItems = new LinkedHashSet<>();
+
+    public BigDecimal getTotalCost() {
+        BigDecimal totalCost = BigDecimal.ZERO;
+        for (OrderItem orderItem : orderItems) {
+            totalCost = totalCost.add(orderItem.getCost());
+        }
+        return totalCost;
+    }
+
 }
