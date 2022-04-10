@@ -24,7 +24,7 @@ public class SecuredInventoryLevelResponse {
         @Getter
         @RequiredArgsConstructor
         static class NestedOptionValue {
-            private final Long id;
+            private final Long valueId;
             private final Long optionId;
             private final String name;
             private final String value;

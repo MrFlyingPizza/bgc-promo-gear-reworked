@@ -57,6 +57,7 @@ public abstract class SecuredInventoryLevelMapper {
                 page.getSort().isSorted());
     }
 
+    @Mapping(source = "id", target = "valueId")
     @Mapping(source = "option.id", target = "optionId")
     @Mapping(source = "option.name", target = "name")
     protected abstract SecuredInventoryLevelResponse.NestedProductVariant.NestedOptionValue map(OptionValue optionValue);
