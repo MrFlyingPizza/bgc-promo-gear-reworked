@@ -33,7 +33,6 @@ public abstract class GeneralOrderMapper {
     @Mapping(target = "lastModifiedDate", ignore = true)
     @Mapping(target = "lastModifiedBy", ignore = true)
     @Mapping(target = "completedDate", ignore = true)
-    @Mapping(target = "owedCredit", ignore = true)
     @Mapping(target = "extraInfo.orderId", ignore = true)
     @Mapping(target = "extraInfo.order", ignore = true)
     @Mapping(target = "orderItems[].orderId", ignore = true)

@@ -71,9 +71,6 @@ public class Order {
     @JoinColumn(name = "location_id", nullable = false)
     private OfficeLocation location;
 
-    @Column(name = "owed_credit")
-    private BigDecimal owedCredit;
-
     @Column(name = "created_date")
     private Instant createdDate;
 
