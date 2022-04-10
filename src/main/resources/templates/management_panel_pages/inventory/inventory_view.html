@@ -73,11 +73,11 @@
                             <label class="btn btn-outline-primary button-filter" for="pub_option1">All</label>
                         </div>
                         <div class="radio-buttons">
-                            <input type="radio" class="btn-check" name="isPubGroup" id="pub_option2" autocomplete="off" onclick="filter(11, 'Yes')" checked/>
+                            <input type="radio" class="btn-check" name="isPubGroup" id="pub_option2" autocomplete="off" onclick="filter(11, '✓')" checked/>
                             <label class="btn btn-outline-primary button-filter" for="pub_option2">Published</label>
                         </div>
                         <div class="radio-buttons">
-                            <input type="radio" class="btn-check" name="isPubGroup" id="pub_option3" autocomplete="off" onclick="filter(11, 'No')"/>
+                            <input type="radio" class="btn-check" name="isPubGroup" id="pub_option3" autocomplete="off" onclick="filter(11, '✕')"/>
                             <label class="btn btn-outline-primary button-filter" for="pub_option3">Non-Published</label>
                         </div>
                     </div>
@@ -91,11 +91,11 @@
                             <label class="btn btn-outline-primary button-filter" for="big_option1">All</label>
                         </div>
                         <div class="radio-buttons">
-                            <input type="radio" class="btn-check" name="isBigGroup" id="big_option2" autocomplete="off" onclick="filter(12, 'Yes')"/>
+                            <input type="radio" class="btn-check" name="isBigGroup" id="big_option2" autocomplete="off" onclick="filter(12, '✓')"/>
                             <label class="btn btn-outline-primary button-filter" for="big_option2">Big</label>
                         </div>
                         <div class="radio-buttons">
-                            <input type="radio" class="btn-check" name="isBigGroup" id="big_option3" autocomplete="off" onclick="filter(12, 'No')"/>
+                            <input type="radio" class="btn-check" name="isBigGroup" id="big_option3" autocomplete="off" onclick="filter(12, '✕')"/>
                             <label class="btn btn-outline-primary button-filter" for="big_option3">Small</label>
                         </div>
                     </div>
@@ -109,11 +109,11 @@
                             <label class="btn btn-outline-primary button-filter" for="wait_option1">All</label>
                         </div>
                         <div class="radio-buttons">
-                            <input type="radio" class="btn-check" name="isWaitGroup" id="wait_option2" autocomplete="off" onclick="filter(13, 'Yes')"/>
+                            <input type="radio" class="btn-check" name="isWaitGroup" id="wait_option2" autocomplete="off" onclick="filter(13, '✓')"/>
                             <label class="btn btn-outline-primary button-filter" for="wait_option2">Waitlist</label>
                         </div>
                         <div class="radio-buttons">
-                            <input type="radio" class="btn-check" name="isWaitGroup" id="wait_option3" autocomplete="off" onclick="filter(13, 'No')"/>
+                            <input type="radio" class="btn-check" name="isWaitGroup" id="wait_option3" autocomplete="off" onclick="filter(13, '✕')"/>
                             <label class="btn btn-outline-primary button-filter" for="wait_option3">No Waitlist</label>
                         </div>
                     </div>
@@ -151,63 +151,23 @@
                     <!-- Form to update inventory -->
                     <form id="update-inventory-form" action="/management/api/office_stock/batch" method="post" class="row g-3">
                         <tbody id="inventory-body">
-                        <tr th:each="officeStock : ${officeStocks}"
-                            th:data-location="${officeStock?.getLocation().getID()}"
-                            th:data-sku="${officeStock?.getProduct().getSKU()}">
-                            <td scope="row" th:text="${officeStock?.getProduct().getProductGroup().getID()} ?: 'N/A'"></td>
-                            <td th:text="${officeStock?.getProduct().getProductGroup()?.getCategory()?.getParent()?.getName()} ?: ${officeStock?.getProduct().getProductGroup()?.getCategory().getName()}"></td>
-                            <td th:text="${officeStock?.getProduct().getProductGroup()?.getCategory()?.getParent()?.getName()} ? ${officeStock?.getProduct().getProductGroup()?.getCategory().getName()} : 'No Group'"></td>
-                            <td th:text="('[' + ${officeStock?.getProduct().getProductGroup().getID()} ?: 'N/A') + '] ' + (${officeStock?.getProduct().getProductGroup()?.getName()} ?: 'N/A')"></td>
-                            <td th:text="${officeStock?.getProduct().getSKU()} ?: 'N/A'"></td>
-                            <td>
-                                <span th:text="${officeStock?.getProduct().getProductGroup()?.getName()} ?: 'N/A'"></span>
-                                <span th:each="attribute, iStat : ${officeStock.getProduct()?.getAttributes()}">
-                                    <span th:text="(${iStat.first}? '(' : '') +
-                                                   (${attribute?.getValue()} ?: 'N/A') +
-                                                   (${iStat.last}? ')' : ', ')">
-                                    </span>
-                                </span>
-                            </td>
-                            <td th:text="${officeStock?.getProduct().getProductGroup()?.getBrand()} ?: 'N/A'"></td>
-                            <td id="input1">
-                                <input th:value="${officeStock?.getAmountOnShelf()}" type="number" class="form-control input-number"
-                                       min="0" th:id="'Onshelf-' + ${officeStock?.getProduct().getSKU()} ?: 'N/A'" readonly>
-                            </td>
-                            <td th:text="${officeStock?.getInPendingOrder()} ?: 'N/A'"></td>
-                            <td th:text="${officeStock?.getNeededStock()} ?: 'N/A'"></td>
-                            <td id="input2">
-                                <input th:value="${officeStock?.getLowStockLimit()}" type="number" class="form-control input-number"
-                                       min="0" th:id="'Lowstocklimit-' + ${officeStock?.getProduct().getSKU()} ?: 'N/A'" readonly>
-                            </td>
-                            <td th:switch="${officeStock?.getProduct().getProductGroup()?.getIsPublished()}">
-                                <p th:case="true">Yes</p>
-                                <p th:case="false">No</p>
-                                <p th:case="*">N/A</p>
-                            </td>
-                            <td th:switch="${officeStock?.getProduct().getProductGroup()?.getIsBigItem()}">
-                                <p th:case="true">Yes</p>
-                                <p th:case="false">No</p>
-                                <p th:case="*">N/A</p>
-                            </td>
-                            <td th:switch="${officeStock?.getProduct().getProductGroup()?.getIsWaitlistable()}">
-                                <p th:case="true">Yes</p>
-                                <p th:case="false">No</p>
-                                <p th:case="*">N/A</p>
-                            </td>
-                            <td th:text="${officeStock?.getLocation().getName()} ?: 'N/A'">
-                            </td>
-                            <td style="padding: 5px; white-space: nowrap;">
-                                <span class="button-action">
-                                    <button class="btn btn-outline-primary button-edit" type="button" style="font-size: 15px;" th:data-sku="${officeStock?.getProduct().getSKU()}"  onclick="openMoreStock(this.getAttribute('data-sku'));">
-                                        <i class="far fa-eye"></i>
-                                    </button>
-                                </span>
-                                <a class="button-action" th:href="'/management/inventory/update?id='+${officeStock?.getProduct().getProductGroup()?.getID()}">
-                                    <button class="btn btn-outline-primary button-edit" type="button" style="font-size: 15px;" th:data-sku="${officeStock?.getProduct().getSKU()}"  onclick="goToSkuStock(this.getAttribute('data-sku'));">
-                                        <i class="far fa-edit"></i>
-                                    </button>
-                                </a>
-                            </td>
+                        <tr>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
                         </tr>
                         </tbody>
                     </form>
@@ -234,9 +194,6 @@
                 </table>
             </div>
         </div>
-    </div>
-    <div th:if="${#lists.isEmpty(officeStocks)}">
-        No Existing Inventory
     </div>
 
     <!--   Modal #5: Display Inventory for a specific Product -->
@@ -419,6 +376,54 @@
 
         var confirmBeforeEdit = false; //checks whether confirmation editing message has appeared yet when attempting to edit inventory
 
+        //Render boolean values as checkmark/x icon
+        var booleanToCheckmark = function (data) {
+            if(data == true){
+                return "✓";
+            } else{
+                return "✕";
+            }
+        }
+
+        // Logic for parent category
+        // If product category has a parent, return parent name in parent category column
+        // If it doesn't have a parent, it is directly part of a level 1 category, and therefore renders it in the
+        // parent category column
+        var categoryParentRender = function (data) {
+            let parent = data["parent"];
+            let currentName = data["name"];
+            if(parent == null){
+                return currentName;
+            } else {
+                let parentName = parent["name"];
+                return parentName;
+            }
+        }
+
+        // Logic for child category
+        // If product category has a parent, return direct category name into child column,
+        // Otherwise, that means category is level 1 category, and returns 'No Group' for child category column
+        var categoryChildRender = function (data) {
+            let parent = data["parent"];
+            let currentName = data["name"];
+            if(parent == null){
+                return "No Group";
+            } else {
+                return currentName;
+            }
+        }
+
+        var categoryParentRender = function (data) {
+            let parent = data["parent"];
+            let currentName = data["name"];
+            if(parent == null){
+                return currentName;
+            } else {
+                let parentName = parent["name"];
+                return parentName;
+            }
+        }
+
         $(document).ready( function () {
             var collapsedGroups = {};   //used to track collapsed groups
             //Variables for DataTable setup
@@ -430,9 +435,41 @@
 
             //Using DataTable
             var table = $('#dataTable').DataTable( {
+
+                ajax: {
+                    url: '/api/secured/inventory_levels',
+                    cache: true,
+                    dataSrc: "inventoryLevels",
+                },
+                columns: [
+                    { data: "product.id" },
+                    { data: "product.category", "render": categoryParentRender},
+                    { data: "product.category", "render":  categoryChildRender},
+                    { data: "product.name" },
+                    { data: "variant.id" },
+                    { data: "product.name" },
+                    { data: "product.brand" },
+                    { data: "availableQuantity" },
+                    { data: "reservedQuantity" },
+                    { data: "neededQuantity"},
+                    { data: "notifyThreshold" },
+                    { data: "product.isPublished", "render": booleanToCheckmark},
+                    { data: "product.isBigItem", "render": booleanToCheckmark },
+                    { data: "product.isWaitListEnabled", "render": booleanToCheckmark },
+                    { data: "location.name" },
+                    { data: "availableQuantity" }
+                ],
+
                 order: [ [1, 'asc'], [2, 'asc'], [0, 'asc'] ],
                 rowGroup: {
-                    dataSrc: [ 1 , 2, 3],
+                    dataSrc: [  function(row) {
+                                    return categoryParentRender(row.product.category);
+                                },
+                                function(row) {
+                                    return categoryChildRender(row.product.category);
+                                },
+                                "product.name" ],
+
                     startRender: function(rows, group, level) {
                         groupParent[level] = group;
                         var groupName = '';
@@ -498,6 +535,8 @@
                     targets: [0, 1, 2, 3],
                     visible: false
                 } ],
+
+
                 "lengthMenu": [ [100, 50, 25, 10, -1], [100, 50, 25, 10, "All"] ],
                 language : {
                     sLengthMenu: "Show&nbsp _MENU_", // changing label for page length filter
@@ -580,18 +619,15 @@
                 });
             });
 
-
-
-
             $('#dataTable_filter').appendTo('#search_input'); // adding search filter to div
             $('#dataTable_length').appendTo('#length_input'); // adding length filter to div
             $('#dataTable_wrapper').find('div:first').remove(); //remove empty row holding previous filters
 
             //Sets default value of column 5 (Published) to yes
-            table.columns(11).search("Yes").draw();
+            table.columns(11).search("✓").draw();
 
             //Sets default value of column 14 (location) to Vancouver Office
-            table.columns(14).search("Vancouver Office").draw();
+            table.columns(14).search("Vancouver").draw();
 
             dataTable = table;
 
