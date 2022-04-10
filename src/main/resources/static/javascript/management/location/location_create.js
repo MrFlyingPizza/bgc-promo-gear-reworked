@@ -27,7 +27,7 @@ $('#create-location-form').submit(
             'city': $('#city').val(),
             'zipCode': $('#postal-code').val(),
             'addressLine1': $('#street-address-one').val(),
-            'addressLine2': $('#street-address-two').val()
+            'addressLine2': ($('#street-address-two').val().trim() === "" ? null : $('#street-address-two').val())
         }
 
         $.ajax({

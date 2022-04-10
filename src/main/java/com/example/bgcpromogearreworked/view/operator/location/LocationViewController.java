@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/management/location")
 public class LocationViewController {
 
-
     private final OfficeLocationService service;
 
     @Autowired
