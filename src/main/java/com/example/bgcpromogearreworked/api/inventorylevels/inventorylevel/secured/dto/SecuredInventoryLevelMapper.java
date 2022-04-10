@@ -59,7 +59,7 @@ public abstract class SecuredInventoryLevelMapper {
 
     @Mapping(source = "option.id", target = "optionId")
     @Mapping(source = "option.name", target = "name")
-    protected abstract SecuredInventoryLevelResponse.NestedVariant.NestedOptionValue map(OptionValue optionValue);
+    protected abstract SecuredInventoryLevelResponse.NestedProductVariant.NestedOptionValue map(OptionValue optionValue);
 
     protected ProductVariant mapVariantFromId(Long variantId) {
         return variantId != null && variantId != 0 ? variantRepo.getById(variantId) : null;

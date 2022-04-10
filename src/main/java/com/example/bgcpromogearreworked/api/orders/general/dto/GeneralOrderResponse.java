@@ -24,7 +24,7 @@ public class GeneralOrderResponse {
 
         @Getter
         @RequiredArgsConstructor
-        public static class NestedVariant {
+        public static class NestedProductVariant {
 
             @Getter
             @RequiredArgsConstructor
@@ -56,7 +56,7 @@ public class GeneralOrderResponse {
         }
 
         private final NestedProduct product;
-        private final NestedVariant variant;
+        private final NestedProductVariant variant;
         private final Integer quantity;
     }
 

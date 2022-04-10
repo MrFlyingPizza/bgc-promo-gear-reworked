@@ -69,7 +69,7 @@ public abstract class GeneralOrderMapper {
     @Mapping(source = "id", target = "valueId")
     @Mapping(source = "option.id", target = "optionId")
     @Mapping(source = "option.name", target = "name")
-    protected abstract GeneralOrderResponse.NestedOrderItem.NestedVariant.NestedOptionValue map(OptionValue optionValue);
+    protected abstract GeneralOrderResponse.NestedOrderItem.NestedProductVariant.NestedOptionValue map(OptionValue optionValue);
 
     protected User userFromId(Long id) {
         return id == null || id == 0 ? null : userRepo.getById(id);

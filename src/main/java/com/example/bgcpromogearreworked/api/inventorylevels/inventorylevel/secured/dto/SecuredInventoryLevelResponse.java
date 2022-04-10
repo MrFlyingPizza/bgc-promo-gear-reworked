@@ -19,7 +19,7 @@ public class SecuredInventoryLevelResponse {
 
     @Getter
     @RequiredArgsConstructor
-    static class NestedVariant {
+    static class NestedProductVariant {
 
         @Getter
         @RequiredArgsConstructor
@@ -68,7 +68,7 @@ public class SecuredInventoryLevelResponse {
     private final Integer neededQuantity;
     private final Integer notifyThreshold;
     private final NestedProduct product;
-    private final NestedVariant variant;
+    private final NestedProductVariant variant;
     private final NestedLocation location;
     private final Instant lastManuallyModifiedDate;
     private final NestedUser lastManuallyModifiedBy;
