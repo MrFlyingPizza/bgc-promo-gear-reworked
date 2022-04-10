@@ -51,9 +51,9 @@
 
                 <div class="filter-buttons">
                     <div class="filter-label" style="font-size: 11px;"><span style="font-size: inherit;">Location:</span></div>
-                    <select class="form-select form-select-sm select-filter" onchange="if (this.selectedIndex) filter(14, this.options[this.selectedIndex].text);">
+                    <select class="form-select form-select-sm select-filter" onchange="switchLocation(this.options[this.selectedIndex].value)">
                         <optgroup label="Offices">
-                            <option th:each="location : ${locations}" th:value="${location?.getID()}" th:text="${location?.getName()}"></option>
+                            <option th:each="location : ${locations}" th:value="${location?.getId()}" th:text="${location?.getName()}"></option>
                         </optgroup>
                     </select>
                 </div>
@@ -140,7 +140,7 @@
                         <th scope="col">On-Shelf</th>
                         <th scope="col">In Pending Order</th>
                         <th scope="col">Needed</th>
-                        <th scope="col">Low Stock Limit</th>
+                        <th scope="col">Notify Threshold</th>
                         <th scope="col">Published</th>
                         <th scope="col">Big Item</th>
                         <th scope="col">Waitlistable</th>
@@ -183,7 +183,7 @@
                         <td><strong>On-Shelf</strong></td>
                         <td><strong>In Pending Order</strong></td>
                         <td><strong>Needed</strong></td>
-                        <td><strong>Low Stock Limit</strong></td>
+                        <td><strong>Notify Threshold</strong></td>
                         <td><strong>Published</strong></td>
                         <td><strong>Big Item</strong></td>
                         <td><strong>Waitlistable</strong></td>
@@ -219,7 +219,7 @@
                                 <th>On-Shelf</th>
                                 <th>In Pending Order</th>
                                 <th>Needed</th>
-                                <th>Low Stock Limit</th>
+                                <th>Notify Threshold</th>
                             </tr>
                             </thead>
                             <tbody id="inventory-sku-body">
@@ -373,8 +373,33 @@
         var skuTable;
         var toCollapseAll = false;
         var singleSKUSubmit = false; //whether submitting inventory for regular view or for single item view
-
         var confirmBeforeEdit = false; //checks whether confirmation editing message has appeared yet when attempting to edit inventory
+
+        var selectedLocationID = -1;
+
+        window.onload = function () {
+            $.ajax({
+                type: "GET",
+                url: '/api/users/me',
+                success: function(data)
+                {
+                    if(data["location"] == null){
+                        console.log("User is not assigned location");
+                    } else {
+                        console.log(data["location"]["id"]);
+                    }
+                },
+                error: function(xhr) {
+                    console.log("user not found");
+                }
+            });
+        }
+
+        //Switch location
+        var switchLocation = function (locationId) {
+            console.log(locationId);
+            return;
+        }
 
         //Render boolean values as checkmark/x icon
         var booleanToCheckmark = function (data) {
@@ -424,6 +449,31 @@
             }
         }
 
+        var inputOnShelfRender = function (data) {
+            let onShelf = data["availableQuantity"];
+            let sku = data["variant"]["id"];
+
+            return '<input value="' + onShelf + '" type="number" class="form-control input-number"' +
+                   'min="0" id="Onshelf-' + sku + '" readOnly >';
+        }
+
+        var inputNotifyThresholdRender = function (data) {
+            let threshold = data["notifyThreshold"];
+            let sku = data["variant"]["id"];
+
+            return '<input value="' + threshold + '" type="number" class="form-control input-number"' +
+                'min="0" id="Lowstocklimit-' + sku + '" readOnly >';
+        }
+
+        var renderActionButtons  = function (data) {
+            let threshold = data["notifyThreshold"];
+            let sku = data["variant"]["id"];
+
+            return '<input value="' + threshold + '" type="number" class="form-control input-number"' +
+                'min="0" id="Lowstocklimit-' + sku + '" readOnly >';
+        }
+
+
         $(document).ready( function () {
             var collapsedGroups = {};   //used to track collapsed groups
             //Variables for DataTable setup
@@ -449,10 +499,10 @@
                     { data: "variant.id" },
                     { data: "product.name" },
                     { data: "product.brand" },
-                    { data: "availableQuantity" },
+                    { data : null, className: "input-disabled", "render":  inputOnShelfRender },
                     { data: "reservedQuantity" },
                     { data: "neededQuantity"},
-                    { data: "notifyThreshold" },
+                    { data : null, className: "input-disabled", "render":  inputNotifyThresholdRender },
                     { data: "product.isPublished", "render": booleanToCheckmark},
                     { data: "product.isBigItem", "render": booleanToCheckmark },
                     { data: "product.isWaitListEnabled", "render": booleanToCheckmark },
@@ -661,7 +711,8 @@
         /*
         Clicking on inventory input, will confirm if you want to edit
         */
-        $('.input-number').dblclick(function() {
+        $(document).on('dblclick', '.input-disabled', function () {
+            singleSKUSubmit = false;
             confirmEdit();
         });
 
