@@ -123,7 +123,7 @@
                         <th scope="col">Category</th>
                         <th scope="col">Name</th>
                         <th scope="col">SKU</th>
-                        <th scope="col">Product</th>
+                        <th scope="col">Variant</th>
                         <th scope="col">Brand</th>
                         <th scope="col">On-Shelf</th>
                         <th scope="col">In Pending Order</th>
@@ -166,7 +166,7 @@
                         <td><strong>Category</strong></td>
                         <td><strong>Name</strong></td>
                         <td><strong>SKU</strong></td>
-                        <td><strong>Product</strong></td>
+                        <td><strong>Variant</strong></td>
                         <td><strong>Brand</strong></td>
                         <td><strong>On-Shelf</strong></td>
                         <td><strong>In Pending Order</strong></td>
@@ -459,6 +459,24 @@
             }
         }
 
+        var variantRender = function (data) {
+            console.log(data);
+            let options;
+
+            if(data == null){
+                options = "Single Variant"
+            //if not null options, return list of options that make up variant
+            } else {
+                options = "["
+                for (const property in data) {
+                    options += data[property]['value'] + ', ';
+                }
+                options = options.slice(0, -2);
+                options += ']';
+            }
+            return options;
+        }
+
         var inputOnShelfRender = function (data) {
             let onShelf = data["availableQuantity"];
             let sku = data["variant"]["id"];
@@ -508,7 +526,7 @@
                     { data: "product.category", "render":  categoryChildRender},
                     { data: "product.name" },
                     { data: "variant.id" },
-                    { data: "product.name" },
+                    { data: "variant.options", "render":  variantRender },
                     { data: "product.brand" },
                     { data : null, className: "input-disabled", "render":  inputOnShelfRender },
                     { data: "reservedQuantity" },
