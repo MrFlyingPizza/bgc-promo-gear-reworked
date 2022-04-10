@@ -38,10 +38,8 @@ public abstract class SecuredInventoryLevelMapper {
     public abstract InventoryLevel fromPartialUpdate(SecuredInventoryLevelPartialUpdate inventoryLevelPartialUpdate,
                                                      @MappingTarget InventoryLevel inventoryLevel);
 
-    @Mapping(source = "variant.product.name", target = "variant.productName")
-    @Mapping(source = "variant.product.id", target = "variant.productId")
+    @Mapping(source = "variant.product", target = "product")
     @Mapping(source = "variant.optionValues", target = "variant.options")
-    @Mapping(source = "variant.product.category", target = "variant.category")
     @Transactional
     public abstract SecuredInventoryLevelResponse toResponse(InventoryLevel inventoryLevel);
 
