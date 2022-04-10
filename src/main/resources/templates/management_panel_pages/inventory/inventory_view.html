@@ -26,19 +26,6 @@
             <p class="m-0 fw-bold" style="color: #36366f;">Product Info</p>
         </div>
 
-        <!--  Loading message -->
-        <div id="loading-body" style="margin: 35px;">
-            <div class="d-flex justify-content-center">
-                <div class="spinner-border text-success" style="height: 5em; width: 5em; margin: 15px;">
-                    <span class="sr-only">Loading...</span>
-                </div>
-            </div>
-            <br>
-            <div class="d-flex justify-content-center">
-                Inventory data is being loading, please wait.
-            </div>
-        </div>
-
         <!--  Inventory Body -->
         <div class="card-body">
 
@@ -51,9 +38,10 @@
 
                 <div class="filter-buttons">
                     <div class="filter-label" style="font-size: 11px;"><span style="font-size: inherit;">Location:</span></div>
-                    <select class="form-select form-select-sm select-filter" onchange="switchLocation(this.options[this.selectedIndex].value)">
+                    <select id="location-list" class="form-select form-select-sm select-filter" onchange="switchLocation(this.options[this.selectedIndex].value)">
                         <optgroup label="Offices">
                             <option th:each="location : ${locations}" th:value="${location?.getId()}" th:text="${location?.getName()}"></option>
+                            <option value="-1" selected>All</option>
                         </optgroup>
                     </select>
                 </div>
@@ -369,13 +357,14 @@
 
 
     <script>
+        var table;
         var dataTable;
         var skuTable;
         var toCollapseAll = false;
         var singleSKUSubmit = false; //whether submitting inventory for regular view or for single item view
         var confirmBeforeEdit = false; //checks whether confirmation editing message has appeared yet when attempting to edit inventory
 
-        var selectedLocationID = -1;
+        var selectedLocationID = "-1";
 
         window.onload = function () {
             $.ajax({
@@ -386,7 +375,11 @@
                     if(data["location"] == null){
                         console.log("User is not assigned location");
                     } else {
-                        console.log(data["location"]["id"]);
+                        selectedLocationID = data["location"]["id"];
+                        let opt = document.querySelector(`#location-list option[value="${selectedLocationID}"]`);
+                        opt.selected = true;
+                        opt.defaultSelected = true;
+                        switchLocation(selectedLocationID);
                     }
                 },
                 error: function(xhr) {
@@ -395,11 +388,28 @@
             });
         }
 
-        //Switch location
-        var switchLocation = function (locationId) {
-            console.log(locationId);
+        //Reload data (cancel changes)
+        var reloadData = function(url){
+            //reload data
+            disableEdit();
+            table.ajax.url(url);
+            table.ajax.reload();
             return;
         }
+
+        //Switch location
+        var switchLocation = function (locationId) {
+            let newUrl = "/api/secured/inventory_levels";
+
+            //if not all locations, add location predicate
+            if(locationId != "-1"){
+                newUrl = newUrl + "?locationId=" + locationId;
+            }
+            reloadData(newUrl);
+            return;
+        }
+
+
 
         //Render boolean values as checkmark/x icon
         var booleanToCheckmark = function (data) {
@@ -483,8 +493,9 @@
             var subGroupCounter = 1;    //temp variable to count subgroups
             var groupCounter = 1;       //variable to count number of groups
 
+
             //Using DataTable
-            var table = $('#dataTable').DataTable( {
+            table = $('#dataTable').DataTable( {
 
                 ajax: {
                     url: '/api/secured/inventory_levels',
@@ -509,7 +520,7 @@
                     { data: "location.name" },
                     { data: "availableQuantity" }
                 ],
-
+                processing: true,
                 order: [ [1, 'asc'], [2, 'asc'], [0, 'asc'] ],
                 rowGroup: {
                     dataSrc: [  function(row) {
@@ -593,10 +604,6 @@
                     search: "_INPUT_",               // changing label for search filter
                     searchPlaceholder: "Search..."   // changing search filter placeholder
                 },
-
-                initComplete: function(settings, json) {
-                    $('#loading-body').hide();
-                }
             } );
 
             /*
@@ -676,9 +683,6 @@
             //Sets default value of column 5 (Published) to yes
             table.columns(11).search("✓").draw();
 
-            //Sets default value of column 14 (location) to Vancouver Office
-            table.columns(14).search("Vancouver").draw();
-
             dataTable = table;
 
 
@@ -742,7 +746,20 @@
             $(".input-number").each(function() {
                 $(this).prop("readonly", false);
             });
+        }
 
+        function disableEdit(){
+            confirmBeforeEdit = false;
+
+            $('#save-button').attr('hidden','');
+            $('#edit-button').removeAttr('hidden');
+
+            $('#save-button-sku').attr('hidden','');
+            $('#edit-button-sku').removeAttr('hidden');
+
+            $(".input-number").each(function() {
+                $(this).prop("readonly", true);
+            });
         }
 
         function singleItemTextChange(data){
