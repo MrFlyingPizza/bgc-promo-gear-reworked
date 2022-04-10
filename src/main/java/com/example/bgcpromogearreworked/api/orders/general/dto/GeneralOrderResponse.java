@@ -51,8 +51,17 @@ public class GeneralOrderResponse {
         @Getter
         @RequiredArgsConstructor
         public static class NestedProduct {
+            @Getter
+            @RequiredArgsConstructor
+            public static class NestedCategory {
+                private final Long id;
+                private final String name;
+                private final NestedCategory parent;
+            }
+
             private final Long id;
             private final String name;
+            private final NestedCategory category;
         }
 
         private final NestedProduct product;
