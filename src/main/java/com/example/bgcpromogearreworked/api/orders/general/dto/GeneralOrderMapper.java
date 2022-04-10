@@ -2,6 +2,7 @@ package com.example.bgcpromogearreworked.api.orders.general.dto;
 
 import com.example.bgcpromogearreworked.persistence.entities.*;
 import com.example.bgcpromogearreworked.persistence.repositories.OfficeLocationRepository;
+import com.example.bgcpromogearreworked.persistence.repositories.ProductVariantRepository;
 import com.example.bgcpromogearreworked.persistence.repositories.UserRepository;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -20,6 +21,9 @@ public abstract class GeneralOrderMapper {
     @Autowired
     private OfficeLocationRepository locationRepo;
 
+    @Autowired
+    private ProductVariantRepository variantRepo;
+
     @Mapping(source = "submitterId", target = "submitter")
     @Mapping(source = "recipientId", target = "recipient")
     @Mapping(source = "locationId", target = "location")
@@ -33,9 +37,6 @@ public abstract class GeneralOrderMapper {
     @Mapping(target = "lastModifiedBy", ignore = true)
     @Mapping(target = "completedDate", ignore = true)
     @Mapping(target = "extraInfo", ignore = true)
-    @Mapping(target = "items[].order", ignore = true)
-    @Mapping(target = "items[].variant", ignore = true)
-    @Mapping(target = "items[].orderId", ignore = true)
     public abstract Order fromCreate(GeneralOrderCreate orderCreate);
 
     @Mapping(source = "submitter.displayName", target = "submitter")
@@ -55,7 +56,13 @@ public abstract class GeneralOrderMapper {
     @Mapping(source = "variant.product.price", target = "price")
     protected abstract GeneralOrderCreate.NestedOrderItem map(CartItem cartItem);
 
+    @Mapping(source = "variantId", target = "variant")
+    @Mapping(target = "orderId", ignore = true)
+    @Mapping(target = "order", ignore = true)
+    protected abstract OrderItem map(GeneralOrderCreate.NestedOrderItem item);
+
     @Mapping(source = "variant.product", target = "product")
+    @Mapping(source = "variant.optionValues", target = "variant.options")
     @Transactional
     protected abstract GeneralOrderResponse.NestedOrderItem map(OrderItem item);
 
@@ -65,11 +72,15 @@ public abstract class GeneralOrderMapper {
     protected abstract GeneralOrderResponse.NestedOrderItem.NestedVariant.NestedOptionValue map(OptionValue optionValue);
 
     protected User userFromId(Long id) {
-        return userRepo.getById(id);
+        return id == null || id == 0 ? null : userRepo.getById(id);
     }
 
     protected OfficeLocation officeLocationFromId(Long id) {
-        return locationRepo.getById(id);
+        return id == null || id == 0 ? null : locationRepo.getById(id);
+    }
+
+    protected ProductVariant productVariantFromId(Long id) {
+        return id == null || id == 0 ? null : variantRepo.getById(id);
     }
 
 }
