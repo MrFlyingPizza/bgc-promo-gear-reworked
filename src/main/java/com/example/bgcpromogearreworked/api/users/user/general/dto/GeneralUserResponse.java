@@ -11,7 +11,7 @@ public class GeneralUserResponse {
     @RequiredArgsConstructor
     static class NestedOfficeLocation {
         private final Long id;
-        private final Long name;
+        private final String name;
     }
 
     private final String displayName;

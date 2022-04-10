@@ -1,5 +1,6 @@
 package com.example.bgcpromogearreworked.api.users.user.secured.dto;
 
+import com.example.bgcpromogearreworked.persistence.entities.OfficeLocation;
 import com.example.bgcpromogearreworked.persistence.entities.User;
 import com.example.bgcpromogearreworked.persistence.repositories.OfficeLocationRepository;
 import org.mapstruct.*;
@@ -14,12 +15,12 @@ public abstract class SecuredUserMapper {
     @Autowired
     private OfficeLocationRepository locationRepo;
 
-    @Mapping(source = "locationId", target = "location.id")
+    @Mapping(source = "locationId", target = "location")
     @Mapping(target = "oid", ignore = true)
     @Mapping(target = "displayName", ignore = true)
     public abstract User fromUpdate(SecuredUserUpdate userUpdate, @MappingTarget User user);
 
-    @Mapping(source = "locationId", target = "location.id")
+    @Mapping(source = "locationId", target = "location")
     @Mapping(target = "oid", ignore = true)
     @Mapping(target = "displayName", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
@@ -38,24 +39,8 @@ public abstract class SecuredUserMapper {
                 users.getSort().isSorted());
     }
 
-    @AfterMapping
-    protected void mapOfficeLocationPartialUpdateZeroAsNull(SecuredUserPartialUpdate userPartialUpdate, @MappingTarget User user) {
-        if (userPartialUpdate.getLocationId() == 0) {
-            user.setLocation(null);
-        }
-    }
-
-    @AfterMapping
-    protected void mapOfficeLocationFromRepoOrNull(@MappingTarget User user) {
-        if (user.getLocation() == null) {
-            return;
-        }
-        Long officeId = user.getLocation().getId();
-        if (officeId == null) {
-            user.setLocation(null);
-        } else {
-            user.setLocation(locationRepo.getById(officeId));
-        }
+    protected OfficeLocation mapOfficeLocationFromId(Long id) {
+        return id == null || id == 0 ? null : locationRepo.getById(id);
     }
 
 }
