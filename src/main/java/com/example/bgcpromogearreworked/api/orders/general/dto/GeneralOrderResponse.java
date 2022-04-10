@@ -24,27 +24,40 @@ public class GeneralOrderResponse {
 
         @Getter
         @RequiredArgsConstructor
-        static class NestedOptionValue {
-            private final Long valueId;
-            private final Long optionId;
-            private final String name;
-            private final String value;
+        public static class NestedVariant {
+
+            @Getter
+            @RequiredArgsConstructor
+            public static class NestedOptionValue {
+                private final Long valueId;
+                private final Long optionId;
+                private final String name;
+                private final String value;
+            }
+
+            @Getter
+            @RequiredArgsConstructor
+            public static class NestedImage {
+                private final Long id;
+                private final String alt;
+                private final String src;
+            }
+
+            private final Long id;
+            private final NestedImage image;
+            private final List<NestedOptionValue> options;
         }
 
         @Getter
         @RequiredArgsConstructor
-        static class NestedImage {
+        public static class NestedProduct {
             private final Long id;
-            private final String alt;
-            private final String src;
+            private final String name;
         }
 
-        private final Long variantId;
-        private final Long productId;
-        private final Long productName;
+        private final NestedProduct product;
+        private final NestedVariant variant;
         private final Integer quantity;
-        private final NestedImage image;
-        private final List<NestedOptionValue> options;
     }
 
     private final Long id;
@@ -58,5 +71,4 @@ public class GeneralOrderResponse {
     private final NestedOfficeLocation location;
     private final Instant completedDate;
     private final List<NestedOrderItem> items;
-// TODO: 2022-03-27 finish implement
 }

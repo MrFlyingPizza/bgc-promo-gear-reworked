@@ -61,9 +61,11 @@ public class Order {
     @Column(name = "type", nullable = false)
     private Type type;
 
+    @Builder.Default
     @Column(name = "submitter_comments", nullable = false, length = 500)
     private String submitterComments = "";
 
+    @Builder.Default
     @Column(name = "fulfiller_comments", nullable = false, length = 500)
     private String fulfillerComments = "";
 
@@ -86,15 +88,16 @@ public class Order {
     @Column(name = "completed_date")
     private Instant completedDate;
 
-    @OneToOne(mappedBy = "order", cascade = {CascadeType.PERSIST})
+    @OneToOne(mappedBy = "order")
     private OrderExtraInfo extraInfo;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
-    private Set<OrderItem> orderItems = new LinkedHashSet<>();
+    @Builder.Default
+    @OneToMany(mappedBy = "order")
+    private Set<OrderItem> items = new LinkedHashSet<>();
 
     public BigDecimal getTotalCost() {
         BigDecimal totalCost = BigDecimal.ZERO;
-        for (OrderItem orderItem : orderItems) {
+        for (OrderItem orderItem : items) {
             totalCost = totalCost.add(orderItem.getCost());
         }
         return totalCost;

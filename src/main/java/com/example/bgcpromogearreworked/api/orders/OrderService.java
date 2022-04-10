@@ -2,7 +2,10 @@ package com.example.bgcpromogearreworked.api.orders;
 
 import com.example.bgcpromogearreworked.api.orders.exceptions.OrderNotFoundException;
 import com.example.bgcpromogearreworked.persistence.entities.Order;
+import com.example.bgcpromogearreworked.persistence.entities.OrderItem;
 import com.example.bgcpromogearreworked.persistence.repositories.InventoryLevelRepository;
+import com.example.bgcpromogearreworked.persistence.repositories.OrderExtraInfoRepository;
+import com.example.bgcpromogearreworked.persistence.repositories.OrderItemRepository;
 import com.example.bgcpromogearreworked.persistence.repositories.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +20,8 @@ import java.util.function.Function;
 public class OrderService {
 
     private final OrderRepository orderRepo;
-    private final InventoryLevelRepository inventoryRepo;
+    private final OrderExtraInfoRepository extraInfoRepo;
+    private final OrderItemRepository orderItemRepo;
     private final OrderInventoryManagerService inventoryManager;
 
     public boolean checkOrderExists(Long orderId) {
@@ -33,8 +37,18 @@ public class OrderService {
         assert source != null && mapper != null;
         Order order = mapper.apply(source);
         assert order.getId() == null;
+        order = orderRepo.save(order);
+        final Long orderId = order.getId();
+        if (order.getExtraInfo() != null) {
+            order.getExtraInfo().setOrderId(orderId);
+            extraInfoRepo.save(order.getExtraInfo());
+        }
+        for (OrderItem item : order.getItems()) {
+            item.setOrderId(orderId);
+            orderItemRepo.save(item);
+        }
         inventoryManager.manage(order, null);
-        return orderRepo.saveAndFlush(order);
+        return order;
     }
 
     @Transactional
