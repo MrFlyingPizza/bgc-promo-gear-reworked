@@ -31,6 +31,7 @@ public class SecuredInventoryLevelResponse {
         }
 
         private final Long id;
+        private final Integer waitListThreshold;
         private final List<NestedOptionValue> options;
     }
 
