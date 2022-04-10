@@ -3,7 +3,7 @@ package com.example.bgcpromogearreworked.api.orders.operations.inventory.modific
 interface InventoryModifier {
 
     /**
-     * An inventory modifier that does nothing. Used for
+     * An inventory modifier that does nothing.
      */
     InventoryModifier NO_MODIFICATION = new InventoryModifier() {
         @Override
