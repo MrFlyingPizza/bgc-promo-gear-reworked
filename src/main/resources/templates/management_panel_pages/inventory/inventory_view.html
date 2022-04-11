@@ -460,7 +460,6 @@
         }
 
         var variantRender = function (data) {
-            console.log(data);
             let options;
 
             if(data == null){
@@ -493,12 +492,12 @@
                 'min="0" id="Lowstocklimit-' + sku + '" readOnly >';
         }
 
-        var renderActionButtons  = function (data) {
-            let threshold = data["notifyThreshold"];
-            let sku = data["variant"]["id"];
-
-            return '<input value="' + threshold + '" type="number" class="form-control input-number"' +
-                'min="0" id="Lowstocklimit-' + sku + '" readOnly >';
+        var renderActionButtons  = function (sku) {
+            return '<span class="button-action">' +
+                        '<button class="btn btn-outline-primary button-edit" type="button" style="font-size: 15px;" data-sku="' + sku + '" onClick="openMoreStock(this.getAttribute(&quot;data-sku&quot;));">' +
+                            '<i class="far fa-eye"></i>' +
+                        '</button>' +
+                    '</span>';
         }
 
 
@@ -536,7 +535,7 @@
                     { data: "product.isBigItem", "render": booleanToCheckmark },
                     { data: "product.isWaitListEnabled", "render": booleanToCheckmark },
                     { data: "location.name" },
-                    { data: "availableQuantity" }
+                    { data: "variant.id", "render" : renderActionButtons }
                 ],
                 processing: true,
                 order: [ [1, 'asc'], [2, 'asc'], [0, 'asc'] ],
@@ -781,22 +780,13 @@
         }
 
         function singleItemTextChange(data){
-            let productName = data["productName"];
-            let sku = data["SKU"];
+            let productName = data["product"]["name"];
+            let sku = data["variant"]["id"];
             let attributes = data.attributes;
             $('#single-item-title').text('Inventory for ' + productName);
             $('#single-item-name-sku').text(productName + ' - SKU: ' + sku);
 
-            let attributeString = '(';
-            let numOfAttributes = 0;
-            for (let key in attributes){
-                if(numOfAttributes > 0){
-                    attributeString += ', ';
-                }
-                attributeString += attributes[key].value;
-                numOfAttributes += 1;
-            }
-            attributeString += ')';
+            let attributeString = variantRender(data["variant"]["options"]);
 
             $('#single-item-attributes').text(attributeString);
         }
@@ -811,18 +801,20 @@
                 "info":     false,
 
                 ajax: {
-                    url: '/management/api/office_stock/' + sku,
-                    dataSrc:  function(data) {
-                        singleItemTextChange(data[0])
-                        return data
-                    }
+                    url: '/api/secured/inventory_levels?variantId=' + sku,
+                    cache: true,
+                    dataSrc: "inventoryLevels",
+                },
+                fnInitComplete: function() {
+                    let rowData = table2.data()["0"];
+                    singleItemTextChange(rowData);
                 },
                 columns: [
-                    { data: "locationName" },
-                    { data: "amountOnShelf" },
-                    { data: "inPendingOrder" },
-                    { data: "neededStock" },
-                    { data: "lowStockLimit" }
+                    { data: "location.name" },
+                    { data: "availableQuantity" },
+                    { data: "reservedQuantity" },
+                    { data: "neededQuantity" },
+                    { data: "notifyThreshold" }
                 ],
                 columnDefs : [
                     { targets: [1, 4],
