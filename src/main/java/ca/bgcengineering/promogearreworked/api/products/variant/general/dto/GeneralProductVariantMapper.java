@@ -18,6 +18,7 @@ public abstract class GeneralProductVariantMapper {
         return new GeneralProductVariantBatchResponse(productVariants.stream().map(this::toResponse).collect(Collectors.toList()));
     }
 
+    @Mapping(source = "id", target = "valueId")
     @Mapping(source = "option.id", target = "optionId")
     @Mapping(source = "option.name", target = "name")
     protected abstract GeneralProductVariantResponse.NestedOptionValue map(OptionValue optionValue);

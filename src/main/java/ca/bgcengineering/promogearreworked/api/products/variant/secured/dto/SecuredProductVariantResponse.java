@@ -28,7 +28,7 @@ public class SecuredProductVariantResponse {
     @RequiredArgsConstructor
     static class NestedProductImage {
         private final Long id;
-        private final String url;
+        private final String src;
         private final String alt;
         private final Integer position;
     }
@@ -36,14 +36,14 @@ public class SecuredProductVariantResponse {
     @Getter
     @RequiredArgsConstructor
     static class NestedOptionValue {
-        private final Long id;
+        private final Long valueId;
         private final Long optionId;
         private final String name;
         private final String value;
     }
 
     private final Long id;
-    private final Long imageId;
+    private final NestedProductImage image;
     private final Integer waitListThreshold;
     private final Boolean isInUse;
     private final List<NestedOptionValue> options;

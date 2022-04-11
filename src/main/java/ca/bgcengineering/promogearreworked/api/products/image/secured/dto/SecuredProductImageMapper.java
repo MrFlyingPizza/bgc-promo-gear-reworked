@@ -1,7 +1,10 @@
 package ca.bgcengineering.promogearreworked.api.products.image.secured.dto;
 
+import ca.bgcengineering.promogearreworked.persistence.entities.Product;
 import ca.bgcengineering.promogearreworked.persistence.entities.ProductImage;
+import ca.bgcengineering.promogearreworked.persistence.repositories.ProductRepository;
 import org.mapstruct.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -10,6 +13,11 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public abstract class SecuredProductImageMapper {
 
+    @Autowired
+    private ProductRepository productRepo;
+
+    @Mapping(target = "src", ignore = true)
+    @Mapping(target = "blobId", ignore = true)
     public abstract SecuredProductImageCreate toCreate(Long productId, String alt, Integer position, MultipartFile image);
 
     @Mapping(source = "productImageCreate.productId", target = "product.id")
@@ -38,14 +46,8 @@ public abstract class SecuredProductImageMapper {
         return new SecuredProductImageBatchResponse(images.stream().map(this::toResponse).collect(Collectors.toList()));
     }
 
-    @AfterMapping
-    protected void setProductToNullIfProductIdNull(@MappingTarget ProductImage image) {
-        if (image == null) {
-            return;
-        }
-        if (image.getProduct().getId() == null) {
-            image.setProduct(null);
-        }
+    protected Product mapProductFromProductId(Long productId) {
+        return productId == null || productId == 0 ? null : productRepo.getById(productId);
     }
 
 }
