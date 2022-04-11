@@ -19,7 +19,25 @@ public class SecuredInventoryLevelResponse {
 
     @Getter
     @RequiredArgsConstructor
-    static class NestedVariant {
+    static class NestedProductVariant {
+
+        @Getter
+        @RequiredArgsConstructor
+        static class NestedOptionValue {
+            private final Long valueId;
+            private final Long optionId;
+            private final String name;
+            private final String value;
+        }
+
+        private final Long id;
+        private final Integer waitListThreshold;
+        private final List<NestedOptionValue> options;
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    static class NestedProduct {
 
         @Getter
         @RequiredArgsConstructor
@@ -29,20 +47,13 @@ public class SecuredInventoryLevelResponse {
             private final NestedCategory parent;
         }
 
-        @Getter
-        @RequiredArgsConstructor
-        static class NestedOptionValue {
-            private final Long id;
-            private final Long optionId;
-            private final String name;
-            private final String value;
-        }
-
         private final Long id;
-        private final Long productId;
-        private final String productName;
+        private final String name;
+        private final String brand;
         private final NestedCategory category;
-        private final List<NestedOptionValue> options;
+        private final Boolean isPublished;
+        private final Boolean isWaitListEnabled;
+        private final Boolean isBigItem;
     }
 
     @Getter
@@ -54,8 +65,10 @@ public class SecuredInventoryLevelResponse {
 
     private final Integer availableQuantity;
     private final Integer reservedQuantity;
+    private final Integer neededQuantity;
     private final Integer notifyThreshold;
-    private final NestedVariant variant;
+    private final NestedProduct product;
+    private final NestedProductVariant variant;
     private final NestedLocation location;
     private final Instant lastManuallyModifiedDate;
     private final NestedUser lastManuallyModifiedBy;

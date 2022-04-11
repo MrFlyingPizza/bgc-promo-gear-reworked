@@ -17,6 +17,9 @@ public class GlobalInventoryLevel {
     @Column(name = "total_available_quantity")
     private Integer totalAvailableQuantity;
 
+    @Column(name = "total_reserved_quantity")
+    private Integer totalReservedQuantity;
+
     @Column(name = "total_needed_quantity")
     private Integer totalNeededQuantity;
 
@@ -25,6 +28,6 @@ public class GlobalInventoryLevel {
     private ProductVariant variant;
 
     public Integer getApparentQuantity() {
-        return totalAvailableQuantity - totalNeededQuantity - variant.getWaitListThreshold();
+        return totalAvailableQuantity - totalReservedQuantity - totalNeededQuantity - variant.getWaitListThreshold();
     }
 }

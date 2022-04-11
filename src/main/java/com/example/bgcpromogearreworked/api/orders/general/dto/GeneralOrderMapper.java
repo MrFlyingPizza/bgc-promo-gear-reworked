@@ -2,10 +2,12 @@ package com.example.bgcpromogearreworked.api.orders.general.dto;
 
 import com.example.bgcpromogearreworked.persistence.entities.*;
 import com.example.bgcpromogearreworked.persistence.repositories.OfficeLocationRepository;
+import com.example.bgcpromogearreworked.persistence.repositories.ProductVariantRepository;
 import com.example.bgcpromogearreworked.persistence.repositories.UserRepository;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,58 +21,66 @@ public abstract class GeneralOrderMapper {
     @Autowired
     private OfficeLocationRepository locationRepo;
 
+    @Autowired
+    private ProductVariantRepository variantRepo;
+
     @Mapping(source = "submitterId", target = "submitter")
     @Mapping(source = "recipientId", target = "recipient")
     @Mapping(source = "locationId", target = "location")
     @Mapping(source = "comments", target = "submitterComments")
-    @Mapping(source = "items", target = "orderItems")
     @Mapping(target = "fulfillerComments", ignore = true)
     @Mapping(target = "fulfiller", ignore = true)
-    @Mapping(target = "status", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "lastModifiedDate", ignore = true)
     @Mapping(target = "lastModifiedBy", ignore = true)
     @Mapping(target = "completedDate", ignore = true)
-    @Mapping(target = "owedCredit", ignore = true)
-    @Mapping(target = "extraInfo.orderId", ignore = true)
-    @Mapping(target = "extraInfo.order", ignore = true)
-    @Mapping(target = "orderItems[].orderId", ignore = true)
-    @Mapping(target = "orderItems[].order", ignore = true)
+    @Mapping(target = "extraInfo", ignore = true)
     public abstract Order fromCreate(GeneralOrderCreate orderCreate);
 
     @Mapping(source = "submitter.displayName", target = "submitter")
     @Mapping(source = "fulfiller.displayName", target = "fulfiller")
     @Mapping(source = "recipient.displayName", target = "recipient")
-    @Mapping(source = "orderItems", target = "items")
+    @Transactional
     public abstract GeneralOrderResponse toResponse(Order order);
 
+    @Transactional
     public GeneralOrderBatchResponse toBatchResponse(List<Order> orders) {
         return new GeneralOrderBatchResponse(orders.stream().map(this::toResponse).collect(Collectors.toList()));
     }
 
-    @Mapping(source = "variant.product.price", target = "price")
+    @Transactional
     public abstract List<GeneralOrderCreate.NestedOrderItem> cartItemsToOrderItems(List<CartItem> cartItems);
 
-    @Mapping(source = "variant.id", target = "variantId")
-    @Mapping(source = "variant.product.id", target = "productId")
-    @Mapping(source = "variant.product.name", target = "productName")
-    @Mapping(source = "variant.image", target = "image")
-    @Mapping(source = "variant.optionValues", target = "options")
-    protected abstract GeneralOrderResponse.NestedOrderItem map(OrderItem orderItem);
+    @Mapping(source = "variant.product.price", target = "price")
+    protected abstract GeneralOrderCreate.NestedOrderItem map(CartItem cartItem);
+
+    @Mapping(source = "variantId", target = "variant")
+    @Mapping(target = "orderId", ignore = true)
+    @Mapping(target = "order", ignore = true)
+    protected abstract OrderItem map(GeneralOrderCreate.NestedOrderItem item);
+
+    @Mapping(source = "variant.product", target = "product")
+    @Mapping(source = "variant.optionValues", target = "variant.options")
+    @Transactional
+    protected abstract GeneralOrderResponse.NestedOrderItem map(OrderItem item);
 
     @Mapping(source = "id", target = "valueId")
     @Mapping(source = "option.id", target = "optionId")
     @Mapping(source = "option.name", target = "name")
-    protected abstract GeneralOrderResponse.NestedOrderItem.NestedOptionValue map(OptionValue optionValue);
+    protected abstract GeneralOrderResponse.NestedOrderItem.NestedProductVariant.NestedOptionValue map(OptionValue optionValue);
 
     protected User userFromId(Long id) {
-        return userRepo.getById(id);
+        return id == null || id == 0 ? null : userRepo.getById(id);
     }
 
     protected OfficeLocation officeLocationFromId(Long id) {
-        return locationRepo.getById(id);
+        return id == null || id == 0 ? null : locationRepo.getById(id);
+    }
+
+    protected ProductVariant productVariantFromId(Long id) {
+        return id == null || id == 0 ? null : variantRepo.getById(id);
     }
 
 }

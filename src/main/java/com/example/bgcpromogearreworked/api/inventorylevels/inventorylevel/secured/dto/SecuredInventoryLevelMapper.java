@@ -27,6 +27,7 @@ public abstract class SecuredInventoryLevelMapper {
     @Mapping(source = "locationId", target = "location")
     @Mapping(source = "lastManuallyModifiedById", target = "lastManuallyModifiedBy")
     @Mapping(target = "neededQuantity", ignore = true)
+    @Mapping(target = "reservedQuantity", ignore = true)
     public abstract InventoryLevel fromUpdate(SecuredInventoryLevelUpdate inventoryLevelUpdate,
                                               @MappingTarget InventoryLevel inventoryLevel);
 
@@ -35,13 +36,12 @@ public abstract class SecuredInventoryLevelMapper {
     @Mapping(source = "lastManuallyModifiedById", target = "lastManuallyModifiedBy")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "neededQuantity", ignore = true)
+    @Mapping(target = "reservedQuantity", ignore = true)
     public abstract InventoryLevel fromPartialUpdate(SecuredInventoryLevelPartialUpdate inventoryLevelPartialUpdate,
                                                      @MappingTarget InventoryLevel inventoryLevel);
 
-    @Mapping(source = "variant.product.name", target = "variant.productName")
-    @Mapping(source = "variant.product.id", target = "variant.productId")
+    @Mapping(source = "variant.product", target = "product")
     @Mapping(source = "variant.optionValues", target = "variant.options")
-    @Mapping(source = "variant.product.category", target = "variant.category")
     @Transactional
     public abstract SecuredInventoryLevelResponse toResponse(InventoryLevel inventoryLevel);
 
@@ -57,9 +57,10 @@ public abstract class SecuredInventoryLevelMapper {
                 page.getSort().isSorted());
     }
 
+    @Mapping(source = "id", target = "valueId")
     @Mapping(source = "option.id", target = "optionId")
     @Mapping(source = "option.name", target = "name")
-    protected abstract SecuredInventoryLevelResponse.NestedVariant.NestedOptionValue map(OptionValue optionValue);
+    protected abstract SecuredInventoryLevelResponse.NestedProductVariant.NestedOptionValue map(OptionValue optionValue);
 
     protected ProductVariant mapVariantFromId(Long variantId) {
         return variantId != null && variantId != 0 ? variantRepo.getById(variantId) : null;

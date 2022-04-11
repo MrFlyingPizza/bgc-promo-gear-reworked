@@ -1,7 +1,7 @@
 package com.example.bgcpromogearreworked.api.officelocations.officelocation.secured;
 
-import com.example.bgcpromogearreworked.api.officelocations.officelocation.OfficeLocationService;
 import com.example.bgcpromogearreworked.api.officelocations.exceptions.OfficeLocationNotFoundException;
+import com.example.bgcpromogearreworked.api.officelocations.officelocation.OfficeLocationService;
 import com.example.bgcpromogearreworked.api.officelocations.officelocation.secured.dto.*;
 import com.example.bgcpromogearreworked.persistence.entities.OfficeLocation;
 import com.querydsl.core.types.Predicate;
@@ -59,5 +59,11 @@ public class SecuredOfficeLocationController {
         return mapper.toResponse(handlerService.handleOfficeLocationPartialUpdate(officeLocationPartialUpdate));
     }
 
-    // TODO: 2022-03-26 implement delete mapping
+    @DeleteMapping("/{locationId}")
+    private void deleteOfficeLocation(@PathVariable Long locationId) {
+        if (!service.checkOfficeLocationExists(locationId)) {
+            throw new OfficeLocationNotFoundException();
+        }
+        service.deleteOfficeLocation(locationId);
+    }
 }

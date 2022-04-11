@@ -23,11 +23,11 @@ $('#create-location-form').submit(
         const data = {
             'name': $('#name').val(),
             'country': $('#country').val(),
-            'province': $('#province').val(),
+            'state': $('#province').val(),
             'city': $('#city').val(),
-            'postalCode': $('#postal-code').val(),
-            'streetAddress1': $('#street-address-one').val(),
-            'streetAddress2': $('#street-address-two').val()
+            'zipCode': $('#postal-code').val(),
+            'addressLine1': $('#street-address-one').val(),
+            'addressLine2': ($('#street-address-two').val().trim() === "" ? null : $('#street-address-two').val())
         }
 
         $.ajax({
@@ -35,12 +35,6 @@ $('#create-location-form').submit(
             url: url,
             contentType: "application/json",
             data: JSON.stringify(data), // serializes the form's elements.
-            beforeSend: function(xhr) {
-                xhr.setRequestHeader(
-                    $('meta[name=_csrf_header]').attr('content'),
-                    $('meta[name=_csrf]').attr('content')
-                )
-            },
             success: function()
             {
                 $('#confirm-location-submit-modal').modal('hide');

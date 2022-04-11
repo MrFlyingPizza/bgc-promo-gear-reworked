@@ -1,5 +1,6 @@
 package com.example.bgcpromogearreworked.api.orders.general.dto;
 
+import com.example.bgcpromogearreworked.api.orders.constraints.Waitlistable;
 import com.example.bgcpromogearreworked.api.orders.constraints.ValidClientOrEventExtraInfo;
 import com.example.bgcpromogearreworked.api.shared.validation.constraints.officelocationexists.OfficeLocationExists;
 import com.example.bgcpromogearreworked.api.shared.validation.constraints.productvariantexists.ProductVariantExists;
@@ -21,6 +22,7 @@ import java.util.List;
 @Builder(toBuilder = true)
 @ValidClientOrEventExtraInfo
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
+@ToString
 public class GeneralOrderCreate {
 
     @Getter
@@ -32,7 +34,7 @@ public class GeneralOrderCreate {
         private final Instant requiredDate;
 
         public NestedOrderExtraInfo(@JsonProperty("recipientInfo") String recipientInfo,
-                             @JsonProperty("requiredDate") Instant requiredDate) {
+                                    @JsonProperty("requiredDate") Instant requiredDate) {
             this.recipientInfo = recipientInfo;
             this.requiredDate = requiredDate;
         }
@@ -40,6 +42,7 @@ public class GeneralOrderCreate {
 
     @Getter
     @Builder(toBuilder = true)
+    @ToString
     public static class NestedOrderItem {
         @ProductVariantExists
         private final Long variantId;
@@ -85,7 +88,8 @@ public class GeneralOrderCreate {
 
     @JsonIgnore
     @Setter
-    private List<NestedOrderItem> items;
+    @Size(min = 1)
+    private List<@Waitlistable NestedOrderItem> items;
 
     @JsonCreator
     public GeneralOrderCreate(@JsonProperty("comments") String comments,

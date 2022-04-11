@@ -31,7 +31,7 @@ public class OrderInventoryManagerService {
         final Long locationId = currentOrder.getLocation().getId();
         final Order.Status currentStatus = currentOrder.getStatus();
         final Order.Status previousStatus = previousOrder == null ? null : previousOrder.getStatus();
-        final Set<OrderItem> orderItems = currentOrder.getOrderItems();
+        final Set<OrderItem> orderItems = currentOrder.getItems();
 
         StatusUpdateInventoryModifier modifier = modifierProvider.get(currentStatus, previousStatus);
 

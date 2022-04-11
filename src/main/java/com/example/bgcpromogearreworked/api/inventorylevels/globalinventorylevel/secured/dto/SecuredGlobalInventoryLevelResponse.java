@@ -11,7 +11,25 @@ public class SecuredGlobalInventoryLevelResponse {
 
     @Getter
     @RequiredArgsConstructor
-    static class NestedProductVariant {
+    public static class NestedProduct {
+
+        @Getter
+        @RequiredArgsConstructor
+        public static class NestedCategory {
+            private final Long id;
+            private final String name;
+            private final NestedCategory parent;
+        }
+
+        private final Long id;
+        private final String name;
+        private final String brand;
+        private final NestedCategory category;
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    public static class NestedProductVariant {
 
         @Getter
         @RequiredArgsConstructor
@@ -22,24 +40,15 @@ public class SecuredGlobalInventoryLevelResponse {
             private final String value;
         }
 
-        @Getter
-        @RequiredArgsConstructor
-        static class NestedCategory {
-            private final Long id;
-            private final String name;
-            private final NestedCategory parent;
-        }
-
         private final Long id;
-        private final Long productId;
-        private final String productName;
         private final Integer waitListThreshold;
-        private final NestedCategory category;
         private final List<NestedOptionValue> options;
     }
 
+    private final NestedProduct product;
     private final NestedProductVariant variant;
     private final Integer totalAvailableQuantity;
+    private final Integer totalReservedQuantity;
     private final Integer totalNeededQuantity;
     private final Integer apparentQuantity;
 
