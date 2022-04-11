@@ -38,10 +38,11 @@ public class SecuredInventoryLevelController {
         return mapper.toResponse(handlerService.handleInventoryLevelGet(locationId, variantId));
     }
 
+    //TODO: Change Pageable.unpaged() back to pageable, currently handling paging and searching in the front end
     @GetMapping
     private SecuredInventoryLevelBatchResponse getInventoryLevelBatch(@QuerydslPredicate(root = InventoryLevel.class) Predicate predicate,
                                                                       Pageable pageable) {
-        return mapper.toBatchResponse(handlerService.handleInventoryLevelBatchGet(predicate, pageable));
+        return mapper.toBatchResponse(handlerService.handleInventoryLevelBatchGet(predicate, Pageable.unpaged()));
     }
 
     @PutMapping("/{locationId}/{variantId}")
