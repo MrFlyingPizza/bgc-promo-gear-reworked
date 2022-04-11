@@ -461,9 +461,9 @@
 
         var variantRender = function (data) {
             let options;
-
-            if(data == null){
-                options = "Single Variant"
+            console.log(data);
+            if(!data || data == [] || data["length"] == 0){
+                options = "N/A"
             //if not null options, return list of options that make up variant
             } else {
                 options = "["
