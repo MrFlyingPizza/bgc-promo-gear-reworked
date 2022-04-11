@@ -16,10 +16,8 @@ public abstract class SecuredProductImageMapper {
 
     @Mapping(source = "productImageCreate.productId", target = "product.id")
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "src", ignore = true)
-    @Mapping(target = "blobId", ignore = true)
     @Mapping(target = "productVariants", ignore = true)
-    public abstract ProductImage fromCreate(SecuredProductImageCreate productImageCreate, String src, UUID blobId);
+    public abstract ProductImage fromCreate(SecuredProductImageCreate productImageCreate);
 
     @Mapping(source = "productId", target = "product.id")
     @Mapping(target = "src", ignore = true)

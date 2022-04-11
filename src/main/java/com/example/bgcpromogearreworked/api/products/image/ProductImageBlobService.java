@@ -9,6 +9,7 @@ import com.azure.storage.blob.models.BlobHttpHeaders;
 import com.azure.storage.blob.models.PublicAccessType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,6 +27,7 @@ public class ProductImageBlobService {
      */
     @Getter
     @RequiredArgsConstructor
+    @ToString
     public static class ImageBlobResult {
         private final String url;
         private final UUID blobId;
@@ -50,17 +52,18 @@ public class ProductImageBlobService {
         if (imageFile.isEmpty()) {
             throw new RuntimeException("Image file cannot be empty.");
         }
+        ImageBlobResult result = null;
         try {
             UUID imageBlobId = UUID.randomUUID();
             BlobClient blobClient = blobContainerClient.getBlobClient(buildBlobName(imageBlobId));
             blobClient.upload(BinaryData.fromBytes(imageFile.getBytes()));
             blobClient.setHttpHeaders(buildHeaders(imageFile.getContentType()));
             blobClient.setTags(buildTags(productId, imageBlobId));
-            return new ImageBlobResult(blobClient.getBlobUrl(), imageBlobId);
+            result = new ImageBlobResult(blobClient.getBlobUrl(), imageBlobId);
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
         }
+        return result;
     }
 
     public void deleteProductImage(Long productId, UUID imageBlobId) {
