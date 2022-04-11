@@ -1,8 +1,12 @@
 package ca.bgcengineering.promogearreworked.api.products.variant.secured.dto;
 
 import ca.bgcengineering.promogearreworked.persistence.entities.OptionValue;
+import ca.bgcengineering.promogearreworked.persistence.entities.Product;
+import ca.bgcengineering.promogearreworked.persistence.entities.ProductImage;
 import ca.bgcengineering.promogearreworked.persistence.entities.ProductVariant;
 import ca.bgcengineering.promogearreworked.persistence.repositories.OptionValueRepository;
+import ca.bgcengineering.promogearreworked.persistence.repositories.ProductImageRepository;
+import ca.bgcengineering.promogearreworked.persistence.repositories.ProductRepository;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -15,8 +19,14 @@ public abstract class SecuredProductVariantMapper {
     @Autowired
     private OptionValueRepository optionValueRepo;
 
-    @Mapping(source = "imageId", target = "image.id")
-    @Mapping(source = "productId", target = "product.id")
+    @Autowired
+    private ProductImageRepository imageRepo;
+
+    @Autowired
+    private ProductRepository productRepo;
+
+    @Mapping(source = "imageId", target = "image")
+    @Mapping(source = "productId", target = "product")
     @Mapping(source = "optionValueIds", target = "optionValues")
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "lastModifiedDate", ignore = true)
@@ -26,8 +36,8 @@ public abstract class SecuredProductVariantMapper {
     @Mapping(target = "globalInventoryLevel", ignore = true)
     public abstract ProductVariant fromCreate(SecuredProductVariantCreate productVariantCreate);
 
-    @Mapping(source = "imageId", target = "image.id")
-    @Mapping(source = "productId", target = "product.id")
+    @Mapping(source = "imageId", target = "image")
+    @Mapping(source = "productId", target = "product")
     @Mapping(source = "optionValueIds", target = "optionValues")
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "lastModifiedDate", ignore = true)
@@ -37,8 +47,8 @@ public abstract class SecuredProductVariantMapper {
     public abstract ProductVariant fromUpdate(SecuredProductVariantUpdate productVariantUpdate,
                                               @MappingTarget ProductVariant productVariant);
 
-    @Mapping(source = "imageId", target = "image.id")
-    @Mapping(source = "productId", target = "product.id")
+    @Mapping(source = "imageId", target = "image")
+    @Mapping(source = "productId", target = "product")
     @Mapping(source = "optionValueIds", target = "optionValues")
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "lastModifiedDate", ignore = true)
@@ -56,17 +66,19 @@ public abstract class SecuredProductVariantMapper {
         return new SecuredProductVariantBatchResponse(productVariants.stream().map(this::toResponse).collect(Collectors.toList()));
     }
 
-    @AfterMapping
-    protected void setImageNullIfImageIdNull(@MappingTarget ProductVariant productVariant) {
-        if (productVariant.getImage().getId() == null) {
-            productVariant.setImage(null);
-        }
+    protected ProductImage mapProductImageFromId(Long imageId) {
+        return imageId == null || imageId == 0 ? null : imageRepo.getById(imageId);
+    }
+
+    protected Product mapProductFromId(Long productId) {
+        return productId == null || productId == 0 ? null : productRepo.getById(productId);
     }
 
     protected OptionValue map(Long optionValueId) {
         return optionValueRepo.findById(optionValueId).orElseThrow();
     }
 
+    @Mapping(source = "id", target = "valueId")
     @Mapping(source = "option.id", target = "optionId")
     @Mapping(source = "option.name", target = "name")
     protected abstract SecuredProductVariantResponse.NestedOptionValue map(OptionValue optionValue);
