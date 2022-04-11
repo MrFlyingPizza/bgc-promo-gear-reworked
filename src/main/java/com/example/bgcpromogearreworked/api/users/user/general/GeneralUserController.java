@@ -35,4 +35,6 @@ public class GeneralUserController {
         return mapper.toResponse(handlerService.handleGetUser(oid));
     }
 
+    // TODO: 2022-04-10 implement user updating office location
+
 }
