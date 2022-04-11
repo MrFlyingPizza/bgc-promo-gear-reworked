@@ -28,7 +28,7 @@ public class SecuredProductImageHandlerService {
     ProductImage handleProductImageCreate(@Valid SecuredProductImageCreate imageCreate) {
         ProductImageBlobService.ImageBlobResult result = blobStorageService.saveProductImage(imageCreate.getProductId(),
                 imageCreate.getImage());
-        if (result == null) { // remove entity if save image blob fails
+        if (result == null || result.getBlobId() == null || result.getUrl() == null) { // remove entity if save image blob fails
             throw new ProductImageSaveFailedException();
         }
         return imageService.createProductImage(imageCreate, source -> mapper.fromCreate(source, result.getUrl(), result.getBlobId()));
