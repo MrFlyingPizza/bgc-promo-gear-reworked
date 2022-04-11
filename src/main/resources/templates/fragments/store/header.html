@@ -1,0 +1,15 @@
+<!-- Start: bgc-nav -->
+<nav th:fragment="header" class="navbar navbar-light navbar-expand-lg shadow-sm d-inline d-lg-flex justify-content-lg-center align-items-lg-end navigation-clean-button" style="font-family: poppins;padding: 10px 0px;color: #333333;padding-bottom: 0px;">
+    <div class="container"><a class="navbar-brand" href="/"><img th:src="@{/images/Logo_PromoGear.svg}" style="height: 55px;padding-bottom: 13px;"></a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse d-lg-flex align-items-lg-center" id="navcol-1" style="padding-top: 13px;">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item dropdown"><a class="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown">about</a>
+                    <div class="dropdown-menu"><a class="dropdown-item" href="/faq">FAQ</a><a class="dropdown-item" href="/guidelines">guidelines</a><a class="dropdown-item" href="/product_care">product care</a><a class="dropdown-item" href="/warranty">warranty</a></div>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="/store">store</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">orders</a></li>
+                <li class="nav-item"><a class="nav-link" href="/management/panel">management</a></li>
+            </ul><span class="d-md-flex d-lg-flex justify-content-md-start align-items-md-end align-items-lg-center navbar-text actions" style="padding-left: 16px;padding-right: 16px;"> <a class="btn button-checkout" role="button" style="padding: 3px 10px;border-color: #333333;border-radius: 20px;color: #333333;" href="/store/cart" data-bs-target="cart.html"><span>checkout&nbsp;<i class="fa fa-shopping-cart m-auto"></i></span></a><a class="login" href="#" style="margin-left: 16px;margin-right: 0px;" data-bs-target="logoff.html">log off</a></span>
+        </div>
+    </div>
+</nav><!-- End: bgc-nav -->

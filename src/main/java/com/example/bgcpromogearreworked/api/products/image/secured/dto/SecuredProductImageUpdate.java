@@ -30,7 +30,7 @@ public class SecuredProductImageUpdate {
     private final String alt;
 
     @JsonCreator
-    SecuredProductImageUpdate(@JsonProperty("position") Integer position, @JsonProperty("alt") String alt) {
+    public SecuredProductImageUpdate(@JsonProperty("position") Integer position, @JsonProperty("alt") String alt) {
         this.position = position;
         this.alt = alt;
     }

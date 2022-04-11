@@ -5,7 +5,6 @@ import com.example.bgcpromogearreworked.persistence.repositories.CategoryReposit
 import com.example.bgcpromogearreworked.persistence.repositories.OptionRepository;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Streamable;
 
 import java.util.List;
 import java.util.stream.Collectors;

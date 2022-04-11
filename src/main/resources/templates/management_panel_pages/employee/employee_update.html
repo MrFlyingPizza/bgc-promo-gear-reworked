@@ -1,0 +1,206 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{management_panel_layout.html}">
+<head>
+    <title>Update Employee</title>
+</head>
+<div layout:fragment="content">
+    <!--  Heading  -->
+    <h2>Update Employee</h2>
+
+    <!-- Return to viewing employees button -->
+    <button class="btn btn-outline-primary" onclick="location.href='/management/employee/'">
+        Return to Employees
+    </button>
+
+    <p class="text-center">Note: Only fill in the fields you like to be changed.</p>
+<!--    <p class="text-center" id="ifNoLocations" style="display: none; color: red;">-->
+<!--        There are no locations in the database.-->
+<!--        Please make one before editing an employee-->
+<!--        as all employees MUST be assigned to a location.-->
+<!--    </p>-->
+
+    <div class="container mt-5">
+        <!--   Form to update employee     -->
+        <form th:action="'/management/api/employee/'+${employee?.getID()}" method="post" class="row g-3" id="update-employee-form">
+            <div class="col-md-6">
+                <label for="credit" class="form-label">Credit:</label>
+                <input type="number" step=".01" class="form-control" id="credit" name="credit" th:placeholder="${employee?.getCredit()}">
+            </div>
+<!--            <div class="col-md-6">-->
+<!--                <label for="location" class="form-label">Location:</label>-->
+<!--                <select name="location" id="location" class="form-select" required>-->
+
+<!--                </select>-->
+<!--            </div>-->
+            <div class="col-md-6">
+                <label for="last-big-item-timestamp" class="form-label">Last Big Item Timestamp:</label>
+                <input type="datetime-local" class="form-control" id="last-big-item-timestamp" name="last-big-item-timestamp">
+                <p th:text="'Old Value: ' + ${employee?.getLastBigItemTimeStamp()}"></p>
+            </div>
+            <div class="col-md-12">
+                <!-- Update Employee Button -->
+                <input class="btn btn-outline-primary" id="submit-update-employee" type="button"
+                       th:attr="onclick=|get_currently_stored_employee('${employee?.getID()}')|" value="Submit Update" disabled>
+                <!-- Delete Employee Button -->
+                <input class="btn btn-outline-primary" id="submit-delete-employee" type="button" value="Delete"
+                       data-bs-toggle="modal" data-bs-target="#confirm-employee-delete-modal">
+            </div>
+
+            <!-- Show the user a popup modal allowing them to confirm the info they are trying to submit -->
+            <div class="modal fade" id="confirm-employee-update-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Confirm Update</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p th:text="'Are you sure you want to make the following changes to \'' + ${employee?.getfName()} + ' ' + ${employee?.getlName()} + '\'?'"></p>
+                            <table class="table">
+                                <tr>
+                                    <th>Attribute</th>
+                                    <th>Currently Stored Value</th>
+                                    <th>New Value</th>
+                                </tr>
+                                <tr id="credit-row">
+                                    <td style="font-weight: bold">Credit</td>
+                                    <td id="currently-stored-credit"></td>
+                                    <td id="display-new-credit"></td>
+                                </tr>
+<!--                                <tr id="locationRow">-->
+<!--                                    <td style="font-weight: bold">Location</td>-->
+<!--                                    <td id="currentlyStoredLocationName"></td>-->
+<!--                                    <td id="displayNewLocationName"></td>-->
+<!--                                </tr>-->
+                                <tr id="last-big-item-timestamp-row">
+                                    <td style="font-weight: bold">Last Big Item Timestamp</td>
+                                    <td id="currently-stored-last-big-item-timestamp"></td>
+                                    <td id="display-new-last-big-item-timestamp"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+                            <input class="btn btn-outline-primary" type="submit" value="Update">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <!-- UPDATE EMPLOYEE SUCCESS/FAIL POPUP MODALS -->
+        <div class="modal fade" id="update-employee-success-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Complete</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <span style="font-size: 35px;font-weight: bold;">Successfully Updated</span><br>
+                        <i class="fa fa-check-circle-o rubberBand animated" style="font-size: 100px;color: rgb(122, 214, 94);height: 41px;"></i>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-outline-primary" href="/management/employee">Return to Employees</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="update-employee-fail-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Failed to Update</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <span style="font-size: 35px;font-weight: bold;">Update Failed</span><br>
+                        <i class="fa fa-close rubberBand animated" style="font-size: 100px;color: rgb(242, 15, 0);height: 41px;"></i><br>
+                        <p class="text-start" id="update-fail-message"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DELETE EMPLOYEE CONFIRM/SUCCESS/FAIL POPUP MODALS -->
+        <div class="modal fade" id="confirm-employee-delete-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Confirm Delete</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <span style="font-size: 35px;font-weight: bold;">Are you sure you want to delete this employee?</span><br>
+                        <span style="font-size: 35px;font-weight: bold;">(THIS CANNOT BE UNDONE!)</span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+                        <button class="btn btn-outline-primary" th:attr="onclick=|delete_employee('${employee?.getID()}')|">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="delete-employee-success-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Complete</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <span style="font-size: 35px;font-weight: bold;">Successfully Deleted</span><br>
+                        <i class="fa fa-check-circle-o rubberBand animated" style="font-size: 100px;color: rgb(122, 214, 94);height: 41px;"></i>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-outline-primary" href="/management/employee">Return to Employees</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="delete-employee-fail-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Failed to Delete</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <span style="font-size: 35px;font-weight: bold;">Delete Failed</span><br>
+                        <i class="fa fa-close rubberBand animated" style="font-size: 100px;color: rgb(242, 15, 0);height: 41px;"></i><br>
+                        <p class="text-start" id="delete-fail-message"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--  Upon press of submit update button, an AJAX get request is done to get the current information
+          of the employee they are trying to update. If that request fails, display this popup modal-->
+        <div class="modal fade" id="get-stored-employee-fail-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Failed to Get Current Employee</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <span style="font-size: 35px;font-weight: bold;">Data Retrieval Failed</span><br>
+                        <i class="fa fa-close rubberBand animated" style="font-size: 100px;color: rgb(242, 15, 0);height: 41px;"></i><br>
+                        <p class="text-start" id="get-stored-employee-fail-message"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/javascript/management/employee/employee_update.js}"></script>
+</div>
+</html>

@@ -1,0 +1,701 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{management_panel_layout.html}">
+<head>
+  <title>Update Attribute</title>
+</head>
+<div layout:fragment="content">
+  <!-- Heading -->
+  <h2>Update Attribute</h2>
+
+  <!-- Return to viewing locations button -->
+  <button class="btn btn-outline-primary" onclick="location.href='/management/attribute_group/'">
+    Return to Attributes
+  </button>
+
+  <p class="text-center">Note: Only fill in the fields you like to be changed</p>
+
+  <!-- Form for user to enter input fields -->
+  <div class="container mt-5">
+    <form th:action="'/management/api/attribute_group/'+${attributeGroup?.getID()}" method="post" class="row g-3" id="update-attribute-group-form">
+      <div class="col-12">
+        <label for="attribute-group-name" class="form-label">Attribute Name:</label>
+        <input type="text" class="form-control" id="attribute-group-name" name="attribute-group-name"
+               th:data-attribute-group-id="${attributeGroup?.getID()}" th:placeholder="${attributeGroup?.getName()}">
+        <div class="form-text">e.g, Size, Gender, Style, Pattern</div>
+      </div>
+
+      <div class="col-md-12">
+        <input class="btn btn-outline-primary" id="update-attribute-group-button" type="button"
+               th:attr="onclick=|get_currently_stored_attribute_group('${attributeGroup?.getID()}')|" value="Submit Update" disabled>
+        <!-- Delete Location Button -->
+        <input class="btn btn-outline-primary" id="delete-attribute-group-button" type="button" value="Delete" data-bs-toggle="modal" data-bs-target="#confirm-delete-attribute-group-modal">
+      </div>
+
+      <!--   Modal #1: Displays entered information and prompts user if they are sure they want to submit update   -->
+      <div class="modal fade" id="confirm-update-attribute-group-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Confirm Update</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              Are you sure to make the following changes to location?
+              <table class="table">
+                <tr>
+                  <th>Attribute</th>
+                  <th>Currently Stored Value</th>
+                  <th>New Value</th>
+                </tr>
+                <tr>
+                  <td style="font-weight: bold">Name</td>
+                  <td id="currently-stored-attribute-group-name"></td>
+                  <td id="display-new-attribute-group-name"></td>
+                </tr>
+              </table>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+              <input class="btn btn-outline-primary" type="submit" value="Update">
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="table-responsive">
+      <table id="all-attributes-table" class="table table-striped table-hover">
+        <thead class="table-light">
+        <th scope="col">Value</th>
+        </thead>
+        <tbody>
+        <tr th:each="attribute : ${attributeGroup?.getAttributes()}">
+          <td th:text="${attribute?.getValue()} ?: 'N/A'"></td>
+          <td>
+            <button class="btn btn-primary rounded-pill text-decoration-none" th:attr="onclick=|display_update_attribute_form('${attribute?.getID()}')|">EDIT</button>
+          </td>
+          <td>
+            <button class="btn btn-danger rounded-pill text-decoration-none" th:attr="onclick=|delete_attribute('${attribute?.getID()}')|">DELETE</button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+<!--    <div th:if="${#lists.isEmpty(attributeGroup?.getAttributes())}">-->
+<!--      No Existing Attributes-->
+<!--    </div>-->
+
+    <form th:action="'/management/api/attribute'" method="post" class="row g-3" id="create-attribute-form">
+      <div class="col-12">
+        <label for="attribute-value" class="form-label">Attribute value:</label>
+        <input type="text" class="form-control" id="attribute-value" name="attribute-value" required>
+        <div class="form-text">e.g for Size: XXS, XS, S, M, L, XL, XXL</div>
+      </div>
+
+      <div class="col-md-12">
+        <input class="btn btn-outline-primary" id="create-attribute-submit-button" type="button"
+               value="Submit" data-bs-toggle="modal" data-bs-target="#confirm-create-attribute-modal" disabled>
+      </div>
+      <!--   Modal #1: Displays entered information and prompts user if they are sure they want to submit   -->
+      <div class="modal fade" id="confirm-create-attribute-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Confirm Submit</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              Are you sure you want to submit the following details?
+              <table class="table">
+                <tr>
+                  <th>Value</th>
+                  <td id="display-new-create-value"></td>
+                </tr>
+              </table>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+              <input class="btn btn-outline-primary" type="submit" value="Submit">
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <!--   Modal #2: Displays success popup if form submission is successful   -->
+    <div class="modal fade" id="create-attribute-success-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Complete</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Successfully Created</span><br>
+            <i class="fa fa-check-circle-o rubberBand animated" style="font-size: 100px;color: rgb(122, 214, 94);height: 41px;"></i>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-outline-success" data-bs-dismiss="modal">Close</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--   Modal #3: Displays error popup if form submission is unsuccessful   -->
+    <div class="modal fade" id="create-attribute-fail-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Failed to Create</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Creation Failed</span><br>
+            <i class="fa fa-close rubberBand animated" style="font-size: 100px;color: rgb(242, 15, 0);height: 41px;"></i><br>
+            <p class="text-start" id="createErrorMessage"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--   Modal #2: Displays success popup if update form submission is successful   -->
+    <div class="modal fade" id="update-attribute-group-success-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Complete</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Successfully Updated</span><br>
+            <i class="fa fa-check-circle-o rubberBand animated" style="font-size: 100px;color: rgb(122, 214, 94);height: 41px;"></i>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-outline-primary" href="/management/attribute_group">Return to Attributes</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--   Modal #3: Displays error popup if update form submission is unsuccessful   -->
+    <div class="modal fade" id="update-attribute-group-fail-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Failed to Update</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Update Failed</span><br>
+            <i class="fa fa-close rubberBand animated" style="font-size: 100px;color: rgb(242, 15, 0);height: 41px;"></i><br>
+            <p class="text-start" id="update-attribute-group-fail-message"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--   Modal #4: Asks user if they are sure they want to delete the attribute   -->
+    <div class="modal fade" id="confirm-delete-attribute-group-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Confirm Delete</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Are you sure you want to delete this attribute?</span><br>
+            <span style="font-size: 35px;font-weight: bold;">(THIS CANNOT BE UNDONE!)</span>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+            <button class="btn btn-outline-primary" th:attr="onclick=|delete_attribute_group('${attributeGroup?.getID()}')|">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--   Modal #5: Displays success popup if delete is successful   -->
+    <div class="modal fade" id="delete-attribute-group-success-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Complete</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Successfully Deleted</span><br>
+            <i class="fa fa-check-circle-o rubberBand animated" style="font-size: 100px;color: rgb(122, 214, 94);height: 41px;"></i>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-outline-primary" href="/management/attribute_group">Return to Attributes</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--   Modal #6: Displays error popup if delete is unsuccessful   -->
+    <div class="modal fade" id="delete-attribute-group-fail-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Failed to Delete</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Delete Failed</span><br>
+            <i class="fa fa-close rubberBand animated" style="font-size: 100px;color: rgb(242, 15, 0);height: 41px;"></i><br>
+            <p class="text-start" id="delete-attribute-fail-message"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--   Modal #7: Displays error popup if getting current attribute data is unsuccessful   -->
+    <div class="modal fade" id="get-stored-attribute-group-fail-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Failed to Get Current Attribute</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Data Retrieval Failed</span><br>
+            <i class="fa fa-close rubberBand animated" style="font-size: 100px;color: rgb(242, 15, 0);height: 41px;"></i><br>
+            <p class="text-start" id="get-stored-attribute-group-fail-message"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--   Modal: Displays form to create a category   -->
+    <div class="modal fade" id="show-update-attribute-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Update Value</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <form id="update-attribute-form" method="post">
+              <div class="col-md-6">
+                <label for="update-attribute-value" class="form-label">Value:</label>
+                <input type="text" id="update-attribute-value" name="update-attribute-value" class="form-control" required>
+              </div>
+              <div class="col-md-12">
+                <input class="btn btn-outline-primary" id="update-attribute-submit-button" type="button" value="Submit"
+                       onclick="get_current_stored_attribute()">
+              </div>
+
+              <!--   Modal #1: Displays entered information and prompts user if they are sure they want to submit   -->
+              <div class="modal fade" id="confirm-update-attribute-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">Confirm Update</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      Are you sure you want to update the following details?
+                      <table class="table">
+                        <tr>
+                          <th>Currently Stored Value</th>
+                          <th>New Value</th>
+                        </tr>
+                        <tr>
+                          <td id="currently-stored-attribute-value"></td>
+                          <td id="display-new-update-value"></td>
+                        </tr>
+                      </table>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+                      <input class="btn btn-outline-primary" type="submit" value="Submit">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <!--          <div class="modal-footer">-->
+          <!--            <a class="btn btn-outline-success" data-bs-dismiss="modal">Close</a>-->
+          <!--          </div>-->
+        </div>
+      </div>
+    </div>
+
+    <!--   Modal #2: Displays success popup if update form submission is successful   -->
+    <div class="modal fade" id="update-attribute-success-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Complete</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Successfully Updated</span><br>
+            <i class="fa fa-check-circle-o rubberBand animated" style="font-size: 100px;color: rgb(122, 214, 94);height: 41px;"></i>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-success" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--   Modal #3: Displays error popup if update form submission is unsuccessful   -->
+    <div class="modal fade" id="update-attribute-fail-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Failed to Update</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Update Failed</span><br>
+            <i class="fa fa-close rubberBand animated" style="font-size: 100px;color: rgb(242, 15, 0);height: 41px;"></i><br>
+            <p class="text-start" id="update-attribute-fail-message"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <script th:inline="javascript">
+      //JS Object that dynamically contains only changed values
+      const updateData = {};
+
+      /**
+       * Activates/Deactivates "Submit Update" button whenever updateData is non-empty/empty respectively
+       */
+      function check_button_activation(){
+        if(jQuery.isEmptyObject(updateData)){
+          $("#update-attribute-group-button").prop("disabled", true);
+        }
+        else{
+          $("#update-attribute-group-button").removeAttr('disabled');
+        }
+      }
+
+
+      //The following JQuery .change()'s dynamically change (1) the content of updateData and (2) the activation of the "Submit Update" button
+      $("#attribute-group-name").change(function (){
+        if($("#attribute-group-name").val() === ""){
+          delete updateData['name'];
+        }
+        else{
+          updateData['name'] = $("#attribute-group-name").val().trim();
+        }
+        check_button_activation();
+      })
+
+      /**
+       * Fills in the third column of Modal #1 in location_update.html
+       */
+      function display_new_attribute_group_details(){
+        $('#display-new-attribute-group-name').text($('#attribute-group-name').val());
+      }
+
+      /**
+       * @param currentData The current data of the location in the database
+       *
+       *  This function fills in the second column of the table in Modal #1 in location_update.html
+       *
+       * Note: Importance of this function is to ensure that the "true" current data is displayed.
+       *       Consider the following situation:
+       *        1. User 1 gets location page
+       *        2. User 1 starts to edit
+       *        3. User 2 gets location page
+       *        4. User 2 starts to edit
+       *        5. User 2 finishes edit and submits to server
+       *        ...
+       *
+       *       Here we can see that the data of the location when User 1 loads the page may be old.
+       *       Therefore we use currentData to get the "true" current data, which in the case of the
+       *       example would be the data that User 2 just submitted
+       */
+      function display_currently_stored_attribute_group(currentData){
+        $('#currently-stored-attribute-group-name').text(currentData['name']);
+      }
+
+
+
+      /**
+       * @param currentData The current data of the location in the database
+       *
+       * This function is called after the AJAX request to get the current location data from the database.
+       * If that request is successful, then:
+       *  1. display_new_attribute_group_details() - Fills in third column of table in Modal #1 in location_update.html
+       *  2. display_currently_stored_attribute_group(currentData) - Fills in second column of table in Modal #1 in location_update.html
+       *  3. hideRows() - If any values are unchanged, then do not display them in Modal #1 in location_update.html
+       *  4. "$('#confirm-update-attribute-group-modal').modal('show')" - Show Modal #1 in location_update.html
+       */
+      function display_update_attribute_group_modal(currentData){
+        display_new_attribute_group_details();
+        display_currently_stored_attribute_group(currentData);
+        $('#confirm-update-attribute-group-modal').modal('show');
+      }
+
+      /**
+       * Function that sends an Ajax Request for retrieving data about a location
+       * @param id location_id used to get data about that location
+       *
+       * Note: The function may show as unused, however it IS being used.
+       *       It shows as unused since the function call is inside the following
+       *       Thymeleaf attribute which is from location_update.html:
+       *       - th:attr="onclick=|get_currently_stored_attribute_groups('${location?.getID()}')|"
+       */
+      function get_currently_stored_attribute_group(id){
+        $.ajax({
+          type: "GET",
+          url: '/management/api/attribute_group/'.concat(id.toString()),
+          beforeSend: function(xhr) {
+            xhr.setRequestHeader(
+                    $('meta[name=_csrf_header]').attr('content'),
+                    $('meta[name=_csrf]').attr('content')
+            )
+          },
+          success: function(data)
+          {
+            display_update_attribute_group_modal(data);
+          },
+          error: function(xhr) {
+            $('#get-stored-attribute-group-fail-message').text("Error Message:\'"+ xhr.responseJSON.message +"\'")
+            $('#get-stored-attribute-group-fail-modal').modal('show');
+          }
+        });
+      }
+
+
+      $('#update-attribute-group-form').submit(
+              function (e) {
+                e.preventDefault();
+
+                const form = $(this);
+                const url = form.attr('action');
+
+                $.ajax({
+                  type: "PUT",
+                  url: url,
+                  contentType: "application/json",
+                  data: JSON.stringify(updateData), // serializes the form's elements.
+                  beforeSend: function(xhr) {
+                    xhr.setRequestHeader(
+                            $('meta[name=_csrf_header]').attr('content'),
+                            $('meta[name=_csrf]').attr('content')
+                    )
+                  },
+                  success: function()
+                  {
+                    $('#confirm-update-attribute-group-modal').modal('hide');
+                    $('#update-attribute-group-success-modal').modal('show');
+                  },
+                  error: function(xhr) {
+                    $('#confirm-update-attribute-group-modal').modal('hide');
+                    $('#update-attribute-group-fail-message').text("Error Message:\'"+ xhr.responseJSON.message +"\'")
+                    $('#update-attribute-group-fail-modal').modal('show');
+                  }
+                });
+              }
+      );
+
+      /**
+       * Function that sends an Ajax Request for deleting a location
+       * @param id location_id used to delete the location that is currently being viewed
+       *
+       * Note: The function may show as unused, however it IS being used.
+       *       It shows as unused since the function call is inside the following
+       *       Thymeleaf attribute which is from location_update.html:
+       *       - th:attr="onclick=|delete_attribute_group('${location?.getID()}')|"
+       */
+      function delete_attribute_group(id){
+        $.ajax({
+          type: "DELETE",
+          url: '/management/api/attribute_group/'.concat(id.toString()),
+          beforeSend: function(xhr) {
+            xhr.setRequestHeader(
+                    $('meta[name=_csrf_header]').attr('content'),
+                    $('meta[name=_csrf]').attr('content')
+            )
+          },
+          success: function()
+          {
+            $('#confirm-delete-attribute-group-modal').modal('hide');
+            $('#delete-attribute-group-success-modal').modal('show');
+          },
+          error: function(xhr) {
+            $('#confirm-delete-attribute-group-modal').modal('hide');
+            $('#delete-attribute-fail-message').text("Error Message:\'"+ xhr.responseJSON.message +"\'")
+            $('#delete-attribute-group-fail-modal').modal('show');
+          }
+        });
+      }
+
+      function display_new_attribute_details(){
+        $('#display-new-create-value').text($('#attribute-value').val());
+        $('#display-new-update-value').text($('#update-attribute-value').val());
+      }
+
+      $('#create-attribute-submit-button').click(display_new_attribute_details);
+
+      $('#update-attribute-form').submit(
+          function (e) {
+            e.preventDefault();
+
+            const form = $(this);
+            const url = form.attr('action');
+            const data = {
+              'value' : $('#update-attribute-value').val()
+            };
+
+            $.ajax({
+              type: "PUT",
+              url: url,
+              contentType: "application/json",
+              data: JSON.stringify(data), // serializes the form's elements.
+              beforeSend: function(xhr) {
+                xhr.setRequestHeader(
+                        $('meta[name=_csrf_header]').attr('content'),
+                        $('meta[name=_csrf]').attr('content')
+                )
+              },
+              success: function()
+              {
+                $('#show-update-attribute-modal').modal('hide');
+                $('#update-attribute-success-modal').modal('show');
+                location.reload();
+              },
+              error: function(xhr) {
+                $('#show-update-attribute-modal').modal('hide');
+                $('#update-attribute-fail-message').text("Error Message:\'"+ xhr.responseJSON.message +"\'")
+                $('#update-attribute-fail-modal').modal('show');
+              }
+            });
+          }
+      );
+
+      $('#create-attribute-form').submit(
+              function (e) {
+                e.preventDefault();
+
+                const form = $(this);
+                const url = form.attr('action');
+                const data = {
+                  'attributeGroupID': $('#attribute-group-name').data("attribute-group-id"),
+                  'value': $('#attribute-value').val()
+                }
+
+                $.ajax({
+                  type: "POST",
+                  url: url,
+                  contentType: "application/json",
+                  data: JSON.stringify(data), // serializes the form's elements.
+                  beforeSend: function(xhr) {
+                    xhr.setRequestHeader(
+                            $('meta[name=_csrf_header]').attr('content'),
+                            $('meta[name=_csrf]').attr('content')
+                    )
+                  },
+                  success: function(data)
+                  {
+                    $('#confirm-create-attribute-modal').modal('hide');
+                    $('#create-attribute-success-modal').modal('show');
+                    //$('#all-attributes-table tr:last').after("<tr><td>"+data['value']+"</td></tr>");
+                    location.reload();
+                  },
+                  error: function(xhr) {
+                    $('#confirm-create-attribute-modal').modal('hide');
+                    $('#createErrorMessage').text("Error Message:\'"+ xhr.responseJSON.message +"\'")
+                    $('#create-attribute-fail-modal').modal('show');
+                  }
+                });
+              }
+      );
+
+      function delete_attribute(id){
+        $.ajax({
+          type: "DELETE",
+          url: '/management/api/attribute/'.concat(id.toString()),
+          beforeSend: function(xhr) {
+            xhr.setRequestHeader(
+                    $('meta[name=_csrf_header]').attr('content'),
+                    $('meta[name=_csrf]').attr('content')
+            )
+          },
+          success: function()
+          {
+            $('#confirm-delete-attribute-group-modal').modal('hide');
+            $('#delete-attribute-group-success-modal').modal('show');
+            location.reload();
+          },
+          error: function(xhr) {
+            $('#confirm-delete-attribute-group-modal').modal('hide');
+            $('#delete-attribute-fail-message').text("Error Message:\'"+ xhr.responseJSON.message +"\'")
+            $('#delete-attribute-group-fail-modal').modal('show');
+          }
+        });
+      }
+
+      function get_current_stored_attribute(id){
+        console.log('/management/api/attribute/'.concat(id.toString()));
+        $.ajax({
+          type: "GET",
+          url: '/management/api/attribute/'.concat(id.toString()),
+          beforeSend: function(xhr) {
+            xhr.setRequestHeader(
+                    $('meta[name=_csrf_header]').attr('content'),
+                    $('meta[name=_csrf]').attr('content')
+            )
+          },
+          success: function(data)
+          {
+            display_update_attribute_modal(data);
+          },
+          error: function(xhr) {
+            $('#show-update-attribute-modal').modal('hide');
+            $('#get-stored-attribute-group-fail-message').text("Error Message:\'"+ xhr.responseJSON.message +"\'")
+            $('#get-stored-attribute-group-fail-modal').modal('show');
+          }
+        });
+      }
+
+      function display_update_attribute_modal(currentAttribute){
+        console.log(currentAttribute);
+        display_new_attribute_details();
+        $('#currently-stored-attribute-value').text(currentAttribute['value']);
+        $('#update-attribute-form').attr('action', '/management/api/attribute/'.concat(currentAttribute['ID']));
+        $('#confirm-update-attribute-modal').modal('show');
+      }
+
+      $('#attribute-value').change(function(){
+        if($('#attribute-value').val() === ""){
+          $("#create-attribute-submit-button").prop("disabled", true);
+        }
+        else{
+          $("#create-attribute-submit-button").removeAttr('disabled');
+        }
+      });
+
+      function display_update_attribute_form(id){
+        $('#update-attribute-submit-button').attr("onclick", "get_current_stored_attribute("+(id.toString())+")");
+        $('#show-update-attribute-modal').modal('show');
+
+      }
+    </script>
+    <!--    <script th:src="@{/javascript/management/location.js}"></script>-->
+  </div>
+</div>
+</html>

@@ -1,0 +1,758 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{management_panel_layout.html}">
+<head>
+  <title>Update Product</title>
+</head>
+<div layout:fragment="content">
+  <div style="text-align: center">
+    <!-- Return to viewing locations button -->
+    <button class="btn btn-outline-primary" style="float: left;" onclick="location.href='/management/product/'">
+      Return to Products
+    </button><br><br>
+    <!-- Heading -->
+    <h2 style="text-align: center">Update Product</h2>
+    <p class="text-center">Note: Only fill in the fields you like to be changed</p>
+  </div>
+
+  <div class="container gy-3">
+    <div class="card">
+      <div class="card-body">
+        <!-- Form to create a product_group -->
+        <form id="update-product-group-form" th:action="'/management/api/product/'+${product?.getID()}" method="post" class="row g-3">
+          <div class="col-12">
+            <label for="name" class="form-label">Product Name:</label>
+            <input type="text" class="form-control" id="name" name="name" th:placeholder="${product?.getName()}">
+          </div>
+          <div class="col-md-6">
+            <label for="brand" class="form-label">Brand:</label>
+            <input type="text" class="form-control" id="brand" name="brand" th:placeholder="${product?.getBrand()}">
+          </div>
+          <div class="col-md-6">
+            <label for="price" class="form-label">Price:</label>
+            <input type="number" step=".01" class="form-control" id="price" name="price" th:placeholder="${product?.getPrice() != null} ? '$' + ${#numbers.formatDecimal(product?.getPrice(), 0, 'COMMA', 2, 'POINT')} : 'N/A'">
+          </div>
+          <div class="col-md-4">
+            <label for="is-published" class="form-check-label">Do you want this product to be published?</label>
+            <input type="checkbox" class="form-check-input" id="is-published" name="is-published"
+                   th:checked="${product?.getIsPublished()}" th:data-initial-published-value="${product?.getIsPublished()}">
+            <div class="form-text">(A published product is one that shows up on the marketplace)</div>
+          </div>
+          <div class="col-md-4">
+            <label for="is-big-item" class="form-check-label">Is this product a "Big Item"?</label>
+            <input type="checkbox" class="form-check-input" id="is-big-item" name="is-big-item"
+                   th:checked="${product?.getIsBigItem()}" th:data-initial-big-item-value="${product?.getIsBigItem()}">
+            <div class="form-text">(A "Big Item" is one that can only be ordered once per year)</div>
+          </div>
+          <div class="col-md-4">
+            <label for="is-waitlistable" class="form-check-label">Is this product "waitlistable"?</label>
+            <input type="checkbox" class="form-check-input" id="is-waitlistable" name="is-waitlistable"
+                   th:checked="${product?.getIsWaitlistable()}" th:data-initial-waitlistable-value="${product?.getIsWaitlistable()}">
+            <div class="form-text">(A "Waitlistable Item" is one that can recieve waitlist orders when the stock is low)</div>
+          </div>
+          <div class="col-12">
+            <label for="description">Product Description:</label>
+            <textarea class="form-control" id="description" name="description" rows="3" th:placeholder="${product?.getDescription()}"></textarea>
+          </div>
+          <div class="col-md-6">
+            <label for="categories" class="form-label">Choose New Category:</label>
+            <select name="categories" id="categories" class="form-select" th:data-initial-category-id="${product?.getCategory()?.getID()}">
+
+            </select>
+            <div class="form-text" th:text="'Current Category: ' + ${product?.getCategory()?.getName()}"></div>
+          </div>
+          <div class="col-md-12">
+            <!--   Update Location Button     -->
+            <input class="btn btn-outline-primary" id="submit-update-product-group" type="button"
+                   th:attr="onclick=|get_currently_stored_product_group('${product?.getID()}')|" value="Submit Update" disabled>
+            <!-- Delete Location Button -->
+            <input class="btn btn-outline-primary" id="submit-delete-product-group" type="button"
+                   value="Delete" data-bs-toggle="modal" data-bs-target="#confirm-delete-location-modal">
+          </div>
+
+          <!-- Show the user a popup modal allowing them to confirm the info they are trying to submit -->
+          <div class="modal fade" id="confirm-product-group-update-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Confirm Submit</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  Are you sure you want to submit the following details?
+                  <table class="table">
+                    <tr>
+                      <th>Attribute</th>
+                      <th>Currently Stored Value</th>
+                      <th>New Value</th>
+                    </tr>
+                    <!--                                        <tr id="name-row">-->
+                    <!--                                            <td style="font-weight: bold">Name</td>-->
+                    <!--                                            <td id="currently-stored-name"></td>-->
+                    <!--                                            <td id="display-new-name"></td>-->
+                    <!--                                        </tr>-->
+                    <tr id="name-row">
+                      <td style="font-weight: bold">Name</td>
+                      <td id="currently-stored-name"></td>
+                      <td id="display-new-name"></td>
+                    </tr>
+                    <tr id="brand-row">
+                      <td style="font-weight: bold">Brand</td>
+                      <td id="currently-stored-brand"></td>
+                      <td id="display-new-brand"></td>
+                    </tr>
+                    <tr id="price-row">
+                      <td style="font-weight: bold">Price</td>
+                      <td id="currently-stored-price"></td>
+                      <td id="display-new-price"></td>
+                    </tr>
+                    <tr id="is-pubilished-row">
+                      <td style="font-weight: bold">Is Published</td>
+                      <td id="currently-stored-is-published"></td>
+                      <td id="display-new-is-published"></td>
+                    </tr>
+                    <tr id="is-big-item-row">
+                      <td style="font-weight: bold">Is Big Item</td>
+                      <td id="currently-stored-is-big-item"></td>
+                      <td id="display-new-is-big-item"></td>
+                    </tr>
+                    <tr id="is-waitlistable-row">
+                      <td style="font-weight: bold">Is Waitlistable</td>
+                      <td id="currently-stored-is-waitlistable"></td>
+                      <td id="display-new-is-waitlistable"></td>
+                    </tr>
+                    <tr id="description-row">
+                      <td style="font-weight: bold">Description</td>
+                      <td id="currently-stored-description"></td>
+                      <td id="display-new-description"></td>
+                    </tr>
+                    <tr id="category-row">
+                      <td style="font-weight: bold">Category</td>
+                      <td id="currently-stored-category"></td>
+                      <td id="display-new-category"></td>
+                    </tr>
+                  </table>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+                  <input class="btn btn-outline-primary" type="submit" value="Update">
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <br>
+    <div class="card">
+      <div class="card-body">
+        <h3 style="text-align: center">Variants</h3>
+        <div class="table-responsive">
+          <table id="variantsTable" class="table table-striped table-hover">
+            <thead>
+            <tr>
+              <th scope="col">Variant</th>
+              <th scope="col">Low Stock Limit</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="product : ${product?.getProducts()}">
+              <!--                                    <td th:text="${product?.getImagePath()} ?: 'N/A'"></td>-->
+              <td>
+                <th:block th:each="attribute : ${product?.getAttributes()}">
+                  <span th:text="' ' + ${attribute?.getValue()} + ' /'"></span>
+                </th:block>
+              </td>
+              <td th:text="${product?.getLowStockLimit()} ?: 'N/A'">
+
+              </td>
+              <td>
+                <a class="btn btn-primary rounded-pill text-decoration-none" th:href="'/management/product_variant/update?id='+${product?.getSKU()}">EDIT</a>
+              </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(product?.getProducts())}">
+              <td rowspan="2">No Existing Products</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- CREATE PRODUCT_GROUP SUCCESS/FAIL POPUP MODALS -->
+    <div class="modal fade" id="update-product-group-success-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Complete</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Successfully Updated</span><br>
+            <i class="fa fa-check-circle-o rubberBand animated" style="font-size: 100px;color: rgb(122, 214, 94);height: 41px;"></i>
+          </div>
+          <div class="modal-footer" id="success-footer">
+            <a class="btn btn-outline-default" href="/management/product">Return to Products</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="update-product-group-fail-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Failed to Update</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Update Failed</span><br>
+            <i class="fa fa-close rubberBand animated" style="font-size: 100px;color: rgb(242, 15, 0);height: 41px;"></i><br>
+            <p class="text-start" id="update-product-group-fail-message"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CREATE CATEGORY SUCCESS/FAIL POPUP MODALS -->
+    <!--        <div class="modal fade" id="create-category-form-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">-->
+    <!--            <div class="modal-dialog">-->
+    <!--                <div class="modal-content">-->
+    <!--                    <div class="modal-header">-->
+    <!--                        <h5 class="modal-title">Create Category Form</h5>-->
+    <!--                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+    <!--                    </div>-->
+    <!--                    <div class="modal-body text-center">-->
+    <!--                        <form id="create-category-form" action="/management/api/category" method="post">-->
+    <!--                            <div class="col-md-6">-->
+    <!--                                <label for="category-name" class="form-label">Name:</label>-->
+    <!--                                <input type="text" id="category-name" name="category-name" class="form-control" required>-->
+    <!--                            </div>-->
+    <!--                            <div class="col-md-6">-->
+    <!--                                <label for="current-categories" class="form-label">Parent Category:</label>-->
+    <!--                                <select name="current-categories" id="current-categories" class="form-select" required>-->
+    <!--                                    <option value=null selected>None</option>-->
+    <!--                                </select>-->
+    <!--                            </div>-->
+    <!--                            <div class="col-md-12">-->
+    <!--                                <input class="btn btn-outline-primary" id="submit-create-category" type="button" value="Submit" data-bs-toggle="modal" data-bs-target="#confirm-category-submit">-->
+    <!--                            </div>-->
+
+    <!--                            &lt;!&ndash; Show the user a popup modal allowing them to confirm the info they are trying to submit &ndash;&gt;-->
+    <!--                            <div class="modal fade" id="confirm-category-submit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">-->
+    <!--                                <div class="modal-dialog">-->
+    <!--                                    <div class="modal-content">-->
+    <!--                                        <div class="modal-header">-->
+    <!--                                            <h5 class="modal-title">Confirm Submit</h5>-->
+    <!--                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+    <!--                                        </div>-->
+    <!--                                        <div class="modal-body">-->
+    <!--                                            Are you sure you want to submit the following details?-->
+    <!--                                            <table class="table">-->
+    <!--                                                <tr>-->
+    <!--                                                    <th>Name</th>-->
+    <!--                                                    <td id="display-new-category-name"></td>-->
+    <!--                                                </tr>-->
+    <!--                                                <tr>-->
+    <!--                                                    <th>Parent Category:</th>-->
+    <!--                                                    <td id="display-new-parent-category"></td>-->
+    <!--                                                </tr>-->
+    <!--                                            </table>-->
+    <!--                                        </div>-->
+    <!--                                        <div class="modal-footer">-->
+    <!--                                            <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>-->
+    <!--                                            <input class="btn btn-outline-primary" type="submit" value="Submit">-->
+    <!--                                        </div>-->
+    <!--                                    </div>-->
+    <!--                                </div>-->
+    <!--                            </div>-->
+    <!--                        </form>-->
+    <!--                    </div>-->
+    <!--                    &lt;!&ndash;          <div class="modal-footer">&ndash;&gt;-->
+    <!--                    &lt;!&ndash;            <a class="btn btn-outline-success" data-bs-dismiss="modal">Close</a>&ndash;&gt;-->
+    <!--                    &lt;!&ndash;          </div>&ndash;&gt;-->
+    <!--                </div>-->
+    <!--            </div>-->
+    <!--        </div>-->
+    <!--        <div class="modal fade" id="create-category-success-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">-->
+    <!--            <div class="modal-dialog">-->
+    <!--                <div class="modal-content">-->
+    <!--                    <div class="modal-header">-->
+    <!--                        <h5 class="modal-title">Complete</h5>-->
+    <!--                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+    <!--                    </div>-->
+    <!--                    <div class="modal-body text-center">-->
+    <!--                        <span style="font-size: 35px;font-weight: bold;">Successfully Created</span><br>-->
+    <!--                        <i class="fa fa-check-circle-o rubberBand animated" style="font-size: 100px;color: rgb(122, 214, 94);height: 41px;"></i>-->
+    <!--                    </div>-->
+    <!--                    <div class="modal-footer">-->
+    <!--                        <a class="btn btn-outline-success" data-bs-dismiss="modal">Close</a>-->
+    <!--                    </div>-->
+    <!--                </div>-->
+    <!--            </div>-->
+    <!--        </div>-->
+
+    <!--  Upon page load, an AJAX get request is done to get all of the the current categories
+          in the database. If that request fails, display this popup modal-->
+    <div class="modal fade" id="get-stored-product-group-fail-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Failed to Get Product Group</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Data Retrieval Failed</span><br>
+            <i class="fa fa-close rubberBand animated" style="font-size: 100px;color: rgb(242, 15, 0);height: 41px;"></i><br>
+            <p class="text-start" id="get-stored-product-group-fail-message"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      /**
+       * Whenever a dropdown option in any select tag is picked,
+       * this function marks that option with the attribute "selected".
+       * Additionally, any other options have their "selected" attribute removed.
+       */
+      $(document).on("change","select",function(){
+        $("option[value=" + this.value + "]", this)
+                .attr("selected", true).siblings()
+                .removeAttr("selected")
+      });
+
+      /**
+       * Upon page load, get all the current categories from the database
+       * and load them into the empty <select> tag in the html.
+       */
+      $(document).ready(function(){
+        fill_current_categories();
+      });
+
+      /**
+       * Gets all current attributes from the database. If:
+       * (1) - There are no categories, dont let them submit at all
+       * (2) - Load all the existing categories into the <select> tags
+       */
+      function fill_current_categories(){
+        $.ajax({
+          type: "GET",
+          url: '/management/api/category/root',
+          beforeSend: function(xhr) {
+            xhr.setRequestHeader(
+                    $('meta[name=_csrf_header]').attr('content'),
+                    $('meta[name=_csrf]').attr('content')
+            )
+          },
+          success: function(data)
+          {
+            if(jQuery.isEmptyObject(data)){
+              $("#submit-create-product-group").prop("disabled", true);
+              $('#if-no-categories').css("display", "");
+            }
+            else{
+              $('#if-no-categories').css("display", "none");
+              $('#categories').empty();
+              $('#current-categories').empty();
+              //Option to be a part of no category
+              $('#current-categories').append($('<option>', {
+                selected: true,
+                value: "null",
+                text : "None"
+              }));
+              $.each(data, function (i, category) {
+                let parentOption = $('#categories').append($('<option>', {
+                  value: category['ID'],
+                  text : category['name']
+                }));
+                $('#categories option:last').css('background-color', '#f5f5f5');
+                let subcategoriesList = category['subcategories'];
+                for(let i = 0; i < subcategoriesList.length; i++){
+                  $('#categories').append($('<option>', {
+                    value: subcategoriesList[i]['ID'],
+                    text : " - " + subcategoriesList[i]['name']
+                  }));
+                }
+                $('#current-categories').append($('<option>', {
+                  value: category['ID'],
+                  text : category['name']
+                }));
+              });
+            }
+          },
+          error: function(xhr) {
+            $('#get-stored-category-fail-message').text("Error Message:\'"+ xhr.responseJSON.message +"\'")
+            $('#get-stored-category-fail-modal').modal('show');
+          }
+        });
+      }
+
+
+      // /**
+      //  * Note: The function may show as unused, however it IS being used.
+      //  *       It shows as unused since the function call is inside the following
+      //  *       Thymeleaf attribute which is from product_group_update.html:
+      //  *       - th:attr="onclick=|fill_attributes()|"
+      //  */
+      // function fill_attributes(){
+      //     fill_current_categories();
+      //     $('#create-category-form-modal').modal('show');
+      // }
+
+      // function display_new_category_details(){
+      //     $('#display-new-category-name').text($('#category-name').val());
+      //     $('#display-new-parent-category').text($('#current-categories option:selected').text());
+      // }
+      // $('#submit-create-category').click(display_new_category_details);
+      //
+      // $('#create-category-form').submit(
+      //     function (e) {
+      //         e.preventDefault();
+      //
+      //         const form = $(this);
+      //         const url = form.attr('action');
+      //         const data = {
+      //             'name': $('#category-name').val(),
+      //             'parentID': $('#current-categories option:selected').val()
+      //         }
+      //
+      //         $.ajax({
+      //             type: "POST",
+      //             url: url,
+      //             contentType: "application/json",
+      //             data: JSON.stringify(data), // serializes the form's elements.
+      //             beforeSend: function(xhr) {
+      //                 xhr.setRequestHeader(
+      //                     $('meta[name=_csrf_header]').attr('content'),
+      //                     $('meta[name=_csrf]').attr('content')
+      //                 )
+      //             },
+      //             success: function(data)
+      //             {
+      //                 $('#categories').append($('<option>', {
+      //                     value: data['ID'],
+      //                     text : data['name']
+      //                 }));
+      //                 $('#create-category-form-modal').modal('hide');
+      //                 $('#confirm-category-submit').modal('hide');
+      //                 $('#create-category-success-modal').modal('show');
+      //             },
+      //             error: function(xhr) {
+      //                 $('#confirm-category-submit').modal('hide');
+      //                 $('#create-product-group-fail-message').text("Error Message:\'"+ xhr.responseJSON.message +"\'")
+      //                 $('#create-product-group-fail-modal').modal('show');
+      //             }
+      //         });
+      //     }
+      // );
+
+      //JS Object that dynamically contains only form input values that are changed
+      const updateData = {};
+
+      /**
+       * Activates/Deactivates "Submit Update" button whenever updateData is non-empty/empty respectively
+       */
+      function check_button_activation(){
+        if(jQuery.isEmptyObject(updateData)){
+          $("#submit-update-product-group").prop("disabled", true);
+        }
+        else{
+          $("#submit-update-product-group").removeAttr('disabled');
+        }
+        console.log("TEST 1: ");
+        console.log(updateData);
+      }
+
+      //The following JQuery .change()'s dynamically change:
+      // (1) the content of updateData and
+      // (2) the activation of the "Submit Update" button
+      $("#name").change(function (){
+        if($("#name").val().trim() === ""){
+          delete updateData['name'];
+        }
+        else{
+          updateData['name'] = $("#name").val().trim();
+        }
+        check_button_activation();
+      });
+      $("#brand").change(function (){
+        if($("#brand").val().trim() === ""){
+          delete updateData['brand'];
+        }
+        else{
+          updateData['brand'] = $("#brand").val().trim();
+        }
+        check_button_activation();
+      });
+      $("#description").change(function (){
+        if($("#description").val().trim() === ""){
+          delete updateData['description'];
+        }
+        else{
+          updateData['description'] = $("#description").val().trim();
+        }
+        check_button_activation();
+      });
+      $("#price").change(function (){
+        if($("#price").val() === ''){
+          delete updateData['price'];
+        }
+        else{
+          updateData['price'] = parseFloat($("#price").val()).toFixed(2);
+        }
+        check_button_activation();
+      });
+      $("#is-published").change(function (){
+        if($("#is-published").is(':checked') === $('#is-published').data("initial-published-value")){
+          delete updateData['isPublished'];
+        }
+        else{
+          updateData['isPublished'] = $("#is-published").is(':checked');
+        }
+        check_button_activation();
+      });
+      $("#is-big-item").change(function (){
+        if($("#is-big-item").is(':checked') === $('#is-big-item').data("initial-big-item-value")){
+          delete updateData['isBigItem'];
+        }
+        else{
+          updateData['isBigItem'] = $("#is-big-item").is(':checked');
+        }
+        check_button_activation();
+      });
+      $("#is-waitlistable").change(function (){
+        if($("#is-waitlistable").is(':checked') === $('#is-waitlistable').data("initial-waitlistable-value")){
+          delete updateData['isWaitlistable'];
+        }
+        else{
+          updateData['isWaitlistable'] = $("#is-waitlistable").is(':checked');
+        }
+        check_button_activation();
+      });
+
+      $("#categories").change(function (){
+        if(parseInt($('#categories option:selected').val()) === parseInt($('#categories').data("initial-category-id"))){
+          delete updateData['categoryID'];
+        }
+        else{
+          updateData['categoryID'] = parseInt($('#categories option:selected').val());
+        }
+        check_button_activation();
+      });
+
+      /**
+       * @param currentData The current stored data of the product group in the database
+       *
+       *  This function fills in a modal popup to let them compare their entered values to
+       *  the current stored data of the product group
+       *
+       * Note: Importance of this function is to ensure that the "true" current data is displayed.
+       *       Consider the following situation:
+       *        1. User 1 gets product group page
+       *        2. User 1 starts to edit
+       *        3. User 2 gets product group page
+       *        4. User 2 starts to edit
+       *        5. User 2 finishes edit and submits to server
+       *        ...
+       *
+       *       Here we can see that the data of the product group when User 1 loads the page may be old.
+       *       Therefore we use currentData to get the "true" current data, which in the case of the
+       *       example would be the data that User 2 just submitted
+       */
+      function display_currently_stored_values(currentData){
+        $('#currently-stored-name').text(currentData['name']);
+        $('#currently-stored-brand').text(currentData['brand']);
+        $('#currently-stored-price').text("$" + currentData['price']);
+        if(currentData['isPublished']){
+          $('#currently-stored-is-published').text("Yes");
+        }
+        else{
+          $('#currently-stored-is-published').text("No");
+        }
+        if(currentData['isBigItem']){
+          $('#currently-stored-is-big-item').text("Yes");
+        }
+        else{
+          $('#currently-stored-is-big-item').text("No");
+        }
+        if(currentData['isWaitlistable']){
+          $('#currently-stored-is-waitlistable').text("Yes");
+        }
+        else{
+          $('#currently-stored-is-waitlistable').text("No");
+        }
+        $('#currently-stored-description').text(currentData['description']);
+        $('#currently-stored-category').text(currentData['category']['name'])
+      }
+
+      function display_new_details(){
+        $('#display-new-name').text($('#name').val());
+        $('#display-new-brand').text($('#brand').val());
+        $('#display-new-price').text("$" + parseFloat($("#price").val()).toFixed(2));
+        if ($('#is-published').is(":checked")){
+          $('#display-new-is-published').text("Yes");
+        }
+        else{
+          $('#display-new-is-published').text("No");
+        }
+        if ($('#is-big-item').is(":checked")){
+          $('#display-new-is-big-item').text("Yes");
+        }
+        else{
+          $('#display-new-is-big-item').text("No");
+        }
+        if ($('#is-waitlistable').is(":checked")){
+          $('#display-new-is-waitlistable').text("Yes");
+        }
+        else{
+          $('#display-new-is-waitlistable').text("No");
+        }
+        $('#display-new-description').text($('#description').val());
+        $('#display-new-category').text($('#categories option:selected').text());
+      }
+
+      /**
+       * If any values are unchanged, then do not display them in the modal popup that
+       * shows them their new values
+       */
+      function hide_rows(){
+        if(('name' in updateData)){
+          $("#name-row").css("display", "");
+        }
+        else{
+          $("#name-row").css("display", "none");
+        }
+        if(('brand' in updateData)){
+          $("#brand-row").css("display", "");
+        }
+        else{
+          $("#brand-row").css("display", "none");
+        }
+        if(('price' in updateData)){
+          $("#price-row").css("display", "");
+        }
+        else{
+          $("#price-row").css("display", "none");
+        }
+        if(('isPublished' in updateData)){
+          $("#is-pubilished-row").css("display", "");
+        }
+        else{
+          $("#is-pubilished-row").css("display", "none");
+        }
+        if(('isBigItem' in updateData)){
+          $("#is-big-item-row").css("display", "");
+        }
+        else{
+          $("#is-big-item-row").css("display", "none");
+        }
+        if(('isWaitlistable' in updateData)){
+          $("#is-waitlistable-row").css("display", "");
+        }
+        else{
+          $("#is-waitlistable-row").css("display", "none");
+        }
+        if(('description' in updateData)){
+          $("#description-row").css("display", "");
+        }
+        else{
+          $("#description-row").css("display", "none");
+        }
+        if(('categoryID' in updateData)){
+          $("#category-row").css("display", "");
+        }
+        else{
+          $("#category-row").css("display", "none");
+        }
+      }
+
+      /**
+       * @param currentData The current stored data of the location in the database
+       *
+       * This function is called after the AJAX request in get_currently_stored_product_group(id).
+       * If that request is successful, then...
+       *  1. display_new_details(),
+       *  2. display_currently_stored_values(currentData) and,
+       *  3. hide_rows()
+       *  ...will fill in the modal popup confirming their entered info.
+       *  4. "$('#confirm-product-group-update-modal').modal('show')" - This activates the modal popup
+       */
+      function display_confirm_update_modal(currentData){
+        display_new_details();
+        display_currently_stored_values(currentData);
+        hide_rows();
+        $('#confirm-product-group-update-modal').modal('show');
+      }
+
+      /**
+       * Function that sends an Ajax Request for retrieving data about a location
+       * @param id location_id used to get data about that location
+       *
+       * Note: The function may show as unused, however it IS being used.
+       *       It shows as unused since the function call is inside the following
+       *       Thymeleaf attribute which is from location_update.html:
+       *       - th:attr="onclick=|get_currently_stored_product_group('${product?.getID()}')|"
+       */
+      function get_currently_stored_product_group(id){
+        $.ajax({
+          type: "GET",
+          url: '/management/api/product/'.concat(id.toString()),
+          beforeSend: function(xhr) {
+            xhr.setRequestHeader(
+                    $('meta[name=_csrf_header]').attr('content'),
+                    $('meta[name=_csrf]').attr('content')
+            )
+          },
+          success: function(data)
+          {
+            display_confirm_update_modal(data);
+          },
+          error: function(xhr) {
+            $('#get-stored-product-group-fail-message').text("Error Message:\'"+ xhr.responseJSON.message +"\'")
+            $('#get-stored-product-group-fail-modal').modal('show');
+          }
+        });
+      }
+
+      $('#update-product-group-form').submit(
+              function (e) {
+                e.preventDefault();
+
+                const form = $(this);
+                const url = form.attr('action');
+
+                console.log("Before AJAX:")
+                console.log(updateData);
+
+                $.ajax({
+                  type: "PUT",
+                  url: url,
+                  contentType: "application/json",
+                  data: JSON.stringify(updateData), // serializes the form's elements.
+                  beforeSend: function(xhr) {
+                    xhr.setRequestHeader(
+                            $('meta[name=_csrf_header]').attr('content'),
+                            $('meta[name=_csrf]').attr('content')
+                    )
+                  },
+                  success: function()
+                  {
+                    $('#confirm-product-group-update-modal').modal('hide');
+                    $('#update-product-group-success-modal').modal('show');
+                  },
+                  error: function(xhr) {
+                    $('#confirm-product-group-update-modal').modal('hide');
+                    $('#update-product-group-fail-message').text("Error Message:\'"+ xhr.responseJSON.message +"\'")
+                    $('#update-product-group-fail-modal').modal('show');
+                  }
+                });
+              }
+      );
+    </script>
+  </div>
+</div>
+</html>

@@ -1,5 +1,6 @@
 package com.example.bgcpromogearreworked.api.inventorylevels;
 
+import com.example.bgcpromogearreworked.api.inventorylevels.exceptions.GlobalInventoryLevelNotFound;
 import com.example.bgcpromogearreworked.api.inventorylevels.exceptions.InventoryLevelNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,6 +14,12 @@ public class InventoryLevelExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     private String handleInventoryLevelNotFound(InventoryLevelNotFoundException exception) {
         return "Inventory level could not be found.";
+    }
+
+    @ExceptionHandler(GlobalInventoryLevelNotFound.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    private String handleGlobalInventoryLevelNotFound(GlobalInventoryLevelNotFound exception) {
+        return "Global inventory level could not be found.";
     }
 
 }

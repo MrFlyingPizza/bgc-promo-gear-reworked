@@ -22,7 +22,7 @@ public class Category {
     @Column(name = "name", length = 30)
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "parent_id")
     private Category parent;
 

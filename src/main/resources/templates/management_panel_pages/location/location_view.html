@@ -1,0 +1,136 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{management_panel_layout.html}">
+<head>
+    <title>Locations</title>
+</head>
+<div layout:fragment="content">
+    <!--  Heading  -->
+    <h2>Office Locations
+
+    <!--  Go to create a new location page  -->
+    <button class="btn btn-outline-secondary btn-compact" style="margin-left: 20px;" onclick="location.href='/management/location/create'">
+        Create a New Location
+    </button>
+
+    </h2>
+
+    <!--  Displaying locations in a table  -->
+    <div class="card shadow" style="margin: 20px;">
+        <div class="card-header py-3" style="background: rgb(248,248,252);">
+            <p class="m-0 fw-bold" style="color: #36366f;">Location Info</p>
+        </div>
+        <div class="card-body">
+
+            <div id="length_search_row" class="row">
+                <div id="length_input" class="col-sm-12 col-md-5"></div>
+                <div id="search_input" class="col-sm-12 col-md-7"></div>
+
+            </div>
+
+            <div class="d-flex flex-row flex-wrap table-bar">
+            </div>
+            <div class="table-responsive table mt-2" id="dataTable-1" role="grid" aria-describedby="dataTable_info">
+                <table class="table my-0" id="dataTable">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Location Name</th>
+                        <th>Address Line 1</th>
+                        <th>Line 2</th>
+                        <th>City</th>
+                        <th>Province</th>
+                        <th>Postal Code</th>
+                        <th>Country</th>
+                        <th>Edit</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th>None</th>
+                        <td>None</td>
+                        <td>None</td>
+                        <td>None</td>
+                        <td>None</td>
+                        <td>None</td>
+                        <td>None</td>
+                        <td>None</td>
+                        <td style="padding: 5px;">
+                            <a>
+                                <button class="btn btn-outline-primary button-edit" type="button" style="font-size: 15px;">
+                                    <i class="far fa-edit"></i>
+                                </button>
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <td><strong>ID</strong></td>
+                        <td><strong>Location Name</strong></td>
+                        <td><strong>Address Line 1</strong></td>
+                        <td><strong>Line 2</strong></td>
+                        <td><strong>City</strong></td>
+                        <td><strong>Province</strong></td>
+                        <td><strong>Postal Code</strong></td>
+                        <td><strong>Country</strong></td>
+                        <td><strong>Edit</strong></td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div>
+        No Existing Locations
+    </div>
+
+    <script>
+        $(document).ready( function () {
+
+            //Using DataTable
+            var table = $('#dataTable').DataTable( {
+
+                ajax: {
+                    url: '/api/office_locations',
+                    dataSrc: "officeLocations"
+                },
+                columns: [
+                    { data: "id" },
+                    { data: "name" },
+                    { data: "addressLine1" },
+                    { data: "addressLine2" },
+                    { data: "city" },
+                    { data: "state" },
+                    { data: "zipCode" },
+                    { data: "country" },
+                    { data: "id" }
+                ],
+
+                "lengthMenu": [ [25, 50, -1], [25, 50, "All"] ],
+                language : {
+                    sLengthMenu: "Show&nbsp _MENU_", // changing label for page length filter
+                    search: "_INPUT_",               // changing label for search filter
+                    searchPlaceholder: "Search..."   // changing search filter placeholder
+                },
+                columnDefs : [
+                    { targets: [8],
+                        render: function (data, type, row) {
+                            return '<a href="/management/location/update?id=' + row.id +' ">' +
+                                    '<button class="btn btn-outline-primary button-edit" type="button" style="font-size: 15px;">' +
+                                        '<i class="far fa-edit"></i>' +
+                                    '</button>' +
+                                   '</a>'
+                        }
+                    }
+                ],
+
+            } );
+            $('#dataTable_filter').appendTo('#search_input');
+            $('#dataTable_length').appendTo('#length_input');
+            $('#dataTable_wrapper').find('div:first').remove(); //remove empty row holding previous filters
+
+        } );
+
+
+    </script>
+</div>
+</html>

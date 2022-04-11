@@ -38,6 +38,7 @@ public class SecuredCategoryHandlerService {
     }
 
     Category handleCategoryPartialUpdate(@Valid SecuredCategoryPartialUpdate categoryPartialUpdate) {
+        // TODO: 2022-03-22 category parentId null has no effect even though category parent can be null
         return categoryService.updateCategory(categoryPartialUpdate.getId(), categoryPartialUpdate, mapper::fromPartialUpdate);
     }
 

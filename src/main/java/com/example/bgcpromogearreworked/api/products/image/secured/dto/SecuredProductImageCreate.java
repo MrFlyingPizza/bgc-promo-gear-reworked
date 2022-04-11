@@ -16,6 +16,7 @@ import javax.validation.GroupSequence;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.UUID;
 
 @Getter
 @GroupSequence({SecuredProductImageCreate.class, FirstValidationGroup.class, SecondValidationGroup.class})
@@ -32,6 +33,14 @@ public class SecuredProductImageCreate {
             groups = FirstValidationGroup.class)
     @ValidFileSize(max = 2000000, groups = SecondValidationGroup.class)
     private MultipartFile image;
+
+    @JsonIgnore
+    @Setter
+    private String src;
+
+    @JsonIgnore
+    @Setter
+    private UUID blobId;
 
     @NotNull
     @Min(1)

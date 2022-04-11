@@ -27,7 +27,7 @@ public class SecuredProductImagePartialUpdate {
     private final String alt;
 
     @JsonCreator
-    SecuredProductImagePartialUpdate(@JsonProperty("position") Integer position, @JsonProperty("alt") String alt) {
+    public SecuredProductImagePartialUpdate(@JsonProperty("position") Integer position, @JsonProperty("alt") String alt) {
         this.position = position;
         this.alt = alt;
     }

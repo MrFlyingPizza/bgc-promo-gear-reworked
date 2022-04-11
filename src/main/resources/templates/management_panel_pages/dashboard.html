@@ -1,0 +1,136 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{management_panel_layout.html}">
+<head>
+    <title>Main</title>
+</head>
+    <div layout:fragment="content">
+        <div class="d-sm-flex justify-content-between align-items-center mb-4">
+            <h3 class="text-dark mb-0">Dashboard</h3>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-xl-3 mb-4">
+                <div class="card shadow border-start-primary py-2" style="margin-top: 7px;">
+                    <div class="card-body dashboard-card">
+                        <div class="row align-items-center no-gutters">
+                            <div class="col me-2" style="padding-right: 12px;padding-left: 12px;width: 139.25px;margin-right: 8px;">
+                                <div class="text-uppercase text-primary fw-bold text-xs mb-1" style="text-align: center;margin-bottom: 0px;height: 21px;width: 118.25px;margin-top: 0px;"><a class="text-decoration-none" href="#" style="font-size: 17.2px;text-align: center;padding-bottom: 0px;margin-bottom: -3px;width: auto;">orders</a></div>
+                                <div class="text-dark fw-bold h5 mb-0"><span></span></div>
+                            </div>
+                            <div class="col-auto"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-cart2 fa-2x text-gray-300">
+                                <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l1.25 5h8.22l1.25-5H3.14zM5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"></path>
+                            </svg></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3 mb-4">
+                <div class="card shadow border-start-primary py-2" style="margin-top: 7px;">
+                    <div class="card-body dashboard-card">
+                        <div class="row align-items-center no-gutters">
+                            <div class="col me-2" style="padding-right: 12px;padding-left: 12px;width: 139.25px;margin-right: 8px;">
+                                <div class="text-uppercase text-primary fw-bold text-xs mb-1" style="text-align: center;margin-bottom: 0px;height: 21px;width: 118.25px;margin-top: 0px;"><a class="text-decoration-none" href="#" style="font-size: 17.2px;text-align: center;padding-bottom: 0px;margin-bottom: -3px;width: auto;color: var(--bs-green);">inventory</a></div>
+                                <div class="text-dark fw-bold h5 mb-0"><span></span></div>
+                            </div>
+                            <div class="col-auto"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" class="fa-2x text-gray-300">
+                                <path d="M9 5H7C5.89543 5 5 5.89543 5 7V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V7C19 5.89543 18.1046 5 17 5H15M9 5C9 6.10457 9.89543 7 11 7H13C14.1046 7 15 6.10457 15 5M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5M12 12H15M12 16H15M9 12H9.01M9 16H9.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3 mb-4">
+                <div class="card shadow border-start-primary py-2" style="margin-top: 7px;">
+                    <div class="card-body dashboard-card">
+                        <div class="row align-items-center no-gutters">
+                            <div class="col me-2" style="padding-right: 12px;padding-left: 12px;width: 139.25px;margin-right: 8px;">
+                                <div class="text-uppercase text-primary fw-bold text-xs mb-1" style="text-align: center;margin-bottom: 0px;height: 21px;width: 118.25px;margin-top: 0px;"><a class="text-decoration-none" href="#" style="font-size: 17.2px;text-align: center;padding-bottom: 0px;margin-bottom: -3px;width: auto;color: var(--bs-warning);">reports</a></div>
+                                <div class="text-dark fw-bold h5 mb-0"><span></span></div>
+                            </div>
+                            <div class="col-auto"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-bar-chart-line fa-2x text-gray-300">
+                                <path d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1V2zm1 12h2V2h-2v12zm-3 0V7H7v7h2zm-5 0v-3H2v3h2z"></path>
+                            </svg></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3 mb-4">
+                <div class="card shadow border-start-primary py-2" style="margin-top: 7px;">
+                    <div class="card-body dashboard-card">
+                        <div class="row align-items-center no-gutters">
+                            <div class="col me-2" style="padding-right: 12px;padding-left: 12px;width: 139.25px;margin-right: 8px;">
+                                <div class="text-uppercase text-primary fw-bold text-xs mb-1" style="text-align: center;margin-bottom: 0px;height: 21px;width: 118.25px;margin-top: 0px;"><a class="text-decoration-none" href="#" style="font-size: 17.2px;text-align: center;padding-bottom: 0px;margin-bottom: -3px;width: auto;color: var(--bs-cyan);">transfers</a></div>
+                                <div class="text-dark fw-bold h5 mb-0"><span></span></div>
+                            </div>
+                            <div class="col-auto"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-arrow-left-right fa-2x text-gray-300">
+                                <path fill-rule="evenodd" d="M1 11.5a.5.5 0 0 0 .5.5h11.793l-3.147 3.146a.5.5 0 0 0 .708.708l4-4a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 11H1.5a.5.5 0 0 0-.5.5zm14-7a.5.5 0 0 1-.5.5H2.707l3.147 3.146a.5.5 0 1 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H14.5a.5.5 0 0 1 .5.5z"></path>
+                            </svg></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-xl-3 mb-4">
+                <div class="card shadow border-start-primary py-2" style="margin-top: 7px;">
+                    <div class="card-body dashboard-card">
+                        <div class="row align-items-center no-gutters">
+                            <div class="col me-2" style="padding-right: 12px;padding-left: 12px;width: 139.25px;margin-right: 8px;">
+                                <div class="text-uppercase text-primary fw-bold text-xs mb-1" style="text-align: center;margin-bottom: 0px;height: 21px;width: 118.25px;margin-top: 0px;"><a class="text-decoration-none" href="/management/product_group" style="font-size: 17.2px;text-align: center;padding-bottom: 0px;margin-bottom: -3px;width: auto;color: #ff5449;">products</a></div>
+                                <div class="text-dark fw-bold h5 mb-0"><span></span></div>
+                            </div>
+                            <div class="col-auto"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-box-seam fa-2x text-gray-300">
+                                <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2l-2.218-.887zm3.564 1.426L5.596 5 8 5.961 14.154 3.5l-2.404-.961zm3.25 1.7-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"></path>
+                            </svg></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3 mb-4">
+                <div class="card shadow border-start-primary py-2" style="margin-top: 7px;">
+                    <div class="card-body dashboard-card">
+                        <div class="row align-items-center no-gutters">
+                            <div class="col me-2" style="padding-right: 12px;padding-left: 12px;width: 139.25px;margin-right: 8px;">
+                                <div class="text-uppercase text-primary fw-bold text-xs mb-1" style="text-align: center;margin-bottom: 0px;height: 21px;width: 118.25px;margin-top: 0px;"><a class="text-decoration-none" href="#" style="font-size: 17.2px;text-align: center;padding-bottom: 0px;margin-bottom: -3px;width: auto;color: rgb(231,81,255);">warranties</a></div>
+                                <div class="text-dark fw-bold h5 mb-0"><span></span></div>
+                            </div>
+                            <div class="col-auto"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-recycle fa-2x text-gray-300">
+                                <path d="M9.302 1.256a1.5 1.5 0 0 0-2.604 0l-1.704 2.98a.5.5 0 0 0 .869.497l1.703-2.981a.5.5 0 0 1 .868 0l2.54 4.444-1.256-.337a.5.5 0 1 0-.26.966l2.415.647a.5.5 0 0 0 .613-.353l.647-2.415a.5.5 0 1 0-.966-.259l-.333 1.242-2.532-4.431zM2.973 7.773l-1.255.337a.5.5 0 1 1-.26-.966l2.416-.647a.5.5 0 0 1 .612.353l.647 2.415a.5.5 0 0 1-.966.259l-.333-1.242-2.545 4.454a.5.5 0 0 0 .434.748H5a.5.5 0 0 1 0 1H1.723A1.5 1.5 0 0 1 .421 12.24l2.552-4.467zm10.89 1.463a.5.5 0 1 0-.868.496l1.716 3.004a.5.5 0 0 1-.434.748h-5.57l.647-.646a.5.5 0 1 0-.708-.707l-1.5 1.5a.498.498 0 0 0 0 .707l1.5 1.5a.5.5 0 1 0 .708-.707l-.647-.647h5.57a1.5 1.5 0 0 0 1.302-2.244l-1.716-3.004z"></path>
+                            </svg></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3 mb-4">
+                <div class="card shadow border-start-primary py-2" style="margin-top: 7px;">
+                    <div class="card-body dashboard-card">
+                        <div class="row align-items-center no-gutters">
+                            <div class="col me-2" style="padding-right: 12px;padding-left: 12px;width: 139.25px;margin-right: 8px;">
+                                <div class="text-uppercase text-primary fw-bold text-xs mb-1" style="text-align: center;margin-bottom: 0px;height: 21px;width: 118.25px;margin-top: 0px;"><a class="text-decoration-none" href="/management/employee" style="font-size: 17.2px;text-align: center;padding-bottom: 0px;margin-bottom: -3px;width: auto;color: rgb(54,114,204);">employees</a></div>
+                                <div class="text-dark fw-bold h5 mb-0"><span></span></div>
+                            </div>
+                            <div class="col-auto"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-person-badge fa-2x text-gray-300">
+                                <path d="M6.5 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3zM11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"></path>
+                                <path d="M4.5 0A2.5 2.5 0 0 0 2 2.5V14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2.5A2.5 2.5 0 0 0 11.5 0h-7zM3 2.5A1.5 1.5 0 0 1 4.5 1h7A1.5 1.5 0 0 1 13 2.5v10.795a4.2 4.2 0 0 0-.776-.492C11.392 12.387 10.063 12 8 12s-3.392.387-4.224.803a4.2 4.2 0 0 0-.776.492V2.5z"></path>
+                            </svg></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3 mb-4">
+                <div class="card shadow border-start-primary py-2" style="margin-top: 7px;">
+                    <div class="card-body dashboard-card">
+                        <div class="row align-items-center no-gutters">
+                            <div class="col me-2" style="padding-right: 12px;padding-left: 12px;width: 139.25px;margin-right: 8px;">
+                                <div class="text-uppercase text-primary fw-bold text-xs mb-1" style="text-align: center;margin-bottom: 0px;height: 21px;width: 118.25px;margin-top: 0px;"><a class="text-decoration-none" href="/management/location" style="font-size: 17.2px;text-align: center;padding-bottom: 0px;margin-bottom: -3px;width: auto;color: rgb(76,234,120);">locations</a></div>
+                                <div class="text-dark fw-bold h5 mb-0"><span></span></div>
+                            </div>
+                            <div class="col-auto"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-building fa-2x text-gray-300">
+                                <path fill-rule="evenodd" d="M14.763.075A.5.5 0 0 1 15 .5v15a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5V14h-1v1.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V10a.5.5 0 0 1 .342-.474L6 7.64V4.5a.5.5 0 0 1 .276-.447l8-4a.5.5 0 0 1 .487.022zM6 8.694 1 10.36V15h5V8.694zM7 15h2v-1.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5V15h2V1.309l-7 3.5V15z"></path>
+                                <path d="M2 11h1v1H2v-1zm2 0h1v1H4v-1zm-2 2h1v1H2v-1zm2 0h1v1H4v-1zm4-4h1v1H8V9zm2 0h1v1h-1V9zm-2 2h1v1H8v-1zm2 0h1v1h-1v-1zm2-2h1v1h-1V9zm0 2h1v1h-1v-1zM8 7h1v1H8V7zm2 0h1v1h-1V7zm2 0h1v1h-1V7zM8 5h1v1H8V5zm2 0h1v1h-1V5zm2 0h1v1h-1V5zm0-2h1v1h-1V3z"></path>
+                            </svg></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</html>

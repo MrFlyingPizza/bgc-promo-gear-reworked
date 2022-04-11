@@ -25,6 +25,11 @@ public class ProductVariantService {
     private final InventoryLevelRepository inventoryLevelRepo;
     private final OfficeLocationRepository officeLocationRepo;
 
+    public boolean checkProductVariantExists(Long variantId) {
+        assert variantId != null;
+        return variantRepo.existsById(variantId);
+    }
+
     public boolean checkProductVariantExistsOnProduct(Long productId, Long variantId) {
         assert productId != null && variantId != null;
         return variantRepo.existsByProductIdAndId(productId, variantId);
@@ -62,7 +67,7 @@ public class ProductVariantService {
             level.setLocationId(location.getId());
             level.setAvailableQuantity(0);
             level.setReservedQuantity(0);
-            level.setNotifyThreshold(0);
+            level.setNotifyThreshold(0); // TODO: 2022-03-20 look into configs for default this value
             inventoryLevelRepo.saveAndFlush(level);
         }
     }

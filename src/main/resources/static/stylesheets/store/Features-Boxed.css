@@ -1,0 +1,263 @@
+.features-boxed {
+    color: #313437;
+    background-color: #eef4f7;
+}
+
+.features-boxed p {
+    color: #7d8285;
+}
+
+.features-boxed h2 {
+    font-weight: bold;
+    margin-bottom: 40px;
+    padding-top: 40px;
+    color: inherit;
+}
+
+@media (max-width:767px) {
+    .features-boxed h2 {
+        margin-bottom: 25px;
+        padding-top: 25px;
+        font-size: 24px;
+    }
+}
+
+.features-boxed .intro {
+    font-size: 16px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.features-boxed .intro p {
+    margin-bottom: 0;
+}
+
+.features-boxed .features {
+    padding: 50px 0;
+}
+
+.features-boxed .item {
+    text-align: center;
+}
+
+.features-boxed .item .box {
+    text-align: center;
+    padding: 30px;
+    background-color: #fff;
+    margin-bottom: 30px;
+}
+
+.features-boxed .item .icon {
+    font-size: 60px;
+    color: var(--bs-gray-600);
+    margin-top: 20px;
+    margin-bottom: 35px;
+}
+
+.features-boxed .item .name {
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 8px;
+    margin-top: 0;
+    color: inherit;
+}
+
+.features-boxed .item .description {
+    font-size: 15px;
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+button {
+}
+
+.button-card:hover {
+    background-color: #232345;
+    color: #eef4f7;
+}
+
+.button-card {
+    margin-right: auto;
+    margin-left: auto;
+    padding-top: 4px;
+    min-width: 140px;
+    border-color: #313437;
+    color: #313437;
+    padding-bottom: 4px;
+    border-radius: 0px;
+}
+
+#button-nav {
+}
+
+@media (max-width: 767px) {
+    #navcol-1 {
+        padding-top: 0px !important;
+        padding-bottom: 10px;
+    }
+}
+
+.button-checkout:hover {
+    background-color: rgb(35,35,69);
+    color: white !important;
+}
+
+.mini-header {
+    margin-bottom: 3px;
+    margin-top: 10px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.front-content {
+    min-height: calc(100vh - 363px);
+    margin-bottom: 60px;
+}
+
+.FAQ-header {
+    font-family: 'Poppins', sans-serif;
+}
+
+#empty-space {
+    width: 260px;
+}
+
+#category-container {
+    min-width: 260px;
+    border-right: solid;
+    border-width: 2px;
+    margin-right: 50px;
+    padding-top: 0px;
+    padding-bottom: 10px;
+    border-color: #d5d5d5;
+}
+
+.product-container {
+    height: 260px;
+    width: 225px;
+}
+
+.image_container {
+    height: 200px;
+    width: 225px;
+    border: solid;
+    border-color: #e0e0e0;
+    border-width: thin;
+    padding: 10px;
+    background-color: white;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.product-image {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+}
+
+.product_name_container {
+    display: flex;
+    justify-content: center;
+    padding-top: 8px;
+}
+
+.product_name {
+    display: flex;
+    text-align: center;
+}
+
+@media (min-width: 1500px) {
+    .card-store-container {
+        max-width: 1500px;
+    }
+}
+
+.card-store-container {
+    margin: auto;
+}
+
+#breadcrumb-container {
+    text-decoration: none;
+    font-size: 20px;
+}
+
+@media (max-width: 890px) {
+    #bottom-container {
+        flex-wrap: wrap;
+    }
+}
+
+#bottom-container {
+    margin: 20px 0px;
+    flex-basis: auto;
+}
+
+#product-container {
+}
+
+.category_name {
+    font-weight: bold;
+}
+
+#categories {
+    margin-top: 20px;
+}
+
+#category-group-1 {
+    margin: 10px 0px;
+}
+
+.subcategory-group {
+    padding-left: 20px;
+    margin: 3px 0px;
+}
+
+.no-decoration {
+    text-decoration: none;
+    color: black;
+}
+
+.no-style-link {
+    text-decoration: none;
+    color: black;
+}
+
+.filter-buttons {
+    margin: 0px 4px;
+    width: fit-content;
+}
+
+.filter-label {
+    height: fit-content;
+    flex: 1 0 100%;
+}
+
+.button-filter {
+    width: fit-content;
+    padding: 0px 4px;
+    font-size: 14px;
+    margin: 0px 2px;
+    margin-bottom: 3px;
+    flex: 1;
+}
+
+.gallery-container {
+    width: auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 10px 15px;
+}
+
+@media (max-width: 890px) {
+    #category-container {
+        border: none;
+    }
+}
+
+@media (max-width: 890px) {
+    #empty-space {
+        max-width: 0px;
+    }
+}
+

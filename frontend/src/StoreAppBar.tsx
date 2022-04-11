@@ -12,6 +12,8 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import {grey} from "@mui/material/colors";
+import {useEffect, useState} from "react";
+import axios from "axios";
 
 const pages = ['Products', 'Warranties', 'Product Care'];
 const settings = ['Profile', 'Cart', 'Dashboard', 'Logout'];
@@ -34,6 +36,16 @@ const StoreAppBar = ({}:any) => {
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
+
+    const [userDisplayName, setUserDisplayName] = useState("User");
+
+    useEffect(() => {
+        axios.get("api/users").then(response => {
+            setUserDisplayName(response.data.displayName);
+        }).catch(error => {
+            console.log(error);
+        })
+    }, []);
 
     return (
         <AppBar position="static" sx={{backgroundColor: grey[900]}}>
@@ -106,9 +118,11 @@ const StoreAppBar = ({}:any) => {
 
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open settings">
-                            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-                            </IconButton>
+                            <Button onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                                <Typography variant={"h6"} sx={{color: "white"}}>
+                                    Welcome, {userDisplayName}!
+                                </Typography>
+                            </Button>
                         </Tooltip>
                         <Menu
                             sx={{ mt: '45px' }}

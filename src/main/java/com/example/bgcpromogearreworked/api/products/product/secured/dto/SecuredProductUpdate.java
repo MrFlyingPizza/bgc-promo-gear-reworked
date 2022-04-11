@@ -37,7 +37,7 @@ public class SecuredProductUpdate {
     private final String description;
 
     @NotNull
-    @Digits(integer = 10, fraction = 2)
+    @Digits(integer = 8, fraction = 2)
     @DecimalMin(value = "0.00")
     @DecimalMax(value = "99999999.99")
     private final BigDecimal price;
@@ -56,15 +56,15 @@ public class SecuredProductUpdate {
     private final List<@NotNull @OptionExists Long> optionIds;
 
     @JsonCreator
-    private SecuredProductUpdate(@JsonProperty("name") String name,
-                                 @JsonProperty("brand") String brand,
-                                 @JsonProperty("categoryId") Long categoryId,
-                                 @JsonProperty("description") String description,
-                                 @JsonProperty("price") BigDecimal price,
-                                 @JsonProperty("isPublished") Boolean isPublished,
-                                 @JsonProperty("isBigItem") Boolean isBigItem,
-                                 @JsonProperty("isWaitListEnabled") Boolean isWaitListEnabled,
-                                 @JsonProperty("optionIds") List<Long> optionIds) {
+    public SecuredProductUpdate(@JsonProperty("name") String name,
+                                @JsonProperty("brand") String brand,
+                                @JsonProperty("categoryId") Long categoryId,
+                                @JsonProperty("description") String description,
+                                @JsonProperty("price") BigDecimal price,
+                                @JsonProperty("isPublished") Boolean isPublished,
+                                @JsonProperty("isBigItem") Boolean isBigItem,
+                                @JsonProperty("isWaitListEnabled") Boolean isWaitListEnabled,
+                                @JsonProperty("optionIds") List<Long> optionIds) {
         this.name = name;
         this.brand = brand;
         this.categoryId = categoryId;

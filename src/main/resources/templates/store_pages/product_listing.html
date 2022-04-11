@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{front_layout.html}">
+<head>
+    <title>Product Listing</title>
+    <style>
+        .attributeButton{
+            background-color: white;
+            border: 0.5px border black;
+            height: 50px;
+            font-size: 14px;
+            font-weight: lighter;
+        }
+
+        .attributeButton:hover{
+            background-color: black;
+            color: white;
+        }
+
+        #addToCartButton{
+            background-color: black;
+            color: white;
+        }
+
+        #addToCartButton:hover{
+            background-color: #343634;
+        }
+
+        .selected{
+            background-color: black;
+            color: white;
+        }
+
+        .customColumn{
+            width: 50%;
+            padding: 10px;
+        }
+
+        .customLeftColumn{
+            float: left;
+        }
+
+        .customRightColumn{
+            float: right;
+        }
+
+
+        .customRow{
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        @media screen and (max-width: 900px) {
+            .customColumn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<div layout:fragment="content">
+    <div class="card-store-container" style="padding: 0px 0px;margin-top: 20px;margin-bottom: 20px;">
+        <div class="card shadow-sm" style="margin: 18px;">
+            <div class="card-body" style="padding: 18px 40px 0px;">
+                <!--        <div class="container">-->
+                <div class="row py-3">
+                    <a class="text-decoration-none" href="/store">Back to Products</a>
+                </div>
+                <div class="customRow">
+                    <div class="customLeftColumn customColumn">
+                        <img th:src="@{/images/Temporary/Gamma-MX-Hoody-Glitch.jpg}" class="mh-100" alt="Photo Displaying Product" style="max-width: 400px; display: block; margin-left: auto; margin-right: auto;">
+                    </div>
+                    <div class="customRightColumn customColumn">
+                        <div class="row py-3">
+                            <p id="productGroupName" class="text-center text-uppercase text-dark fs-2"
+                               th:text="${product?.getName()}"
+                               th:data-productId="${product.getID()}"
+                               th:data-num-attribute-groups="${attributeGroups.size}">
+                            </p>
+                            <p class="text-center text-dark fs-5" th:text="${product.getDescription()}"></p>
+                        </div>
+                        <th:block th:each="attributeGroup : ${attributeGroups}">
+                            <p th:text="'Select a ' + ${attributeGroup?.getName()} + ':'"
+                               th:data-attribute-group-id="${attributeGroup?.getID()}">
+                            </p>
+                            <th:block th:each="attribute : ${listOfAttributeLists[attributeGroupStat.index]}">
+                                <button class="attributeButton" th:classappend="'attributeSelector'+${attributeGroupStat.index}"
+                                        th:text="${attribute?.getValue()}"
+                                        th:data-attribute-id="${attribute?.getID()}"
+                                        th:data-index="${attributeGroupStat.index}"
+                                        onclick="apply_selected(this)">
+                                </button>
+                            </th:block>
+                        </th:block>
+                        <div class="row d-flex justify-content-center py-2">
+                            <p>Quantity:<input id="addToCartQuantity" type="number" min="1" onKeyDown="return false" value="1"></p>
+                            <button onclick="add_to_cart_button()" id="addToCartButton">
+                                &#128722; Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!--              <th:block th:each="attribute : product?.getAttributes()" class="row d-flex justify-content-center py-2">-->
+                <!--                <p>-->
+                <!--                  <span th:text="'SELECT A ' + ${attribute?.getAttributeGroup?.getName()} + ': '"> </span>-->
+                <!--                  <input th:each="${attribute}" th:id="${attibute?.getID()} + '-input-checkbox'" type="checkbox">-->
+                <!--                  <label th:for="${attibute?.getID()} + '-input-checkbox'" th:text="${attribute?.getValue()}"></label>-->
+                <!--                </p>-->
+                <!--              </th:block>-->
+                <!--        </div>-->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function(){
+            let numAttributeGroups = $("#productGroupName").data("num-attribute-groups");
+            for(let i = 0; i < numAttributeGroups; i++){
+                let attributeSelector = $(".attributeSelector"+(i)+":first");
+                if(attributeSelector != null){
+                    attributeSelector.addClass('attribute'+(i)+"Selected");
+                    attributeSelector.addClass('selected');
+                }
+            }
+            get_product_group();
+        }
+
+        var products = [];
+        function get_product_group(){
+            let productGroupID = $("#productGroupName").data("productid");
+            $.ajax({
+                type: "GET",
+                url: '/management/api/product_group/'+productGroupID.toString(),
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader(
+                        $('meta[name=_csrf_header]').attr('content'),
+                        $('meta[name=_csrf]').attr('content')
+                    )
+                },
+                success: function(data)
+                {
+                    console.log(data);
+                    data['products'].forEach(function(product){
+                        let attributeIDs = [];
+                        product.attributes.forEach(function(attribute) {
+                            attributeIDs.push(attribute.ID);
+                        });
+                        let simpleProduct = {
+                            'SKU': product.SKU,
+                            'attributeIDs': attributeIDs,
+                        };
+                        products.push(simpleProduct);
+                    });
+                    console.log(products);
+                }
+            });
+        }
+
+
+        function apply_selected(element){
+            let className = element.classList[1]; //THIS IS HARD CODED. FIX THIS
+            console.log(className);
+            let index = $(element).data("index");
+            $("."+className).removeClass('selected');
+            $("."+className).removeClass('attribute'+(index)+'Selected')
+            $(element).addClass('attribute'+(index)+'Selected');
+            $(element).addClass('selected');
+        }
+
+        function add_to_cart_button(){
+            let numAttributeGroups = $("#productGroupName").data("num-attribute-groups");
+            let attributeIDs = [];
+            for(let i = 0; i < numAttributeGroups; i++){
+                let id = $(".attribute"+(i)+"Selected").data("attribute-id");
+                attributeIDs.push(id);
+            }
+            console.log(attributeIDs);
+            let sku = find_sku(attributeIDs);
+            if(isNaN(sku)){
+                alert("Error: Unable to find SKU");
+                return;
+            }
+            else{
+                console.log(sku);
+
+                cartSubmitItem = {
+                    'sku': sku,
+                    'quantity': parseInt($('#addToCartQuantity').val())
+                }
+                $.ajax({
+                    type: "PUT",
+                    url: '/api/cart/item',
+                    contentType: "application/json",
+                    data: JSON.stringify(cartSubmitItem), // serializes the form's elements.
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader(
+                            $('meta[name=_csrf_header]').attr('content'),
+                            $('meta[name=_csrf]').attr('content')
+                        )
+                    },
+                    success: function()
+                    {
+                        alert("Success");
+                    },
+                    error: function(xhr) {
+                        alert("Failed");
+                    }
+                });
+            }
+        }
+
+        function find_sku(selectedAttributeIDs){
+            for(let i = 0; i < products.length; i++){
+                if(selectedAttributeIDs.sort().join(',') === products[i].attributeIDs.sort().join(',')){
+                    return products[i].SKU;
+                }
+            }
+            return null;
+        }
+    </script>
+</div>
+</html>

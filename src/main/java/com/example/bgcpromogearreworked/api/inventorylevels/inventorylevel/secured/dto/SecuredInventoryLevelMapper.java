@@ -1,18 +1,14 @@
 package com.example.bgcpromogearreworked.api.inventorylevels.inventorylevel.secured.dto;
 
-import com.example.bgcpromogearreworked.persistence.entities.InventoryLevel;
-import com.example.bgcpromogearreworked.persistence.entities.OfficeLocation;
-import com.example.bgcpromogearreworked.persistence.entities.OptionValue;
-import com.example.bgcpromogearreworked.persistence.repositories.InventoryLevelRepository;
+import com.example.bgcpromogearreworked.persistence.entities.*;
 import com.example.bgcpromogearreworked.persistence.repositories.OfficeLocationRepository;
 import com.example.bgcpromogearreworked.persistence.repositories.ProductVariantRepository;
-import org.mapstruct.AfterMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import com.example.bgcpromogearreworked.persistence.repositories.UserRepository;
+import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
@@ -24,47 +20,57 @@ public abstract class SecuredInventoryLevelMapper {
     @Autowired
     private OfficeLocationRepository locationRepo;
 
+    @Autowired
+    private UserRepository userRepo;
+
+    @Mapping(source = "variantId", target = "variant")
+    @Mapping(source = "locationId", target = "location")
+    @Mapping(source = "lastManuallyModifiedById", target = "lastManuallyModifiedBy")
+    @Mapping(target = "neededQuantity", ignore = true)
+    @Mapping(target = "reservedQuantity", ignore = true)
     public abstract InventoryLevel fromUpdate(SecuredInventoryLevelUpdate inventoryLevelUpdate,
                                               @MappingTarget InventoryLevel inventoryLevel);
 
+    @Mapping(source = "variantId", target = "variant")
+    @Mapping(source = "locationId", target = "location")
+    @Mapping(source = "lastManuallyModifiedById", target = "lastManuallyModifiedBy")
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "neededQuantity", ignore = true)
+    @Mapping(target = "reservedQuantity", ignore = true)
     public abstract InventoryLevel fromPartialUpdate(SecuredInventoryLevelPartialUpdate inventoryLevelPartialUpdate,
                                                      @MappingTarget InventoryLevel inventoryLevel);
 
-    @Mapping(source = "variant.product.name", target = "variant.productName")
-    @Mapping(source = "variant.product.id", target = "variant.productId")
+    @Mapping(source = "variant.product", target = "product")
+    @Mapping(source = "variant.optionValues", target = "variant.options")
+    @Transactional
     public abstract SecuredInventoryLevelResponse toResponse(InventoryLevel inventoryLevel);
 
-    public SecuredInventoryLevelBatchResponse toBatchResponse(List<InventoryLevel> inventoryLevels) {
-        return new SecuredInventoryLevelBatchResponse(inventoryLevels.stream().map(this::toResponse).collect(Collectors.toList()));
+    @Transactional
+    public SecuredInventoryLevelBatchResponse toBatchResponse(Page<InventoryLevel> page) {
+        return new SecuredInventoryLevelBatchResponse(page.getContent().stream().map(this::toResponse).collect(Collectors.toList()),
+                page.getTotalPages(),
+                page.getNumber(),
+                page.isFirst(),
+                page.isLast(),
+                page.getNumberOfElements(),
+                page.getTotalElements(),
+                page.getSort().isSorted());
     }
 
-    @AfterMapping
-    protected void mapProductVariantFromRepoOrNull(@MappingTarget InventoryLevel inventoryLevel) {
-        if (inventoryLevel.getVariant() == null) {
-            return;
-        }
-        Long variantId = inventoryLevel.getVariant().getId();
-        if (variantId == null) {
-            inventoryLevel.setVariant(null);
-        } else {
-            inventoryLevel.setVariant(variantRepo.getById(variantId));
-        }
-    }
-
-    @AfterMapping
-    protected void mapOfficeLocationFromRepoOrNull(@MappingTarget InventoryLevel inventoryLevel) {
-        if (inventoryLevel.getLocation() == null) {
-            return;
-        }
-        Long locationId = inventoryLevel.getLocation().getId();
-        if (locationId == null) {
-            inventoryLevel.setLocation(null);
-        } else {
-            inventoryLevel.setLocation(locationRepo.getById(locationId));
-        }
-    }
-
+    @Mapping(source = "id", target = "valueId")
     @Mapping(source = "option.id", target = "optionId")
     @Mapping(source = "option.name", target = "name")
-    protected abstract SecuredInventoryLevelResponse.NestedVariant.NestedOptionValue map(OptionValue optionValue);
+    protected abstract SecuredInventoryLevelResponse.NestedProductVariant.NestedOptionValue map(OptionValue optionValue);
+
+    protected ProductVariant mapVariantFromId(Long variantId) {
+        return variantId != null && variantId != 0 ? variantRepo.getById(variantId) : null;
+    }
+
+    protected OfficeLocation mapLocationFromId(Long locationId) {
+        return locationId != null && locationId != 0 ? locationRepo.getById(locationId) : null;
+    }
+
+    protected User mapUserFromId(Long userId) {
+        return userId != null && userId != 0 ? userRepo.getById(userId) : null;
+    }
 }
