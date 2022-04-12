@@ -1,4 +1,4 @@
-package ca.bgcengineering.promogearreworked.api.orders.operations.inventory.modification;
+package ca.bgcengineering.promogearreworked.api.orders.aspects.inventoryprocessing;
 
 import ca.bgcengineering.promogearreworked.persistence.entities.Order;
 
