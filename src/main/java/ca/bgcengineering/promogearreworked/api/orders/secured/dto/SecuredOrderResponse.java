@@ -100,6 +100,6 @@ public class SecuredOrderResponse {
     private final Instant createdDate;
     private final NestedUser createdBy;
     private final Instant lastModifiedDate;
-    private final Instant lastModifiedBy;
+    private final NestedUser lastModifiedBy;
 
 }
