@@ -45,6 +45,8 @@ public abstract class SecuredOrderMapper {
     @Mapping(target = "orderId", ignore = true)
     protected abstract OrderItem map(ca.bgcengineering.promogearreworked.api.orders.secured.dto.SecuredOrderCreate.NestedOrderItem item);
 
+    protected abstract SecuredOrderResponse.NestedOrderItem map(OrderItem item);
+
     @AfterMapping
     protected void mapPrice(@MappingTarget OrderItem item) {
         item.setPrice(item.getVariant().getProduct().getPrice());
