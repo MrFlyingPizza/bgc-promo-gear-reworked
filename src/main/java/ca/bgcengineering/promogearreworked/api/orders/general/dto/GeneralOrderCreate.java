@@ -22,7 +22,6 @@ import java.util.List;
 @Builder(toBuilder = true)
 @ValidClientOrEventExtraInfo
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@ToString
 public class GeneralOrderCreate {
 
     @Getter
@@ -42,7 +41,6 @@ public class GeneralOrderCreate {
 
     @Getter
     @Builder(toBuilder = true)
-    @ToString
     public static class NestedOrderItem {
         @ProductVariantExists
         private final Long variantId;
