@@ -1,4 +1,4 @@
-package ca.bgcengineering.promogearreworked.api.orders.aspects.orderquantityprocessing;
+package ca.bgcengineering.promogearreworked.api.orders.aspects.orderpartitioning;
 
 import lombok.Getter;
 

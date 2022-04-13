@@ -1,6 +1,6 @@
-package ca.bgcengineering.promogearreworked.api.orders.aspects.orderquantityprocessing;
+package ca.bgcengineering.promogearreworked.api.orders.aspects.orderpartitioning;
 
-public class ProcessableItemPartitions<T> extends ItemPartitions<ProcessableItem<T>> {
+class ProcessableItemPartitions<T> extends ItemPartitions<ProcessableItem<T>> {
 
     ItemPartitions<T> toItemPartitions() {
         ItemPartitions<T> partitions = new ItemPartitions<>();

@@ -89,6 +89,10 @@ public class GeneralOrderCreate {
     @Size(min = 1)
     private List<@Waitlistable NestedOrderItem> items;
 
+    @JsonIgnore
+    @Setter
+    private BigDecimal totalCost;
+
     @JsonCreator
     public GeneralOrderCreate(@JsonProperty("comments") String comments,
                               @JsonProperty("locationId") Long locationId,

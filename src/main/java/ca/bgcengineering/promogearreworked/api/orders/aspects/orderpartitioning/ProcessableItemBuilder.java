@@ -1,4 +1,4 @@
-package ca.bgcengineering.promogearreworked.api.orders.aspects.orderquantityprocessing;
+package ca.bgcengineering.promogearreworked.api.orders.aspects.orderpartitioning;
 
 import ca.bgcengineering.promogearreworked.api.orders.general.dto.GeneralOrderCreate;
 import ca.bgcengineering.promogearreworked.api.orders.secured.dto.SecuredOrderCreate;

@@ -1,11 +1,10 @@
-package ca.bgcengineering.promogearreworked.api.orders.aspects.orderquantityprocessing;
+package ca.bgcengineering.promogearreworked.api.orders.aspects.orderpartitioning;
 
 import ca.bgcengineering.promogearreworked.api.inventorylevels.globalinventorylevel.GlobalInventoryLevelService;
 import ca.bgcengineering.promogearreworked.persistence.entities.GlobalInventoryLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
 @Component

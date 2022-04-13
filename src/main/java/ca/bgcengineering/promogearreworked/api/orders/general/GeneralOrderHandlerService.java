@@ -1,8 +1,8 @@
 package ca.bgcengineering.promogearreworked.api.orders.general;
 
 import ca.bgcengineering.promogearreworked.api.inventorylevels.globalinventorylevel.GlobalInventoryLevelService;
-import ca.bgcengineering.promogearreworked.api.orders.aspects.orderquantityprocessing.ItemPartitions;
-import ca.bgcengineering.promogearreworked.api.orders.aspects.orderquantityprocessing.OrderQuantityProcessor;
+import ca.bgcengineering.promogearreworked.api.orders.aspects.orderpartitioning.ItemPartitions;
+import ca.bgcengineering.promogearreworked.api.orders.aspects.orderpartitioning.OrderQuantityProcessor;
 import ca.bgcengineering.promogearreworked.api.orders.general.dto.GeneralOrderCreate;
 import ca.bgcengineering.promogearreworked.persistence.entities.GlobalInventoryLevel;
 import ca.bgcengineering.promogearreworked.persistence.entities.Order;
