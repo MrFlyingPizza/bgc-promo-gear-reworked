@@ -20,6 +20,7 @@ import java.util.List;
 public class SecuredOrderCreate {
 
     @Getter
+    @Builder(toBuilder = true)
     public static class NestedOrderItem {
         private final Long variantId;
         private final Integer quantity;
