@@ -79,23 +79,11 @@
 
     <script>
         var cart_items;
-        window.onload=function()
-        {
-            $.ajax({
-                type: "GET",
-                url: '/api/cart',
-                beforeSend: function(xhr) {
-                    xhr.setRequestHeader(
-                        $('meta[name=_csrf_header]').attr('content'),
-                        $('meta[name=_csrf]').attr('content')
-                    )
-                },
-                success: function(data)
-                {
+        window.onload=function() {
+            $.get('/api/users/me/cart_items', function (data) {
                     console.log(data);
                     cart_items = data;
                     fill_html_with_cart_items();
-                }
             });
         }
 
