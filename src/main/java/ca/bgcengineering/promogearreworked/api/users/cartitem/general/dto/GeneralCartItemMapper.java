@@ -43,6 +43,7 @@ public abstract class GeneralCartItemMapper {
         return new GeneralCartItemBatchResponse(cartItems.stream().map(this::toResponse).collect(Collectors.toList()));
     }
 
+    @Mapping(source = "id", target = "valueId")
     @Mapping(source = "option.id", target = "optionId")
     @Mapping(source = "option.name", target = "name")
     protected abstract GeneralCartItemResponse.NestedOptionValue map(OptionValue optionValue);
