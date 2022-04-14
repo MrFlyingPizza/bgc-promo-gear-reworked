@@ -31,11 +31,8 @@ public abstract class GeneralCartItemMapper {
     // no partial update because there is only one field but could be necessary in the future
 
     @Transactional
-    @Mapping(source = "variant.product.id", target = "productId")
-    @Mapping(source = "variant.product.name", target = "productName")
-    @Mapping(source = "variant.optionValues", target = "options")
-    @Mapping(source = "variant.image", target = "image")
-    @Mapping(source = "variant.id", target = "variantId")
+    @Mapping(source = "variant.product", target = "product")
+    @Mapping(source = "variant.optionValues", target = "variant.options")
     public abstract GeneralCartItemResponse toResponse(CartItem cartItem);
 
     @Transactional
