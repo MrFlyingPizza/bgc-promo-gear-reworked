@@ -1,5 +1,5 @@
 import {ICartItem} from "./ICartItem";
-import {Button, Grid, Input, List, ListItem, Paper, Stack, styled} from "@mui/material";
+import {Box, Button, Grid, Input, List, ListItem, Paper, Stack, styled} from "@mui/material";
 import * as React from "react";
 import {useState} from "react";
 
@@ -13,8 +13,18 @@ function CartContent(props: {items: ICartItem[]}) {
                 <Grid container spacing={2}>
                     <Grid item xs={4}> {
                         item.variant.image ?
-                        <img alt={item.variant.image.alt} src={item.variant.image.src}/>
-                            : <img alt={"sad cat"} src={"https://i.pinimg.com/originals/3e/84/09/3e8409dcdd012b4bcda84a710f2d1052.jpg"}/>
+                        <Box component={"img"}
+                             alt={item.variant.image.alt}
+                             src={item.variant.image.src}
+                             maxHeight={"100px"}
+                             maxWidth={"100px"}
+                        />
+                            : <Box component={"img"}
+                                   alt={"sad cat"}
+                                   src={"https://i.pinimg.com/originals/3e/84/09/3e8409dcdd012b4bcda84a710f2d1052.jpg"}
+                                   maxHeight={"100px"}
+                                   maxWidth={"100px"}
+                            />
                     }
                     </Grid>
                     <Grid item xs={4}>

@@ -22,7 +22,7 @@ public class StoreViewController {
 
     @GetMapping("cart")
     public String showCartPage(){
-        return "store_pages/cart";
+        return "store_pages/new_cart";
     }
 
     @GetMapping("checkout")
