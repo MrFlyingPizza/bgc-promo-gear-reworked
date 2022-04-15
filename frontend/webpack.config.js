@@ -2,8 +2,13 @@ const path = require('path');
 
 module.exports = {
     mode: 'development',
-    entry: './src/index.tsx',
+    entry: {
+        cart: './src/cart.tsx'
+    },
     devtool: 'inline-source-map',
+    watchOptions: {
+        ignored: '**/node_modules'
+    },
     module: {
         rules: [
             {
@@ -17,7 +22,7 @@ module.exports = {
         extensions: ['.tsx', '.ts', '.js'],
     },
     output: {
-        filename: 'bundle.js',
+        filename: '[name].bundle.js',
         path: path.resolve(__dirname, 'dist'),
     },
 };
