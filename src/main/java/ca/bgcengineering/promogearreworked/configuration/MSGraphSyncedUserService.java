@@ -45,7 +45,6 @@ public class MSGraphSyncedUserService extends AADOAuth2UserService {
             user.setOid(UUID.fromString(graphUser.id));
             user.setDisplayName(graphUser.displayName);
             user.setCredit(storeDefaults.getStartingCredits());
-            user.setLastBigItemDate(Clock.systemUTC().instant());
             return user;
         });
         userRepo.saveAndFlush(updatedUser);

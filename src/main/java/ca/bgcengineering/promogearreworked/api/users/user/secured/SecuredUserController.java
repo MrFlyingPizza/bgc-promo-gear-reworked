@@ -1,9 +1,11 @@
 package ca.bgcengineering.promogearreworked.api.users.user.secured;
 
+import ca.bgcengineering.promogearreworked.api.users.exceptions.GraphUserNotFoundException;
 import ca.bgcengineering.promogearreworked.api.users.exceptions.UserNotFoundException;
 import ca.bgcengineering.promogearreworked.api.users.user.UserService;
 import ca.bgcengineering.promogearreworked.api.users.user.secured.dto.*;
-import ca.bgcengineering.promogearreworked.persistence.entities.User;
+import com.microsoft.graph.models.User;
+import com.microsoft.graph.requests.GraphServiceClient;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -19,17 +21,24 @@ public class SecuredUserController {
     private final UserService service;
     private final SecuredUserHandlerService handlerService;
     private final SecuredUserMapper mapper;
+    private final GraphServiceClient graphClient;
 
     @GetMapping("/{userId}")
     private SecuredUserResponse getUser(@PathVariable Long userId) {
         if (!service.checkUserExists(userId)) {
             throw new UserNotFoundException();
         }
-        return mapper.toResponse(handlerService.handleUserGet(userId));
+        SecuredUserResponse response = mapper.toResponse(handlerService.handleUserGet(userId));
+        User user = graphClient.users(response.getOid().toString()).buildRequest().get();
+        if (user == null) {
+            throw new GraphUserNotFoundException();
+        }
+        response.setEmail(user.mail);
+        return response;
     }
 
     @GetMapping
-    private SecuredUserBatchResponse getUserBatch(@QuerydslPredicate(root = User.class) Predicate predicate,
+    private SecuredUserBatchResponse getUserBatch(@QuerydslPredicate(root = ca.bgcengineering.promogearreworked.persistence.entities.User.class) Predicate predicate,
                                                   Pageable pageable) {
         return mapper.toBatchResponse(handlerService.handleUserBatchGet(predicate, pageable));
     }
