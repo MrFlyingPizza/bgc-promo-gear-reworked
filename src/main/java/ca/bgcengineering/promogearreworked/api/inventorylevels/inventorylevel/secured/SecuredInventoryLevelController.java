@@ -16,6 +16,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "/api/secured/inventory_levels",
         produces = MediaType.APPLICATION_JSON_VALUE)
@@ -39,9 +41,8 @@ public class SecuredInventoryLevelController {
     }
 
     @GetMapping
-    private SecuredInventoryLevelBatchResponse getInventoryLevelBatch(@QuerydslPredicate(root = InventoryLevel.class) Predicate predicate,
-                                                                      Pageable pageable,
-                                                                      @RequestParam(defaultValue = "true") Boolean paged) {
+    private SecuredInventoryLevelBatchResponse getInventoryLevelBatch(@QuerydslPredicate(root = InventoryLevel.class) Predicate predicate, Pageable pageable,
+                                                                      @RequestParam(defaultValue = "false") Boolean paged) {
         if (!paged) {
             pageable = Pageable.unpaged();
         }

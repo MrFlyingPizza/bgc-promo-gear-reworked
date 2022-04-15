@@ -11,7 +11,7 @@ public class GeneralCartItemResponse {
     @Getter
     @RequiredArgsConstructor
     static class NestedOptionValue {
-        private final Long id;
+        private final Long valueId;
         private final Long optionId;
         private final String name;
         private final String value;
@@ -19,18 +19,30 @@ public class GeneralCartItemResponse {
 
     @Getter
     @RequiredArgsConstructor
-    static class NestedImage {
+    static class NestedProductImage {
         private final Long id;
         private final String alt;
         private final String src;
     }
 
+    @Getter
+    @RequiredArgsConstructor
+    static class NestedProductVariant {
+        private final Long id;
+        private final NestedProductImage image;
+        private final List<NestedOptionValue> options;
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    static class NestedProduct {
+        private final Long id;
+        private final String name;
+    }
+
     private final Long userId;
-    private final Long variantId;
-    private final Long productId;
-    private final String productName;
-    private final NestedImage image;
-    private final List<NestedOptionValue> options;
+    private final NestedProduct product;
+    private final NestedProductVariant variant;
     private final Integer quantity;
 
 }

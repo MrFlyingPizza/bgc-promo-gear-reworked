@@ -1,6 +1,8 @@
 package ca.bgcengineering.promogearreworked.api.orders.general;
 
 import ca.bgcengineering.promogearreworked.api.inventorylevels.globalinventorylevel.GlobalInventoryLevelService;
+import ca.bgcengineering.promogearreworked.api.orders.aspects.orderpartitioning.ItemPartitions;
+import ca.bgcengineering.promogearreworked.api.orders.aspects.orderpartitioning.OrderQuantityProcessor;
 import ca.bgcengineering.promogearreworked.api.orders.general.dto.GeneralOrderCreate;
 import ca.bgcengineering.promogearreworked.persistence.entities.GlobalInventoryLevel;
 import ca.bgcengineering.promogearreworked.persistence.entities.Order;
@@ -24,6 +26,7 @@ public class GeneralOrderHandlerService {
     private final OrderService service;
     private final GlobalInventoryLevelService inventoryService;
     private final GeneralOrderMapper mapper;
+    private final OrderQuantityProcessor quantityProcessor;
 
     private void splitOrderItems(List<GeneralOrderCreate.NestedOrderItem> orderItems,
                                  List<GeneralOrderCreate.NestedOrderItem> readyPortion,
@@ -44,18 +47,18 @@ public class GeneralOrderHandlerService {
     }
 
     private List<GeneralOrderCreate> splitOrder(GeneralOrderCreate orderCreate) {
-        List<GeneralOrderCreate.NestedOrderItem> orderItems = orderCreate.getItems();
-        List<GeneralOrderCreate.NestedOrderItem> availableItems = new ArrayList<>();
-        List<GeneralOrderCreate.NestedOrderItem> insufficientItems = new ArrayList<>();
 
-        splitOrderItems(orderItems, availableItems, insufficientItems);
+        ItemPartitions<GeneralOrderCreate.NestedOrderItem> partition = quantityProcessor.partition(orderCreate.getItems(), GeneralOrderCreate.NestedOrderItem.class);
+
+        List<GeneralOrderCreate.NestedOrderItem> submissionItems = partition.getAvailable();
+        List<GeneralOrderCreate.NestedOrderItem> waitingItems = partition.getUnavailable();
 
         List<GeneralOrderCreate> orders = new ArrayList<>();
-        if (!availableItems.isEmpty()) {
-            orders.add(orderCreate.toBuilder().items(availableItems).status(Order.Status.SUBMITTED).build());
+        if (!submissionItems.isEmpty()) {
+            orders.add(orderCreate.toBuilder().items(submissionItems).status(Order.Status.SUBMITTED).build());
         }
-        if (!insufficientItems.isEmpty()) {
-            orders.add(orderCreate.toBuilder().items(insufficientItems).status(Order.Status.WAIT_LIST).build());
+        if (!waitingItems.isEmpty()) {
+            orders.add(orderCreate.toBuilder().items(waitingItems).status(Order.Status.WAIT_LIST).build());
         }
         return orders;
     }

@@ -77,14 +77,16 @@ public class Order {
     @Column(name = "created_date")
     private Instant createdDate;
 
-    @Column(name = "created_by")
-    private Long createdBy;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by")
+    private User createdBy;
 
     @Column(name = "last_modified_date")
     private Instant lastModifiedDate;
 
-    @Column(name = "last_modified_by")
-    private Long lastModifiedBy;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "last_modified_by")
+    private User lastModifiedBy;
 
     @Column(name = "completed_date")
     private Instant completedDate;

@@ -1,7 +1,7 @@
 package ca.bgcengineering.promogearreworked.api.orders;
 
-import ca.bgcengineering.promogearreworked.api.orders.operations.inventory.modification.StatusUpdateInventoryModifier;
-import ca.bgcengineering.promogearreworked.api.orders.operations.inventory.modification.StatusUpdateInventoryModifierProvider;
+import ca.bgcengineering.promogearreworked.api.orders.aspects.inventoryprocessing.StatusUpdateInventoryModifier;
+import ca.bgcengineering.promogearreworked.api.orders.aspects.inventoryprocessing.StatusUpdateInventoryModifierProvider;
 import ca.bgcengineering.promogearreworked.persistence.entities.Order;
 import ca.bgcengineering.promogearreworked.persistence.entities.OrderItem;
 import ca.bgcengineering.promogearreworked.persistence.entities.InventoryLevel;
