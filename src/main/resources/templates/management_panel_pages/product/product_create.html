@@ -1,204 +1,547 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{management_panel_layout.html}">
 <head>
   <title>Create Product</title>
+  <style>
+    /* Remove default bullets */
+    ul, #myUL {
+      list-style-type: none;
+    }
+
+    /* Remove margins and padding from the parent ul */
+    #myUL {
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Style the caret/arrow */
+    .caret {
+      cursor: pointer;
+      user-select: none; /* Prevent text selection */
+    }
+
+    /* Create the caret/arrow with a unicode, and style it */
+    .caret::before {
+      content: "\25B6";
+      color: black;
+      display: inline-block;
+      margin-right: 6px;
+    }
+
+    /* Rotate the caret/arrow icon when clicked on (using JavaScript) */
+    .caret-down::before {
+      transform: rotate(90deg);
+    }
+
+    /* Hide the nested list */
+    .nested {
+      display: none;
+    }
+
+    /* Show the nested list when the user clicks on the caret/arrow (with JavaScript) */
+    .active {
+      display: block;
+    }
+  </style>
 </head>
 <div layout:fragment="content">
 
-  <div id="create-part-one">
-    <div style="text-align: center">
-      <!-- Return to viewing locations button -->
-      <button class="btn btn-outline-primary" style="float: left;" onclick="location.href='/management/product/'">
-        Return to Products
-      </button><br><br>
-      <!-- Heading -->
-      <h2 style="text-align: center">Create New Product</h2>
+  <!--  <div id="create-part-one">-->
+  <div style="margin-bottom: 2em;">
+    <!-- Return to viewing products button -->
+    <a class="btn btn-outline-primary" href="/management/product/">
+      Return to Products
+    </a>
+  </div>
+  <div>
+    <!-- Heading -->
+    <h2 style="text-align: center">Create New Product</h2>
+  </div>
+
+  <div class="container gy-3">
+    <div class="card">
+      <div class="card-body">
+        <!-- Form to create a product_group -->
+        <form id="create-product-group-form" action="/api/secured/products" method="post" class="row g-3">
+          <div class="col-12 form-field">
+            <label for="name" class="form-label">Product Name:</label>
+            <input type="text" class="form-control" id="name" name="name" required style="border-color: #dc3545">
+            <small style="color: #dc3545">Name cannot be blank.</small>
+          </div>
+          <div class="col-md-6 form-field">
+            <label for="brand" class="form-label">Brand:</label>
+            <input type="text" class="form-control" id="brand" name="brand" style="border-color: #dc3545">
+            <small style="color: #dc3545">Brand cannot be blank.</small>
+          </div>
+          <div class="col-md-6 form-field">
+            <label for="price" class="form-label">Price ($CAD):</label>
+            <input type="number" step=".01" class="form-control" id="price" name="price" required style="border-color: #dc3545">
+            <small style="color: #dc3545">Price cannot be blank.</small>
+          </div>
+          <div class="col-md-12 form-field">
+            <label for="is-published" class="form-check-label">Do you want this product to be published?</label>
+            <input type="checkbox" class="form-check-input" id="is-published" name="is-published">
+            <div class="form-text">(A published product is one that shows up on the marketplace)</div>
+          </div>
+          <div class="col-md-12 form-field">
+            <label for="is-big-item" class="form-check-label">Is this product a "Big Item"?</label>
+            <input type="checkbox" class="form-check-input" id="is-big-item" name="is-big-item">
+            <div class="form-text">(A "Big Item" is one that can only be ordered once per year)</div>
+          </div>
+          <div class="col-md-12 form-field">
+            <label for="is-waitlistable" class="form-check-label">Is this product "waitlistable"?</label>
+            <input type="checkbox" class="form-check-input" id="is-waitlistable" name="is-waitlistable">
+            <div class="form-text">(A "Waitlistable Item" is one that can recieve waitlist orders when the stock is low)</div>
+          </div>
+          <div class="col-12 form-field">
+            <label for="description">Product Description:</label>
+            <textarea class="form-control" id="description" name="description" rows="3" required style="border-color: #dc3545"></textarea>
+            <small style="color: #dc3545">Description cannot be blank.</small>
+          </div>
+          <div class="col-12">
+            <label for="categories" class="form-label">Category:</label>
+            <select name="categories" id="categories" class="form-select" required>
+
+            </select>
+          </div>
+          <div class="col-12">
+            <button class="btn btn-outline-primary" id="edit-categories-modal-button"
+                   style="float: right;" data-bs-toggle="modal" data-bs-target="#edit-categories-modal">
+              Edit Categories
+            </button>
+          </div>
+          <p class="text-center" id="if-no-categories" style="display: none; color: red;">
+            There are no categories in the database.
+            Please make one before creating a product
+            as all products MUST be assigned to a category.
+          </p>
+          <!--        &lt;!&ndash; Show the user a popup modal allowing them to confirm the info they are trying to submit &ndash;&gt;-->
+          <!--        <div class="modal fade" id="confirm-product-group-create-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">-->
+          <!--          <div class="modal-dialog">-->
+          <!--            <div class="modal-content">-->
+          <!--              <div class="modal-header">-->
+          <!--                <h5 class="modal-title">Confirm Submit</h5>-->
+          <!--                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+          <!--              </div>-->
+          <!--              <div class="modal-body">-->
+          <!--                Are you sure you want to submit the following details?-->
+          <!--                <table class="table">-->
+          <!--                  <tr>-->
+          <!--                    <th>Name</th>-->
+          <!--                    <td id="display-new-name"></td>-->
+          <!--                  </tr>-->
+          <!--                  <tr>-->
+          <!--                    <th>Brand</th>-->
+          <!--                    <td id="display-new-brand"></td>-->
+          <!--                  </tr>-->
+          <!--                  <tr>-->
+          <!--                    <th>Price</th>-->
+          <!--                    <td id="display-new-price"></td>-->
+          <!--                  </tr>-->
+          <!--                  <tr>-->
+          <!--                    <th>Is Published</th>-->
+          <!--                    <td id="display-new-is-published"></td>-->
+          <!--                  </tr>-->
+          <!--                  <tr>-->
+          <!--                    <th>Is Big Item</th>-->
+          <!--                    <td id="display-new-is-big-item"></td>-->
+          <!--                  </tr>-->
+          <!--                  <tr>-->
+          <!--                    <th>Is Waitlistable</th>-->
+          <!--                    <td id="display-new-is-waitlisted"></td>-->
+          <!--                  </tr>-->
+          <!--                  <tr>-->
+          <!--                    <th>Description</th>-->
+          <!--                    <td id="display-new-description"></td>-->
+          <!--                  </tr>-->
+          <!--                  <tr>-->
+          <!--                    <th>Category</th>-->
+          <!--                    <td id="display-new-category"></td>-->
+          <!--                  </tr>-->
+          <!--                </table>-->
+          <!--              </div>-->
+          <!--              <div class="modal-footer">-->
+          <!--                <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>-->
+          <!--                <input class="btn btn-outline-primary" type="submit" value="Submit">-->
+          <!--              </div>-->
+          <!--            </div>-->
+          <!--          </div>-->
+          <!--        </div>-->
+        </form>
+      </div>
     </div>
+    <br>
+    <div class="card">
+      <div class="card-body" style="text-align: center;">
+        <h4>Upload Media</h4>
+        <form method="POST" enctype="multipart/form-data" id="file-upload-form">
+          <p><label for="image-upload" style="cursor: pointer;">Click To Upload File</label></p>
+          <input type="file" accept="image/jpeg, image/png" name="image" id="image-upload"
+                 style="display: none;">
+        </form>
+        <span id="image-upload-result"></span>
+        <div id="uploaded-images-container"
+             style="display: none; width: 100%; height: 300px;">
 
-    <div class="container gy-3">
-      <div class="card">
-        <div class="card-body">
-          <!-- Form to create a product_group -->
-          <form id="create-product-group-form" action="/management/api/product" method="post" class="row g-3">
-            <div class="col-12 form-field">
-              <label for="name" class="form-label">Product Name:</label>
-              <input type="text" class="form-control" id="name" name="name" required style="border-color: #dc3545">
-              <small style="color: #dc3545">Name cannot be blank.</small>
-            </div>
-            <div class="col-md-6 form-field">
-              <label for="brand" class="form-label">Brand:</label>
-              <input type="text" class="form-control" id="brand" name="brand" style="border-color: #dc3545">
-              <small style="color: #dc3545">Brand cannot be blank.</small>
-            </div>
-            <div class="col-md-6 form-field">
-              <label for="price" class="form-label">Price ($CAD):</label>
-              <input type="number" step=".01" class="form-control" id="price" name="price" required style="border-color: #dc3545">
-              <small style="color: #dc3545">Price cannot be blank.</small>
-            </div>
-            <div class="col-md-12 form-field">
-              <label for="is-published" class="form-check-label">Do you want this product to be published?</label>
-              <input type="checkbox" class="form-check-input" id="is-published" name="is-published">
-              <div class="form-text">(A published product is one that shows up on the marketplace)</div>
-            </div>
-            <div class="col-md-12 form-field">
-              <label for="is-big-item" class="form-check-label">Is this product a "Big Item"?</label>
-              <input type="checkbox" class="form-check-input" id="is-big-item" name="is-big-item">
-              <div class="form-text">(A "Big Item" is one that can only be ordered once per year)</div>
-            </div>
-            <div class="col-md-12 form-field">
-              <label for="is-waitlistable" class="form-check-label">Is this product "waitlistable"?</label>
-              <input type="checkbox" class="form-check-input" id="is-waitlistable" name="is-waitlistable">
-              <div class="form-text">(A "Waitlistable Item" is one that can recieve waitlist orders when the stock is low)</div>
-            </div>
-            <div class="col-12 form-field">
-              <label for="description">Product Description:</label>
-              <textarea class="form-control" id="description" name="description" rows="3" required style="border-color: #dc3545"></textarea>
-              <small style="color: #dc3545">Description cannot be blank.</small>
-            </div>
-            <div class="col-12">
-              <label for="categories" class="form-label">Category:</label>
-              <select name="categories" id="categories" class="form-select" required>
-
-              </select>
-            </div>
-            <div class="col-12">
-              <input class="btn btn-outline-primary" id="create-category-form-modal-button"
-                     style="float: right;" type="button" value="Edit Categories"
-                     th:attr="onclick=|fill_categories()|" disabled>
-            </div>
-            <p class="text-center" id="if-no-categories" style="display: none; color: red;">
-              There are no categories in the database.
-              Please make one before creating a product
-              as all products MUST be assigned to a category.
-            </p>
-            <!--        &lt;!&ndash; Show the user a popup modal allowing them to confirm the info they are trying to submit &ndash;&gt;-->
-            <!--        <div class="modal fade" id="confirm-product-group-create-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">-->
-            <!--          <div class="modal-dialog">-->
-            <!--            <div class="modal-content">-->
-            <!--              <div class="modal-header">-->
-            <!--                <h5 class="modal-title">Confirm Submit</h5>-->
-            <!--                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-            <!--              </div>-->
-            <!--              <div class="modal-body">-->
-            <!--                Are you sure you want to submit the following details?-->
-            <!--                <table class="table">-->
-            <!--                  <tr>-->
-            <!--                    <th>Name</th>-->
-            <!--                    <td id="display-new-name"></td>-->
-            <!--                  </tr>-->
-            <!--                  <tr>-->
-            <!--                    <th>Brand</th>-->
-            <!--                    <td id="display-new-brand"></td>-->
-            <!--                  </tr>-->
-            <!--                  <tr>-->
-            <!--                    <th>Price</th>-->
-            <!--                    <td id="display-new-price"></td>-->
-            <!--                  </tr>-->
-            <!--                  <tr>-->
-            <!--                    <th>Is Published</th>-->
-            <!--                    <td id="display-new-is-published"></td>-->
-            <!--                  </tr>-->
-            <!--                  <tr>-->
-            <!--                    <th>Is Big Item</th>-->
-            <!--                    <td id="display-new-is-big-item"></td>-->
-            <!--                  </tr>-->
-            <!--                  <tr>-->
-            <!--                    <th>Is Waitlistable</th>-->
-            <!--                    <td id="display-new-is-waitlisted"></td>-->
-            <!--                  </tr>-->
-            <!--                  <tr>-->
-            <!--                    <th>Description</th>-->
-            <!--                    <td id="display-new-description"></td>-->
-            <!--                  </tr>-->
-            <!--                  <tr>-->
-            <!--                    <th>Category</th>-->
-            <!--                    <td id="display-new-category"></td>-->
-            <!--                  </tr>-->
-            <!--                </table>-->
-            <!--              </div>-->
-            <!--              <div class="modal-footer">-->
-            <!--                <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>-->
-            <!--                <input class="btn btn-outline-primary" type="submit" value="Submit">-->
-            <!--              </div>-->
-            <!--            </div>-->
-            <!--          </div>-->
-            <!--        </div>-->
-          </form>
         </div>
       </div>
-      <br>
-      <div class="card">
-        <div class="card-body" style="text-align: center;">
-          <h4>Options</h4>
-          <small><i>Select which options you would like your product to have</i></small>
-          <div class="table-responsive" style="text-align: left;">
-            <table id="attributesTable" class="table table table-striped table-hover">
-              <th:block th:each="attributeGroup : ${attributeGroups}">
-                <!--          th:if="${!attributeGroup?.getAttributes().isEmpty()}"-->
-                <tr th:data-index="${attributeGroupStat.index}" th:data-id="${attributeGroup?.getID()}">
-                  <th scope="col" th:text="${attributeGroup?.getName()} ?: 'N/A'"></th>
-                  <th:block th:each="attribute : ${attributeGroup?.getAttributes()}">
-                    <td>
-                      <input type="checkbox" th:data-attrid="${attribute?.getID()}"
-                             th:id="'product-' + ${attributeGroup?.getName()} + '-' + ${attribute?.getValue()}"
-                             th:data-attrvalue="${attribute?.getValue()}"
-                             th:name="'selection'+${attributeGroupStat.index}">
-                      <label th:for="'product-' + ${attributeGroup?.getName()} + '-' + ${attribute?.getValue()}" th:text="${attribute?.getValue()}"></label>
-                    </td>
-                  </th:block>
-                </tr>
-              </th:block>
-            </table>
-          </div>
-          <a class="btn btn-outline-primary" style="float: left;" data-bs-toggle="modal" href="#create-attributes-landing-modal" role="button">Create Attribute</a>
-          <button style="float: right;" class="btn btn-outline-primary" onclick="create_all_possible_products()">Continue</button>
+    </div>
+    <br>
+    <div class="card">
+      <div class="card-body" style="text-align: center;">
+        <h4>Options</h4>
+        <small><i>Select which options you would like your product to have</i></small>
+        <div class="table-responsive" style="text-align: left;">
+          <table id="attributesTable" class="table table table-striped table-hover">
+            <th:block th:each="attributeGroup : ${attributeGroups}">
+              <!--          th:if="${!attributeGroup?.getAttributes().isEmpty()}"-->
+              <tr th:data-index="${attributeGroupStat.index}" th:data-id="${attributeGroup?.getID()}">
+                <th scope="col" th:text="${attributeGroup?.getName()} ?: 'N/A'"></th>
+                <th:block th:each="attribute : ${attributeGroup?.getAttributes()}">
+                  <td>
+                    <input type="checkbox" th:data-attrid="${attribute?.getID()}"
+                           th:id="'product-' + ${attributeGroup?.getName()} + '-' + ${attribute?.getValue()}"
+                           th:data-attrvalue="${attribute?.getValue()}"
+                           th:name="'selection'+${attributeGroupStat.index}">
+                    <label th:for="'product-' + ${attributeGroup?.getName()} + '-' + ${attribute?.getValue()}" th:text="${attribute?.getValue()}"></label>
+                  </td>
+                </th:block>
+              </tr>
+            </th:block>
+          </table>
         </div>
+        <a class="btn btn-outline-primary" style="float: left;" data-bs-toggle="modal" href="#create-attributes-landing-modal" role="button" disabled>Create Attribute</a>
+        <button style="float: right;" class="btn btn-outline-primary" onclick="create_all_possible_products()">Continue</button>
       </div>
     </div>
   </div>
+  <!--  </div>-->
 
   <br>
   <div class="card">
     <div class="card-body">
-      <section id="create-part-two" style="display: none">
-        <h3 style="text-align: center">Variants</h3>
-        <!--    <button class="btn btn-outline-primary" onclick="go_back_to_part_one()">Go Back to Part One</button>-->
-        <!--        <div style="display: table">-->
-        <!--          <div style="display: table-row">-->
-        <!--            <div style="display: table-cell">Product</div>-->
-        <!--            <div style="display: table-cell">Image File</div>-->
-        <!--            <div style="display: table-cell">Low Stock Limit</div>-->
-        <!--          </div>-->
-        <!--          <form id="finishProductsForm" action="/management/api/product/batch" method="post">-->
+      <!--      <section id="create-part-two" style="display: none">-->
+      <h3 style="text-align: center">Variants</h3>
+      <!--    <button class="btn btn-outline-primary" onclick="go_back_to_part_one()">Go Back to Part One</button>-->
+      <!--        <div style="display: table">-->
+      <!--          <div style="display: table-row">-->
+      <!--            <div style="display: table-cell">Product</div>-->
+      <!--            <div style="display: table-cell">Image File</div>-->
+      <!--            <div style="display: table-cell">Low Stock Limit</div>-->
+      <!--          </div>-->
+      <!--          <form id="finishProductsForm" action="/management/api/product/batch" method="post">-->
 
-        <!--          </form>-->
-        <!--        </div>-->
-        <form id="finishProductsForm" action="/management/api/product/batch" method="post">
-          <div class="table-responsive">
-            <table id="variantsTable" class="table table table-striped table-hover">
-              <thead>
-              <tr>
-                <th scope="col">Variant</th>
-                <th scope="col">Low Stock Limit</th>
-              </tr>
-              </thead>
-              <tbody id="finishProductsFormBody">
-              </tbody>
-              <tfoot>
-              <th scope="row">Change All Low Stock Limit</th>
-              <td><input type="number" id="changeAllLowStockLimitInput" min="0" value="0"></td>
-              <td><button type="button" class="btn btn-primary rounded-pill text-decoration-none" onclick="set_all_low_stock_input()">Set All</button></td>
-              </tfoot>
-            </table>
-          </div>
-        </form>
-        <div class="col-md-12">
-          <button class="btn btn-success" style="float: right;" onclick="submit_all()">Save</button>
-          <!--      <input class="btn btn-outline-primary" id="submit-create-product-group" type="button"-->
-          <!--             value="Submit" data-bs-toggle="modal" data-bs-target="#confirm-product-group-create-modal">-->
+      <!--          </form>-->
+      <!--        </div>-->
+      <form id="finishProductsForm" action="/management/api/product/batch" method="post">
+        <div class="table-responsive">
+          <table id="variantsTable" class="table table table-striped table-hover">
+            <thead>
+            <tr>
+              <th scope="col">Variant</th>
+              <th scope="col">Image File</th>
+              <th scope="col">Low Stock Limit</th>
+            </tr>
+            </thead>
+            <tbody id="finishProductsFormBody">
+            </tbody>
+            <tfoot>
+            <th scope="row">Change All Low Stock Limit</th>
+            <td><input type="number" id="changeAllLowStockLimitInput" min="0" value="0"></td>
+            <td><button type="button" class="btn btn-primary rounded-pill text-decoration-none" onclick="set_all_low_stock_input()">Set All</button></td>
+            </tfoot>
+          </table>
         </div>
-      </section>
+      </form>
+      <div class="col-md-12">
+        <button class="btn btn-success" style="float: right;" onclick="submit_all()">Save</button>
+        <!--      <input class="btn btn-outline-primary" id="submit-create-product-group" type="button"-->
+        <!--             value="Submit" data-bs-toggle="modal" data-bs-target="#confirm-product-group-create-modal">-->
+      </div>
+      <!--      </section>-->
     </div>
   </div>
+
+
+  <div class="modal fade" id="edit-categories-modal" tabindex="-1" role="dialog"
+       aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Categories</h5>
+        </div>
+        <div class="modal-body">
+<!--          <h5 class="modal-title">Sample Title</h5>-->
+
+<!--          <ul th:each="category : ${categories}" th:if="${category?.getParent()?.getId() == null}" id="myUL">-->
+<!--            <li><span th:text="${category?.getName()}" th:id="'category-'+${category?.getId()}" class="caret"></span>-->
+<!--              <ul th:if="${category?.getSubcategories() != null and !(category?.getSubcategories().isEmpty())}"-->
+<!--                  class="nested">-->
+<!--                <li th:each="subCategory : ${category?.getSubcategories()}" th:text="${subCategory?.getName()}"></li>-->
+<!--              </ul>-->
+<!--            </li>-->
+<!--          </ul>-->
+          <button class="btn btn-outline-primary btn-sm button-filter" id="expand-option" type="button">Expand All</button>
+          <button class="btn btn-outline-primary btn-sm button-filter" id="collapse-option" type="button">Collapse All</button>
+          <button class="btn btn-outline-primary btn-sm button-filter"
+                  id="create-new-category-button" type="button"
+                  data-bs-toggle="modal" data-bs-target="#create-new-parent-category-modal">Create New Parent Category</button>
+          <br>
+          <br>
+          <div class="accordion" id="categoryAccordionPanels">
+            <div th:each="category : ${categories}"
+                 th:if="${category?.getParent()?.getId() == null}"
+                 class="accordion-item">
+              <h2 class="accordion-header"
+                  th:id="'panelsStayOpen-heading-'+${categoryStat.index}">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                        th:data-bs-target="'#panelsStayOpen-collapse-'+${categoryStat.index}" aria-expanded="true"
+                        th:aria-controls="'panelsStayOpen-collapse-'+${categoryStat.index}" th:text="${category?.getName()}">
+                </button>
+              </h2>
+              <div th:id="'panelsStayOpen-collapse-'+${categoryStat.index}" class="accordion-collapse collapse"
+                   th:aria-labelledby="'panelsStayOpen-heading-'+${categoryStat.index}">
+                <div class="accordion-body">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Subcategory</th>
+                        <th scope="col">Edit</th>
+                        <th scope="col">Delete</th>
+                      </tr>
+                    </thead>
+                    <tbody th:id="'subcategory-table-'+${categoryStat.index}">
+                      <tr th:each="subCategory : ${category?.getSubcategories()}">
+                        <td th:text="${subCategory?.getName()}" th:id="'subcategory-text-'+${subCategory?.getId()}"></td>
+                        <td style="padding: 5px;">
+                            <button class="btn btn-outline-primary button-edit"
+                                    type="button" style="font-size: 15px;"
+                                    th:data-subcat-id="${subCategory?.getId()}"
+                                    onclick="display_edit_subcategory_modal(this)">
+                              <i class="far fa-edit"></i>
+                            </button>
+                        </td>
+                        <td style="padding: 5px;">
+                          <button class="btn btn-outline-primary button-edit"
+                                  type="button" style="font-size: 15px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                              <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                              <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                            </svg>
+                          </button>
+                        </td>
+                      </tr>
+                      <tr th:if="${#lists.isEmpty(category?.getSubcategories())}">
+                        <td>No Subcategories</td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td>
+                          <button type="button" class="btn btn-primary" id="add-sub-cat-button"
+                                  th:data-subcat-table-id="${categoryStat.index}"
+                                  th:data-parent-cat-id="${category?.getId()}"
+                                  th:data-parent-cat-name="${category?.getName()}"
+                                  onclick="display_create_subcategory_modal(this)">+Add Subcategory</button>
+<!--                          <label th:for="'new-subcategory-'+${categoryStat.index}"-->
+<!--                                 class="form-label" style="display: none;">Enter New Subcategory Name:</label>-->
+<!--                          <input type="text" class="form-control"-->
+<!--                                 th:data-subcat-table-id="${categoryStat.index}"-->
+<!--                                 th:data-parent-cat-id="${category?.getId()}"-->
+<!--                                 th:data-parent-cat-name="${category?.getName()}"-->
+<!--                                 th:id="'new-subcategory-'+${categoryStat.index}"-->
+<!--                                 th:name="'new-subcategory-'+${categoryStat.index}"-->
+<!--                                 style="display: none;">-->
+<!--                          <br>-->
+<!--                          <button th:id="'save-sub-cat-button-'+${categoryStat.index}"-->
+<!--                                  type="button" class="btn btn-success submit-create-category"-->
+<!--                                  onclick="display_new_subcategory_details(this)" style="display: none;"-->
+<!--                                  data-bs-toggle="modal" data-bs-target="#confirm-category-submit">Save</button>-->
+<!--                          <button th:id="'discard-sub-cat-button-'+${categoryStat.index}"-->
+<!--                                  type="button" class="btn btn-danger"-->
+<!--                                  onclick="cancel_new_subcategory(this)" style="display: none">Cancel</button>-->
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Return</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="create-new-parent-category-modal" aria-hidden="true"
+       aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Create New Parent Category</h5>
+        </div>
+        <div class="modal-body">
+          <label for="new-parent-category-input" class="form-label">Enter New Name</label>
+          <input type="text" class="form-control"
+                 id="new-parent-category-input" name="new-subcategory" placeholder="Ex. &quot;Accessories&quot;">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Return</button>
+          <button id="save-new-parent-category-button-1"
+                  class="btn btn-outline-primary"
+                  onclick="display_new_parent_category_details()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="confirm-parent-category-submit" tabindex="-1" role="dialog"
+       aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirm Submit</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to submit the following details?
+          <table class="table">
+            <tr>
+              <th>Category Name</th>
+              <td id="display-new-parent-category-name"></td>
+            </tr>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-default" data-bs-dismiss="modal">Return</button>
+          <button id="save-new-parent-category-button-2"
+                  class="btn btn-success"
+                  onclick="save_new_parent_category()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="create-new-subcategory-modal" aria-hidden="true"
+       aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Create New Subcategory</h5>
+        </div>
+        <div class="modal-body">
+          <label for="new-subcategory-input" class="form-label"
+                 id="new-subcategory-input-label">Enter New Subcategory Name</label>
+          <input type="text" class="form-control"
+                 id="new-subcategory-input" name="new-subcategory" placeholder="Ex. &quot;Men's Hoodies&quot;">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Return</button>
+          <button id="save-new-subcategory-button-1"
+                  class="btn btn-outline-primary"
+                  onclick="display_new_subcategory_details()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="confirm-new-subcategory-modal" tabindex="-1" role="dialog"
+       aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Create New Subcategory</h5>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to submit the following details?
+          <table class="table">
+            <tr>
+              <th>New Subcategory Name</th>
+              <td id="display-new-subcategory-name"></td>
+            </tr>
+            <tr>
+              <th>For Parent Category</th>
+              <td id="display-for-parent-category-name"></td>
+            </tr>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-default" data-bs-dismiss="modal">Return</button>
+          <button id="save-new-subcategory-button-2"
+                  class="btn btn-success"
+                  onclick="save_new_subcategory()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="edit-subcategory-modal" aria-hidden="true"
+       aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Subcategory</h5>
+        </div>
+        <div class="modal-body">
+          <table class="table">
+            <tr>
+              <th>Current Subcategory Name</th>
+              <td id="display-current-subcategory-name"></td>
+            </tr>
+            <tr>
+              <th>Enter New Subcategory Name</th>
+              <td>
+                <input type="text" class="form-control"
+                       id="edit-subcategory-input" name="edit-subcategory-input" placeholder="Ex. &quot;Men's Hoodies&quot;">
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Return</button>
+          <button id="edit-new-subcategory-button-1"
+                  class="btn btn-outline-primary"
+                  onclick="display_edit_subcategory_details()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="confirm-edit-subcategory-modal" tabindex="-1" role="dialog"
+       aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit New Subcategory</h5>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to submit the following details?
+          <table class="table">
+            <tr>
+              <th>Currently Stored Subcategory Name</th>
+              <td id="display-currently-stored-subcategory-name"></td>
+            </tr>
+            <tr>
+              <th>New Subcategory Name</th>
+              <td id="display-new-edit-subcategory-name"></td>
+            </tr>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-default" data-bs-dismiss="modal">Return</button>
+          <button id="save-new-subcategory-button"
+                  class="btn btn-success"
+                  onclick="save_edit_subcategory()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
 
   <!-- CREATE PRODUCT_GROUP SUCCESS/FAIL POPUP MODALS -->
   <div class="modal fade" id="create-product-group-success-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -484,7 +827,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Saving...</h5>
+          <h5 class="modal-title" id="wait-modal-title"></h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -495,16 +838,47 @@
           </div>
           <br>
           <div class="justify-content-center">
-            Currently saving data...do NOT halt the process by closing or refreshing the tab to ensure full completion
+            Currently saving data...do NOT halt the process by closing or refreshing the tab to ensure full completion!
           </div>
-        </div>
-        <div class="modal-footer">
-
         </div>
       </div>
     </div>
   </div>
-
+  <div class="modal fade" id="success-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="success-modal-title">Complete</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center">
+          <span style="font-size: 35px;font-weight: bold;" id="success-modal-message">Successfully Created</span><br>
+          <i class="fa fa-check-circle-o rubberBand animated" style="font-size: 100px;color: rgb(122, 214, 94);height: 41px;"></i>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Return</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="failed-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="failed-modal-title">Failed</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center">
+          <span style="font-size: 35px;font-weight: bold;" id="failed-modal-message-header"></span><br>
+          <i class="fa fa-close rubberBand animated" style="font-size: 100px;color: rgb(242, 15, 0);height: 41px;"></i><br>
+          <p class="text-start" id="failed-modal-message"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Return</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script>
     /**
@@ -523,61 +897,59 @@
      * and load them into the empty <select> tag in the html.
      */
     $(document).ready(function(){
-      console.log("Testing 1");
       fill_current_categories();
     });
 
+    var testing;
     /**
      * Gets all current attributes from the database. If:
      * (1) - There are no categories, dont let them submit at all
      * (2) - Load all the existing categories into the <select> tags
      */
     function fill_current_categories(){
-      console.log("TESTING");
       $.ajax({
         type: "GET",
-        url: '/management/pi/category/root',
+        url: '/api/secured/categories/',
         beforeSend: function(xhr) {
-          xhr.setRequestHeader(
-                  $('meta[name=_csrf_header]').attr('content'),
-                  $('meta[name=_csrf]').attr('content')
-          )
+          // xhr.setRequestHeader(
+          //         $('meta[name=_csrf_header]').attr('content'),
+          //         $('meta[name=_csrf]').attr('content')
+          // )
         },
         success: function(data)
         {
-          console.log(data);
-          if(jQuery.isEmptyObject(data)){
+          if(jQuery.isEmptyObject(data['categories'])){
             $("#submit-create-product-group").prop("disabled", true);
             $('#if-no-categories').css("display", "");
           }
           else{
             $('#if-no-categories').css("display", "none");
             $('#categories').empty();
-            $('#current-categories').empty();
-            //Option to be a part of no category
-            $('#current-categories').append($('<option>', {
-              selected: true,
-              value: "null",
-              text : "None"
-            }));
-            $.each(data, function (i, category) {
-              let parentOption = $('#categories').append($('<option>', {
-                value: category['ID'],
-                text : category['name']
-              }));
-              $('#categories option:last').css('background-color', '#f5f5f5');
-              let subcategoriesList = category['subcategories'];
-              for(let i = 0; i < subcategoriesList.length; i++){
-                $('#categories').append($('<option>', {
-                  value: subcategoriesList[i]['ID'],
-                  text : " - " + subcategoriesList[i]['name']
-                }));
+            for(let i = 0; i < data['categories'].length; i++){
+              if(data['categories'][i]['parent'] === null){
+                if(i === 0){
+                  $('#categories').append($('<option>', {
+                    selected: true,
+                    value: data['categories'][i]['id'],
+                    text : data['categories'][i]['name']
+                  }));
+                }
+                else{
+                  $('#categories').append($('<option>', {
+                    value: data['categories'][i]['id'],
+                    text : data['categories'][i]['name']
+                  }));
+                }
+                $('#categories option:last').css('background-color', '#f5f5f5');
+                let subcategoriesList = data['categories'][i]['subcategories'];
+                for(let i = 0; i < subcategoriesList.length; i++){
+                  $('#categories').append($('<option>', {
+                    value: subcategoriesList[i]['id'],
+                    text : " - " + subcategoriesList[i]['name']
+                  }));
+                }
               }
-              $('#current-categories').append($('<option>', {
-                value: category['ID'],
-                text : category['name']
-              }));
-            });
+            }
           }
         },
         error: function(xhr) {
@@ -594,10 +966,10 @@
      *       Thymeleaf attribute which is from product_group_create.html:
      *       - th:attr="onclick=|fill_categories()|"
      */
-    function fill_categories(){
-      fill_current_categories();
-      $('#categories-landing-modal').modal('show');
-    }
+    // function fill_categories(){
+    //   fill_current_categories();
+    //   $('#categories-landing-modal').modal('show');
+    // }
 
     // function display_new_product_group_details(){
     //     $('#display-new-name').text($('#name').val());
@@ -627,49 +999,416 @@
 
     //$('#submit-create-product-group').click(display_new_product_group_details);
 
-    function display_new_category_details(){
-      $('#display-new-category-name').text($('#category-name').val());
-      $('#display-new-parent-category').text($('#current-categories option:selected').text());
+    function display_new_parent_category_details(){
+      $('#display-new-parent-category-name').text($('#new-parent-category-input').val());
+      $('#confirm-parent-category-submit').modal('show');
     }
-    $('#submit-create-category').click(display_new_category_details);
 
-    $('#create-category-form').submit(
-            function (e) {
-              e.preventDefault();
+    function display_create_subcategory_modal(element){
+      $('#new-subcategory-input-label').text("Enter New Subcategory Name for Parent Category \""+$(element).data('parent-cat-name')+"\"");
 
-              const form = $(this);
-              const url = form.attr('action');
-              const data = {
-                'name': $('#category-name').val(),
-                'parentID': $('#current-categories option:selected').val()
-              }
+      $('#new-subcategory-input').removeData('subcat-table-id');
+      $('#new-subcategory-input').removeData('parent-cat-id');
+      $('#new-subcategory-input').removeData('parent-cat-name');
 
-              $.ajax({
-                type: "POST",
-                url: url,
-                contentType: "application/json",
-                data: JSON.stringify(data), // serializes the form's elements.
-                beforeSend: function(xhr) {
-                  xhr.setRequestHeader(
-                          $('meta[name=_csrf_header]').attr('content'),
-                          $('meta[name=_csrf]').attr('content')
-                  )
-                },
-                success: function(data)
-                {
-                  fill_current_categories();
-                  $('#create-category-form-modal').modal('hide');
-                  $('#confirm-category-submit').modal('hide');
-                  $('#create-category-success-modal').modal('show');
-                },
-                error: function(xhr) {
-                  $('#confirm-category-submit').modal('hide');
-                  $('#create-product-group-fail-message').text("Error Message:\'"+ xhr.responseJSON.message +"\'")
-                  $('#create-product-group-fail-modal').modal('show');
-                }
-              });
-            }
-    );
+      $('#new-subcategory-input').attr('data-subcat-table-id', $(element).data("subcat-table-id"));
+      $('#new-subcategory-input').attr('data-parent-cat-id', $(element).data("parent-cat-id"));
+      $('#new-subcategory-input').attr('data-parent-cat-name', $(element).data("parent-cat-name"));
+
+      $('#create-new-subcategory-modal').modal('show');
+    }
+
+    function display_new_subcategory_details(element){
+      $('#display-new-subcategory-name').text($('#new-subcategory-input').val());
+      $('#display-for-parent-category-name').text($('#new-subcategory-input').data("parent-cat-name"));
+
+      // $('#save-new-subcategory-button').attr('data-subcat-table-id', $(element).siblings("input").data("subcat-table-id"));
+      // $('#save-new-subcategory-button').attr('data-subcat-name', $(element).siblings("input").val());
+      // $('#save-new-subcategory-button').attr('data-parent-cat-id', $(element).siblings("input").data("parent-cat-id"));
+      $('#confirm-new-subcategory-modal').modal('show');
+    }
+
+    function display_edit_subcategory_modal(element){
+      $.ajax({
+        type: "GET",
+        url: '/api/secured/categories/'.concat($(element).data("subcat-id")),
+        success: function(data)
+        {
+          $('#display-current-subcategory-name').text(data['name']);
+
+          $('#edit-subcategory-input').removeData('subcat-id');
+          $('#edit-subcategory-input').attr('data-subcat-id', $(element).data("subcat-id"));
+
+          $('#edit-subcategory-modal').modal('show');
+        },
+        error: function(xhr) {
+          $('#failed-modal-message-header').text("Data Retrieval Failed");
+          var responseMessagesString = '';
+          let responseMessages = xhr.responseJSON['messages'];
+          for(let i = 0; i < responseMessages.length; i++){
+            responseMessagesString += ((i+1) + ". " + responseMessages[i]['message'] + "\n");
+          }
+          $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+          $('#failed-modal').modal('show');
+        }
+      });
+    }
+
+    function display_edit_subcategory_details(){
+      $.ajax({
+        type: "GET",
+        url: '/api/secured/categories/'.concat($('#edit-subcategory-input').data("subcat-id")),
+        success: function(data)
+        {
+          $('#display-currently-stored-subcategory-name').text(data['name'])
+          $('#display-new-edit-subcategory-name').text($('#edit-subcategory-input').val());
+
+          $('#confirm-edit-subcategory-modal').modal('show');
+        },
+        error: function(xhr) {
+          $('#failed-modal-message-header').text("Data Retrieval Failed");
+          var responseMessagesString = '';
+          let responseMessages = xhr.responseJSON['messages'];
+          for(let i = 0; i < responseMessages.length; i++){
+            responseMessagesString += ((i+1) + ". " + responseMessages[i]['message'] + "\n");
+          }
+          $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+          $('#failed-modal').modal('show');
+        }
+      });
+    }
+
+    function save_edit_subcategory(){
+      const data = {
+        'name': $('#edit-subcategory-input').val()
+      }
+
+      $.ajax({
+        type: "PATCH",
+        url: '/api/secured/categories'.concat($('#edit-subcategory-input').data("subcat-id")),
+        contentType: "application/json",
+        data: JSON.stringify(data), // serializes the form's elements.
+        beforeSend: function(xhr) {
+          // xhr.setRequestHeader(
+          //         $('meta[name=_csrf_header]').attr('content'),
+          //         $('meta[name=_csrf]').attr('content')
+          // )
+          $('#edit-subcategory-modal').modal('hide');
+          $('#confirm-edit-subcategory-modal').modal('hide');
+
+          $('#wait-modal-title').text("Saving Subcategory...");
+          $('#wait-modal').modal('show');
+        },
+        success: function(data)
+        {
+          console.log(data);
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          let oldName = $('#subcategory-text-'+data['id']).text();
+          $('#subcategory-text-'+data['id']).text(data['name']);
+
+
+          $('#success-modal-message').text("Successfully edited Subcategory - \"" + oldName + "\" to - \"" + data['name'] + "\"");
+          $('#success-modal').modal('show');
+
+
+          fill_current_categories();
+        },
+        error: function(xhr) {
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          $('#failed-modal-message-header').text("Edit Failed");
+          var responseMessagesString = '';
+          let responseMessages = xhr.responseJSON['messages'];
+          for(let i = 0; i < responseMessages.length; i++){
+            responseMessagesString += ((i+1) + ". " + responseMessages[i]['message'] + "\n");
+          }
+          $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+          $('#failed-modal').modal('show');
+        }
+      });
+
+    }
+
+    // var toggler = document.getElementsByClassName("caret");
+    //
+    // for (let i = 0; i < toggler.length; i++) {
+    //   toggler[i].addEventListener("click", function() {
+    //     this.parentElement.querySelector(".nested").classList.toggle("active");
+    //     this.classList.toggle("caret-down");
+    //   });
+    // }
+
+    // function enable_edit_mode(element)
+    // {
+    //   $(element).siblings().show();
+    //   $(element).hide();
+    // }
+
+    var numNewSubcategoriesMadeInSession = 0;
+
+    function save_new_subcategory()
+    {
+      const data = {
+        'name': $('#new-subcategory-input').val(),
+        'parentId': $('#new-subcategory-input').data('parent-cat-id')
+      }
+
+      console.log("POST Subcategory Data:");
+      console.log(data);
+
+      $.ajax({
+        type: "POST",
+        url: '/api/secured/categories',
+        contentType: "application/json",
+        data: JSON.stringify(data), // serializes the form's elements.
+        beforeSend: function(xhr) {
+          // xhr.setRequestHeader(
+          //         $('meta[name=_csrf_header]').attr('content'),
+          //         $('meta[name=_csrf]').attr('content')
+          // )
+          $('#create-new-subcategory-modal').modal('hide');
+          $('#confirm-new-subcategory-modal').modal('hide');
+
+          $('#wait-modal-title').text("Saving Subcategory...");
+          $('#wait-modal').modal('show');
+        },
+        success: function(data)
+        {
+          console.log(data);
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          numNewSubcategoriesMadeInSession++;
+
+          let subcategoryRow = `
+                 <tr>
+                    <td>${data.name}</td>
+                        <td style="padding: 5px;">
+                            <button class="btn btn-outline-primary button-edit"
+                                    type="button" style="font-size: 15px;">
+                              <i class="far fa-edit"></i>
+                            </button>
+                        </td>
+                        <td style="padding: 5px;">
+                          <button class="btn btn-outline-primary button-edit"
+                                  type="button" style="font-size: 15px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                              <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                              <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                            </svg>
+                          </button>
+                        </td>
+                      </tr>
+          `;
+
+          let subcatTableId = $('#new-subcategory-input').data("subcat-table-id");
+          $("#subcategory-table-"+subcatTableId).append(subcategoryRow);
+
+          $('#success-modal-message').text("Successfully created new Subcategory - \"" + data['name'] + "\" for Parent Category - \"" + data['parent']['name'] + "\"");
+          $('#success-modal').modal('show');
+
+
+          fill_current_categories();
+        },
+        error: function(xhr) {
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          $('#failed-modal-message-header').text("Creation Failed");
+          var responseMessagesString = '';
+          let responseMessages = xhr.responseJSON['messages'];
+          for(let i = 0; i < responseMessages.length; i++){
+            responseMessagesString += ((i+1) + ". " + responseMessages[i]['message'] + "\n");
+          }
+          $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+          $('#failed-modal').modal('show');
+        }
+      });
+    }
+
+    var numNewParentCategoriesMadeInSession = 0;
+
+    function save_new_parent_category(){
+      const data = {
+        'name': $('#new-parent-category-input').val(),
+        'parentId': null
+      }
+
+      $.ajax({
+        type: "POST",
+        url: '/api/secured/categories',
+        contentType: "application/json",
+        data: JSON.stringify(data), // serializes the form's elements.
+        beforeSend: function(xhr) {
+          // xhr.setRequestHeader(
+          //         $('meta[name=_csrf_header]').attr('content'),
+          //         $('meta[name=_csrf]').attr('content')
+          // )
+          $('#create-new-parent-category-modal').modal('hide');
+          $('#confirm-parent-category-submit').modal('hide');
+
+          $('#wait-modal-title').text("Saving Parent Category...");
+          $('#wait-modal').modal('show');
+        },
+        success: function(data)
+        {
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          numNewParentCategoriesMadeInSession++;
+
+          let newAccordionItem = `
+                 <div class="accordion-item">
+                    <h2 class="accordion-header" id="panelsStayOpen-heading-dynamic-made-${numNewParentCategoriesMadeInSession}">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#panelsStayOpen-collapse-dynamic-made-${numNewParentCategoriesMadeInSession}"
+                            aria-expanded="true" aria-controls="panelsStayOpen-collapse-dynamic-made-${numNewParentCategoriesMadeInSession}"
+                            >${data.name}
+                        </button>
+                    </h2>
+                    <div id="panelsStayOpen-collapse-dynamic-made-${numNewParentCategoriesMadeInSession}"
+                         class="accordion-collapse collapse"
+                         aria-labelledby="panelsStayOpen-heading-dynamic-made-${numNewParentCategoriesMadeInSession}">
+                        <div class="accordion-body">
+                            <table>
+                                <tr>
+                                    <td>&#8226; No Subcategories</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <button
+                                            type="button" class="btn btn-primary" id="add-sub-cat-button"
+                                            onclick="enable_edit_mode(this)">+Add Subcategory</button>
+                                        <label for="new-subcategory-dynamic-made-${numNewParentCategoriesMadeInSession}""
+                                            class="form-label" style="display: none;">Enter New Name</label>
+                                        <input type="text" class="form-control"
+                                            data-parent-cat-id="${data.id}"
+                                            id="new-subcategory-dynamic-made-${numNewParentCategoriesMadeInSession}"
+                                            name="new-subcategory-dynamic-made-${numNewParentCategoriesMadeInSession}"
+                                            style="display: none;">
+                                        <br>
+                                        <button id="save-sub-cat-button-dynamic-made-${numNewParentCategoriesMadeInSession}"
+                                            type="button" class="btn btn-success submit-create-category"
+                                            onclick="save_new_subcategory(this)" style="display: none;"
+                                            data-bs-toggle="modal" data-bs-target="#confirm-category-submit">Save
+                                        </button>
+                                        <button id="discard-sub-cat-button-dynamic-made-${numNewParentCategoriesMadeInSession}"
+                                            type="button" class="btn btn-danger"
+                                            onclick="cancel_new_subcategory(this)" style="display: none">Cancel
+                                         </button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                 </div>
+          `;
+
+          $('#categoryAccordionPanels').append(newAccordionItem);
+
+          $('#success-modal-message').text("Successfully created new Parent Category - \"" + data['name'] + "\"");
+          $('#success-modal').modal('show');
+
+
+          fill_current_categories();
+
+
+        },
+        error: function(xhr) {
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          $('#failed-modal-message-header').text("Creation Failed");
+          var responseMessagesString = '';
+          let responseMessages = xhr.responseJSON['messages'];
+          for(let i = 0; i < responseMessages.length; i++){
+            responseMessagesString += ((i+1) + ". " + responseMessages[i]['message'] + "\n");
+          }
+          $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+          $('#failed-modal').modal('show');
+        }
+      });
+    }
+
+    // function cancel_new_subcategory(element) {
+    //   $(element).hide();
+    //   $(element).siblings().hide();
+    //   $(element).siblings('#add-sub-cat-button').show();
+    // }
+
+    /*
+    Clicking on the expand button, expands all groups
+    */
+    $('#expand-option').on('click', function() {
+      $('.accordion-button').removeClass('collpased');
+      $('.accordion-collapse').collapse('show');
+    });
+
+    /*
+    Clicking on the collapse button, collapses all groups
+    */
+    $('#collapse-option').on('click', function() {
+      $('.accordion-button').addClass('collpased');
+      $('.accordion-collapse').collapse('hide');
+    });
+
+    $('#edit-categories-modal-button').on('click', function() {
+      $('.accordion-button').removeClass('collpased');
+      $('.accordion-collapse').collapse('show');
+    });
+
+    // function display_new_category_details(){
+    //   $('#display-new-category-name').text($('#category-name').val());
+    //   $('#display-new-parent-category').text($('#current-categories option:selected').text());
+    // }
+    // $('#submit-create-category').click(display_new_category_details);
+
+    // $('#create-category-form').submit(
+    //         function (e) {
+    //           e.preventDefault();
+    //
+    //           const form = $(this);
+    //           const url = form.attr('action');
+    //           const data = {
+    //             'name': $('#category-name').val(),
+    //             'parentID': $('#current-categories option:selected').val()
+    //           }
+    //
+    //           $.ajax({
+    //             type: "POST",
+    //             url: url,
+    //             contentType: "application/json",
+    //             data: JSON.stringify(data), // serializes the form's elements.
+    //             beforeSend: function(xhr) {
+    //               xhr.setRequestHeader(
+    //                       $('meta[name=_csrf_header]').attr('content'),
+    //                       $('meta[name=_csrf]').attr('content')
+    //               )
+    //             },
+    //             success: function(data)
+    //             {
+    //               fill_current_categories();
+    //               $('#create-category-form-modal').modal('hide');
+    //               $('#confirm-category-submit').modal('hide');
+    //               $('#create-category-success-modal').modal('show');
+    //             },
+    //             error: function(xhr) {
+    //               $('#confirm-category-submit').modal('hide');
+    //               $('#create-product-group-fail-message').text("Error Message:\'"+ xhr.responseJSON.message +"\'")
+    //               $('#create-product-group-fail-modal').modal('show');
+    //             }
+    //           });
+    //         }
+    // );
 
     //End Categories
     //-----------------------------------------------------------------------------------------------------------------------
@@ -703,12 +1442,20 @@
       for(let i = 0; i < valueCombinations.length; i++){
         $('#finishProductsFormBody').append("<tr id='product-create"+(i+1)+"' data-attrids='"+idCombinations[i]+"'>" +
                 "            <td>"+valueCombinations[i].toString().replaceAll(" ", "/")+"</td>\n" +
-                //"            <div style=\"display: table-cell;\"><input id='product-file-input"+(i+1)+"' type=\"file\"></div>\n" +
+                "            <td><select id='product-image-select"+(i+1)+"' class='product-image-select'></select></td>\n" +
                 "            <td><input id='product-low-stock-limit-input"+(i+1)+"' class=\"lowStockLimitInput\" type=\"number\" min=\"0\" value=\"0\"></td>" +
                 "            <td><button type=\"button\" class=\"btn btn-danger rounded-pill text-decoration-none\" id='deleteVariant"+(i+1)+"' onclick='delete_variant("+(i+1)+")'>Disable</button></td>" +
                 "           </tr>");
       }
       $('#finishProductsForm').data("count", valueCombinations.length);
+      $('.product-image-select').each(function (i, obj) {
+        for(let i = 0; i < imageUrls.length; i++){
+          $(this).append($('<option>', {
+            value: imageUrls[i],
+            text : imageUrls[i]
+          }));
+        }
+      });
       $('#create-part-two').css("display", "");
       deleteTracker = [];
       //$('#create-part-one').css("display", "none");
@@ -982,7 +1729,6 @@
     };
 
     $('#create-product-group-form').on('input', function(e){
-      console.log(e);
       switch(e.target.id) {
         case 'name':
           checkName();
@@ -1061,7 +1807,7 @@
           attributes.push({ "ID": arrayOfAttrIDs[k]});
         }
         const product = {
-          //'imagePath': $('#imagepath').val(),
+          'imagePath': $('#product-image-select'+(j+1)).val(),
           'PGID': pgid,
           'lowStockLimit': $("#product-low-stock-limit-input"+(j+1)).val(),
           'attributes': attributes
@@ -1083,7 +1829,7 @@
           },
           success: function()
           {
-            $('#success-redirect').attr("href", "/management/product_group/update?id="+pgid)
+            $('#success-redirect').attr("href", "/management/product/update?id="+pgid)
             $('#wait-modal').modal('hide');
             $('#create-product-group-success-modal').modal('show');
           },
@@ -1243,8 +1989,76 @@
       }
     }
 
+    var imageUrls = [];
 
+    $("#image-upload").change(function(e){
+      //stop submit the form, we will post it manually.
+      e.preventDefault();
+
+      // Get form
+      var form = $('#file-upload-form')[0];
+
+      // Create an FormData object
+      var data = new FormData(form);
+
+      // If you want to add an extra field for the FormData
+      // data.append("CustomField", "This is some extra data, testing");
+
+      // disabled the submit button
+      $("#file-upload-form").prop("disabled", true);
+
+      $.ajax({
+        type: "POST",
+        enctype: 'multipart/form-data',
+        url: '/api/image',
+        data: data,
+        processData: false,
+        contentType: false,
+        cache: false,
+        timeout: 600000,
+        beforeSend: function(xhr) {
+          xhr.setRequestHeader(
+                  $('meta[name=_csrf_header]').attr('content'),
+                  $('meta[name=_csrf]').attr('content')
+          )
+        },
+        success: function (data) {
+
+          $("#image-upload-result").text("Success");
+          $("#image-upload-result").css('color', 'green');
+          $("#uploaded-images-container").css('display', 'flex');
+          console.log("SUCCESS : ", data);
+          $("#file-upload-form").prop("disabled", false);
+          const newImage = `
+                    <div style="flex: 1;">
+                        <img src="${data}" style="max-width: 100%; max-height: 300px;">
+                    </div>
+                `;
+          $("#uploaded-images-container").append(newImage);
+          $('.product-image-select').each(function () {
+            for(let i = 0; i < imageUrls.length; i++){
+              $(this).append($('<option>', {
+                value: data,
+                text : data
+              }));
+            }
+          });
+          imageUrls.push(data);
+
+        },
+        error: function (e) {
+          var failText = "Failed to Upload: "
+          $("#image-upload-result").text(failText.concat(e.responseText));
+          $("#image-upload-result").css('color', 'red');
+          console.log("ERROR : ", e);
+          $("#file-upload-form").prop("disabled", false);
+
+        }
+      });
+
+    });
   </script>
-<!--  <script th:src="@{/javascript/management/product/product_create.js}"></script>-->
+
+  <!--  <script th:src="@{/javascript/management/product/product_create.js}"></script>-->
 </div>
 </html>

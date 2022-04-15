@@ -1,5 +1,6 @@
 package ca.bgcengineering.promogearreworked.view.operator.product;
 
+import ca.bgcengineering.promogearreworked.api.categories.category.CategoryService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +11,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/management/product")
 public class ProductViewController {
 
+    private final CategoryService categoryService;
+
+    public ProductViewController(CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
+
     @GetMapping(path = {"", "view"})
     public String showViewProducts(Model model) {
         return "management_panel_pages/product/product_view";
@@ -17,6 +24,7 @@ public class ProductViewController {
 
     @GetMapping("/create")
     public String showCreateProduct(Model model){
+        model.addAttribute("categories", categoryService.getCategories());
         return "management_panel_pages/product/product_create";
     }
 
