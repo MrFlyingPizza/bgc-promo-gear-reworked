@@ -32,7 +32,7 @@ public class GeneralProductController {
     }
 
     @GetMapping
-    private GeneralProductBatchResponse getProductBatch(@QuerydslPredicate Predicate predicate,
+    private GeneralProductBatchResponse getProductBatch(@QuerydslPredicate(root = Product.class) Predicate predicate,
                                                         Pageable pageable,
                                                         @RequestParam(defaultValue = "false") Boolean paged) {
         if (!paged) {
