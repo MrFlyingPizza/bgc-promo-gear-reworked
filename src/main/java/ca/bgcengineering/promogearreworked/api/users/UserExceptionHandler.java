@@ -1,9 +1,6 @@
 package ca.bgcengineering.promogearreworked.api.users;
 
-import ca.bgcengineering.promogearreworked.api.users.exceptions.UserAuthenticationClaimInvalidException;
-import ca.bgcengineering.promogearreworked.api.users.exceptions.UserCartItemNotFoundException;
-import ca.bgcengineering.promogearreworked.api.users.exceptions.UserNotAuthenticatedException;
-import ca.bgcengineering.promogearreworked.api.users.exceptions.UserNotFoundException;
+import ca.bgcengineering.promogearreworked.api.users.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -34,6 +31,12 @@ public class UserExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     private String handleUserCartItemNotFound(UserCartItemNotFoundException exception) {
         return "User cart item could not be found.";
+    }
+
+    @ExceptionHandler(GraphUserNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    private String handleGraphUserNotFound(GraphUserNotFoundException exception) {
+        return "No such user found in active directory.";
     }
 
 }

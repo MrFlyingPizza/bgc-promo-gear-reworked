@@ -1,13 +1,13 @@
 package ca.bgcengineering.promogearreworked.api.products.product.general;
 
 import ca.bgcengineering.promogearreworked.api.products.product.ProductService;
-import ca.bgcengineering.promogearreworked.api.products.product.general.dto.GeneralProductMapper;
 import ca.bgcengineering.promogearreworked.persistence.entities.Product;
+import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-
-import java.util.List;
 
 @Service
 @Validated
@@ -15,14 +15,13 @@ import java.util.List;
 public class GeneralProductHandlerService {
 
     private final ProductService productService;
-    private final GeneralProductMapper mapper;
 
     Product handleProductGet(Long productId) {
         return productService.getProduct(productId);
     }
 
-    List<Product> handleProductBatchGet() {
-        return productService.getProducts();
+    Page<Product> handleProductBatchGet(Predicate predicate, Pageable pageable) {
+        return productService.getProducts(predicate, pageable);
     }
 
 }

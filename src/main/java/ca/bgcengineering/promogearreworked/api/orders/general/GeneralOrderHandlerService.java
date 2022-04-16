@@ -4,6 +4,8 @@ import ca.bgcengineering.promogearreworked.api.inventorylevels.globalinventoryle
 import ca.bgcengineering.promogearreworked.api.orders.aspects.orderpartitioning.ItemPartitions;
 import ca.bgcengineering.promogearreworked.api.orders.aspects.orderpartitioning.OrderQuantityProcessor;
 import ca.bgcengineering.promogearreworked.api.orders.general.dto.GeneralOrderCreate;
+import ca.bgcengineering.promogearreworked.api.users.cartitem.CartItemService;
+import ca.bgcengineering.promogearreworked.api.users.user.UserService;
 import ca.bgcengineering.promogearreworked.persistence.entities.GlobalInventoryLevel;
 import ca.bgcengineering.promogearreworked.persistence.entities.Order;
 import ca.bgcengineering.promogearreworked.api.orders.OrderService;
@@ -65,6 +67,13 @@ public class GeneralOrderHandlerService {
 
     @Transactional
     List<Order> handleOrderCreate(@Valid GeneralOrderCreate orderCreate) {
+//        // empty the cart of the submitter
+//        cartItemService.deleteCartItems(orderCreate.getSubmitterId());
+//        // deduct credit through user update
+//        userService.updateUser(orderCreate.getSubmitterId(), orderCreate.getTotalCost(), (deductedCredit, target) -> {
+//            target.setCredit(target.getCredit().subtract(deductedCredit));
+//            return target;
+//        });
         return splitOrder(orderCreate).stream().map(order -> service.createOrder(order, mapper::fromCreate))
                 .collect(Collectors.toList());
     }

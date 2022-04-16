@@ -1,13 +1,27 @@
 import {ICartItem} from "./ICartItem";
-import {Container} from "@mui/material";
-import {grey} from "@mui/material/colors";
+import {Box, Button, Container, List, ListItem, ListItemText, Paper, Typography} from "@mui/material";
 import * as React from "react";
+import {useState} from "react";
+import {grey} from "@mui/material/colors";
 
 function CartSummary(props: {items: ICartItem[]}) {
-    return (
-        <Container sx={{backgroundColor: grey[200], minHeight: "100px"}}>
 
-        </Container>
+    const [items, setItems] = useState<ICartItem[]>(props.items);
+
+    const summaryItems = items.map(item => {
+        return (<ListItemText key={item.variant.id} primary={item.product.name} secondary={item.quantity}/>);
+    });
+
+    return (
+        <Paper elevation={2}>
+            <Container sx={{minHeight: "100px"}}>
+                <List>{summaryItems}
+                    <ListItem>
+                        <Button variant={"contained"}>Continue</Button>
+                    </ListItem>
+                </List>
+            </Container>
+        </Paper>
     );
 }
 

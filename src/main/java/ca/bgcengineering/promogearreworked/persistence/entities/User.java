@@ -35,6 +35,9 @@ public class User {
     @Column(name = "display_name", length = 256)
     private String displayName;
 
+    @Column(name = "email", length = 320)
+    private String email;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "office_id")
     private OfficeLocation location;

@@ -4,11 +4,12 @@ import ca.bgcengineering.promogearreworked.api.products.exceptions.ProductNotFou
 import ca.bgcengineering.promogearreworked.api.products.product.ProductService;
 import ca.bgcengineering.promogearreworked.api.products.product.secured.dto.*;
 import ca.bgcengineering.promogearreworked.persistence.entities.Product;
+import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,9 +36,13 @@ public class SecuredProductController {
     }
 
     @GetMapping
-    private SecuredProductBatchResponse getProductBatch() {
-        List<Product> result = handlerService.handleProductBatchGet();
-        return mapper.toBatchResponse(result);
+    private SecuredProductBatchResponse getProductBatch(@QuerydslPredicate(root = Product.class) Predicate predicate,
+                                                        Pageable pageable,
+                                                        @RequestParam(defaultValue = "false") Boolean paged) {
+        if (!paged) {
+            pageable = Pageable.unpaged();
+        }
+        return mapper.toBatchResponse(handlerService.handleProductBatchGet(predicate, pageable));
     }
 
     @PatchMapping("/{productId}")

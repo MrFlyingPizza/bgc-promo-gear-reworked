@@ -2,6 +2,7 @@ package ca.bgcengineering.promogearreworked.api.users.user.secured.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -25,5 +26,8 @@ public class SecuredUserResponse {
     private final Instant lastBigItemDate;
     private final String displayName;
     private final NestedOfficeLocation location;
+
+    @Setter
+    private String email;
 
 }

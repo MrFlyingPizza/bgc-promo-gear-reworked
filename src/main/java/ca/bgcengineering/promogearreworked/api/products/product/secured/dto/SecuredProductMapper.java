@@ -5,8 +5,8 @@ import ca.bgcengineering.promogearreworked.persistence.repositories.CategoryRepo
 import ca.bgcengineering.promogearreworked.persistence.repositories.OptionRepository;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
@@ -57,8 +57,15 @@ public abstract class SecuredProductMapper {
 
     public abstract SecuredProductResponse toResponse(Product product);
 
-    public SecuredProductBatchResponse toBatchResponse(List<Product> products) {
-        return new SecuredProductBatchResponse(products.stream().map(this::toResponse).collect(Collectors.toList()));
+    public SecuredProductBatchResponse toBatchResponse(Page<Product> page) {
+        return new SecuredProductBatchResponse(page.getContent().stream().map(this::toResponse).collect(Collectors.toList()),
+                page.getTotalPages(),
+                page.getNumber(),
+                page.isFirst(),
+                page.isLast(),
+                page.getNumberOfElements(),
+                page.getTotalElements(),
+                page.getSort().isSorted());
     }
 
     @AfterMapping

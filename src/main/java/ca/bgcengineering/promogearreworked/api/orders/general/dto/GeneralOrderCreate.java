@@ -90,7 +90,7 @@ public class GeneralOrderCreate {
     private List<@Waitlistable NestedOrderItem> items;
 
     @JsonIgnore
-    @Setter
+    @Setter // TODO: 2022-04-12 add validation for this
     private BigDecimal totalCost;
 
     @JsonCreator

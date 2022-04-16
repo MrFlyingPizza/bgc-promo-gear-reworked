@@ -5,11 +5,14 @@ import ca.bgcengineering.promogearreworked.persistence.entities.Option;
 import ca.bgcengineering.promogearreworked.persistence.entities.Product;
 import ca.bgcengineering.promogearreworked.persistence.repositories.ProductRepository;
 import ca.bgcengineering.promogearreworked.persistence.repositories.ProductVariantRepository;
+import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -31,8 +34,9 @@ public class ProductService {
         return repo.findById(productId).orElseThrow(ProductNotFoundException::new);
     }
 
-    public List<Product> getProducts() {
-        return repo.findAll();
+    @Transactional
+    public Page<Product> getProducts(Predicate predicate, Pageable pageable) {
+        return repo.findAll(predicate, pageable);
     }
 
     public <T> Product createProduct(T source, Function<T, Product> mapper) {

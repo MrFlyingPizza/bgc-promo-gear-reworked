@@ -6,8 +6,8 @@ import ca.bgcengineering.promogearreworked.persistence.entities.ProductVariant;
 import org.mapstruct.BeforeMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.data.domain.Page;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
@@ -15,8 +15,15 @@ public abstract class GeneralProductMapper {
 
     public abstract GeneralProductResponse toResponse(Product product);
 
-    public GeneralProductBatchResponse toBatchResponse(List<Product> products) {
-        return new GeneralProductBatchResponse(products.stream().map(this::toResponse).collect(Collectors.toList()));
+    public GeneralProductBatchResponse toBatchResponse(Page<Product> page) {
+        return new GeneralProductBatchResponse(page.getContent().stream().map(this::toResponse).collect(Collectors.toList()),
+                page.getTotalPages(),
+                page.getNumber(),
+                page.isFirst(),
+                page.isLast(),
+                page.getNumberOfElements(),
+                page.getTotalElements(),
+                page.getSort().isSorted());
     }
 
     // only include valid product variants
