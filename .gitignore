@@ -33,3 +33,5 @@ hs_err_pid*
 /.idea/modules.xml
 /.idea/vcs.xml
 /.idea/dataSources.local.xml
+/target/
+/.idea/dataSources.xml
