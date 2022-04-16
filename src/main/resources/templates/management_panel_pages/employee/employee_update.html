@@ -11,41 +11,52 @@
         Return to Employees
     </button>
 
-    <p class="text-center">Note: Only fill in the fields you like to be changed.</p>
-<!--    <p class="text-center" id="ifNoLocations" style="display: none; color: red;">-->
-<!--        There are no locations in the database.-->
-<!--        Please make one before editing an employee-->
-<!--        as all employees MUST be assigned to a location.-->
-<!--    </p>-->
+    <!--  Displaying locations in a table  -->
+    <div class="card shadow" style="margin: 20px;">
+        <div class="card-header py-3" style="background: rgb(248,248,252);">
+            <p class="m-0 fw-bold" style="color: #36366f;">User Update</p>
+        </div>
+        <div class="card-body">
 
-    <div class="container mt-5">
-        <!--   Form to update employee     -->
-        <form th:action="'/management/api/employee/'+${employee?.getID()}" method="post" class="row g-3" id="update-employee-form">
-            <div class="col-md-6">
-                <label for="credit" class="form-label">Credit:</label>
-                <input type="number" step=".01" class="form-control" id="credit" name="credit" th:placeholder="${employee?.getCredit()}">
-            </div>
-<!--            <div class="col-md-6">-->
-<!--                <label for="location" class="form-label">Location:</label>-->
-<!--                <select name="location" id="location" class="form-select" required>-->
+        <p class="text-center">Note: Only fill in the fields you like to be changed.</p>
+    <!--    <p class="text-center" id="ifNoLocations" style="display: none; color: red;">-->
+    <!--        There are no locations in the database.-->
+    <!--        Please make one before editing an employee-->
+    <!--        as all employees MUST be assigned to a location.-->
+    <!--    </p>-->
 
-<!--                </select>-->
-<!--            </div>-->
-            <div class="col-md-6">
-                <label for="last-big-item-timestamp" class="form-label">Last Big Item Timestamp:</label>
-                <input type="datetime-local" class="form-control" id="last-big-item-timestamp" name="last-big-item-timestamp">
-                <p th:text="'Old Value: ' + ${employee?.getLastBigItemTimeStamp()}"></p>
-            </div>
-            <div class="col-md-12">
-                <!-- Update Employee Button -->
-                <input class="btn btn-outline-primary" id="submit-update-employee" type="button"
-                       th:attr="onclick=|get_currently_stored_employee('${employee?.getID()}')|" value="Submit Update" disabled>
-                <!-- Delete Employee Button -->
-                <input class="btn btn-outline-primary" id="submit-delete-employee" type="button" value="Delete"
-                       data-bs-toggle="modal" data-bs-target="#confirm-employee-delete-modal">
-            </div>
+        <div class="container mt-5">
+            <!--   Form to update employee     -->
+            <form th:action="'/management/api/employee/'+${employee?.getID()}" method="post" class="row g-3" id="update-employee-form">
+                <div class="col-md-6">
+                    <label for="credit" class="form-label">Credit:</label>
+                    <input type="number" step=".01" class="form-control" id="credit" name="credit" th:placeholder="${employee?.getCredit()}">
+                </div>
+    <!--            <div class="col-md-6">-->
+    <!--                <label for="location" class="form-label">Location:</label>-->
+    <!--                <select name="location" id="location" class="form-select" required>-->
 
-            <!-- Show the user a popup modal allowing them to confirm the info they are trying to submit -->
+    <!--                </select>-->
+    <!--            </div>-->
+                <div class="col-md-6">
+                    <label for="last-big-item-timestamp" class="form-label">Last Big Item Timestamp:</label>
+                    <input type="datetime-local" class="form-control" id="last-big-item-timestamp" name="last-big-item-timestamp">
+                    <p th:text="'Old Value: ' + ${employee?.getLastBigItemTimeStamp()}"></p>
+                </div>
+                <div class="col-md-12">
+                    <!-- Update Employee Button -->
+                    <input class="btn btn-outline-primary" id="submit-update-employee" type="button"
+                           th:attr="onclick=|get_currently_stored_employee('${employee?.getID()}')|" value="Submit Update" disabled>
+                    <!-- Delete Employee Button -->
+                    <input class="btn btn-outline-primary" id="submit-delete-employee" type="button" value="Delete"
+                           data-bs-toggle="modal" data-bs-target="#confirm-employee-delete-modal">
+                </div>
+
+        </div>
+    </div>
+
+
+        <!-- Show the user a popup modal allowing them to confirm the info they are trying to submit -->
             <div class="modal fade" id="confirm-employee-update-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
