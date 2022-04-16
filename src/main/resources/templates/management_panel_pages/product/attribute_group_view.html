@@ -1,0 +1,107 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{management_panel_layout.html}">
+<head>
+  <title>Attributes</title>
+</head>
+<div layout:fragment="content">
+  <!--  Heading  -->
+  <h2>Attributes</h2>
+
+  <button class="btn btn-outline-primary" onclick="location.href='/management/product_group'">
+    Return to Products
+  </button>
+
+  <button class="btn btn-outline-primary" onclick="location.href='/management/attribute_group/create'">
+    Create a New Attribute
+  </button>
+
+  <!--  Displaying attribute groups in a table  -->
+  <div class="card shadow" style="margin: 20px;">
+    <div class="card-header py-3" style="background: rgb(248,248,252);">
+      <p class="m-0 fw-bold" style="color: #36366f;">Attributes Edit</p>
+    </div>
+    <div class="card-body">
+
+      <div id="length_search_row" class="row">
+        <div id="length_input" class="col-sm-12 col-md-5"></div>
+        <div id="search_input" class="col-sm-12 col-md-7"></div>
+
+      </div>
+
+      <div class="d-flex flex-row flex-wrap table-bar">
+        <div class="filter-buttons">
+          <div class="filter-label" style="font-size: 11px;"><span style="font-size: inherit;">Type:</span></div>
+          <button class="btn btn-outline-primary btn-sm button-filter" id="filter-1" type="button">Offices Only</button>
+          <button class="btn btn-outline-primary btn-sm button-filter" id="filter-2" type="button">Non-Offices Only</button>
+        </div>
+        <div class="filter-buttons">
+          <div class="filter-label" style="font-size: 11px;"><span style="font-size: inherit;">Type:</span></div><select class="form-select form-select-sm select-filter">
+          <optgroup label="Types of Locations">
+            <option value="1" selected="">All Locations</option>
+            <option value="2">Offices Only</option>
+            <option value="3">Non-Offices Only</option>
+          </optgroup>
+        </select>
+        </div>
+        <div class="filter-buttons">
+          <div class="filter-label" style="font-size: 11px;"><span style="font-size: inherit;">Type:</span></div>
+          <div class="d-flex flex-wrap"><div class="radio-buttons"><input type="radio" class="btn-check" name="options" id="option1" autocomplete="off" checked/><label class="btn btn-outline-primary button-filter" for="option1">All</label></div><div class="radio-buttons"><input type="radio" class="btn-check" name="options" id="option2" autocomplete="off" /><label class="btn btn-outline-primary button-filter" for="option2">Offices Only</label></div><div class="radio-buttons"><input type="radio" class="btn-check" name="options" id="option3" autocomplete="off" /><label class="btn btn-outline-primary button-filter" for="option3">Non-Offices Only</label></div></div>
+        </div>
+      </div>
+      <div class="table-responsive table mt-2" id="dataTable-1" role="grid" aria-describedby="dataTable_info">
+        <table class="table my-0" id="dataTable">
+          <thead>
+          <tr>
+            <th scope="col">Attribute ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Edit</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="attributeGroup : ${attributeGroups}">
+            <th scope="row" th:text="${attributeGroup?.getID()} ?: 'N/A'"></th>
+            <td th:text="${attributeGroup?.getName()} ?: 'N/A'"></td>
+            <td style="padding: 5px;">
+              <a th:href="'/management/attribute_group/update?id='+${attributeGroup?.getID()}">
+                <button class="btn btn-outline-primary button-edit" type="button" style="font-size: 15px;">
+                  <i class="far fa-edit"></i>
+                </button>
+              </a>
+            </td>
+          </tr>
+          </tbody>
+          <tfoot>
+          <tr>
+            <td><strong>Attribute ID</strong></td>
+            <td><strong>Name</strong></td>
+            <td><strong>Edit</strong></td>
+          </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+    <div th:if="${#lists.isEmpty(attributeGroups)}">
+      No Existing Attributes
+    </div>
+
+  <script>
+    $(document).ready( function () {
+
+      //Using DataTable
+      var table = $('#dataTable').DataTable( {
+
+        "lengthMenu": [ [15, 25, 50, 100, -1], [15, 25, 50, 100, "All"] ],
+        language : {
+          sLengthMenu: "Show&nbsp _MENU_", // changing label for page length filter
+          search: "_INPUT_",               // changing label for search filter
+          searchPlaceholder: "Search..."   // changing search filter placeholder
+        }
+      } );
+      $('#dataTable_filter').appendTo('#search_input'); // adding search filter to div
+      $('#dataTable_length').appendTo('#length_input'); // adding length filter to div
+      $('#dataTable_wrapper').find('div:first').remove(); //remove empty row holding previous filters
+
+    } );
+  </script>
+</div>
+</html>

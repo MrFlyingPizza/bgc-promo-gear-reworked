@@ -6,8 +6,10 @@ import com.example.bgcpromogearreworked.persistence.entities.InventoryLevelId;
 import com.example.bgcpromogearreworked.persistence.repositories.InventoryLevelRepository;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.function.BiFunction;
@@ -23,20 +25,30 @@ public class InventoryLevelService {
         return inventoryLevelRepo.existsById(new InventoryLevelId(locationId, variantId));
     }
 
+    @Transactional
     public InventoryLevel getInventoryLevel(Long locationId, Long variantId) {
         assert locationId != null && variantId != null;
         return inventoryLevelRepo.findById(new InventoryLevelId(locationId, variantId)).orElseThrow();
     }
 
+    @Transactional
     public List<InventoryLevel> getInventoryLevels() {
         return inventoryLevelRepo.findAll();
     }
 
+    @Transactional
     public Page<InventoryLevel> getInventoryLevels(Predicate predicate, Pageable pageable) {
         assert predicate != null && pageable != null;
         return inventoryLevelRepo.findAll(predicate, pageable);
     }
 
+    @Transactional
+    public Page<InventoryLevel> getInventoryLevels(Long locationId, Pageable pageable) {
+        assert locationId != null && pageable != null;
+        return inventoryLevelRepo.findAllByLocationId(locationId, pageable);
+    }
+
+    @Transactional
     public <T> InventoryLevel updateInventoryLevel(Long locationId,
                                                    Long variantId,
                                                    T source,

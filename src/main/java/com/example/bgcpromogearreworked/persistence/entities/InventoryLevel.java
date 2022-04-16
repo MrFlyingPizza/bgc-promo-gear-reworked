@@ -12,30 +12,34 @@ import java.time.Instant;
 @Setter
 @IdClass(InventoryLevelId.class)
 public class InventoryLevel {
-    @Id
-    @Column(name = "variant_id", updatable = false, insertable = false)
-    private Long variantId;
 
     @Id
-    @Column(name = "location_id", updatable = false, insertable = false)
+    @Column(name = "location_id", nullable = false)
     private Long locationId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "variant_id", nullable = false)
+    @Id
+    @Column(name = "variant_id", nullable = false)
+    private Long variantId;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "variant_id", nullable = false, updatable = false, insertable = false)
     private ProductVariant variant;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "location_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "location_id", nullable = false, updatable = false, insertable = false)
     private OfficeLocation location;
 
-    @Column(name = "available_quantity", nullable = false)
-    private Integer availableQuantity;
+    @Column(name = "available_quantity", nullable = false) // TODO: 2022-04-03 look into making configs for these values
+    private Integer availableQuantity = 0;
 
     @Column(name = "reserved_quantity", nullable = false)
-    private Integer reservedQuantity;
+    private Integer reservedQuantity = 0;
+
+    @Column(name = "needed_quantity", nullable = false)
+    private Integer neededQuantity = 0;
 
     @Column(name = "notify_threshold", nullable = false)
-    private Integer notifyThreshold;
+    private Integer notifyThreshold = 0;
 
     @Column(name = "last_manually_modified_date")
     private Instant lastManuallyModifiedDate;

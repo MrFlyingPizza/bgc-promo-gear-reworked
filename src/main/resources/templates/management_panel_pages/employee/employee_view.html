@@ -1,0 +1,143 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{management_panel_layout.html}">
+<head>
+    <title>Employees</title>
+</head>
+<div layout:fragment="content">
+    <!--  Heading  -->
+    <h2>Employees</h2>
+
+
+    <!--  Displaying employees in a table  -->
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-light">
+            <th scope="col">First Name</th>
+            <th scope="col">Last Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Credit</th>
+            <th scope="col">Role</th>
+            <th scope="col">Last Big Item Purchase</th>
+            <th scope="col">Location</th>
+            </thead>
+            <tbody>
+            <tr th:each="employee : ${employees}">
+                <td th:text="${employee?.getfName()} ?: 'N/A'"></td>
+                <td th:text="${employee?.getlName()} ?: 'N/A'"></td>
+                <td th:text="${employee?.getEmail()} ?: 'N/A'"></td>
+                <td th:text="${employee?.getCredit() != null} ? '$' + ${#numbers.formatDecimal(employee?.getCredit(), 0, 'COMMA', 2, 'POINT')} : 'N/A'"></td>
+                <td th:switch="${employee?.getUserRole()}">
+                    <p th:case="0">None</p>
+                    <p th:case="1">Fulfiller</p>
+                    <p th:case="2">Admin</p>
+                    <p th:case="*">N/A</p>
+                </td>
+                <td th:text="${employee?.getLastBigItemTimeStamp()} ?: 'N/A'"></td>
+                <td th:text="${employee?.getLocation()?.getName()} ?: 'N/A'"></td>
+                <td>
+                    <a class="btn btn-primary rounded-pill text-decoration-none" th:href="'/management/employee/update?id='+${employee?.getID()}">EDIT</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:if="${#lists.isEmpty(employees)}">
+        No Existing Employees
+    </div>
+
+<!--  THE NEW BOOTSTRAP TABLE. (Yet to be properly formatted and made function with JS)  -->
+<!--    <div class="card shadow" style="margin: 15px;">-->
+<!--        <div class="card-header py-3" style="background: rgb(248,248,252);">-->
+<!--            <p class="m-0 fw-bold" style="color: #36366f;">Location Info</p>-->
+<!--        </div>-->
+<!--        <div class="card-body">-->
+<!--            <div class="d-flex flex-row justify-content-between flex-wrap table-bar">-->
+<!--                <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable" style="width: 265.438px;"><label class="form-label d-flex align-items-center">Show&nbsp;<select class="d-inline-block form-select form-select-sm" style="width: fit-content;">-->
+<!--                    <option value="10" selected="">10</option>-->
+<!--                    <option value="25">25</option>-->
+<!--                    <option value="50">50</option>-->
+<!--                    <option value="100">100</option>-->
+<!--                </select>&nbsp;</label></div>-->
+<!--                <div class="text-md-end dataTables_filter" id="dataTable_filter"><label class="form-label"><input type="search" class="form-control form-control-sm" aria-controls="dataTable" placeholder="Search"></label></div>-->
+<!--            </div>-->
+<!--            <div class="d-flex flex-row flex-wrap table-bar">-->
+<!--                <div class="filter-buttons">-->
+<!--                    <div class="filter-label" style="font-size: 11px;"><span style="font-size: inherit;">Type:</span></div><button class="btn btn-outline-primary btn-sm button-filter" id="filter-1" type="button">Offices Only</button><button class="btn btn-outline-primary btn-sm button-filter" id="filter-2" type="button">Non-Offices Only</button>-->
+<!--                </div>-->
+<!--                <div class="filter-buttons">-->
+<!--                    <div class="filter-label" style="font-size: 11px;"><span style="font-size: inherit;">Type:</span></div>-->
+<!--                    <select class="form-select form-select-sm select-filter">-->
+<!--                        <optgroup label="Types of Locations">-->
+<!--                            <option value="1" selected="">All Locations</option>-->
+<!--                            <option value="2">Offices Only</option>-->
+<!--                            <option value="3">Non-Offices Only</option>-->
+<!--                        </optgroup>-->
+<!--                    </select>-->
+<!--                </div>-->
+<!--                <div class="filter-buttons">-->
+<!--                    <div class="filter-label" style="font-size: 11px;"><span style="font-size: inherit;">Type:</span></div>-->
+<!--                    <div class="d-flex flex-wrap"><div class="radio-buttons"><input type="radio" class="btn-check" name="options" id="option1" autocomplete="off" checked/><label class="btn btn-outline-primary button-filter" for="option1">All</label></div><div class="radio-buttons"><input type="radio" class="btn-check" name="options" id="option2" autocomplete="off" /><label class="btn btn-outline-primary button-filter" for="option2">Offices Only</label></div><div class="radio-buttons"><input type="radio" class="btn-check" name="options" id="option3" autocomplete="off" /><label class="btn btn-outline-primary button-filter" for="option3">Non-Offices Only</label></div></div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="table-responsive table mt-2" id="dataTable-1" role="grid" aria-describedby="dataTable_info">-->
+<!--                <table class="table my-0" id="dataTable">-->
+<!--                    <thead>-->
+<!--                    <tr>-->
+<!--                        <th>Location Name</th>-->
+<!--                        <th>Address Line 1</th>-->
+<!--                        <th>Line 2</th>-->
+<!--                        <th>City</th>-->
+<!--                        <th>Province</th>-->
+<!--                        <th>Postal Code</th>-->
+<!--                        <th>Country</th>-->
+<!--                        <th>Is Office?</th>-->
+<!--                        <th>Edit</th>-->
+<!--                    </tr>-->
+<!--                    </thead>-->
+<!--                    <tbody>-->
+<!--                    <tr>-->
+<!--                        <td>Vancouver Office</td>-->
+<!--                        <td>980 Howe Street<br></td>-->
+<!--                        <td>Suite 500<br></td>-->
+<!--                        <td>Vancouver</td>-->
+<!--                        <td>BC</td>-->
+<!--                        <td>V6Z 0C8</td>-->
+<!--                        <td>Canada</td>-->
+<!--                        <td>Y</td>-->
+<!--                        <td style="padding: 5px;"><button class="btn btn-outline-primary button-edit" type="button" style="font-size: 15px;"><i class="far fa-edit"></i></button></td>-->
+<!--                    </tr>-->
+<!--                    </tbody>-->
+<!--                    <tfoot>-->
+<!--                    <tr>-->
+<!--                        <td><strong>Location Name</strong></td>-->
+<!--                        <td><strong>Address Line 1</strong></td>-->
+<!--                        <td><strong>Line 2</strong></td>-->
+<!--                        <td><strong>City</strong></td>-->
+<!--                        <td><strong>Province</strong></td>-->
+<!--                        <td><strong>Postal Code</strong></td>-->
+<!--                        <td><strong>Country</strong></td>-->
+<!--                        <td><strong>Is Office?</strong></td>-->
+<!--                        <td><strong>Edit</strong></td>-->
+<!--                    </tr>-->
+<!--                    </tfoot>-->
+<!--                </table>-->
+<!--            </div>-->
+<!--            <div class="row">-->
+<!--                <div class="col-md-6 align-self-center">-->
+<!--                    <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing 1 to 10 of 27</p>-->
+<!--                </div>-->
+<!--                <div class="col-md-6">-->
+<!--                    <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers">-->
+<!--                        <ul class="pagination">-->
+<!--                            <li class="page-item disabled"><a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">«</span></a></li>-->
+<!--                            <li class="page-item active"><a class="page-link" href="#">1</a></li>-->
+<!--                            <li class="page-item"><a class="page-link" href="#">2</a></li>-->
+<!--                            <li class="page-item"><a class="page-link" href="#">3</a></li>-->
+<!--                            <li class="page-item"><a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">»</span></a></li>-->
+<!--                        </ul>-->
+<!--                    </nav>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+</div>
+</html>

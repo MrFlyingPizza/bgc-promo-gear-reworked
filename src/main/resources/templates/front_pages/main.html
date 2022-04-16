@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{front_layout.html}">
+<head>
+    <title>Main</title>
+</head>
+
+<div layout:fragment="content">
+    <div style="position: relative;height: 500px;">
+        <div class="d-flex justify-content-center align-items-center" style="position: absolute;height: 100%;width: 100%;">
+            <div class="d-flex flex-column align-items-start container" id="slide-card">
+                <h1 class="display-5 pb-3" style="font-family: Montserrat, sans-serif;font-weight: bold;color: rgb(255,255,255);text-shadow: 0 0 5px rgb(0 0 0 / 30%);text-transform: uppercase;">BGC ENGINEERING SWAG, GEAR AND ACCESSORIES</h1><a class="btn btn-outline-light button-large" role="button" href="/store">Browse Products Now</a>
+            </div>
+        </div>
+        <div class="carousel slide" data-bs-ride="carousel" data-bs-interval="7500" id="carousel-1" style="filter: brightness(60%);height: 100%;">
+            <div class="carousel-inner d-md-flex align-items-md-center" style="height: 100%;object-fit: cover;">
+                <div class="carousel-item active" style="height: 100%;"><img class="w-100 d-block" alt="Slide Image" th:src="@{/images/Temporary/office_interior.jpg}" style="height: 100%;object-fit: cover;"></div>
+                <div class="carousel-item" style="height: 100%;"><img class="w-100 d-block" alt="Slide Image" th:src="@{/images/Temporary/SSDG_BGC0325-2048x1365.jpg}" style="height: 100%;object-fit: cover;"></div>
+                <div class="carousel-item" style="height: 100%;"><img class="w-100 d-block" alt="Slide Image" th:src="@{/images/Temporary/SSDG_BGC0429-2048x1362.jpg}" style="height: 100%;object-fit: cover;"></div>
+            </div>
+            <div>
+                <!-- Start: Previous --><a class="carousel-control-prev" href="#carousel-1" role="button" data-bs-slide="prev"><span class="carousel-control-prev-icon"></span><span class="visually-hidden">Previous</span></a><!-- End: Previous -->
+                <!-- Start: Next --><a class="carousel-control-next" href="#carousel-1" role="button" data-bs-slide="next"><span class="carousel-control-next-icon"></span><span class="visually-hidden">Next</span></a><!-- End: Next -->
+            </div>
+            <ol class="carousel-indicators">
+                <li data-bs-target="#carousel-1" data-bs-slide-to="0" class="active"></li>
+                <li data-bs-target="#carousel-1" data-bs-slide-to="1"></li>
+                <li data-bs-target="#carousel-1" data-bs-slide-to="2"></li>
+            </ol>
+        </div>
+    </div>
+    <div>
+        <!-- Start: Features Boxed -->
+        <section class="features-boxed" style="background: rgba(255,255,255,0);">
+            <div class="container">
+                <!-- Start: Features -->
+                <div class="row justify-content-center features">
+                    <div class="col-sm-6 col-md-5 col-lg-4 item" style="height: auto;">
+                        <div class="d-flex flex-column justify-content-between align-items-center box" style="height: 90%;padding: 15px;background: rgba(255,255,255,0);">
+                            <div><i class="fa fa-shield icon" style="margin-top: 10px;margin-bottom: 20px;"></i>
+                                <h3 class="name" style="margin-bottom: 6px;color: #313437;font-family: Poppins, sans-serif;">Warranty</h3>
+                                <p class="description">Problem with an item? Most of the products have robust warranty programs. View our warranty guidelines and submit a warranty form!</p>
+                            </div><a class="btn button-card" role="button" href="/warranty">Submit a warranty form →</a>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-5 col-lg-4 item" style="height: auto;">
+                        <div class="d-flex flex-column justify-content-between align-items-center box" style="height: 90%;padding: 15px;background: rgba(255,255,255,0);">
+                            <div><i class="fas fa-hand-holding-heart icon" style="margin-top: 10px;margin-bottom: 20px;"></i>
+                                <h3 class="name" style="margin-bottom: 6px;font-family: Poppins, sans-serif;">Product Care</h3>
+                                <p class="description">Learn the best way to take care of your new gear to avoid wear and tear.</p>
+                            </div><a class="btn btn-outline-dark button-card" role="button" href="/product_care">Learn more →</a>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-5 col-lg-4 item" style="height: auto;">
+                        <div class="d-flex flex-column justify-content-between align-items-center box" style="height: 90%;padding: 15px;background: rgba(255,255,255,0);">
+                            <div><i class="fas fa-clipboard-list icon" style="margin-top: 10px;margin-bottom: 20px;"></i>
+                                <h3 class="name" style="margin-bottom: 6px;font-family: Poppins, sans-serif;">Guidelines</h3>
+                                <p class="description">Please review our guidelines before checking out your request for promotional gear.</p>
+                            </div><a class="btn btn-outline-dark button-card" role="button" href="/guidelines">Review guidelines →</a>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-5 col-lg-4 item" style="height: auto;">
+                        <div class="d-flex flex-column justify-content-between align-items-center box" style="height: 90%;padding: 15px;background: rgba(255,255,255,0);">
+                            <div><i class="fa fa-question-circle-o icon" style="margin-top: 10px;margin-bottom: 20px;"></i>
+                                <h3 class="name" style="margin-bottom: 6px;font-family: Poppins, sans-serif;">FAQ</h3>
+                                <p class="description">Have a question or need assistance? View our frequently asked questions.</p>
+                            </div><a class="btn btn-outline-dark button-card" role="button" href="/faq">Find your answer →</a>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-5 col-lg-4 item" style="height: auto;">
+                        <div class="d-flex flex-column justify-content-between align-items-center box" style="height: 90%;padding: 15px;background: rgba(255,255,255,0);">
+                            <div><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-box-seam icon" style="margin-top: 10px;margin-bottom: 20px;">
+                                <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2l-2.218-.887zm3.564 1.426L5.596 5 8 5.961 14.154 3.5l-2.404-.961zm3.25 1.7-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"></path>
+                            </svg>
+                                <h3 class="name" style="margin-bottom: 6px;font-family: Poppins, sans-serif;">My Orders</h3>
+                                <p class="description">View past or current orders and their statuses.</p>
+                            </div><a class="btn btn-outline-dark button-card" role="button" href="#">View orders →</a>
+                        </div>
+                    </div>
+                </div><!-- End: Features -->
+            </div>
+        </section><!-- End: Features Boxed -->
+    </div>
+</div>
+</html>

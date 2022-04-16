@@ -1,0 +1,117 @@
+/* Table Border
+table, tr, th, td {
+    border: 1px solid rgba(128, 128, 128, 0.726);
+    border-collapse:collapse;
+    padding: 2px;
+    padding-inline: 10px;
+} */
+
+/* Table Cells*/
+th, td{
+    text-align: left;
+    width: fit-content;
+}
+
+.clickable{
+    cursor: pointer;
+}
+
+/*----COLLAPSABLE ORDER UPDATE FORM----*/
+
+.hiddenRow {
+    padding: 0 !important;
+    border: none;
+}
+
+.accordion-body{
+    background-color: #eeeeee;
+}
+
+/*-Header of flex form-*/
+.orderFormHeader{
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+    width: 100%;
+}
+
+.orderIDHeader{
+    margin-right: 20px;
+    font-weight: 500;
+    font-size: 1.1em;
+}
+
+
+
+/*--Contains everything but header in flex form-*/
+.orderFlexBody{
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    flex-basis: fit-content;
+    flex-wrap: wrap;
+    align-items: stretch;
+}
+
+/*-Class for sections in the flex form-*/
+.orderFlexSection{
+    margin: 10px;
+    padding: 15px;
+    background-color: white;
+    border-radius: 10px;
+    flex-grow: 1;
+    align-items: stretch;
+}
+
+.orderDetailsSection{
+    flex-grow: 2;
+}
+
+/*-Class when you need a new row within a section-*/
+.newLine{
+    margin-top: 15px;
+    margin-right: 10px;
+}
+
+/*-Button for enabling edit function-*/
+.editBut {
+    height: 20px;
+    width: 50px;
+    margin: 0;
+    padding: 0;
+
+    float: right;
+    vertical-align: baseline;
+    background-image: url(../images/icons/edit_text_icon.svg);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-position: 3px 4px;
+}
+
+.total-cost{
+    padding-left: 38%;
+    font-weight: 500;
+}
+
+.butAdd{
+    margin-left: 10px;
+    height: 25px;
+    font-size: 0.9em;
+    padding-inline: 4px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+.productInputsContainer{
+    margin-left: 10px;
+    margin-top: 15px;
+}
+
+.tableHeader th{
+    border-bottom: 1px solid #d7d7d7;
+    font-weight: 500;
+}
+
+
+

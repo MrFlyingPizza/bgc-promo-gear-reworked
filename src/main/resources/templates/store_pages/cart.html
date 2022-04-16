@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{front_layout.html}">
+<head>
+    <title>Cart</title>
+    <style>
+        .cartRow_container{
+            display: flex;
+            flex-wrap: wrap;
+            height: fit-content;
+            padding: 20px;
+            border-bottom: 1px solid black;
+            justify-content: space-between;
+        }
+
+        .outOfStock-true{
+            background-color: rgba(255, 0, 0, 0.2);
+        }
+
+        .product_container{
+            display: flex;
+            flex-wrap: wrap;
+            width: 40%;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .product_image_container{
+            flex-grow: 0;
+        }
+
+        .product_detail_container{
+            padding-left: 5%;
+        }
+
+        .product_image{
+            padding-left: 10%;
+            width: 100px;
+            height: 100px;
+            overflow:hidden;
+        }
+
+        .quantity_Container{
+            text-align: center;
+            margin: auto;
+        }
+
+        .remove_Container{
+            text-align: right;
+            margin: auto;
+        }
+    </style>
+</head>
+
+<div layout:fragment="content">
+    <div class="card-store-container" style="padding: 0px 0px;margin-top: 20px;margin-bottom: 20px;">
+        <div class="card shadow-sm" style="margin: 18px;">
+            <div class="card-body" style="padding: 18px 40px 0px;">
+                <div class="container" style="min-height: 70vh;">
+                    <div class="row fs-1 py-4 border-bottom border-dark">
+                        Shopping Cart
+                    </div>
+                    <!--FOR EACH ITEM IN CART-->
+                    <div id="cart-row-container">
+                        Currently Nothing In Cart
+                    </div>
+                    <!--END OF FOR EACH ITEM IN CART-->
+                    <!--   Spacing for "Continue to Checkout" Button   -->
+                    <div class="row py-4">
+                        <div class="col-sm-0 col-md-10">
+                        </div>
+                        <div class="col-sm-12 col-md-2 d-flex justify-content-center">
+                            <a class="btn btn-primary btn-sm" href="/store/checkout">Continue to Checkout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var cart_items;
+        window.onload=function()
+        {
+            $.ajax({
+                type: "GET",
+                url: '/api/cart',
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader(
+                        $('meta[name=_csrf_header]').attr('content'),
+                        $('meta[name=_csrf]').attr('content')
+                    )
+                },
+                success: function(data)
+                {
+                    console.log(data);
+                    cart_items = data;
+                    fill_html_with_cart_items();
+                }
+            });
+        }
+
+        function fill_html_with_cart_items()
+        {
+            let row_container = $('#cart-row-container');
+            var num_rows = 0;
+            for(let i = 0; i < cart_items.cartItems.length; i++){
+                let cartItem = cart_items.cartItems[i];
+                if(num_rows === 0){
+                    row_container.html("<div>\n" +
+                        "  <div class=\"cartRow_container\"> <!--where th:each goes-->\n" +
+                        "    <div class=\"product_container\">\n" +
+                        "      <div class=\"col product_image_container\">\n" +
+                        "        <img  class=\"product_image\" src=\"\" alt=\"Photo Displaying Product\"> <!--Product Photo, probably href this to lead to product page again-->\n" +
+                        "      </div>\n" +
+                        "      <div class=\"col product_detail_container\">\n" +
+                        "        <h5>"+cartItem.productName+"</h5>\n" +
+                        "<!--        <div>-->\n" +
+                        "<!--          <span th:text=\"${cartItem.genderName}\" th:if=\"${cartItem.genderName != null}\"></span>-->\n" +
+                        "<!--          <span th:text=\"' | '\" th:if=\"(${cartItem.genderName != null} and ${cartItem.styleName != null})-->\n" +
+                        "<!--                                                  or (${cartItem.genderName != null} and ${cartItem.sizeName != null})\"></span>-->\n" +
+                        "<!--          <span th:text=\"${cartItem.styleName}\" th:if=\"${cartItem.styleName != null}\"></span>-->\n" +
+                        "<!--          <span th:text=\"' | '\" th:if=\"(${cartItem.styleName != null} and ${cartItem.sizeName != null})\"></span>-->\n" +
+                        "<!--          <span th:text=\"${cartItem.sizeName}\" th:if=\"${cartItem.sizeName != null}\"></span>-->\n" +
+                        "<!--        </div>-->\n" +
+                        "        <div>\n" +
+                        "          <span>SKU: "+cartItem.sku+"</span>\n" +
+                        "        </div>\n" +
+                        "      </div>\n" +
+                        "    </div>\n" +
+                        "\n" +
+                        "    <div class=\"col quantity_Container\">\n" +
+                        "<!--      &lt;!&ndash; Quantity Ordered&ndash;&gt;-->\n" +
+                        "<!--      <span th:case=\"true\" th:text=\"'Qty: Out Of Stock'\"></span>-->\n" +
+                        "    <span>Qty: "+cartItem.quantity+"</span>\n" +
+                        "    </div>\n" +
+                        "    <div class=\"col remove_Container\">\n" +
+                        "      <button class=\"btn btn-secondary btn-sm\" data-sku='"+cartItem.sku+"' th:data-qty='"+cartItem.quantity+"'\n" +
+                        "              onclick=\"remove_item_from_cart(this)\">Remove</button><!--Button to remove item from cart-->\n" +
+                        "    </div>\n" +
+                        "  </div>\n" +
+                        "</div>");
+                }
+                else{
+                    row_container.append("<div>\n" +
+                        "  <div class=\"cartRow_container\"> <!--where th:each goes-->\n" +
+                        "    <div class=\"product_container\">\n" +
+                        "      <div class=\"col product_image_container\">\n" +
+                        "        <img  class=\"product_image\" src=\"\" alt=\"Photo Displaying Product\"> <!--Product Photo, probably href this to lead to product page again-->\n" +
+                        "      </div>\n" +
+                        "      <div class=\"col product_detail_container\">\n" +
+                        "        <h5>"+cartItem.productName+"</h5>\n" +
+                        "<!--        <div>-->\n" +
+                        "<!--          <span th:text=\"${cartItem.genderName}\" th:if=\"${cartItem.genderName != null}\"></span>-->\n" +
+                        "<!--          <span th:text=\"' | '\" th:if=\"(${cartItem.genderName != null} and ${cartItem.styleName != null})-->\n" +
+                        "<!--                                                  or (${cartItem.genderName != null} and ${cartItem.sizeName != null})\"></span>-->\n" +
+                        "<!--          <span th:text=\"${cartItem.styleName}\" th:if=\"${cartItem.styleName != null}\"></span>-->\n" +
+                        "<!--          <span th:text=\"' | '\" th:if=\"(${cartItem.styleName != null} and ${cartItem.sizeName != null})\"></span>-->\n" +
+                        "<!--          <span th:text=\"${cartItem.sizeName}\" th:if=\"${cartItem.sizeName != null}\"></span>-->\n" +
+                        "<!--        </div>-->\n" +
+                        "        <div>\n" +
+                        "          <span>SKU: "+cartItem.sku+"</span>\n" +
+                        "        </div>\n" +
+                        "      </div>\n" +
+                        "    </div>\n" +
+                        "\n" +
+                        "    <div class=\"col quantity_Container\">\n" +
+                        "<!--      &lt;!&ndash; Quantity Ordered&ndash;&gt;-->\n" +
+                        "<!--      <span th:case=\"true\" th:text=\"'Qty: Out Of Stock'\"></span>-->\n" +
+                        "    <span>Qty: "+cartItem.quantity+"</span>\n" +
+                        "    </div>\n" +
+                        "    <div class=\"col remove_Container\">\n" +
+                        "      <button class=\"btn btn-secondary btn-sm\" data-sku='"+cartItem.sku+"' th:data-qty='"+cartItem.quantity+"'\n" +
+                        "              onclick=\"remove_item_from_cart(this)\">Remove</button><!--Button to remove item from cart-->\n" +
+                        "    </div>\n" +
+                        "  </div>\n" +
+                        "</div>");
+                }
+                num_rows++;
+            }
+        }
+
+        // function remove_item_from_cart(pressedButton)
+        // {
+        //     let sku = pressedButton.getAttribute("data-sku");
+        //     let qtyToBeRemoved = pressedButton.getAttribute("data-qty");
+        //     remove_from_cart(sku, qtyToBeRemoved, null, function(){
+        //
+        //     })
+        //     location.reload();
+        // }
+    </script>
+</div>
+</html>

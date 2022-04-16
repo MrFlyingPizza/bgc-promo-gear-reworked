@@ -1,0 +1,1004 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{management_panel_layout.html}">
+<head>
+    <title>Inventory</title>
+</head>
+<div layout:fragment="content">
+    <!--  Heading  -->
+    <h2>Inventory</h2>
+
+
+    <!--  Go to create a new product page  -->
+    <button class="btn btn-outline-primary" onclick="location.href='/management/product_group/create'">
+        Create a New Product
+    </button>
+
+    <button class="btn btn-outline-primary" onclick="location.href='/management/category'">
+        Categories
+    </button>
+
+    <button class="btn btn-outline-primary" onclick="location.href='/management/attribute_group'">
+        Attributes
+    </button>
+
+    <!--  Displaying product groups in a table  -->
+    <div class="card shadow" style="margin: 20px;">
+        <div class="card-header py-3" style="background: rgb(248,248,252);">
+            <p class="m-0 fw-bold" style="color: #36366f;">Product Info</p>
+        </div>
+
+        <!--  Inventory Body -->
+        <div class="card-body">
+
+            <div id="length_search_row" class="row">
+                <div id="length_input" class="col-sm-12 col-md-5"></div>
+                <div id="search_input" class="col-sm-12 col-md-7"></div>
+            </div>
+
+            <div class="d-flex flex-row flex-wrap table-bar">
+
+                <div class="filter-buttons">
+                    <div class="filter-label" style="font-size: 11px;"><span style="font-size: inherit;">Location:</span></div>
+                    <select id="location-list" class="form-select form-select-sm select-filter" onchange="switchLocation(this.options[this.selectedIndex].value)">
+                        <optgroup label="Offices">
+                            <option th:each="location : ${locations}" th:value="${location?.getId()}" th:text="${location?.getName()}"></option>
+                            <option value="-1" selected>All</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="filter-buttons">
+                    <div class="filter-label" style="font-size: 11px;"><span style="font-size: inherit;">Categories:</span></div>
+                    <button class="btn btn-outline-primary btn-sm button-filter" id="expand-option" type="button">Expand</button>
+                    <button class="btn btn-outline-primary btn-sm button-filter" id="collapse-option" type="button">Collapse</button>
+                </div>
+
+
+                <div class="filter-buttons">
+                    <div class="filter-label" style="font-size: 11px;"><span style="font-size: inherit;">Is Product Published?:</span></div>
+                    <div class="d-flex flex-wrap">
+                        <div class="radio-buttons">
+                            <input type="radio" class="btn-check" name="isPubGroup" id="pub_option1" autocomplete="off" onclick="filter(11, '')"/>
+                            <label class="btn btn-outline-primary button-filter" for="pub_option1">All</label>
+                        </div>
+                        <div class="radio-buttons">
+                            <input type="radio" class="btn-check" name="isPubGroup" id="pub_option2" autocomplete="off" onclick="filter(11, '✓')" checked/>
+                            <label class="btn btn-outline-primary button-filter" for="pub_option2">Published</label>
+                        </div>
+                        <div class="radio-buttons">
+                            <input type="radio" class="btn-check" name="isPubGroup" id="pub_option3" autocomplete="off" onclick="filter(11, '✕')"/>
+                            <label class="btn btn-outline-primary button-filter" for="pub_option3">Non-Published</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-buttons">
+                    <div class="filter-label" style="font-size: 11px;"><span style="font-size: inherit;">Is Big Item?:</span></div>
+                    <div class="d-flex flex-wrap">
+                        <div class="radio-buttons">
+                            <input type="radio" class="btn-check" name="isBigGroup" id="big_option1" autocomplete="off" onclick="filter(12, '')" checked/>
+                            <label class="btn btn-outline-primary button-filter" for="big_option1">All</label>
+                        </div>
+                        <div class="radio-buttons">
+                            <input type="radio" class="btn-check" name="isBigGroup" id="big_option2" autocomplete="off" onclick="filter(12, '✓')"/>
+                            <label class="btn btn-outline-primary button-filter" for="big_option2">Big</label>
+                        </div>
+                        <div class="radio-buttons">
+                            <input type="radio" class="btn-check" name="isBigGroup" id="big_option3" autocomplete="off" onclick="filter(12, '✕')"/>
+                            <label class="btn btn-outline-primary button-filter" for="big_option3">Small</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-buttons">
+                    <div class="filter-label" style="font-size: 11px;"><span style="font-size: inherit;">Is Waitlistable?:</span></div>
+                    <div class="d-flex flex-wrap">
+                        <div class="radio-buttons">
+                            <input type="radio" class="btn-check" name="isWaitGroup" id="wait_option1" autocomplete="off" onclick="filter(13, '')" checked/>
+                            <label class="btn btn-outline-primary button-filter" for="wait_option1">All</label>
+                        </div>
+                        <div class="radio-buttons">
+                            <input type="radio" class="btn-check" name="isWaitGroup" id="wait_option2" autocomplete="off" onclick="filter(13, '✓')"/>
+                            <label class="btn btn-outline-primary button-filter" for="wait_option2">Waitlist</label>
+                        </div>
+                        <div class="radio-buttons">
+                            <input type="radio" class="btn-check" name="isWaitGroup" id="wait_option3" autocomplete="off" onclick="filter(13, '✕')"/>
+                            <label class="btn btn-outline-primary button-filter" for="wait_option3">No Waitlist</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-buttons">
+                    <div class="filter-label" style="font-size: 11px;"><span style="font-size: inherit;">Manual Edit:</span></div>
+                    <button class="btn btn-outline-primary btn-sm button-filter" id="edit-button" type="button">Edit Inventory</button>
+                    <button class="btn btn-outline-primary btn-sm button-filter" id="save-button" type="button" hidden="true">Save Changes</button>
+                </div>
+
+            </div>
+            <div class="table-responsive table mt-2" id="dataTable-1" role="grid" aria-describedby="dataTable_info">
+                <table class="table my-0" id="dataTable" width="100%">
+                    <thead>
+                    <tr>
+                        <th scope="col">Product ID</th>
+                        <th scope="col">Parent Category</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">SKU</th>
+                        <th scope="col">Variant</th>
+                        <th scope="col">Brand</th>
+                        <th scope="col">On-Shelf</th>
+                        <th scope="col">In Pending Order</th>
+                        <th scope="col">Needed</th>
+                        <th scope="col">Notify Threshold</th>
+                        <th scope="col">Published</th>
+                        <th scope="col">Big Item</th>
+                        <th scope="col">Waitlistable</th>
+                        <th scope="col">Location</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                    </thead>
+                    <!-- Form to update inventory -->
+                    <form id="update-inventory-form" action="/management/api/office_stock/batch" method="post" class="row g-3">
+                        <tbody id="inventory-body">
+                        <tr>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                        </tr>
+                        </tbody>
+                    </form>
+                    <tfoot>
+                    <tr>
+                        <td><strong>Product ID</strong></td>
+                        <td><strong>Parent Category</strong></td>
+                        <td><strong>Category</strong></td>
+                        <td><strong>Name</strong></td>
+                        <td><strong>SKU</strong></td>
+                        <td><strong>Variant</strong></td>
+                        <td><strong>Brand</strong></td>
+                        <td><strong>On-Shelf</strong></td>
+                        <td><strong>In Pending Order</strong></td>
+                        <td><strong>Needed</strong></td>
+                        <td><strong>Notify Threshold</strong></td>
+                        <td><strong>Published</strong></td>
+                        <td><strong>Big Item</strong></td>
+                        <td><strong>Waitlistable</strong></td>
+                        <td><strong>Location</strong></td>
+                        <td><strong>Action</strong></td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!--   Modal #5: Display Inventory for a specific Product -->
+    <div class="modal fade" id="more-info-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="single-item-title">Inventory for [ITEM NAME]</h5>
+                    <div class="filter-buttons">
+                        <button class="btn btn-outline-primary btn-sm button-filter" id="edit-button-sku" type="button">Edit Inventory</button>
+                        <button class="btn btn-outline-primary btn-sm button-filter" id="save-button-sku" type="button" hidden="true">Save Changes</button>
+                    </div>
+                </div>
+                <div class="modal-body text-center">
+                    <h5 class="modal-title" id="single-item-name-sku">[ITEM NAME - SKU]</h5>
+                    <h5 class="modal-title" id="single-item-attributes">[ITEM ATTRIBUTES]</h5>
+                    <!-- Form to update inventory of single product-->
+                    <form id="update-sku-inventory" action="/management/api/office_stock/batch" method="post" class="row g-3">
+                        <table id="SKU-table" class="display" style="width:100%; text-align: left; padding: 5px 15px;">
+                            <thead>
+                            <tr>
+                                <th>Office</th>
+                                <th>On-Shelf</th>
+                                <th>In Pending Order</th>
+                                <th>Needed</th>
+                                <th>Notify Threshold</th>
+                            </tr>
+                            </thead>
+                            <tbody id="inventory-sku-body">
+                            <tr>
+                                <td>Vancouver</td>
+                                <td>System Architect</td>
+                                <td>Edinburgh</td>
+                                <td>61</td>
+                                <td>2011/04/25</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Return</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--   Modal #1: Asks user if they are sure they want to edit inventory   -->
+    <div class="modal fade" id="confirm-edit-inventory-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Enable Edit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <span style="font-size: 25px;font-weight: bold;">Are you sure you would like to manually edit inventory?</span><br>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-outline-primary" th:attr="onclick=|enableEdit()|">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--   Modal #2: Displays entered information and prompts user if they are sure they want to submit   -->
+    <div class="modal fade" id="submit-edit-inventory-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Submit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to submit edits to the inventory?
+                    <table class="table">
+                        <tr>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+                    <input class="btn btn-outline-primary" type="submit" value="Submit" id="inventory-submit-button" form="update-inventory-form" hidden>
+                    <input class="btn btn-outline-primary" type="submit" value="Submit" id="inventory-sku-submit-button"  form="update-sku-inventory" hidden>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--   Modal #3: Waiting modal, during processing   -->
+    <div class="modal" id="wait-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Saving...</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border text-success" style="height: 5em; width: 5em;" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="justify-content-center">
+                        Currently saving data... do NOT halt the process by closing or refreshing the tab to ensure full completion
+                    </div>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--   Modal #4: Changes failed modal -->
+    <div class="modal fade" id="fail-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Failed to Update</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <span style="font-size: 35px;font-weight: bold;">Update Failed</span><br>
+                    <i class="fa fa-close rubberBand animated" style="font-size: 100px;color: rgb(242, 15, 0);height: 41px;"></i><br>
+                    <p class="text-start" id="fail-message"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--   Modal #4: Changes Successful modal -->
+    <div class="modal fade" id="success-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Complete</h5>
+                </div>
+                <div class="modal-body text-center">
+                    <span style="font-size: 35px;font-weight: bold;">Successfully Updated</span><br>
+                    <i class="fa fa-check-circle-o rubberBand animated" style="font-size: 100px;color: rgb(122, 214, 94);height: 41px;"></i>
+                </div>
+                <div class="modal-footer" id="success-footer">
+                    <a id="success-redirect" class="btn btn-outline-default" href="/management/inventory">Back to Inventory</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--   Modal #4: Changes Successful modal -->
+    <div class="modal fade" id="success-modal-2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Complete</h5>
+                </div>
+                <div class="modal-body text-center">
+                    <span style="font-size: 35px;font-weight: bold;">Successfully Updated</span><br>
+                    <i class="fa fa-check-circle-o rubberBand animated" style="font-size: 100px;color: rgb(122, 214, 94);height: 41px;"></i>
+                </div>
+                <div class="modal-footer" id="success-2-footer">
+                    <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Return</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        var table;
+        var dataTable;
+        var skuTable;
+        var toCollapseAll = false;
+        var singleSKUSubmit = false; //whether submitting inventory for regular view or for single item view
+        var confirmBeforeEdit = false; //checks whether confirmation editing message has appeared yet when attempting to edit inventory
+
+        var selectedLocationID = "-1";
+
+        window.onload = function () {
+            $.ajax({
+                type: "GET",
+                url: '/api/users/me',
+                success: function(data)
+                {
+                    if(data["location"] == null){
+                        console.log("User is not assigned location");
+                    } else {
+                        selectedLocationID = data["location"]["id"];
+                        let opt = document.querySelector(`#location-list option[value="${selectedLocationID}"]`);
+                        opt.selected = true;
+                        opt.defaultSelected = true;
+                        switchLocation(selectedLocationID);
+                    }
+                },
+                error: function(xhr) {
+                    console.log("user not found");
+                }
+            });
+        }
+
+        //Reload data (cancel changes)
+        var reloadData = function(url){
+            //reload data
+            disableEdit();
+            table.ajax.url(url);
+            table.ajax.reload();
+            return;
+        }
+
+        //Switch location
+        var switchLocation = function (locationId) {
+            let newUrl = "/api/secured/inventory_levels";
+
+            //if not all locations, add location predicate
+            if(locationId != "-1"){
+                newUrl = newUrl + "?locationId=" + locationId;
+            }
+            reloadData(newUrl);
+            return;
+        }
+
+
+
+        //Render boolean values as checkmark/x icon
+        var booleanToCheckmark = function (data) {
+            if(data == true){
+                return "✓";
+            } else{
+                return "✕";
+            }
+        }
+
+        // Logic for parent category
+        // If product category has a parent, return parent name in parent category column
+        // If it doesn't have a parent, it is directly part of a level 1 category, and therefore renders it in the
+        // parent category column
+        var categoryParentRender = function (data) {
+            let parent = data["parent"];
+            let currentName = data["name"];
+            if(parent == null){
+                return currentName;
+            } else {
+                let parentName = parent["name"];
+                return parentName;
+            }
+        }
+
+        // Logic for child category
+        // If product category has a parent, return direct category name into child column,
+        // Otherwise, that means category is level 1 category, and returns 'No Group' for child category column
+        var categoryChildRender = function (data) {
+            let parent = data["parent"];
+            let currentName = data["name"];
+            if(parent == null){
+                return "No Group";
+            } else {
+                return currentName;
+            }
+        }
+
+        var categoryParentRender = function (data) {
+            let parent = data["parent"];
+            let currentName = data["name"];
+            if(parent == null){
+                return currentName;
+            } else {
+                let parentName = parent["name"];
+                return parentName;
+            }
+        }
+
+        var variantRender = function (data) {
+            console.log(data);
+            let options;
+
+            if(data == null){
+                options = "Single Variant"
+            //if not null options, return list of options that make up variant
+            } else {
+                options = "["
+                for (const property in data) {
+                    options += data[property]['value'] + ', ';
+                }
+                options = options.slice(0, -2);
+                options += ']';
+            }
+            return options;
+        }
+
+        var inputOnShelfRender = function (data) {
+            let onShelf = data["availableQuantity"];
+            let sku = data["variant"]["id"];
+
+            return '<input value="' + onShelf + '" type="number" class="form-control input-number"' +
+                   'min="0" id="Onshelf-' + sku + '" readOnly >';
+        }
+
+        var inputNotifyThresholdRender = function (data) {
+            let threshold = data["notifyThreshold"];
+            let sku = data["variant"]["id"];
+
+            return '<input value="' + threshold + '" type="number" class="form-control input-number"' +
+                'min="0" id="Lowstocklimit-' + sku + '" readOnly >';
+        }
+
+        var renderActionButtons  = function (data) {
+            let threshold = data["notifyThreshold"];
+            let sku = data["variant"]["id"];
+
+            return '<input value="' + threshold + '" type="number" class="form-control input-number"' +
+                'min="0" id="Lowstocklimit-' + sku + '" readOnly >';
+        }
+
+
+        $(document).ready( function () {
+            var collapsedGroups = {};   //used to track collapsed groups
+            //Variables for DataTable setup
+            var groupParent = [];       //temp variable to track group parents
+            var parentID;           //temp variable to track group parent id
+            var prodGroupCounter = 1; //temp variable to count productGroups
+            var subGroupCounter = 1;    //temp variable to count subgroups
+            var groupCounter = 1;       //variable to count number of groups
+
+
+            //Using DataTable
+            table = $('#dataTable').DataTable( {
+
+                ajax: {
+                    url: '/api/secured/inventory_levels',
+                    cache: true,
+                    dataSrc: "inventoryLevels",
+                },
+                columns: [
+                    { data: "product.id" },
+                    { data: "product.category", "render": categoryParentRender},
+                    { data: "product.category", "render":  categoryChildRender},
+                    { data: "product.name" },
+                    { data: "variant.id" },
+                    { data: "variant.options", "render":  variantRender },
+                    { data: "product.brand" },
+                    { data : null, className: "input-disabled", "render":  inputOnShelfRender },
+                    { data: "reservedQuantity" },
+                    { data: "neededQuantity"},
+                    { data : null, className: "input-disabled", "render":  inputNotifyThresholdRender },
+                    { data: "product.isPublished", "render": booleanToCheckmark},
+                    { data: "product.isBigItem", "render": booleanToCheckmark },
+                    { data: "product.isWaitListEnabled", "render": booleanToCheckmark },
+                    { data: "location.name" },
+                    { data: "availableQuantity" }
+                ],
+                processing: true,
+                order: [ [1, 'asc'], [2, 'asc'], [0, 'asc'] ],
+                rowGroup: {
+                    dataSrc: [  function(row) {
+                                    return categoryParentRender(row.product.category);
+                                },
+                                function(row) {
+                                    return categoryChildRender(row.product.category);
+                                },
+                                "product.name" ],
+
+                    startRender: function(rows, group, level) {
+                        groupParent[level] = group;
+                        var groupName = '';
+                        for (var i = 0; i < level; i++) {
+                            groupName += groupParent[i];
+                            if (collapsedGroups[groupName]) {
+                                return;
+                            }
+                        }
+                        //console.log("Rows: "+ rows + " Group: " + group + " Level: " + level);
+                        //If not parent, name subgroup "parentName-subGroupCounter"
+                        if(level == 2) {
+                            groupName = groupParent[0] + "-" + subGroupCounter;
+                            //console.log(groupName);
+                            //Otherwise name parent by group name
+                        } else if (level == 1){
+                            groupName = groupName;
+                            //console.log(groupName);
+                        } else {
+                            groupName = group;
+                        }
+
+                        //Controls whether default is collapsed or expanded
+                        if (((typeof(collapsedGroups[groupName]) == 'undefined')
+                            || (collapsedGroups[groupName] === null)) && level != 0) {
+                            collapsedGroups[groupName] = toCollapseAll;   //whether to collapse all rows or not
+                        }
+
+
+                        var collapsed = collapsedGroups[groupName];
+                        rows.nodes().each(function(r) {r.style.display = (collapsed ? 'none' : '');});
+
+                        if(level == 0) {
+                            var groupModify = $('<tr/>').append('<td colspan="12">' + ' - ' + group + ' (' + rows.count() + ')</td>').attr('data-name', groupName).toggleClass('collapsed', collapsed);
+                        } else if (level == 1){
+                            var groupModify = $('<tr/>').append('<td colspan="12">' + group + '</td>').attr('data-name', groupName).toggleClass('collapsed', collapsed);
+                        } else {
+                            var groupModify = $('<tr/>').append('<td colspan="12" style="background-color: #f5f7ff">' + ' + ' + group + '</td>').attr('data-name', groupName).toggleClass('collapsed', collapsed);
+
+                        }
+
+                        //If parent level, add amount of subgroups data
+                        if(level == 0){
+                            parentID = groupCounter;
+                            groupModify.attr('id', parentID);    //add group id
+                            groupCounter++;
+                            //If non-parent level, update parent's amount of subgroups data
+                        } else {
+                            $("#" + parentID).attr('data-subgroups', subGroupCounter);
+                        }
+
+                        //restart subgroup counter if parent, else increment
+                        if(level == 0){
+                            subGroupCounter = 1;
+                        } else {
+                            subGroupCounter++;
+                        }
+
+                        return groupModify;
+                    }
+                },
+                columnDefs: [ {
+                    targets: [0, 1, 2, 3],
+                    visible: false
+                } ],
+
+
+                "lengthMenu": [ [100, 50, 25, 10, -1], [100, 50, 25, 10, "All"] ],
+                language : {
+                    sLengthMenu: "Show&nbsp _MENU_", // changing label for page length filter
+                    search: "_INPUT_",               // changing label for search filter
+                    searchPlaceholder: "Search..."   // changing search filter placeholder
+                },
+            } );
+
+            /*
+            Clicking on parent group, will collapse/expand all subgroups
+             */
+            $('#dataTable tbody').on('click', 'tr.dtrg-level-0', function() {
+
+                var subgroups = $(this).data('subgroups');  //number of parent's subgroups
+                var name = $(this).data('name');
+                var toCollapse;
+                for (var i = 1; i <= subgroups; i++) {
+                    var subgroupName = name + '-' + i;
+                    //Decides whether to collapse or expand everything based on first group
+                    if (i == 1 || i == 2){
+                        toCollapse = !collapsedGroups[subgroupName];
+                    }
+                    collapsedGroups[subgroupName] = toCollapse; //sets each group to opposite of first row's state
+                    table.draw(false);
+                }
+
+            });
+
+            /*
+            Clicking on sub-group (level 1) will expand/collapse that sub-group
+             */
+            /*
+            $('#dataTable tbody').on('click', 'tr.dtrg-level-1', function() {
+                var originalName = $(this).data('name');
+                var counter = 2;
+                $(".dtrg-level-2").each(function() {
+                    var name =  originalName + '-' + counter;
+                    //console.log("Name: " + name);
+                    collapsedGroups[name] = !collapsedGroups[name];
+                    counter += 1;
+                    //console.log("Counter: " + counter);
+                });
+                table.draw(false);
+            }); */
+
+            /*
+            Clicking on sub-group (level 2) will expand/collapse that sub-group
+            */
+            $('#dataTable tbody').on('click', 'tr.dtrg-level-2', function() {
+                var name = $(this).data('name');
+                collapsedGroups[name] = !collapsedGroups[name];
+                table.draw(false);
+            });
+
+            /*
+            Clicking on the expand button, expands all groups
+            */
+            $('#expand-option').on('click', function() {
+                $(".dtrg-level-2").each(function() {
+                    console.log($(this).data('name'));
+                    var name = $(this).data('name');
+                    collapsedGroups[name] = false;
+                    table.draw(false);
+                });
+            });
+
+            /*
+            Clicking on the collapse button, collapses all groups
+            */
+            $('#collapse-option').on('click', function() {
+                $(".dtrg-level-2").each(function() {
+                    console.log($(this).data('name'));
+                    var name = $(this).data('name');
+                    collapsedGroups[name] = true;
+                    table.draw(false);
+                });
+            });
+
+            $('#dataTable_filter').appendTo('#search_input'); // adding search filter to div
+            $('#dataTable_length').appendTo('#length_input'); // adding length filter to div
+            $('#dataTable_wrapper').find('div:first').remove(); //remove empty row holding previous filters
+
+            //Sets default value of column 5 (Published) to yes
+            table.columns(11).search("✓").draw();
+
+            dataTable = table;
+
+
+        } );
+
+        /**
+         * Performs filter for specified column and input
+         * (Hidden columns must also be accounted for)
+         * @param col column number of table
+         * @param input input for filtering
+         */
+        function filter(col, input){
+            dataTable.columns(col).search(input).draw();
+        }
+
+        /*
+        Show confirm message for editing
+        */
+        function confirmEdit(){
+            if(singleSKUSubmit == false){
+                if(confirmBeforeEdit == false){
+                    $('#confirm-edit-inventory-modal').modal('show');
+                }
+            } else if(singleSKUSubmit){
+                $('#confirm-edit-inventory-modal').modal('show');
+            }
+
+        }
+
+        /*
+        Clicking on inventory input, will confirm if you want to edit
+        */
+        $(document).on('dblclick', '.input-disabled', function () {
+            singleSKUSubmit = false;
+            confirmEdit();
+        });
+
+        /*
+        Clicking on edit inventory button, will confirm you want to edit
+        */
+        $('#edit-button').click(function() {
+            singleSKUSubmit = false;
+            confirmEdit();
+        });
+
+        $('#edit-button-sku').click(function() {
+            singleSKUSubmit = true;
+            confirmEdit();
+        });
+
+        function enableEdit(){
+            $('#confirm-edit-inventory-modal').modal('hide');
+            confirmBeforeEdit = true;
+
+            $('#edit-button').attr('hidden','');
+            $('#save-button').removeAttr('hidden');
+
+            $('#edit-button-sku').attr('hidden','');
+            $('#save-button-sku').removeAttr('hidden');
+
+            $(".input-number").each(function() {
+                $(this).prop("readonly", false);
+            });
+        }
+
+        function disableEdit(){
+            confirmBeforeEdit = false;
+
+            $('#save-button').attr('hidden','');
+            $('#edit-button').removeAttr('hidden');
+
+            $('#save-button-sku').attr('hidden','');
+            $('#edit-button-sku').removeAttr('hidden');
+
+            $(".input-number").each(function() {
+                $(this).prop("readonly", true);
+            });
+        }
+
+        function singleItemTextChange(data){
+            let productName = data["productName"];
+            let sku = data["SKU"];
+            let attributes = data.attributes;
+            $('#single-item-title').text('Inventory for ' + productName);
+            $('#single-item-name-sku').text(productName + ' - SKU: ' + sku);
+
+            let attributeString = '(';
+            let numOfAttributes = 0;
+            for (let key in attributes){
+                if(numOfAttributes > 0){
+                    attributeString += ', ';
+                }
+                attributeString += attributes[key].value;
+                numOfAttributes += 1;
+            }
+            attributeString += ')';
+
+            $('#single-item-attributes').text(attributeString);
+        }
+
+        function openMoreStock(sku){
+
+            $("#SKU-table").dataTable().fnDestroy();
+
+            var table2 = $('#SKU-table').DataTable( {
+                "paging":   false,
+                "ordering": false,
+                "info":     false,
+
+                ajax: {
+                    url: '/management/api/office_stock/' + sku,
+                    dataSrc:  function(data) {
+                        singleItemTextChange(data[0])
+                        return data
+                    }
+                },
+                columns: [
+                    { data: "locationName" },
+                    { data: "amountOnShelf" },
+                    { data: "inPendingOrder" },
+                    { data: "neededStock" },
+                    { data: "lowStockLimit" }
+                ],
+                columnDefs : [
+                    { targets: [1, 4],
+                        render: function (data, type, row) {
+                            return '<input class="form-control input-number" type="number" ' +
+                                'min="0" readOnly value = ' + data + ' data-sku = ' + row.SKU + ' data-location = ' + row.locationID + '>';
+                        }
+                    }
+                ],
+            } );
+
+            $('#save-button-sku').attr('hidden','');
+            $('#edit-button-sku').removeAttr('hidden');
+            $('#more-info-modal').modal('show');
+
+
+        }
+
+        function goToSkuStock(sku){
+            window.location.href = '/admin/inventory/item?sku=' + sku;
+        }
+
+        /*
+        Clicking on save changes, will ask to confirm
+        */
+        $('#save-button').click(function() {
+            $('#submit-edit-inventory-modal').modal('show');
+            //toggles submit button for regular inventory view
+            $('#inventory-sku-submit-button').attr('hidden','');
+            $('#inventory-submit-button').removeAttr('hidden');
+        });
+
+        $('#save-button-sku').click(function() {
+            $('#submit-edit-inventory-modal').modal('show');
+            //toggles submit button for single sku inventory view
+            $('#inventory-submit-button').attr('hidden','');
+            $('#inventory-sku-submit-button').removeAttr('hidden');
+        });
+
+
+        $('#update-inventory-form').submit(
+            function (e) {
+                e.preventDefault();
+
+                const form = $(this);
+                const url = form.attr('action');
+
+                const data = [];
+
+                var table = document.getElementById('inventory-body');
+                for (var i = 0, row; row = table.rows[i]; i++){
+                    const sku = row.getAttribute("data-sku");
+                    const locationID = row.getAttribute("data-location");
+
+                    if(sku != null){
+                        let onShelf = '';
+                        let lowStockLimit = '';
+                        for (var j = 0, col; col = row.cells[j]; j++){
+                            if(j == 3){
+                                onShelf = col.children[0].value;
+                            }
+                            if(j == 6) {
+                                lowStockLimit = col.children[0].value;
+                            }
+                        }
+                        let rowData = {
+                            'locationID': locationID,
+                            'SKU': sku,
+                            'amountOnShelf': onShelf,
+                            'lowStockLimit': lowStockLimit
+                        }
+                        data.push(rowData);
+                    }
+                }
+
+                $('#wait-modal').modal('show');
+                console.log(data);
+
+                $.ajax({
+                    type: "PUT",
+                    url: url,
+                    contentType: "application/json",
+                    data: JSON.stringify(data), // serializes the form's elements.
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader(
+                            $('meta[name=_csrf_header]').attr('content'),
+                            $('meta[name=_csrf]').attr('content')
+                        )
+                        $('#submit-edit-inventory-modal').modal('hide');
+                    },
+                    success: function()
+                    {
+                        $('#wait-modal').modal('hide');
+                        $('#success-modal').modal('show');
+                    },
+                    error: function(xhr) {
+                        $('#wait-modal').modal('hide');
+                        $('#fail-message').text("Error Message:\'"+ xhr.responseJSON.message +"\'")
+                        $('#fail-modal').modal('show');
+
+                    }
+                });
+            }
+        );
+
+
+        $('#update-sku-inventory').submit(
+            function (e) {
+                e.preventDefault();
+
+                const form = $(this);
+                const url = form.attr('action');
+
+                const data = [];
+
+                var table = document.getElementById('inventory-sku-body');
+                for (var i = 0, row; row = table.rows[i]; i++){
+                    let sku = ''
+                    let locationID = '';
+
+                    let onShelf = '';
+                    let lowStockLimit = '';
+                    for (var j = 0, col; col = row.cells[j]; j++){
+                        if(j == 1){
+                            onShelf = col.children[0].value;
+                        }
+                        if(j == 4) {
+                            lowStockLimit = col.children[0].value;
+                            sku = col.children[0].getAttribute("data-sku");
+                            locationID = col.children[0].getAttribute("data-location");
+                        }
+                    }
+                    let rowData = {
+                        'locationID': locationID,
+                        'SKU': sku,
+                        'amountOnShelf': onShelf,
+                        'lowStockLimit': lowStockLimit
+                    }
+                    console.log(rowData);
+                    data.push(rowData);
+                }
+
+
+                $('#wait-modal').modal('show');
+                console.log(data);
+
+                $.ajax({
+                    type: "PUT",
+                    url: url,
+                    contentType: "application/json",
+                    data: JSON.stringify(data), // serializes the form's elements.
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader(
+                            $('meta[name=_csrf_header]').attr('content'),
+                            $('meta[name=_csrf]').attr('content')
+                        )
+                        $('#submit-edit-inventory-modal').modal('hide');
+                        $('#more-info-modal').modal('hide');
+                    },
+                    success: function()
+                    {
+                        $('#wait-modal').modal('hide');
+                        $('#success-modal-2').modal('show');
+                    },
+                    error: function(xhr) {
+                        $('#wait-modal').modal('hide');
+                        $('#fail-message').text("Error Message:\'"+ xhr.responseJSON.message +"\'")
+                        $('#fail-modal').modal('show');
+
+                    }
+                });
+            }
+        );
+
+    </script>
+
+
+</div>
+</html>

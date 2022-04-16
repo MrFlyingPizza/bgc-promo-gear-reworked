@@ -1,0 +1,66 @@
+<!-- todo: remove in the future -->
+
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{management_panel_layout.html}">
+<head>
+  <title>Make a New Location</title>
+</head>
+<div layout:fragment="content">
+  <form action="/management/api/location" method="post">
+    <label for="name">Location Name:</label>
+    <input type="text" id="name" name="name"><br><br>
+    <label for="country">Country:</label>
+    <input type="text" id="country" name="country"><br><br>
+    <label for="province">Province:</label>
+    <input type="text" id="province" name="province"><br><br>
+    <label for="city">City:</label>
+    <input type="text" id="city" name="city"><br><br>
+    <label for="postalCode">Postal Code:</label>
+    <input type="text" id="postalCode" name="postalCode"><br><br>
+    <label for="streetAddress1">Street Address 1:</label>
+    <input type="text" id="streetAddress1" name="streetAddress1"><br><br>
+    <label for="streetAddress2">Street Address 2:</label>
+    <input type="text" id="streetAddress2" name="streetAddress2"><br><br>
+    <input type="submit" value="Submit">
+  </form>
+  <script>
+
+    $('form').submit(
+            function (e) {
+              e.preventDefault();
+
+              const form = $(this);
+              const url = form.attr('action');
+              const data = {
+                'name': $('#name').val(),
+                'country': $('#country').val(),
+                'province': $('#province').val(),
+                'city': $('#city').val(),
+                'postalCode': $('#postalCode').val(),
+                'streetAddress1': $('#streetAddress1').val(),
+                'streetAddress2': $('#streetAddress2').val()
+              }
+
+              $.ajax({
+                type: "POST",
+                url: url,
+                contentType: "application/json",
+                data: JSON.stringify(data), // serializes the form's elements.
+                beforeSend: function(xhr) {
+                  xhr.setRequestHeader(
+                          $('meta[name=_csrf_header]').attr('content'),
+                          $('meta[name=_csrf]').attr('content')
+                  )
+                },
+                success: function(data)
+                {
+                  alert(data); // show response from the php script.
+                },
+                error: function(data) {
+                  console.log(data);
+                }
+              });
+            }
+    );
+  </script>
+</div>
+</html>

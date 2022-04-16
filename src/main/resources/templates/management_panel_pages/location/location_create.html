@@ -1,0 +1,144 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{management_panel_layout.html}">
+<head>
+  <title>Create Location</title>
+</head>
+<div layout:fragment="content">
+  <!-- Heading -->
+  <h2>Create New Location</h2>
+
+  <!-- Return to viewing locations -->
+  <button class="btn btn-outline-primary" onclick="location.href='/management/location/'">
+    Return to Locations
+  </button>
+
+
+  <div class="container mt-5">
+    <!-- Form to create a location   -->
+    <form id="create-location-form" action="/api/secured/office_locations" method="post" class="row g-3">
+      <div class="col-12">
+        <label for="name" class="form-label">Location Name:</label>
+        <input type="text" class="form-control" id="name" name="name" required>
+        <div class="form-text">e.g, Vancouver Office, Calgary Office</div>
+      </div>
+      <div class="col-md-4">
+        <label for="country" class="form-label">Country:</label>
+        <input type="text" class="form-control" id="country" name="country" required>
+      </div>
+      <div class="col-md-4">
+        <label for="province" class="form-label">State/Province:</label>
+        <input type="text" class="form-control" id="province" name="province">
+      </div>
+      <div class="col-md-4">
+        <label for="city" class="form-label">City:</label>
+        <input type="text" class="form-control" id="city" name="city" required>
+      </div>
+      <div class="col-md-8">
+        <label for="street-address-one" class="form-label">Street Address 1:</label>
+        <input type="text" class="form-control" id="street-address-one" name="street-address-one" required>
+      </div>
+      <div class="col-md-4">
+        <label for="postal-code" class="form-label">Postal Code:</label>
+        <input type="text" class="form-control" id="postal-code" name="postal-code" required>
+      </div>
+      <div class="col-12">
+        <label for="street-address-two" class="form-label">Street Address 2:</label>
+        <input type="text" class="form-control" id="street-address-two" name="street-address-two">
+      </div>
+      <div class="col-md-12">
+        <input class="btn btn-outline-primary" id="submit-create-location" type="button"
+               value="Submit" data-bs-toggle="modal" data-bs-target="#confirm-location-submit-modal">
+      </div>
+
+      <!-- Show the user a popup modal allowing them to confirm the info they are trying to submit -->
+      <div class="modal fade" id="confirm-location-submit-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Confirm Submit</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              Are you sure you want to submit the following details?
+              <table class="table">
+                <tr>
+                  <th>Name</th>
+                  <td id="display-new-name"></td>
+                </tr>
+                <tr>
+                  <th>Country</th>
+                  <td id="display-new-country"></td>
+                </tr>
+                <tr>
+                  <th>State/Province</th>
+                  <td id="display-new-province"></td>
+                </tr>
+                <tr>
+                  <th>City</th>
+                  <td id="display-new-city"></td>
+                </tr>
+                <tr>
+                  <th>Street Address 1</th>
+                  <td id="display-new-street-address-one"></td>
+                </tr>
+                <tr>
+                  <th>Street Address 2</th>
+                  <td id="display-new-street-address-two"></td>
+                </tr>
+                <tr>
+                  <th>Postal Code</th>
+                  <td id="display-new-postal-code"></td>
+                </tr>
+              </table>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+              <input class="btn btn-outline-primary" type="submit" value="Submit">
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <!--   Display a checkbox popup if a location is created successfully   -->
+    <div class="modal fade" id="create-location-success-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Complete</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Successfully Created</span><br>
+            <i class="fa fa-check-circle-o rubberBand animated" style="font-size: 100px;color: rgb(122, 214, 94);height: 41px;"></i>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-outline-primary" href="/management/location">Return to Locations</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--   Display an "X" popup if a location is created unsuccessfully   -->
+    <div class="modal fade" id="create-fail-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Failure</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Creation Failed</span><br>
+            <i class="fa fa-close rubberBand animated" style="font-size: 100px;color: rgb(242, 15, 0);height: 41px;"></i><br>
+            <p class="text-start" id="create-fail-message"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script th:src="@{/javascript/management/location/location_create.js}"></script>
+  </div>
+</div>
+</html>

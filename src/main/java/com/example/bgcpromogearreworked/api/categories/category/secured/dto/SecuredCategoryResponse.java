@@ -11,7 +11,7 @@ public class SecuredCategoryResponse {
 
     @Getter
     @RequiredArgsConstructor
-    static class NestedCategory {
+    public static class NestedCategory {
         private final Long id;
         private final String name;
     }

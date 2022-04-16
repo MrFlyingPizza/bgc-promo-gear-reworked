@@ -26,7 +26,7 @@ public class SecuredProductVariantHandlerService {
         return service.createProductVariant(productVariantCreate, mapper::fromCreate);
     }
 
-    ProductVariant handleProductVariantGet(Long variantId) throws ProductVariantNotFoundException {
+    ProductVariant handleProductVariantGet(Long variantId) {
         return service.getProductVariant(variantId);
     }
 

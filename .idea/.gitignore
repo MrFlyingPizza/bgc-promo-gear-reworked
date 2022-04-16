@@ -7,3 +7,5 @@
 /dataSources/
 /dataSources.local.xml
 /modules.xml
+/dataSources.xml
+/jpa-buddy.xml

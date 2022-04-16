@@ -15,19 +15,19 @@ import javax.persistence.*;
 public class CartItem {
 
     @Id
-    @Column(name = "user_id", insertable = false, updatable = false)
+    @Column(name = "user_id", nullable = false)
     private Long userId;
 
     @Id
-    @Column(name = "variant_id", insertable = false, updatable = false)
+    @Column(name = "variant_id", nullable = false)
     private Long variantId;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false, updatable = false, insertable = false)
     private User user;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "variant_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "variant_id", nullable = false, updatable = false, insertable = false)
     private ProductVariant variant;
 
     @Column(name = "quantity", nullable = false)

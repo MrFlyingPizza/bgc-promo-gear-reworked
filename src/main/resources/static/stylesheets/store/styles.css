@@ -1,0 +1,20 @@
+.indent {
+    margin-left: 10px;
+}
+
+.image {
+    display: block;
+    height: auto;
+}
+
+.description_text {
+    font-size: 12px;
+    text-align: center;
+    overflow: hidden;
+    max-height: 75px;
+}
+
+.description_text:hover{
+    overflow-y: scroll;
+}
+

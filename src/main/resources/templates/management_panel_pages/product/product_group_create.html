@@ -1,0 +1,261 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{management_panel_layout.html}">
+<head>
+  <title>Create Product</title>
+</head>
+<div layout:fragment="content">
+  <!-- Heading -->
+  <h2>Create New Product</h2>
+
+  <!-- Return to viewing locations button -->
+  <button class="btn btn-outline-primary" onclick="location.href='/management/product_group/'">
+    Return to Products
+  </button>
+
+  <div class="container mt-5">
+    <!-- Form to create a product_group -->
+    <form id="create-product-group-form" action="/management/api/product_group" method="post" class="row g-3">
+      <div class="col-12">
+        <label for="name" class="form-label">Product Name:</label>
+        <input type="text" class="form-control" id="name" name="name" required>
+      </div>
+      <div class="col-md-6">
+        <label for="brand" class="form-label">Brand:</label>
+        <input type="text" class="form-control" id="brand" name="brand">
+      </div>
+      <div class="col-md-6">
+        <label for="price" class="form-label">Price:</label>
+        <input type="number" step=".01" class="form-control" id="price" name="price" required>
+      </div>
+      <div class="col-md-4">
+        <label for="is-published" class="form-check-label">Do you want this product to be published?</label>
+        <input type="checkbox" class="form-check-input" id="is-published" name="is-published">
+        <div class="form-text">(A published product is one that shows up on the marketplace)</div>
+      </div>
+      <div class="col-md-4">
+        <label for="is-big-item" class="form-check-label">Is this product a "Big Item"?</label>
+        <input type="checkbox" class="form-check-input" id="is-big-item" name="is-big-item">
+        <div class="form-text">(A "Big Item" is one that can only be ordered once per year)</div>
+      </div>
+      <div class="col-md-4">
+        <label for="is-waitlistable" class="form-check-label">Is this product "waitlistable"?</label>
+        <input type="checkbox" class="form-check-input" id="is-waitlistable" name="is-waitlistable">
+        <div class="form-text">(A "Waitlistable Item" is one that can recieve waitlist orders when the stock is low)</div>
+      </div>
+      <div class="col-12">
+        <label for="description">Product Description:</label>
+        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+      </div>
+      <div class="col-md-6">
+          <label for="categories" class="form-label">Category:</label>
+          <select name="categories" id="categories" class="form-select" required>
+
+          </select>
+      </div>
+      <div class="col-md-6">
+        <input class="btn btn-outline-primary" id="create-category-form-modal-button"
+               type="button" value="Create Category" th:attr="onclick=|fill_attributes()|">
+      </div>
+      <div class="col-md-12">
+        <input class="btn btn-outline-primary" id="submit-create-product-group" type="button"
+               value="Submit" data-bs-toggle="modal" data-bs-target="#confirm-product-group-create-modal">
+      </div>
+        <p class="text-center" id="if-no-categories" style="display: none; color: red;">
+            There are no categories in the database.
+            Please make one before creating a product
+            as all products MUST be assigned to a category.
+        </p>
+
+      <!-- Show the user a popup modal allowing them to confirm the info they are trying to submit -->
+      <div class="modal fade" id="confirm-product-group-create-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Confirm Submit</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              Are you sure you want to submit the following details?
+              <table class="table">
+                <tr>
+                  <th>Name</th>
+                  <td id="display-new-name"></td>
+                </tr>
+                <tr>
+                  <th>Brand</th>
+                  <td id="display-new-brand"></td>
+                </tr>
+                <tr>
+                  <th>Price</th>
+                  <td id="display-new-price"></td>
+                </tr>
+                <tr>
+                  <th>Is Published</th>
+                  <td id="display-new-is-published"></td>
+                </tr>
+                <tr>
+                  <th>Is Big Item</th>
+                  <td id="display-new-is-big-item"></td>
+                </tr>
+                <tr>
+                  <th>Is Waitlistable</th>
+                  <td id="display-new-is-waitlisted"></td>
+                </tr>
+                <tr>
+                  <th>Description</th>
+                  <td id="display-new-description"></td>
+                </tr>
+                <tr>
+                    <th>Category</th>
+                    <td id="display-new-category"></td>
+                </tr>
+              </table>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+              <input class="btn btn-outline-primary" type="submit" value="Submit">
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <!-- CREATE PRODUCT_GROUP SUCCESS/FAIL POPUP MODALS -->
+    <div class="modal fade" id="create-product-group-success-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Complete</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Successfully Created</span><br>
+            <i class="fa fa-check-circle-o rubberBand animated" style="font-size: 100px;color: rgb(122, 214, 94);height: 41px;"></i>
+          </div>
+          <div class="modal-footer" id="success-footer">
+            <a class="btn btn-outline-default" href="/management/product_group">Return to Products</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="create-product-group-fail-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Failed to Create</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Creation Failed</span><br>
+            <i class="fa fa-close rubberBand animated" style="font-size: 100px;color: rgb(242, 15, 0);height: 41px;"></i><br>
+            <p class="text-start" id="create-product-group-fail-message"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CREATE CATEGORY SUCCESS/FAIL POPUP MODALS -->
+    <div class="modal fade" id="create-category-form-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Create Category Form</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <form id="create-category-form" action="/management/api/category" method="post">
+              <div class="col-md-6">
+                <label for="category-name" class="form-label">Name:</label>
+                <input type="text" id="category-name" name="category-name" class="form-control" required>
+              </div>
+              <div class="col-md-6">
+                <label for="current-categories" class="form-label">Parent Category:</label>
+                <select name="current-categories" id="current-categories" class="form-select" required>
+                  <option value=null selected>None</option>
+                </select>
+              </div>
+              <div class="col-md-12">
+                <input class="btn btn-outline-primary" id="submit-create-category" type="button" value="Submit" data-bs-toggle="modal" data-bs-target="#confirm-category-submit">
+              </div>
+
+              <!-- Show the user a popup modal allowing them to confirm the info they are trying to submit -->
+              <div class="modal fade" id="confirm-category-submit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">Confirm Submit</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      Are you sure you want to submit the following details?
+                      <table class="table">
+                        <tr>
+                          <th>Name</th>
+                          <td id="display-new-category-name"></td>
+                        </tr>
+                        <tr>
+                          <th>Parent Category:</th>
+                          <td id="display-new-parent-category"></td>
+                        </tr>
+                      </table>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+                      <input class="btn btn-outline-primary" type="submit" value="Submit">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+<!--          <div class="modal-footer">-->
+<!--            <a class="btn btn-outline-success" data-bs-dismiss="modal">Close</a>-->
+<!--          </div>-->
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="create-category-success-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Complete</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Successfully Created</span><br>
+            <i class="fa fa-check-circle-o rubberBand animated" style="font-size: 100px;color: rgb(122, 214, 94);height: 41px;"></i>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-outline-success" data-bs-dismiss="modal">Close</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--  Upon page load, an AJAX get request is done to get all of the the current categories
+          in the database. If that request fails, display this popup modal-->
+    <div class="modal fade" id="get-stored-category-fail-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Failed to Get Categories</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Data Retrieval Failed</span><br>
+            <i class="fa fa-close rubberBand animated" style="font-size: 100px;color: rgb(242, 15, 0);height: 41px;"></i><br>
+            <p class="text-start" id="get-stored-category-fail-message"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script th:src="@{/javascript/management/product/product_group_create.js}"></script>
+  </div>
+</div>
+</html>

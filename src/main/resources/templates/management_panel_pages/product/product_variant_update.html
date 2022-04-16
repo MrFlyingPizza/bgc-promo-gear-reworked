@@ -1,0 +1,381 @@
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{management_panel_layout.html}">
+<head>
+  <title>Update Product</title>
+</head>
+<div layout:fragment="content">
+  <div style="text-align: center">
+    <!-- Return to viewing locations button -->
+    <a class="btn btn-outline-primary" style="float: left;" th:href="'/management/product/update?id='+${productVariant?.getProductGroup()?.getID()}">
+      Return to Product Info
+    </a><br><br>
+    <!-- Heading -->
+    <h2 style="text-align: center">Update Product</h2>
+    <p class="text-center">Note: Only fill in the fields you like to be changed</p>
+  </div>
+
+  <div class="container gy-3">
+    <div class="card">
+      <div class="card-body">
+        <!-- Form to create a product_group -->
+        <form id="update-product-form" th:action="'/management/api/product_variant/'+${productVariant?.getSKU()}" method="post" class="row g-3">
+          <div class="col-md-12">
+            <label for="low-stock-limit" class="form-label">Low Stock Threshold:</label>
+            <input type="number" step="1" min=0 class="form-control" id="low-stock-limit" name="low-stock-limit"
+                   th:placeholder="${productVariant?.getLowStockLimit()}">
+          </div>
+          <div class="col-md-12">
+            <!--   Update Location Button     -->
+            <input class="btn btn-outline-success" id="submit-update-product" type="button"
+                   th:attr="onclick=|get_currently_stored_product('${productVariant?.getSKU()}')|" value="Submit Update" disabled>
+            <!-- Delete Location Button -->
+            <input class="btn btn-outline-danger" id="submit-delete-product-group" type="button"
+                   value="Delete" data-bs-toggle="modal" data-bs-target="#confirm-delete-product-modal">
+          </div>
+
+          <!-- Show the user a popup modal allowing them to confirm the info they are trying to submit -->
+          <div class="modal fade" id="confirm-product-update-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Confirm Submit</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  Are you sure you want to submit the following details?
+                  <table class="table">
+                    <tr>
+                      <th>Attribute</th>
+                      <th>Currently Stored Value</th>
+                      <th>New Value</th>
+                    </tr>
+                    <tr id="low-stock-limit-row">
+                      <td style="font-weight: bold">Low Stock Threshold</td>
+                      <td id="currently-stored-low-stock-limit"></td>
+                      <td id="display-new-low-stock-limit"></td>
+                    </tr>
+                  </table>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+                  <input class="btn btn-outline-primary" type="submit" value="Update">
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- CREATE PRODUCT_GROUP SUCCESS/FAIL POPUP MODALS -->
+    <div class="modal fade" id="update-product-success-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Complete</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Successfully Updated</span><br>
+            <i class="fa fa-check-circle-o rubberBand animated" style="font-size: 100px;color: rgb(122, 214, 94);height: 41px;"></i>
+          </div>
+          <div class="modal-footer" id="success-footer">
+            <a class="btn btn-outline-default" th:href="'/management/product/update?id='+${productVariant?.getProductGroup()?.getID()}">Return to Product Info</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="update-product-fail-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Failed to Update</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Update Failed</span><br>
+            <i class="fa fa-close rubberBand animated" style="font-size: 100px;color: rgb(242, 15, 0);height: 41px;"></i><br>
+            <p class="text-start" id="update-product-fail-message"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--  DELETE CONFIRM/SUCCESS/FAIL POPUP MODALS  -->
+    <div class="modal fade" id="confirm-delete-product-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Confirm Delete</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Are you sure you want to delete this productVariant?</span><br>
+            <span style="font-size: 35px;font-weight: bold;">(THIS CANNOT BE UNDONE!)</span>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+            <button class="btn btn-outline-danger" th:attr="onclick=|delete_product('${productVariant?.getSKU()}')|">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="delete-product-success-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Complete</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Successfully Deleted</span><br>
+            <i class="fa fa-check-circle-o rubberBand animated" style="font-size: 100px;color: rgb(122, 214, 94);height: 41px;"></i>
+          </div>
+          <div class="modal-footer">
+            <a class="btn btn-outline-default" th:href="'/management/product/update?id='+${productVariant?.getProductGroup()?.getID()}">Return to Product Info</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="delete-product-fail-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Failed to Delete</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Delete Failed</span><br>
+            <i class="fa fa-close rubberBand animated" style="font-size: 100px;color: rgb(242, 15, 0);height: 41px;"></i><br>
+            <p class="text-start" id="delete-fail-message"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--  Upon page load, an AJAX get request is done to get all of the the current categories
+          in the database. If that request fails, display this popup modal-->
+    <div class="modal fade" id="get-stored-product-fail-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Failed to Get Product</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <span style="font-size: 35px;font-weight: bold;">Data Retrieval Failed</span><br>
+            <i class="fa fa-close rubberBand animated" style="font-size: 100px;color: rgb(242, 15, 0);height: 41px;"></i><br>
+            <p class="text-start" id="get-stored-product-fail-message"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      /**
+       * Whenever a dropdown option in any select tag is picked,
+       * this function marks that option with the attribute "selected".
+       * Additionally, any other options have their "selected" attribute removed.
+       */
+      $(document).on("change","select",function(){
+        $("option[value=" + this.value + "]", this)
+                .attr("selected", true).siblings()
+                .removeAttr("selected")
+      });
+
+      //JS Object that dynamically contains only form input values that are changed
+      const updateData = {};
+
+      /**
+       * Activates/Deactivates "Submit Update" button whenever updateData is non-empty/empty respectively
+       */
+      function check_button_activation(){
+        if(jQuery.isEmptyObject(updateData)){
+          $("#submit-update-product").prop("disabled", true);
+        }
+        else{
+          $("#submit-update-product").removeAttr('disabled');
+        }
+        console.log("TEST 1: ");
+        console.log(updateData);
+      }
+
+      //The following JQuery .change()'s dynamically change:
+      // (1) the content of updateData and
+      // (2) the activation of the "Submit Update" button
+      $("#low-stock-limit").change(function (){
+        if($("#low-stock-limit").val()=== ''){
+          delete updateData['lowStockLimit'];
+        }
+        else{
+          updateData['lowStockLimit'] = parseInt($("#low-stock-limit").val());
+        }
+        check_button_activation();
+      });
+
+      /**
+       * @param currentData The current stored data of the product in the database
+       *
+       *  This function fills in a modal popup to let them compare their entered values to
+       *  the current stored data of the product
+       *
+       * Note: Importance of this function is to ensure that the "true" current data is displayed.
+       *       Consider the following situation:
+       *        1. User 1 gets product page
+       *        2. User 1 starts to edit
+       *        3. User 2 gets product page
+       *        4. User 2 starts to edit
+       *        5. User 2 finishes edit and submits to server
+       *        ...
+       *
+       *       Here we can see that the data of the product when User 1 loads the page may be old.
+       *       Therefore we use currentData to get the "true" current data, which in the case of the
+       *       example would be the data that User 2 just submitted
+       */
+      function display_currently_stored_values(currentData){
+        $('#currently-stored-low-stock-limit').text(currentData['lowStockLimit']);
+      }
+
+      function display_new_details(){
+        $('#display-new-low-stock-limit').text($('#low-stock-limit').val());
+      }
+
+      /**
+       * If any values are unchanged, then do not display them in the modal popup that
+       * shows them their new values
+       */
+      function hide_rows(){
+        if(('lowStockLimit' in updateData)){
+          $("#low-stock-limit-row").css("display", "");
+        }
+        else{
+          $("#low-stock-limit-row").css("display", "none");
+        }
+      }
+
+      /**
+       * @param currentData The current stored data of the product in the database
+       *
+       * This function is called after the AJAX request in get_currently_stored_product_group(id).
+       * If that request is successful, then...
+       *  1. display_new_details(),
+       *  2. display_currently_stored_values(currentData) and,
+       *  3. hide_rows()
+       *  ...will fill in the modal popup confirming their entered info.
+       *  4. "$('#confirm-product-update-modal').modal('show')" - This activates the modal popup
+       */
+      function display_confirm_update_modal(currentData){
+        display_new_details();
+        display_currently_stored_values(currentData);
+        hide_rows();
+        $('#confirm-product-update-modal').modal('show');
+      }
+
+      /**
+       * Function that sends an Ajax Request for retrieving data about a product
+       * @param id product_id used to get data about that product
+       *
+       * Note: The function may show as unused, however it IS being used.
+       *       It shows as unused since the function call is inside the following
+       *       Thymeleaf attribute which is from product_update.html:
+       *       - th:attr="onclick=|get_currently_stored_product('${productVariant?.getSKU()}')|"
+       */
+      function get_currently_stored_product(id){
+        $.ajax({
+          type: "GET",
+          url: '/management/api/product/'.concat(id.toString()),
+          beforeSend: function(xhr) {
+            xhr.setRequestHeader(
+                    $('meta[name=_csrf_header]').attr('content'),
+                    $('meta[name=_csrf]').attr('content')
+            )
+          },
+          success: function(data)
+          {
+            display_confirm_update_modal(data);
+          },
+          error: function(xhr) {
+            $('#get-stored-product-group-fail-message').text("Error Message:\'"+ xhr.responseJSON.message +"\'")
+            $('#get-stored-product-group-fail-modal').modal('show');
+          }
+        });
+      }
+
+      $('#update-product-form').submit(
+              function (e) {
+                e.preventDefault();
+
+                const form = $(this);
+                const url = form.attr('action');
+
+                console.log("Before AJAX:")
+                console.log(updateData);
+
+                $.ajax({
+                  type: "PUT",
+                  url: url,
+                  contentType: "application/json",
+                  data: JSON.stringify(updateData), // serializes the form's elements.
+                  beforeSend: function(xhr) {
+                    xhr.setRequestHeader(
+                            $('meta[name=_csrf_header]').attr('content'),
+                            $('meta[name=_csrf]').attr('content')
+                    )
+                  },
+                  success: function()
+                  {
+                    $('#confirm-product-update-modal').modal('hide');
+                    $('#update-product-success-modal').modal('show');
+                  },
+                  error: function(xhr) {
+                    $('#confirm-product-update-modal').modal('hide');
+                    $('#update-product-fail-message').text("Error Message:\'"+ xhr.responseJSON.message +"\'")
+                    $('#update-product-fail-modal').modal('show');
+                  }
+                });
+              }
+      );
+
+      /**
+       * Function that sends an Ajax Request for deleting a product
+       * @param id product_id used to delete the product that is currently being viewed
+       *
+       * Note: The function may show as unused, however it IS being used.
+       *       It shows as unused since the function call is inside the following
+       *       Thymeleaf attribute which is from product_update.html:
+       *       - th:attr="onclick=|delete_product('${productVariant?.getSKU()}')|"
+       */
+      function delete_product(id){
+        $.ajax({
+          type: "DELETE",
+          url: '/management/api/product/'.concat(id.toString()),
+          beforeSend: function(xhr) {
+            xhr.setRequestHeader(
+                    $('meta[name=_csrf_header]').attr('content'),
+                    $('meta[name=_csrf]').attr('content')
+            )
+          },
+          success: function()
+          {
+            $('#confirm-delete-product-modal').modal('hide');
+            $('#delete-product-success-modal').modal('show');
+          },
+          error: function(xhr) {
+            $('#confirm-delete-product-modal').modal('hide');
+            $('#delete-fail-message').text("Error Message:\'"+ xhr.responseJSON.message +"\'")
+            $('#delete-product-fail-modal').modal('show');
+          }
+        });
+      }
+    </script>
+  </div>
+</div>
+</html>

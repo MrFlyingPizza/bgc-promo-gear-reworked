@@ -21,7 +21,7 @@ public class SecuredOptionPartialUpdate {
     private final String name;
 
     @JsonCreator
-    SecuredOptionPartialUpdate(@JsonProperty("name") String name) {
+    public SecuredOptionPartialUpdate(@JsonProperty("name") String name) {
         this.name = name;
     }
 }

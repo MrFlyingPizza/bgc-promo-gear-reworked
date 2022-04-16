@@ -28,10 +28,12 @@ public class SecuredProductImageHandlerService {
     ProductImage handleProductImageCreate(@Valid SecuredProductImageCreate imageCreate) {
         ProductImageBlobService.ImageBlobResult result = blobStorageService.saveProductImage(imageCreate.getProductId(),
                 imageCreate.getImage());
-        if (result == null) { // remove entity if save image blob fails
+        if (result == null || result.getBlobId() == null || result.getUrl() == null) {
             throw new ProductImageSaveFailedException();
         }
-        return imageService.createProductImage(imageCreate, source -> mapper.fromCreate(source, result.getUrl(), result.getBlobId()));
+        imageCreate.setSrc(result.getUrl());
+        imageCreate.setBlobId(result.getBlobId());
+        return imageService.createProductImage(imageCreate, mapper::fromCreate);
     }
 
     ProductImage handleProductImageGet(Long imageId) {
