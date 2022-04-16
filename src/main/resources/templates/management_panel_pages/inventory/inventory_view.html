@@ -363,8 +363,11 @@
         var toCollapseAll = false;
         var singleSKUSubmit = false; //whether submitting inventory for regular view or for single item view
         var confirmBeforeEdit = false; //checks whether confirmation editing message has appeared yet when attempting to edit inventory
-
         var selectedLocationID = "-1";
+        var lastUrl = "";
+
+        let updateData = {};      //updating data in main inventory panel
+        let updateDataPopup = {}; //updating data through pop-up
 
         window.onload = function () {
             $.ajax({
@@ -388,11 +391,81 @@
             });
         }
 
+        //checks input change
+        var checkChange = function(row, isPopup){
+            let tempUpdateData = {};
+
+            //assign to correct data depending on which modal is being changed
+            if(isPopup){
+                tempUpdateData = updateDataPopup;
+            } else {
+                tempUpdateData = updateData;
+            }
+
+
+            let locationId = $(row).data("location");
+            let sku = $(row).data("sku");
+            let inputType = $(row).data("type");
+            let newValue = $(row).val();
+            let oldValue = $(row).data("value");
+
+            const key = locationId + "-" + sku;
+
+            //if nothing entered switch to 0
+            if(!newValue || newValue < 0){
+                $(row).val(0);
+                newValue = 0;
+            }
+
+            //change css based on value difference
+            if(newValue > oldValue){
+                $(row).css("background-color", "#e4fbd9"); //green if more than old value
+            } else if (newValue < oldValue) { //red if less than old value
+                $(row).css("background-color", "#fde9e9");
+            } else {
+                $(row).css("background-color", "white");
+            }
+
+            //change data object if data is changed
+            if(newValue != oldValue){
+                //if properties do not already exist in object, initialize it
+                if(!tempUpdateData[key]){
+                    tempUpdateData[key] = {
+                        variantId : sku,
+                        locationId : locationId
+                    };
+                }
+                if(!tempUpdateData[key][inputType]){
+                    tempUpdateData[key][inputType] = {};
+                }
+                tempUpdateData[key][inputType] = parseInt(newValue);
+            } else {
+                delete tempUpdateData[key][inputType];  //delete prop if not changed
+            }
+
+            //delete row if no changes exist
+            if(!tempUpdateData[key]["availableQuantity"] && !tempUpdateData[key]["notifyThreshold"]){
+                delete tempUpdateData[key];
+            }
+
+            //assign to correct data depending on which modal is being changed
+            if(isPopup){
+                updateDataPopup = tempUpdateData;
+            } else {
+                updateData = tempUpdateData;
+            }
+        }
+
         //Reload data (cancel changes)
         var reloadData = function(url){
             //reload data
             disableEdit();
-            table.ajax.url(url);
+            //call last URL used if new one not given
+            if(url){
+                table.ajax.url(url);
+            } else {
+                table.ajax.url(lastUrl);
+            }
             table.ajax.reload();
             return;
         }
@@ -405,6 +478,7 @@
             if(locationId != "-1"){
                 newUrl = newUrl + "?locationId=" + locationId;
             }
+            lastUrl = newUrl;
             reloadData(newUrl);
             return;
         }
@@ -460,11 +534,9 @@
         }
 
         var variantRender = function (data) {
-            console.log(data);
             let options;
-
-            if(data == null){
-                options = "Single Variant"
+            if(!data || data == [] || data["length"] == 0){
+                options = "N/A"
             //if not null options, return list of options that make up variant
             } else {
                 options = "["
@@ -477,28 +549,35 @@
             return options;
         }
 
+
         var inputOnShelfRender = function (data) {
             let onShelf = data["availableQuantity"];
             let sku = data["variant"]["id"];
+            let locationId = data["location"]["id"];
 
+            //assigns unique id of "Onshelf-{sku}-{locationId}"
             return '<input value="' + onShelf + '" type="number" class="form-control input-number"' +
-                   'min="0" id="Onshelf-' + sku + '" readOnly >';
+                   'min="0" data-type="availableQuantity"'
+                +   'data-sku="' + sku +'" data-location="' + locationId +'" data-value="' + onShelf +'"readOnly onchange="checkChange(this, false)" >';
         }
 
         var inputNotifyThresholdRender = function (data) {
             let threshold = data["notifyThreshold"];
             let sku = data["variant"]["id"];
+            let locationId = data["location"]["id"];
 
+            //assigns unique id of "NotifyTheshold-{sku}-{locationId}"
             return '<input value="' + threshold + '" type="number" class="form-control input-number"' +
-                'min="0" id="Lowstocklimit-' + sku + '" readOnly >';
+                'min="0" data-type="notifyThreshold"'
+            +   'data-sku="' + sku +'" data-location="' + locationId +'" data-value="' + threshold +'"readOnly onchange="checkChange(this, false)" >';
         }
 
-        var renderActionButtons  = function (data) {
-            let threshold = data["notifyThreshold"];
-            let sku = data["variant"]["id"];
-
-            return '<input value="' + threshold + '" type="number" class="form-control input-number"' +
-                'min="0" id="Lowstocklimit-' + sku + '" readOnly >';
+        var renderActionButtons  = function (sku) {
+            return '<span class="button-action">' +
+                        '<button class="btn btn-outline-primary button-edit" type="button" style="font-size: 15px;" data-sku="' + sku + '" onClick="openMoreStock(this.getAttribute(&quot;data-sku&quot;));">' +
+                            '<i class="far fa-eye"></i>' +
+                        '</button>' +
+                    '</span>';
         }
 
 
@@ -515,6 +594,7 @@
             //Using DataTable
             table = $('#dataTable').DataTable( {
 
+                processing: true,
                 ajax: {
                     url: '/api/secured/inventory_levels',
                     cache: true,
@@ -536,10 +616,9 @@
                     { data: "product.isBigItem", "render": booleanToCheckmark },
                     { data: "product.isWaitListEnabled", "render": booleanToCheckmark },
                     { data: "location.name" },
-                    { data: "availableQuantity" }
+                    { data: "variant.id", "render" : renderActionButtons }
                 ],
-                processing: true,
-                order: [ [1, 'asc'], [2, 'asc'], [0, 'asc'] ],
+                order: [ [1, 'asc'], [2, 'asc'], [0, 'asc'], [4, 'asc'] ],
                 rowGroup: {
                     dataSrc: [  function(row) {
                                     return categoryParentRender(row.product.category);
@@ -702,8 +781,6 @@
             table.columns(11).search("✓").draw();
 
             dataTable = table;
-
-
         } );
 
         /**
@@ -781,25 +858,54 @@
         }
 
         function singleItemTextChange(data){
-            let productName = data["productName"];
-            let sku = data["SKU"];
+            let productName = data["product"]["name"];
+            let sku = data["variant"]["id"];
             let attributes = data.attributes;
             $('#single-item-title').text('Inventory for ' + productName);
             $('#single-item-name-sku').text(productName + ' - SKU: ' + sku);
 
-            let attributeString = '(';
-            let numOfAttributes = 0;
-            for (let key in attributes){
-                if(numOfAttributes > 0){
-                    attributeString += ', ';
-                }
-                attributeString += attributes[key].value;
-                numOfAttributes += 1;
-            }
-            attributeString += ')';
+            let attributeString = variantRender(data["variant"]["options"]);
 
             $('#single-item-attributes').text(attributeString);
         }
+
+        //Input render for pop-up (extra inventory modal)
+        var inputOnShelfExtraRender = function (data) {
+            let onShelf = data["availableQuantity"];
+            let sku = data["variant"]["id"];
+            let locationId = data["location"]["id"];
+
+            let readOnly = "readOnly";
+            //if confirmed to edit, do not render inputs as readOnly
+            if(confirmBeforeEdit == true){
+                readOnly = "";
+            }
+
+            //assigns unique id of "Onshelf-{sku}-{locationId}"
+            return '<input value="' + onShelf + '" type="number" class="form-control input-number"' +
+                'min="0" data-type="availableQuantity"'
+                +   'data-sku="' + sku +'" data-location="' + locationId +'" data-value="' + onShelf +'"' + readOnly + ' onchange="checkChange(this, true)" >';
+        }
+
+        //Input render for pop-up (extra inventory modal)
+        var inputNotifyThresholdExtraRender = function (data) {
+            let threshold = data["notifyThreshold"];
+            let sku = data["variant"]["id"];
+            let locationId = data["location"]["id"];
+
+            let readOnly = "readOnly";
+            //if confirmed to edit, do not render inputs as readOnly
+            if(confirmBeforeEdit == true){
+                readOnly = "";
+            }
+
+            //assigns unique id of "NotifyTheshold-{sku}-{locationId}"
+            return '<input value="' + threshold + '" type="number" class="form-control input-number"' +
+                'min="0" data-type="notifyThreshold"'
+                +   'data-sku="' + sku +'" data-location="' + locationId +'" data-value="' + threshold +'"' + readOnly + ' onchange="checkChange(this, true)" >';
+        }
+
+        //Input render for pop-up (extra inventory modal)
 
         function openMoreStock(sku){
 
@@ -811,31 +917,32 @@
                 "info":     false,
 
                 ajax: {
-                    url: '/management/api/office_stock/' + sku,
-                    dataSrc:  function(data) {
-                        singleItemTextChange(data[0])
-                        return data
+                    url: '/api/secured/inventory_levels?variantId=' + sku,
+                    cache: true,
+                    dataSrc: "inventoryLevels",
+                },
+                fnInitComplete: function() {
+                    let rowData = table2.data()["0"];
+                    singleItemTextChange(rowData);
+
+                    //if confirmed to edit, show save button, otherwise show edit button
+                    if(!confirmBeforeEdit) {
+                        $('#save-button-sku').attr('hidden', '');
+                        $('#edit-button-sku').removeAttr('hidden');
+                    } else {
+                        $('#edit-button-sku').attr('hidden', '');
+                        $('#save-button-sku').removeAttr('hidden');
                     }
                 },
                 columns: [
-                    { data: "locationName" },
-                    { data: "amountOnShelf" },
-                    { data: "inPendingOrder" },
-                    { data: "neededStock" },
-                    { data: "lowStockLimit" }
-                ],
-                columnDefs : [
-                    { targets: [1, 4],
-                        render: function (data, type, row) {
-                            return '<input class="form-control input-number" type="number" ' +
-                                'min="0" readOnly value = ' + data + ' data-sku = ' + row.SKU + ' data-location = ' + row.locationID + '>';
-                        }
-                    }
+                    { data: "location.name" },
+                    { data : null, className: "input-disabled", "render" : inputOnShelfExtraRender },
+                    { data: "reservedQuantity" },
+                    { data: "neededQuantity" },
+                    { data : null, className: "input-disabled", "render" : inputNotifyThresholdExtraRender }
                 ],
             } );
 
-            $('#save-button-sku').attr('hidden','');
-            $('#edit-button-sku').removeAttr('hidden');
             $('#more-info-modal').modal('show');
 
 
@@ -867,133 +974,102 @@
             function (e) {
                 e.preventDefault();
 
-                const form = $(this);
-                const url = form.attr('action');
-
-                const data = [];
-
-                var table = document.getElementById('inventory-body');
-                for (var i = 0, row; row = table.rows[i]; i++){
-                    const sku = row.getAttribute("data-sku");
-                    const locationID = row.getAttribute("data-location");
-
-                    if(sku != null){
-                        let onShelf = '';
-                        let lowStockLimit = '';
-                        for (var j = 0, col; col = row.cells[j]; j++){
-                            if(j == 3){
-                                onShelf = col.children[0].value;
-                            }
-                            if(j == 6) {
-                                lowStockLimit = col.children[0].value;
-                            }
-                        }
-                        let rowData = {
-                            'locationID': locationID,
-                            'SKU': sku,
-                            'amountOnShelf': onShelf,
-                            'lowStockLimit': lowStockLimit
-                        }
-                        data.push(rowData);
-                    }
+                //only show wait modal if updateData is not empty
+                if(!jQuery.isEmptyObject(updateData)){
+                    $('#wait-modal').modal('show');
                 }
 
-                $('#wait-modal').modal('show');
-                console.log(data);
+                for(const key in updateData){
+                    let item = updateData[key];
+                    console.log(item);
+                    let data = {};  //data to pass off in each API patch
 
-                $.ajax({
-                    type: "PUT",
-                    url: url,
-                    contentType: "application/json",
-                    data: JSON.stringify(data), // serializes the form's elements.
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader(
-                            $('meta[name=_csrf_header]').attr('content'),
-                            $('meta[name=_csrf]').attr('content')
-                        )
-                        $('#submit-edit-inventory-modal').modal('hide');
-                    },
-                    success: function()
-                    {
-                        $('#wait-modal').modal('hide');
-                        $('#success-modal').modal('show');
-                    },
-                    error: function(xhr) {
-                        $('#wait-modal').modal('hide');
-                        $('#fail-message').text("Error Message:\'"+ xhr.responseJSON.message +"\'")
-                        $('#fail-modal').modal('show');
-
+                    //initializing input data
+                    if(item["availableQuantity"]){
+                        data["availableQuantity"] = {};
+                        data["availableQuantity"] = item["availableQuantity"];
                     }
-                });
+                    if(item["notifyThreshold"]){
+                        data["notifyThreshold"] = {};
+                        data["notifyThreshold"] = item["notifyThreshold"];
+                    }
+
+                    $.ajax({
+                        type: "PATCH",
+                        url: "/api/secured/inventory_levels/" + item["locationId"] + "/" + item["variantId"],
+                        contentType: "application/json",
+                        data: JSON.stringify(data), // serializes the form's elements.
+                        beforeSend: function(xhr) {
+                            $('#submit-edit-inventory-modal').modal('hide');
+                        },
+                        success: function()
+                        {
+                            $('#wait-modal').modal('hide');
+                            $('#success-modal').modal('show');
+                        },
+                        error: function(xhr) {
+                            $('#wait-modal').modal('hide');
+                            $('#fail-message').text("Error Message:\'"+ xhr.responseJSON.message +"\'")
+                            $('#fail-modal').modal('show');
+
+                        }
+                    });
+
+                }
             }
         );
 
-
+        //update inventory through pop-up
         $('#update-sku-inventory').submit(
             function (e) {
                 e.preventDefault();
 
-                const form = $(this);
-                const url = form.attr('action');
-
-                const data = [];
-
-                var table = document.getElementById('inventory-sku-body');
-                for (var i = 0, row; row = table.rows[i]; i++){
-                    let sku = ''
-                    let locationID = '';
-
-                    let onShelf = '';
-                    let lowStockLimit = '';
-                    for (var j = 0, col; col = row.cells[j]; j++){
-                        if(j == 1){
-                            onShelf = col.children[0].value;
-                        }
-                        if(j == 4) {
-                            lowStockLimit = col.children[0].value;
-                            sku = col.children[0].getAttribute("data-sku");
-                            locationID = col.children[0].getAttribute("data-location");
-                        }
-                    }
-                    let rowData = {
-                        'locationID': locationID,
-                        'SKU': sku,
-                        'amountOnShelf': onShelf,
-                        'lowStockLimit': lowStockLimit
-                    }
-                    console.log(rowData);
-                    data.push(rowData);
+                //only show wait modal if updateData is not empty
+                if(!jQuery.isEmptyObject(updateDataPopup)){
+                    $('#wait-modal').modal('show');
                 }
 
+                for(const key in updateDataPopup) {
+                    let item = updateDataPopup[key];
+                    console.log(item);
+                    let data = {};  //data to pass off in each API patch
 
-                $('#wait-modal').modal('show');
-                console.log(data);
-
-                $.ajax({
-                    type: "PUT",
-                    url: url,
-                    contentType: "application/json",
-                    data: JSON.stringify(data), // serializes the form's elements.
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader(
-                            $('meta[name=_csrf_header]').attr('content'),
-                            $('meta[name=_csrf]').attr('content')
-                        )
-                        $('#submit-edit-inventory-modal').modal('hide');
-                        $('#more-info-modal').modal('hide');
-                    },
-                    success: function()
-                    {
-                        $('#wait-modal').modal('hide');
-                        $('#success-modal-2').modal('show');
-                    },
-                    error: function(xhr) {
-                        $('#wait-modal').modal('hide');
-                        $('#fail-message').text("Error Message:\'"+ xhr.responseJSON.message +"\'")
-                        $('#fail-modal').modal('show');
-
+                    //initializing input data
+                    if (item["availableQuantity"]) {
+                        data["availableQuantity"] = {};
+                        data["availableQuantity"] = item["availableQuantity"];
                     }
-                });
+                    if (item["notifyThreshold"]) {
+                        data["notifyThreshold"] = {};
+                        data["notifyThreshold"] = item["notifyThreshold"];
+                    }
+
+                    console.log(data);
+
+                    $.ajax({
+                        type: "PATCH",
+                        url: "/api/secured/inventory_levels/" + item["locationId"] + "/" + item["variantId"],
+                        contentType: "application/json",
+                        data: JSON.stringify(data), // serializes the form's elements.
+                        beforeSend: function (xhr) {
+                            $('#submit-edit-inventory-modal').modal('hide');
+                            $('#more-info-modal').modal('hide');
+                        },
+                        success: function () {
+                            $('#wait-modal').modal('hide');
+                            $('#success-modal-2').modal('show');
+
+                            //TODO: fix multiple calls when multiple rows are updated
+                            reloadData();
+                        },
+                        error: function (xhr) {
+                            $('#wait-modal').modal('hide');
+                            $('#fail-message').text("Error Message:\'" + xhr.responseJSON.message + "\'")
+                            $('#fail-modal').modal('show');
+
+                        }
+                    });
+                }
             }
         );
 

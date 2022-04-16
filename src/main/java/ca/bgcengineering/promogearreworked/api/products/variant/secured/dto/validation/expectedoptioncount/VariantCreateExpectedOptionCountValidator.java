@@ -1,0 +1,20 @@
+package ca.bgcengineering.promogearreworked.api.products.variant.secured.dto.validation.expectedoptioncount;
+
+import ca.bgcengineering.promogearreworked.api.products.variant.secured.dto.SecuredProductVariantCreate;
+import ca.bgcengineering.promogearreworked.persistence.repositories.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+
+public class VariantCreateExpectedOptionCountValidator extends ExpectedOptionCountValidator
+        implements ConstraintValidator<ExpectedOptionCount, SecuredProductVariantCreate> {
+
+    @Autowired
+    private ProductRepository productRepo;
+
+    @Override
+    public boolean isValid(SecuredProductVariantCreate productVariantCreate, ConstraintValidatorContext constraintValidatorContext) {
+        return validate(productVariantCreate.getOptionValueIds(), productVariantCreate.getProductId(), productRepo);
+    }
+}

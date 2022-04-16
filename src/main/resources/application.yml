@@ -13,9 +13,9 @@ azure:
     blob-endpoint: https://promogearsa.blob.core.windows.net/
 
   activedirectory:
-    client-id: 61130a3e-2362-4c44-b86c-c840c0f32ea9
-    tenant-id: 8ec578ae-91c9-4c17-b0ed-c2767953b320
-    client-secret: cS67Q~crEh_NQJqKv~3Y~JLVrjqU~Db6kEjwt
+    client-id: 858cfe4c-4558-49d8-b598-49eea8a6eee7
+    tenant-id: 13b20fb1-7751-4ce4-ab35-5178f6ec731b
+    client-secret: ~cn7Q~mEcpGMZf07Pn7n4bZAcP~2A3-jqyALQ
 
 ---
 spring:
