@@ -189,27 +189,30 @@
     <div class="card">
       <div class="card-body" style="text-align: center;">
         <h4>Options</h4>
-        <small><i>Select which options you would like your product to have</i></small>
-        <div class="table-responsive" style="text-align: left;">
-          <table id="attributesTable" class="table table table-striped table-hover">
-            <th:block th:each="attributeGroup : ${attributeGroups}">
-              <!--          th:if="${!attributeGroup?.getAttributes().isEmpty()}"-->
-              <tr th:data-index="${attributeGroupStat.index}" th:data-id="${attributeGroup?.getID()}">
-                <th scope="col" th:text="${attributeGroup?.getName()} ?: 'N/A'"></th>
-                <th:block th:each="attribute : ${attributeGroup?.getAttributes()}">
-                  <td>
-                    <input type="checkbox" th:data-attrid="${attribute?.getID()}"
-                           th:id="'product-' + ${attributeGroup?.getName()} + '-' + ${attribute?.getValue()}"
-                           th:data-attrvalue="${attribute?.getValue()}"
-                           th:name="'selection'+${attributeGroupStat.index}">
-                    <label th:for="'product-' + ${attributeGroup?.getName()} + '-' + ${attribute?.getValue()}" th:text="${attribute?.getValue()}"></label>
-                  </td>
-                </th:block>
-              </tr>
-            </th:block>
-          </table>
+        <label for="has-options" class="form-check-label">This product options, like size or colour</label>
+        <input type="checkbox" class="form-check-input" id="has-options" name="has-options">
+        <br>
+        <div id="options-select-container" style="display: none;">
+          <small><i>Select which options you would like your product to have</i></small>
+          <div class="product-option" id="product-option-1">
+            <label for="option-name-1" class="form-check-label">Option Name</label>
+            <select class="form-select" id="option-name-1" name="option-name-1">
+            </select>
+            <!-- <button class="delete-product-option" id="delete-product-option-1" onclick="delete_option(1)">Delete Option</button> -->
+
+
+<!--            <span>Option Values</span>-->
+<!--            <input type="text" class="form-control" id="option-name-1-value-1" name="option-name-1-value-1">-->
+<!--            <button></button>-->
+          </div>
+
+          <button class="btn btn-primary" id="add-new-option-button">+ Add another option</button>
         </div>
-        <a class="btn btn-outline-primary" style="float: left;" data-bs-toggle="modal" href="#create-attributes-landing-modal" role="button" disabled>Create Attribute</a>
+
+        <button class="btn btn-outline-primary" id="edit-options-modal-button"
+                style="float: left;" data-bs-toggle="modal" data-bs-target="#edit-options-modal">
+          Edit Options
+        </button>
         <button style="float: right;" class="btn btn-outline-primary" onclick="create_all_possible_products()">Continue</button>
       </div>
     </div>
@@ -262,6 +265,7 @@
   </div>
 
 
+<!-- Start Categories -->
   <div class="modal fade" id="edit-categories-modal" tabindex="-1" role="dialog"
        aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
@@ -280,20 +284,25 @@
 <!--              </ul>-->
 <!--            </li>-->
 <!--          </ul>-->
-          <button class="btn btn-outline-primary btn-sm button-filter" id="expand-option" type="button">Expand All</button>
-          <button class="btn btn-outline-primary btn-sm button-filter" id="collapse-option" type="button">Collapse All</button>
+          <button class="btn btn-outline-primary btn-sm button-filter expand-option" type="button">Expand All</button>
+          <button class="btn btn-outline-primary btn-sm button-filter collapse-option" type="button">Collapse All</button>
           <button class="btn btn-outline-primary btn-sm button-filter"
                   id="create-new-category-button" type="button"
                   data-bs-toggle="modal" data-bs-target="#create-new-parent-category-modal">Create New Parent Category</button>
           <br>
           <br>
           <div class="accordion" id="categoryAccordionPanels">
+            <div th:if="${#lists.isEmpty(categories)}" data-has-none="true">
+              No Categories Here
+            </div>
             <div th:each="category : ${categories}"
                  th:if="${category?.getParent()?.getId() == null}"
-                 class="accordion-item">
+                 class="accordion-item"
+                 th:id="'category-accordion-'+${category?.getId()}">
               <h2 class="accordion-header"
                   th:id="'panelsStayOpen-heading-'+${categoryStat.index}">
                 <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                        th:id="'parent-category-text-'+${category?.getId()}"
                         th:data-bs-target="'#panelsStayOpen-collapse-'+${categoryStat.index}" aria-expanded="true"
                         th:aria-controls="'panelsStayOpen-collapse-'+${categoryStat.index}" th:text="${category?.getName()}">
                 </button>
@@ -301,6 +310,18 @@
               <div th:id="'panelsStayOpen-collapse-'+${categoryStat.index}" class="accordion-collapse collapse"
                    th:aria-labelledby="'panelsStayOpen-heading-'+${categoryStat.index}">
                 <div class="accordion-body">
+                  <button type="button" class="btn btn-warning"
+                          th:id="'parent-category-edit-text-'+${category?.getId()}"
+                          th:text="|Edit &quot${category?.getName()}&quot|"
+                          th:data-cat-id="${category?.getId()}"
+                          onclick="display_edit_parent_category_modal(this)"></button>
+                  <button type="button" class="btn btn-danger"
+                          th:id="'parent-category-delete-text-'+${category?.getId()}"
+                          th:text="|Delete &quot${category?.getName()}&quot|"
+                          th:data-id="${category?.getId()}"
+                          th:data-type-of-delete="category"
+                          th:data-name="${category?.getName()}"
+                          onclick="display_delete_modal(this)"></button>
                   <table class="table">
                     <thead>
                       <tr>
@@ -310,7 +331,11 @@
                       </tr>
                     </thead>
                     <tbody th:id="'subcategory-table-'+${categoryStat.index}">
-                      <tr th:each="subCategory : ${category?.getSubcategories()}">
+                      <tr th:if="${#lists.isEmpty(category?.getSubcategories())}" data-has-none="true">
+                        <td>No Subcategories</td>
+                      </tr>
+                      <tr th:each="subCategory : ${category?.getSubcategories()}"
+                          th:id="'subcategory-row-'+${subCategory?.getId()}">
                         <td th:text="${subCategory?.getName()}" th:id="'subcategory-text-'+${subCategory?.getId()}"></td>
                         <td style="padding: 5px;">
                             <button class="btn btn-outline-primary button-edit"
@@ -322,16 +347,17 @@
                         </td>
                         <td style="padding: 5px;">
                           <button class="btn btn-outline-primary button-edit"
-                                  type="button" style="font-size: 15px;">
+                                  type="button" style="font-size: 15px;"
+                                  th:data-id="${subCategory?.getId()}"
+                                  th:data-type-of-delete="subcategory"
+                                  th:data-name="${subCategory?.getName()}"
+                                  onclick="display_delete_modal(this)">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                               <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
                               <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
                             </svg>
                           </button>
                         </td>
-                      </tr>
-                      <tr th:if="${#lists.isEmpty(category?.getSubcategories())}">
-                        <td>No Subcategories</td>
                       </tr>
                     </tbody>
                     <tfoot>
@@ -342,23 +368,6 @@
                                   th:data-parent-cat-id="${category?.getId()}"
                                   th:data-parent-cat-name="${category?.getName()}"
                                   onclick="display_create_subcategory_modal(this)">+Add Subcategory</button>
-<!--                          <label th:for="'new-subcategory-'+${categoryStat.index}"-->
-<!--                                 class="form-label" style="display: none;">Enter New Subcategory Name:</label>-->
-<!--                          <input type="text" class="form-control"-->
-<!--                                 th:data-subcat-table-id="${categoryStat.index}"-->
-<!--                                 th:data-parent-cat-id="${category?.getId()}"-->
-<!--                                 th:data-parent-cat-name="${category?.getName()}"-->
-<!--                                 th:id="'new-subcategory-'+${categoryStat.index}"-->
-<!--                                 th:name="'new-subcategory-'+${categoryStat.index}"-->
-<!--                                 style="display: none;">-->
-<!--                          <br>-->
-<!--                          <button th:id="'save-sub-cat-button-'+${categoryStat.index}"-->
-<!--                                  type="button" class="btn btn-success submit-create-category"-->
-<!--                                  onclick="display_new_subcategory_details(this)" style="display: none;"-->
-<!--                                  data-bs-toggle="modal" data-bs-target="#confirm-category-submit">Save</button>-->
-<!--                          <button th:id="'discard-sub-cat-button-'+${categoryStat.index}"-->
-<!--                                  type="button" class="btn btn-danger"-->
-<!--                                  onclick="cancel_new_subcategory(this)" style="display: none">Cancel</button>-->
                         </td>
                       </tr>
                     </tfoot>
@@ -396,7 +405,6 @@
       </div>
     </div>
   </div>
-
   <div class="modal fade" id="confirm-parent-category-submit" tabindex="-1" role="dialog"
        aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -424,6 +432,68 @@
     </div>
   </div>
 
+  <div class="modal fade" id="edit-parent-category-modal" aria-hidden="true"
+       aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Category</h5>
+        </div>
+        <div class="modal-body">
+          <table class="table">
+            <tr>
+              <th>Current Parent Category Name</th>
+              <td id="display-current-parent-category-name"></td>
+            </tr>
+            <tr>
+              <th>Enter New Parent Category Name</th>
+              <td>
+                <input type="text" class="form-control"
+                       id="edit-parent-category-input" name="edit-parent-category-input"
+                       placeholder="Ex. &quot;Accessories&quot;">
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Return</button>
+          <button id="edit-parent-category-button-1"
+                  class="btn btn-outline-primary"
+                  onclick="display_edit_parent_category_details()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="confirm-edit-parent-category-modal" tabindex="-1" role="dialog"
+       aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Parent Category</h5>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to submit the following details?
+          <table class="table">
+            <tr>
+              <th>Currently Stored Parent Category Name</th>
+              <td id="display-currently-stored-parent-category-name"></td>
+            </tr>
+            <tr>
+              <th>New Parent Category Name</th>
+              <td id="display-new-edit-parent-category-name"></td>
+            </tr>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-default" data-bs-dismiss="modal">Return</button>
+          <button id="edit-parent-category-button-2"
+                  class="btn btn-success"
+                  onclick="save_edit_parent_category()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="modal fade" id="create-new-subcategory-modal" aria-hidden="true"
        aria-labelledby="exampleModalToggleLabel" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
@@ -446,7 +516,6 @@
       </div>
     </div>
   </div>
-
   <div class="modal fade" id="confirm-new-subcategory-modal" tabindex="-1" role="dialog"
        aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -508,7 +577,6 @@
       </div>
     </div>
   </div>
-
   <div class="modal fade" id="confirm-edit-subcategory-modal" tabindex="-1" role="dialog"
        aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -538,6 +606,360 @@
       </div>
     </div>
   </div>
+<!-- End Categories-->
+
+<!-- Start Options -->
+  <div class="modal fade" id="edit-options-modal" tabindex="-1" role="dialog"
+       aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Options</h5>
+        </div>
+        <div class="modal-body">
+          <button class="btn btn-outline-primary btn-sm button-filter expand-option" type="button">Expand All</button>
+          <button class="btn btn-outline-primary btn-sm button-filter collapse-option" type="button">Collapse All</button>
+          <button class="btn btn-outline-primary btn-sm button-filter"
+                  id="create-new-option-button" type="button"
+                  data-bs-toggle="modal" data-bs-target="#create-new-option-modal">Create New Option</button>
+          <br>
+          <br>
+          <div class="accordion" id="optionAccordionPanels">
+            <div th:if="${#lists.isEmpty(options)}" data-has-none="true">
+              No Categories Here
+            </div>
+            <div th:each="option : ${options}"
+                 class="accordion-item"
+                 th:id="'option-accordion-'+${option?.getId()}">
+              <h2 class="accordion-header"
+                  th:id="'panelsStayOpen-heading-'+${optionStat.index}">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                        th:id="'option-text-'+${option?.getId()}"
+                        th:data-bs-target="'#panelsStayOpen-collapse-'+${optionStat.index}" aria-expanded="true"
+                        th:aria-controls="'panelsStayOpen-collapse-'+${optionStat.index}" th:text="${option?.getName()}">
+                </button>
+              </h2>
+              <div th:id="'panelsStayOpen-collapse-'+${optionStat.index}" class="accordion-collapse collapse"
+                   th:aria-labelledby="'panelsStayOpen-heading-'+${optionStat.index}">
+                <div class="accordion-body">
+                  <button type="button" class="btn btn-warning"
+                          th:id="'option-edit-text-'+${option?.getId()}"
+                          th:text="|Edit &quot${option?.getName()}&quot|"
+                          th:data-option-id="${option?.getId()}"
+                          onclick="display_edit_option_modal(this)"></button>
+                  <button type="button" class="btn btn-danger"
+                          th:id="'option-delete-text-'+${option?.getId()}"
+                          th:text="|Delete &quot${option?.getName()}&quot|"
+                          th:data-id="${option?.getId()}"
+                          th:data-type-of-delete="option"
+                          th:data-name="${option?.getName()}"
+                          onclick="display_delete_modal(this)"></button>
+                  <table class="table">
+                    <thead>
+                    <tr>
+                      <th scope="col">Option Values</th>
+                      <th scope="col">Edit</th>
+                      <th scope="col">Delete</th>
+                    </tr>
+                    </thead>
+                    <tbody th:id="'option-values-table-'+${optionStat.index}">
+                    <tr th:if="${#lists.isEmpty(option?.getValues())}" data-has-none="true">
+                      <td>No Option Values</td>
+                    </tr>
+                    <tr th:each="optionValue : ${option?.getValues()}"
+                        th:id="'option-value-row-'+${optionValue?.getId()}">
+                      <td th:text="${optionValue?.getValue()}" th:id="'option-value-text-'+${optionValue?.getId()}"></td>
+                      <td style="padding: 5px;">
+                        <button class="btn btn-outline-primary button-edit"
+                                type="button" style="font-size: 15px;"
+                                th:data-option-id="${option?.getId()}"
+                                th:data-option-value-id="${optionValue?.getId()}"
+                                onclick="display_edit_option_value_modal(this)">
+                          <i class="far fa-edit"></i>
+                        </button>
+                      </td>
+                      <td style="padding: 5px;">
+                        <button class="btn btn-outline-primary button-edit"
+                                type="button" style="font-size: 15px;"
+                                th:data-id="${optionValue?.getId()}"
+                                th:data-type-of-delete="option_value"
+                                th:data-name="${optionValue?.getValue()}"
+                                onclick="display_delete_modal(this)">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                      <td>
+                        <button type="button" class="btn btn-primary" id="add-option-value-button"
+                                th:data-option-value-table-id="${optionStat.index}"
+                                th:data-option-id="${option?.getId()}"
+                                th:data-option-name="${option?.getName()}"
+                                onclick="display_create_option_value_modal(this)">+Add Option Value</button>
+                      </td>
+                    </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Return</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="create-new-option-modal" aria-hidden="true"
+       aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Create New Option</h5>
+        </div>
+        <div class="modal-body">
+          <label for="new-option-input" class="form-label">Enter New Name</label>
+          <input type="text" class="form-control"
+                 id="new-option-input" name="new-option-input" placeholder="Ex. &quot;Size&quot;">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Return</button>
+          <button id="save-new-option-button-1"
+                  class="btn btn-outline-primary"
+                  onclick="display_new_option_details()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="confirm-option-submit" tabindex="-1" role="dialog"
+       aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirm Submit</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to submit the following details?
+          <table class="table">
+            <tr>
+              <th>Option Name</th>
+              <td id="display-new-option-name"></td>
+            </tr>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-default" data-bs-dismiss="modal">Return</button>
+          <button id="save-new-option-button-2"
+                  class="btn btn-success"
+                  onclick="save_new_option()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="edit-option-modal" aria-hidden="true"
+       aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Option</h5>
+        </div>
+        <div class="modal-body">
+          <table class="table">
+            <tr>
+              <th>Current Option Name</th>
+              <td id="display-current-option-name"></td>
+            </tr>
+            <tr>
+              <th>Enter New Option Name</th>
+              <td>
+                <input type="text" class="form-control"
+                       id="edit-option-input" name="edit-option-input"
+                       placeholder="Ex. &quot;Size&quot;">
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Return</button>
+          <button id="edit-option-button-1"
+                  class="btn btn-outline-primary"
+                  onclick="display_edit_option_details()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="confirm-edit-option-modal" tabindex="-1" role="dialog"
+       aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Option</h5>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to submit the following details?
+          <table class="table">
+            <tr>
+              <th>Currently Stored Option Name</th>
+              <td id="display-currently-stored-option-name"></td>
+            </tr>
+            <tr>
+              <th>New Option Name</th>
+              <td id="display-new-edit-option-name"></td>
+            </tr>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-default" data-bs-dismiss="modal">Return</button>
+          <button id="edit-option-button-2"
+                  class="btn btn-success"
+                  onclick="save_edit_option()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="create-new-option-value-modal" aria-hidden="true"
+       aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Create New Option Value</h5>
+        </div>
+        <div class="modal-body">
+          <label for="new-option-value-input" class="form-label"
+                 id="new-option-value-input-label">Enter New Option Value</label>
+          <input type="text" class="form-control"
+                 id="new-option-value-input" name="new-option-value-input" placeholder="Ex. &quot;Small, Red, Striped...&quot;">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Return</button>
+          <button id="save-new-option-value-button-1"
+                  class="btn btn-outline-primary"
+                  onclick="display_new_option_value_details()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="confirm-new-option-value-modal" tabindex="-1" role="dialog"
+       aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Create New Option Value</h5>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to submit the following details?
+          <table class="table">
+            <tr>
+              <th>New Option Value</th>
+              <td id="display-new-option-value"></td>
+            </tr>
+            <tr>
+              <th>For Option</th>
+              <td id="display-for-option-name"></td>
+            </tr>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-default" data-bs-dismiss="modal">Return</button>
+          <button id="save-new-option-value-button-2"
+                  class="btn btn-success"
+                  onclick="save_new_option_value()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="edit-option-value-modal" aria-hidden="true"
+       aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Option Value</h5>
+        </div>
+        <div class="modal-body">
+          <table class="table">
+            <tr>
+              <th>Current Option Value</th>
+              <td id="display-current-option-value"></td>
+            </tr>
+            <tr>
+              <th>Enter New Option Value</th>
+              <td>
+                <input type="text" class="form-control"
+                       id="edit-option-value-input" name="edit-option-value-input" placeholder="Ex. &quot;Small, Red, Striped...&quot;">
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Return</button>
+          <button id="edit-new-option-value-button-1"
+                  class="btn btn-outline-primary"
+                  onclick="display_edit_option_value_details()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="confirm-edit-option-value-modal" tabindex="-1" role="dialog"
+       aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit New Option Value</h5>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to submit the following details?
+          <table class="table">
+            <tr>
+              <th>Currently Stored Option Value</th>
+              <td id="display-currently-stored-option-value"></td>
+            </tr>
+            <tr>
+              <th>New Option Value</th>
+              <td id="display-new-edit-option-value"></td>
+            </tr>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-default" data-bs-dismiss="modal">Return</button>
+          <button id="save-new-option-value-button"
+                  class="btn btn-success"
+                  onclick="save_edit_option_value()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- End Options -->
+  <div class="modal fade" id="confirm-delete-modal" tabindex="-1" role="dialog"
+       aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirm-delete-modal-title"></h5>
+        </div>
+        <div class="modal-body text-center">
+          <span id="confirm-delete-modal-message"></span><br>
+          <span>This action CANNOT be undone!</span>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-default" data-bs-dismiss="modal">Return</button>
+          <button id="confirm-delete-button"
+                  class="btn btn-danger">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
 
 
@@ -580,248 +1002,6 @@
     </div>
   </div>
 
-  <!-- CREATE CATEGORY SUCCESS/FAIL POPUP MODALS -->
-  <div class="modal fade" id="create-category-form-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Create Category Form</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body text-center">
-          <form id="create-category-form" action="/management/api/category" method="post">
-            <div class="col-md-6">
-              <label for="category-name" class="form-label">Name:</label>
-              <input type="text" id="category-name" name="category-name" class="form-control" required>
-            </div>
-            <div class="col-md-6">
-              <label for="current-categories" class="form-label">Parent Category:</label>
-              <select name="current-categories" id="current-categories" class="form-select" required>
-                <option value=null selected>None</option>
-              </select>
-            </div>
-            <div class="col-md-12">
-              <input class="btn btn-outline-primary" id="submit-create-category" type="button" value="Submit" data-bs-toggle="modal" data-bs-target="#confirm-category-submit">
-            </div>
-
-            <!-- Show the user a popup modal allowing them to confirm the info they are trying to submit -->
-            <div class="modal fade" id="confirm-category-submit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title">Confirm Submit</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    Are you sure you want to submit the following details?
-                    <table class="table">
-                      <tr>
-                        <th>Name</th>
-                        <td id="display-new-category-name"></td>
-                      </tr>
-                      <tr>
-                        <th>Parent Category:</th>
-                        <td id="display-new-parent-category"></td>
-                      </tr>
-                    </table>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
-                    <input class="btn btn-outline-primary" type="submit" value="Submit">
-                  </div>
-                </div>
-              </div>
-            </div>
-          </form>
-        </div>
-        <!--          <div class="modal-footer">-->
-        <!--            <a class="btn btn-outline-success" data-bs-dismiss="modal">Close</a>-->
-        <!--          </div>-->
-      </div>
-    </div>
-  </div>
-  <div class="modal fade" id="create-category-success-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Complete</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body text-center">
-          <span style="font-size: 35px;font-weight: bold;">Successfully Created</span><br>
-          <i class="fa fa-check-circle-o rubberBand animated" style="font-size: 100px;color: rgb(122, 214, 94);height: 41px;"></i>
-        </div>
-        <div class="modal-footer">
-          <a class="btn btn-outline-success" data-bs-dismiss="modal">Close</a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-  <div class="modal fade" id="categories-landing-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Categories</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          Hi, welcome to the Categories editing modal. <br><br>Categories operate on a parent-child relationship such as
-          'Apparel' -> 'Hoodies'. <br><br>In our system, there can be no subcategories of subcategories (ie Grandchildren) so
-          something such as 'Apparel' -> 'Hoodies' -> 'Men's Hoodies' would NOT be allowed since 'Men's Hoodies' would be
-          a grandchild of 'Apparel'. <br><br>With all that said, please select one of the following options to continue:
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-outline-primary" id="categories-create-new-modal-button"
-                  data-bs-toggle="modal" data-bs-target="#categories-create-new-modal">Create New</button>
-          <input class="btn btn-outline-primary" id="categories-edit-existing-modal-button" type="button" value="Edit Existing"
-                 data-bs-toggle="modal" data-bs-target="#categories-edit-existing-modal">
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="modal fade" id="categories-create-new-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Create New Category</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          Please select one of the following options:
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-outline-primary" id="categories-create-new-parent-modal-button" data-bs-dismiss="modal"
-                  data-bs-toggle="modal" data-bs-target="#categories-create-new-parent-modal">Create New Parent Category</button>
-          <input class="btn btn-outline-primary" id="categories-create-new-subcategory-modal-button" type="button"
-                 data-bs-dismiss="modal"
-                 value="Create New Subcategory" data-bs-toggle="modal" data-bs-target="#categories-create-new-subcategory-modal">
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="modal fade" id="categories-create-new-parent-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Create New Category</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          Please select one of the following options:
-        </div>
-        <div class="modal-footer">
-          <!--          <input class="btn btn-outline-primary" id="categories-create-new-parent-modal-button" type="button"-->
-          <!--                 value="Create New Parent Category" data-bs-toggle="modal" data-bs-target="#categories-create-new-parent-modal"-->
-          <!--                 data-bs-dismiss="modal">-->
-          <!--          <input class="btn btn-outline-primary" id="categories-create-new-subcategory-modal-button" type="button"-->
-          <!--                 data-bs-dismiss="modal" value="Create New Subcategory" data-bs-toggle="modal" -->
-          <!--                 data-bs-target="#categories-create-new-subcategory-modal">-->
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="modal fade" id="categories-create-new-subcategory-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Create New Category</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          Please select one of the following options:
-        </div>
-        <div class="modal-footer">
-          <!--          <input class="btn btn-outline-primary" id="categories-create-new-parent-modal-button" type="button"-->
-          <!--                 data-bs-dismiss="modal"-->
-          <!--                 value="Create New Parent Category" data-bs-toggle="modal" data-bs-target="#categories-create-new-parent-modal">-->
-          <!--          <input class="btn btn-outline-primary" id="categories-create-new-subcategory-modal-button" type="button"-->
-          <!--                 value="Create New Subcategory" data-bs-toggle="modal" data-bs-target="#categories-craete-new-subcategory-modal">-->
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal fade" id="create-attributes-landing-modal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Attributes</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          Hi, welcome to the Attributes editing page. <br><br>Please select one of the following options to continue:
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#attributes-create-new-modal" data-bs-dismiss="modal">Create New</button>
-          <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#attributes-edit-modal" data-bs-dismiss="modal">Edit Existing</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal fade" id="attributes-create-new-modal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Create Attributes</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          Hi, welcome to the Attributes creation page. <br><br>Please select one of the following options to continue:
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-outline-primary" onclick="generate_create_attribute_form()">Create New Attribute</button>
-          <button class="btn btn-outline-primary" data-bs-toggle="modal"
-                  data-bs-target="#attributes-add-option-modal" data-bs-dismiss="modal">Add Options to Existing</button>
-          <button class="btn btn-outline-primary" data-bs-toggle="modal"
-                  data-bs-target="#attributes-add-option-modal" data-bs-dismiss="modal">Back</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal fade" id="attributes-create-new-modal2" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Create Attributes</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body" id="attributes-create-new-modal2-body">
-
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-outline-warning"  data-bs-dismiss="modal">Cancel</button>
-          <button class="btn btn-outline-success" onclick="submit_attribute()">Submit</button>
-          <button class="btn btn-outline-primary" data-bs-toggle="modal"
-                  data-bs-target="#attributes-add-option-modal" data-bs-dismiss="modal">Back</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!--  Upon page load, an AJAX get request is done to get all of the the current categories
-        in the database. If that request fails, display this popup modal-->
-  <div class="modal fade" id="get-stored-category-fail-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Failed to Get Categories</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body text-center">
-          <span style="font-size: 35px;font-weight: bold;">Data Retrieval Failed</span><br>
-          <i class="fa fa-close rubberBand animated" style="font-size: 100px;color: rgb(242, 15, 0);height: 41px;"></i><br>
-          <p class="text-start" id="get-stored-category-fail-message"></p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <div class="modal fade" id="wait-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -882,6 +1062,34 @@
 
   <script>
     /**
+     * Upon page load, get all the current categories from the database
+     * and load them into the empty <select> tag in the html.
+     */
+    $(document).ready(function(){
+      fill_current_categories();
+    });
+
+    /**
+     * Universal Delete Handler
+     * Takes in element to be deleted, and dynamically generates confirm-message
+     * as well as adding the appropriate delete function to the delete button
+     */
+    function display_delete_modal(element){
+      $('#confirm-delete-modal-title').text("Confirm Delete " + ($(element).data('type-of-delete')).charAt(0).toUpperCase() + ($(element).data('type-of-delete')).slice(1));
+      $('#confirm-delete-modal-message').text("Are you sure you want to delete \"" +$(element).data('name')+ "\"");
+
+      $('#confirm-delete-button').removeData('id');
+      $('#confirm-delete-button').prop('onclick', null);
+
+      $('#confirm-delete-button').attr('data-id', $(element).data('id'));
+      let deleteFunctionName = "delete_".concat($(element).data('type-of-delete').concat("(this)"));
+      $('#confirm-delete-button').attr("onclick", deleteFunctionName);
+
+      $('#confirm-delete-modal').modal('show');
+
+    }
+
+    /**
      * Whenever a dropdown option in any select tag is picked,
      * this function marks that option with the attribute "selected".
      * Additionally, any other options have their "selected" attribute removed.
@@ -890,14 +1098,6 @@
       $("option[value=" + this.value + "]", this)
               .attr("selected", true).siblings()
               .removeAttr("selected")
-    });
-
-    /**
-     * Upon page load, get all the current categories from the database
-     * and load them into the empty <select> tag in the html.
-     */
-    $(document).ready(function(){
-      fill_current_categories();
     });
 
     var testing;
@@ -953,57 +1153,379 @@
           }
         },
         error: function(xhr) {
-          $('#get-stored-category-fail-message').text("Error Message:\'"+ xhr.responseJSON.message +"\'")
-          $('#get-stored-category-fail-modal').modal('show');
+          console.log(xhr);
+          testing = xhr;
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          $('#failed-modal-message-header').text("Data Retrieval Failed");
+          var responseMessagesString = '';
+          let responseMessages = xhr.responseJSON['messages'];
+
+          if (responseMessages !== undefined) {
+            for (let i = 0; i < responseMessages.length; i++) {
+              responseMessagesString += ((i + 1) + ". " + responseMessages[i]['message'] + "\n");
+            }
+            $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+          } else {
+            $('#failed-modal-message').text("Error Message: \nNo available Error Message.");
+          }
+
+          $('#failed-modal').modal('show');
         }
       });
     }
 
+    function delete_category(element){
+      $.ajax({
+        type: "DELETE",
+        url: '/api/secured/categories/'.concat($(element).data('id')),
+        beforeSend: function(xhr) {
+          // xhr.setRequestHeader(
+          //         $('meta[name=_csrf_header]').attr('content'),
+          //         $('meta[name=_csrf]').attr('content')
+          // )
+          $('#confirm-delete-modal').modal('hide');
+
+          $('#wait-modal-title').text("Deleting Parent Category...");
+          $('#wait-modal').modal('show');
+        },
+        success: function(data)
+        {
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+
+          $('#category-accordion-'+$(element).data('id')).remove();
+
+          if(!($('#categoryAccordionPanels').children().length > 0)){
+            let noCategoriesDiv = `
+              <div data-has-none="true">
+                No Categories Here
+              </div>
+            `;
+
+            $('#categoryAccordionPanels').append(noCategoriesDiv);
+          }
+
+          $('#success-modal-message').text("Successfully deleted Parent Category");
+          $('#success-modal').modal('show');
+
+
+          fill_current_categories();
+        },
+        error: function(xhr) {
+          console.log(xhr);
+          testing = xhr;
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          $('#failed-modal-message-header').text("Delete Failed");
+          var responseMessagesString = '';
+          let responseMessages = xhr.responseJSON['messages'];
+
+          if (responseMessages !== undefined) {
+            for (let i = 0; i < responseMessages.length; i++) {
+              responseMessagesString += ((i + 1) + ". " + responseMessages[i]['message'] + "\n");
+            }
+            $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+          } else {
+            $('#failed-modal-message').text("Error Message: \nNo available Error Message.");
+          }
+
+          $('#failed-modal').modal('show');
+        }
+      });
+    }
 
     /**
-     * Note: The function may show as unused, however it IS being used.
-     *       It shows as unused since the function call is inside the following
-     *       Thymeleaf attribute which is from product_group_create.html:
-     *       - th:attr="onclick=|fill_categories()|"
-     */
-    // function fill_categories(){
-    //   fill_current_categories();
-    //   $('#categories-landing-modal').modal('show');
-    // }
-
-    // function display_new_product_group_details(){
-    //     $('#display-new-name').text($('#name').val());
-    //     $('#display-new-brand').text($('#brand').val());
-    //     $('#display-new-price').text("$" + $('#price').val());
-    //     if ($('#is-published').is(":checked")){
-    //         $('#display-new-is-published').text("Yes");
-    //     }
-    //     else{
-    //         $('#display-new-is-published').text("No");
-    //     }
-    //     if ($('#is-big-item').is(":checked")){
-    //         $('#display-new-is-big-item').text("Yes");
-    //     }
-    //     else{
-    //         $('#display-new-is-big-item').text("No");
-    //     }
-    //     if ($('#is-waitlistable').is(":checked")){
-    //         $('#display-new-is-waitlisted').text("Yes");
-    //     }
-    //     else{
-    //         $('#display-new-is-waitlisted').text("No");
-    //     }
-    //     $('#display-new-description').text($('#description').val());
-    //     $('#display-new-category').text($('#categories option:selected').text());
-    // }
-
-    //$('#submit-create-product-group').click(display_new_product_group_details);
-
+     * Create Parent Category Part 1 of 2
+    */
     function display_new_parent_category_details(){
       $('#display-new-parent-category-name').text($('#new-parent-category-input').val());
       $('#confirm-parent-category-submit').modal('show');
     }
 
+    var parentCategorySecondaryCounter = 0;
+
+    /**
+     * Create Parent Category Part 2 of 2
+    */
+     function save_new_parent_category(){
+      const data = {
+        'name': $('#new-parent-category-input').val(),
+        'parentId': null
+      }
+
+      $.ajax({
+        type: "POST",
+        url: '/api/secured/categories',
+        contentType: "application/json",
+        data: JSON.stringify(data), // serializes the form's elements.
+        beforeSend: function(xhr) {
+          // xhr.setRequestHeader(
+          //         $('meta[name=_csrf_header]').attr('content'),
+          //         $('meta[name=_csrf]').attr('content')
+          // )
+          $('#create-new-parent-category-modal').modal('hide');
+          $('#confirm-parent-category-submit').modal('hide');
+
+          $('#wait-modal-title').text("Saving Parent Category...");
+          $('#wait-modal').modal('show');
+        },
+        success: function(data)
+        {
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          parentCategorySecondaryCounter--;
+
+          let newAccordionItem = `
+              <div class="accordion-item"
+                 id="category-accordion-${data.id}">
+              <h2 class="accordion-header"
+                  id="panelsStayOpen-heading-${parentCategorySecondaryCounter}">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                        id="parent-category-text-${data.id}"
+                        data-bs-target="#panelsStayOpen-collapse-${parentCategorySecondaryCounter}" aria-expanded="true"
+                        aria-controls="panelsStayOpen-collapse-${parentCategorySecondaryCounter}">${data.name}
+                </button>
+              </h2>
+              <div id="panelsStayOpen-collapse-${parentCategorySecondaryCounter}" class="accordion-collapse collapse"
+                   aria-labelledby="panelsStayOpen-heading-${parentCategorySecondaryCounter}">
+                <div class="accordion-body">
+                  <button type="button" class="btn btn-warning"
+                          id="parent-category-edit-text-${data.id}"
+                          data-cat-id="${data.id}"
+                          onclick="display_edit_parent_category_modal(this)">Edit &quot;${data.name}&quot;</button>
+                  <button type="button" class="btn btn-danger"
+                          id="parent-category-delete-text-${data.id}"
+                          data-id="${data.id}"
+                          data-type-of-delete="category"
+                          data-name="${data.name}"
+                          onclick="display_delete_modal(this)">Delete &quot;${data.name}&quot;</button>
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Subcategory</th>
+                        <th scope="col">Edit</th>
+                        <th scope="col">Delete</th>
+                      </tr>
+                    </thead>
+                    <tbody id="subcategory-table-${parentCategorySecondaryCounter}">
+                      <tr data-has-none="true">
+                        <td>No Subcategories</td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td>
+                          <button type="button" class="btn btn-primary" id="add-sub-cat-button"
+                                  data-subcat-table-id="${parentCategorySecondaryCounter}"
+                                  data-parent-cat-id="${data.id}"
+                                  data-parent-cat-name="${data.name}"
+                                  onclick="display_create_subcategory_modal(this)">+Add Subcategory</button>
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
+            </div>
+          `;
+
+          $('#categoryAccordionPanels').append(newAccordionItem);
+
+          $('#success-modal-message').text("Successfully created new Parent Category - \"" + data['name'] + "\"");
+          $('#success-modal').modal('show');
+
+
+          fill_current_categories();
+
+
+        },
+        error: function(xhr) {
+          console.log(xhr);
+          testing = xhr;
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          $('#failed-modal-message-header').text("Creation Failed");
+          var responseMessagesString = '';
+          let responseMessages = xhr.responseJSON['messages'];
+
+          if (responseMessages !== undefined) {
+            for (let i = 0; i < responseMessages.length; i++) {
+              responseMessagesString += ((i + 1) + ". " + responseMessages[i]['message'] + "\n");
+            }
+            $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+          } else {
+            $('#failed-modal-message').text("Error Message: \nNo available Error Message.");
+          }
+
+          $('#failed-modal').modal('show');
+        }
+      });
+    }
+
+    /**
+     * Edit Parent Category Part 1 of 3
+     */
+    function display_edit_parent_category_modal(element){
+      $.ajax({
+        type: "GET",
+        url: '/api/secured/categories/'.concat($(element).data("cat-id")),
+        success: function(data)
+        {
+          $('#display-current-parent-category-name').text(data['name']);
+
+          $('#edit-parent-category-input').removeData('cat-id');
+          $('#edit-parent-category-input').attr('data-cat-id', $(element).data("cat-id"));
+
+          $('#edit-parent-category-modal').modal('show');
+        },
+        error: function(xhr) {
+          console.log(xhr);
+          testing = xhr;
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          $('#failed-modal-message-header').text("Data Retrieval Failed");
+          var responseMessagesString = '';
+          let responseMessages = xhr.responseJSON['messages'];
+
+          if (responseMessages !== undefined) {
+            for (let i = 0; i < responseMessages.length; i++) {
+              responseMessagesString += ((i + 1) + ". " + responseMessages[i]['message'] + "\n");
+            }
+            $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+          } else {
+            $('#failed-modal-message').text("Error Message: \nNo available Error Message.");
+          }
+
+          $('#failed-modal').modal('show');
+        }
+      });
+    }
+
+    /**
+     * Edit Parent Category Part 2 of 3
+     */
+    function display_edit_parent_category_details(){
+      $.ajax({
+        type: "GET",
+        url: '/api/secured/categories/'.concat($('#edit-parent-category-input').data("cat-id")),
+        success: function(data)
+        {
+          $('#display-currently-stored-parent-category-name').text(data['name'])
+          $('#display-new-edit-parent-category-name').text($('#edit-parent-category-input').val());
+
+          $('#confirm-edit-parent-category-modal').modal('show');
+        },
+        error: function(xhr) {
+          console.log(xhr);
+          testing = xhr;
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          $('#failed-modal-message-header').text("Data Retrieval Failed");
+          var responseMessagesString = '';
+          let responseMessages = xhr.responseJSON['messages'];
+
+          if (responseMessages !== undefined) {
+            for (let i = 0; i < responseMessages.length; i++) {
+              responseMessagesString += ((i + 1) + ". " + responseMessages[i]['message'] + "\n");
+            }
+            $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+          } else {
+            $('#failed-modal-message').text("Error Message: \nNo available Error Message.");
+          }
+
+          $('#failed-modal').modal('show');
+        }
+      });
+    }
+
+    /**
+     * Edit Parent Category Part 3 of 3
+     */
+    function save_edit_parent_category(){
+      const data = {
+        'name': $('#edit-parent-category-input').val()
+      }
+
+      $.ajax({
+        type: "PATCH",
+        url: '/api/secured/categories/'.concat($('#edit-parent-category-input').data("cat-id")),
+        contentType: "application/json",
+        data: JSON.stringify(data), // serializes the form's elements.
+        beforeSend: function(xhr) {
+          // xhr.setRequestHeader(
+          //         $('meta[name=_csrf_header]').attr('content'),
+          //         $('meta[name=_csrf]').attr('content')
+          // )
+          $('#edit-parent-category-modal').modal('hide');
+          $('#confirm-edit-parent-category-modal').modal('hide');
+
+          $('#wait-modal-title').text("Saving Category...");
+          $('#wait-modal').modal('show');
+        },
+        success: function(data)
+        {
+          console.log(data);
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          let oldName = $('#parent-category-text-'+data['id']).text();
+          $('#parent-category-text-'+data['id']).text(data['name']);
+          $('#parent-category-edit-text-'+data['id']).text("Edit \""+data['name']+"\"");
+          $('#parent-category-delete-text-'+data['id']).text("Delete \""+data['name']+"\"");
+          $('#parent-category-delete-text-'+data['id']).removeData('name');
+          $('#parent-category-delete-text-'+data['id']).attr("data-name", data['name']);
+
+
+          $('#success-modal-message').text("Successfully edited Parent Category - \"" + oldName + "\" to - \"" + data['name'] + "\"");
+          $('#success-modal').modal('show');
+
+
+          fill_current_categories();
+        },
+        error: function(xhr) {
+          console.log(xhr);
+          testing = xhr;
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          $('#failed-modal-message-header').text("Edit Failed");
+          var responseMessagesString = '';
+          let responseMessages = xhr.responseJSON['messages'];
+
+          if (responseMessages !== undefined) {
+            for (let i = 0; i < responseMessages.length; i++) {
+              responseMessagesString += ((i + 1) + ". " + responseMessages[i]['message'] + "\n");
+            }
+            $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+          } else {
+            $('#failed-modal-message').text("Error Message: \nNo available Error Message.");
+          }
+
+          $('#failed-modal').modal('show');
+        }
+      });
+    }
+
+    /**
+     * Create Subcategory Part 1 of 3
+    */
     function display_create_subcategory_modal(element){
       $('#new-subcategory-input-label').text("Enter New Subcategory Name for Parent Category \""+$(element).data('parent-cat-name')+"\"");
 
@@ -1018,141 +1540,22 @@
       $('#create-new-subcategory-modal').modal('show');
     }
 
+    /**
+     * Create Subcategory Part 2 of 3
+     */
     function display_new_subcategory_details(element){
       $('#display-new-subcategory-name').text($('#new-subcategory-input').val());
       $('#display-for-parent-category-name').text($('#new-subcategory-input').data("parent-cat-name"));
 
-      // $('#save-new-subcategory-button').attr('data-subcat-table-id', $(element).siblings("input").data("subcat-table-id"));
-      // $('#save-new-subcategory-button').attr('data-subcat-name', $(element).siblings("input").val());
-      // $('#save-new-subcategory-button').attr('data-parent-cat-id', $(element).siblings("input").data("parent-cat-id"));
       $('#confirm-new-subcategory-modal').modal('show');
     }
 
-    function display_edit_subcategory_modal(element){
-      $.ajax({
-        type: "GET",
-        url: '/api/secured/categories/'.concat($(element).data("subcat-id")),
-        success: function(data)
-        {
-          $('#display-current-subcategory-name').text(data['name']);
+    var subcategorySecondaryCounter = 0;
 
-          $('#edit-subcategory-input').removeData('subcat-id');
-          $('#edit-subcategory-input').attr('data-subcat-id', $(element).data("subcat-id"));
-
-          $('#edit-subcategory-modal').modal('show');
-        },
-        error: function(xhr) {
-          $('#failed-modal-message-header').text("Data Retrieval Failed");
-          var responseMessagesString = '';
-          let responseMessages = xhr.responseJSON['messages'];
-          for(let i = 0; i < responseMessages.length; i++){
-            responseMessagesString += ((i+1) + ". " + responseMessages[i]['message'] + "\n");
-          }
-          $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
-          $('#failed-modal').modal('show');
-        }
-      });
-    }
-
-    function display_edit_subcategory_details(){
-      $.ajax({
-        type: "GET",
-        url: '/api/secured/categories/'.concat($('#edit-subcategory-input').data("subcat-id")),
-        success: function(data)
-        {
-          $('#display-currently-stored-subcategory-name').text(data['name'])
-          $('#display-new-edit-subcategory-name').text($('#edit-subcategory-input').val());
-
-          $('#confirm-edit-subcategory-modal').modal('show');
-        },
-        error: function(xhr) {
-          $('#failed-modal-message-header').text("Data Retrieval Failed");
-          var responseMessagesString = '';
-          let responseMessages = xhr.responseJSON['messages'];
-          for(let i = 0; i < responseMessages.length; i++){
-            responseMessagesString += ((i+1) + ". " + responseMessages[i]['message'] + "\n");
-          }
-          $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
-          $('#failed-modal').modal('show');
-        }
-      });
-    }
-
-    function save_edit_subcategory(){
-      const data = {
-        'name': $('#edit-subcategory-input').val()
-      }
-
-      $.ajax({
-        type: "PATCH",
-        url: '/api/secured/categories'.concat($('#edit-subcategory-input').data("subcat-id")),
-        contentType: "application/json",
-        data: JSON.stringify(data), // serializes the form's elements.
-        beforeSend: function(xhr) {
-          // xhr.setRequestHeader(
-          //         $('meta[name=_csrf_header]').attr('content'),
-          //         $('meta[name=_csrf]').attr('content')
-          // )
-          $('#edit-subcategory-modal').modal('hide');
-          $('#confirm-edit-subcategory-modal').modal('hide');
-
-          $('#wait-modal-title').text("Saving Subcategory...");
-          $('#wait-modal').modal('show');
-        },
-        success: function(data)
-        {
-          console.log(data);
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
-
-          let oldName = $('#subcategory-text-'+data['id']).text();
-          $('#subcategory-text-'+data['id']).text(data['name']);
-
-
-          $('#success-modal-message').text("Successfully edited Subcategory - \"" + oldName + "\" to - \"" + data['name'] + "\"");
-          $('#success-modal').modal('show');
-
-
-          fill_current_categories();
-        },
-        error: function(xhr) {
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
-
-          $('#failed-modal-message-header').text("Edit Failed");
-          var responseMessagesString = '';
-          let responseMessages = xhr.responseJSON['messages'];
-          for(let i = 0; i < responseMessages.length; i++){
-            responseMessagesString += ((i+1) + ". " + responseMessages[i]['message'] + "\n");
-          }
-          $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
-          $('#failed-modal').modal('show');
-        }
-      });
-
-    }
-
-    // var toggler = document.getElementsByClassName("caret");
-    //
-    // for (let i = 0; i < toggler.length; i++) {
-    //   toggler[i].addEventListener("click", function() {
-    //     this.parentElement.querySelector(".nested").classList.toggle("active");
-    //     this.classList.toggle("caret-down");
-    //   });
-    // }
-
-    // function enable_edit_mode(element)
-    // {
-    //   $(element).siblings().show();
-    //   $(element).hide();
-    // }
-
-    var numNewSubcategoriesMadeInSession = 0;
-
-    function save_new_subcategory()
-    {
+    /**
+     * Create Subcategory Part 3 of 3
+     */
+    function save_new_subcategory() {
       const data = {
         'name': $('#new-subcategory-input').val(),
         'parentId': $('#new-subcategory-input').data('parent-cat-id')
@@ -1184,31 +1587,44 @@
             $('#wait-modal').modal('hide');
           });
 
-          numNewSubcategoriesMadeInSession++;
+          subcategorySecondaryCounter--;
 
           let subcategoryRow = `
-                 <tr>
-                    <td>${data.name}</td>
-                        <td style="padding: 5px;">
+                 <tr id="subcategory-row-${data.id}">
+                     <td id="subcategory-text-${data.id}">
+                        ${data.name}
+                     </td>
+                     <td style="padding: 5px;">
                             <button class="btn btn-outline-primary button-edit"
-                                    type="button" style="font-size: 15px;">
+                                    type="button" style="font-size: 15px;"
+                                    data-subcat-id="${data.id}"
+                                    onclick="display_edit_subcategory_modal(this)">
                               <i class="far fa-edit"></i>
                             </button>
-                        </td>
-                        <td style="padding: 5px;">
+                     </td>
+                     <td style="padding: 5px;">
                           <button class="btn btn-outline-primary button-edit"
-                                  type="button" style="font-size: 15px;">
+                                  type="button" style="font-size: 15px;"
+                                  data-id="${data.id}"
+                                  data-type-of-delete="subcategory"
+                                  data-name="${data.name}"
+                                  onclick="display_delete_modal(this)">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                               <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
                               <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
                             </svg>
                           </button>
-                        </td>
-                      </tr>
+                     </td>
+                 </tr>
           `;
 
           let subcatTableId = $('#new-subcategory-input').data("subcat-table-id");
-          $("#subcategory-table-"+subcatTableId).append(subcategoryRow);
+          if($($('#subcategory-table-'+subcatTableId).children()[0]).data('has-none') === true){
+            $("#subcategory-table-"+subcatTableId).html(subcategoryRow);
+          }
+          else{
+            $("#subcategory-table-"+subcatTableId).append(subcategoryRow);
+          }
 
           $('#success-modal-message').text("Successfully created new Subcategory - \"" + data['name'] + "\" for Parent Category - \"" + data['parent']['name'] + "\"");
           $('#success-modal').modal('show');
@@ -1217,6 +1633,8 @@
           fill_current_categories();
         },
         error: function(xhr) {
+          console.log(xhr);
+          testing = xhr;
           $("#wait-modal").on('shown.bs.modal', function () {
             $('#wait-modal').modal('hide');
           });
@@ -1224,26 +1642,112 @@
           $('#failed-modal-message-header').text("Creation Failed");
           var responseMessagesString = '';
           let responseMessages = xhr.responseJSON['messages'];
-          for(let i = 0; i < responseMessages.length; i++){
-            responseMessagesString += ((i+1) + ". " + responseMessages[i]['message'] + "\n");
+
+          if (responseMessages !== undefined) {
+            for (let i = 0; i < responseMessages.length; i++) {
+              responseMessagesString += ((i + 1) + ". " + responseMessages[i]['message'] + "\n");
+            }
+            $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+          } else {
+            $('#failed-modal-message').text("Error Message: \nNo available Error Message.");
           }
-          $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+
           $('#failed-modal').modal('show');
         }
       });
     }
 
-    var numNewParentCategoriesMadeInSession = 0;
+    /**
+     * Edit Subcategory Part 1 of 3
+     */
+    function display_edit_subcategory_modal(element){
+      $.ajax({
+        type: "GET",
+        url: '/api/secured/categories/'.concat($(element).data("subcat-id")),
+        success: function(data)
+        {
+          $('#display-current-subcategory-name').text(data['name']);
 
-    function save_new_parent_category(){
+          $('#edit-subcategory-input').removeData('subcat-id');
+          $('#edit-subcategory-input').attr('data-subcat-id', $(element).data("subcat-id"));
+
+          $('#edit-subcategory-modal').modal('show');
+        },
+        error: function(xhr) {
+          console.log(xhr);
+          testing = xhr;
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          $('#failed-modal-message-header').text("Data Retrieval Failed");
+          var responseMessagesString = '';
+          let responseMessages = xhr.responseJSON['messages'];
+
+          if (responseMessages !== undefined) {
+            for (let i = 0; i < responseMessages.length; i++) {
+              responseMessagesString += ((i + 1) + ". " + responseMessages[i]['message'] + "\n");
+            }
+            $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+          } else {
+            $('#failed-modal-message').text("Error Message: \nNo available Error Message.");
+          }
+
+          $('#failed-modal').modal('show');
+        }
+      });
+    }
+
+    /**
+     * Edit Parent Category Part 2 of 3
+     */
+    function display_edit_subcategory_details(){
+      $.ajax({
+        type: "GET",
+        url: '/api/secured/categories/'.concat($('#edit-subcategory-input').data("subcat-id")),
+        success: function(data)
+        {
+          $('#display-currently-stored-subcategory-name').text(data['name'])
+          $('#display-new-edit-subcategory-name').text($('#edit-subcategory-input').val());
+
+          $('#confirm-edit-subcategory-modal').modal('show');
+        },
+        error: function(xhr) {
+          console.log(xhr);
+          testing = xhr;
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          $('#failed-modal-message-header').text("Data Retrieval Failed");
+          var responseMessagesString = '';
+          let responseMessages = xhr.responseJSON['messages'];
+
+          if (responseMessages !== undefined) {
+            for (let i = 0; i < responseMessages.length; i++) {
+              responseMessagesString += ((i + 1) + ". " + responseMessages[i]['message'] + "\n");
+            }
+            $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+          } else {
+            $('#failed-modal-message').text("Error Message: \nNo available Error Message.");
+          }
+
+          $('#failed-modal').modal('show');
+        }
+      });
+    }
+
+    /**
+     * Edit Parent Category Part 3 of 3
+     */
+    function save_edit_subcategory(){
       const data = {
-        'name': $('#new-parent-category-input').val(),
-        'parentId': null
+        'name': $('#edit-subcategory-input').val()
       }
 
       $.ajax({
-        type: "POST",
-        url: '/api/secured/categories',
+        type: "PATCH",
+        url: '/api/secured/categories/'.concat($('#edit-subcategory-input').data("subcat-id")),
         contentType: "application/json",
         data: JSON.stringify(data), // serializes the form's elements.
         beforeSend: function(xhr) {
@@ -1251,10 +1755,70 @@
           //         $('meta[name=_csrf_header]').attr('content'),
           //         $('meta[name=_csrf]').attr('content')
           // )
-          $('#create-new-parent-category-modal').modal('hide');
-          $('#confirm-parent-category-submit').modal('hide');
+          $('#edit-subcategory-modal').modal('hide');
+          $('#confirm-edit-subcategory-modal').modal('hide');
 
-          $('#wait-modal-title').text("Saving Parent Category...");
+          $('#wait-modal-title').text("Saving Subcategory...");
+          $('#wait-modal').modal('show');
+        },
+        success: function(data)
+        {
+          console.log(data);
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          let oldName = $('#subcategory-text-'+data['id']).text();
+          $('#subcategory-text-'+data['id']).text(data['name']);
+          $($('#subcategory-text-'+data['id']).next().next().children()[0]).removeData('name');
+          $($('#subcategory-text-'+data['id']).next().next().children()[0]).attr('data-name', data['name']);
+
+
+
+          $('#success-modal-message').text("Successfully edited Subcategory - \"" + oldName + "\" to - \"" + data['name'] + "\"");
+          $('#success-modal').modal('show');
+
+
+          fill_current_categories();
+        },
+        error: function(xhr) {
+          console.log(xhr);
+          testing = xhr;
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          $('#failed-modal-message-header').text("Edit Failed");
+          var responseMessagesString = '';
+          let responseMessages = xhr.responseJSON['messages'];
+
+          if (responseMessages !== undefined) {
+            for (let i = 0; i < responseMessages.length; i++) {
+              responseMessagesString += ((i + 1) + ". " + responseMessages[i]['message'] + "\n");
+            }
+            $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+          } else {
+            $('#failed-modal-message').text("Error Message: \nNo available Error Message.");
+          }
+
+          $('#failed-modal').modal('show');
+        }
+      });
+
+    }
+
+    function delete_subcategory(element){
+      $.ajax({
+        type: "DELETE",
+        url: '/api/secured/categories/'.concat($(element).data('id')),
+        beforeSend: function(xhr) {
+          // xhr.setRequestHeader(
+          //         $('meta[name=_csrf_header]').attr('content'),
+          //         $('meta[name=_csrf]').attr('content')
+          // )
+          $('#confirm-delete-modal').modal('hide');
+
+          $('#wait-modal-title').text("Deleting Subcategory...");
           $('#wait-modal').modal('show');
         },
         success: function(data)
@@ -1263,92 +1827,55 @@
             $('#wait-modal').modal('hide');
           });
 
-          numNewParentCategoriesMadeInSession++;
+          $('#subcategory-row-'+$(element).data('id')).remove();
 
-          let newAccordionItem = `
-                 <div class="accordion-item">
-                    <h2 class="accordion-header" id="panelsStayOpen-heading-dynamic-made-${numNewParentCategoriesMadeInSession}">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#panelsStayOpen-collapse-dynamic-made-${numNewParentCategoriesMadeInSession}"
-                            aria-expanded="true" aria-controls="panelsStayOpen-collapse-dynamic-made-${numNewParentCategoriesMadeInSession}"
-                            >${data.name}
-                        </button>
-                    </h2>
-                    <div id="panelsStayOpen-collapse-dynamic-made-${numNewParentCategoriesMadeInSession}"
-                         class="accordion-collapse collapse"
-                         aria-labelledby="panelsStayOpen-heading-dynamic-made-${numNewParentCategoriesMadeInSession}">
-                        <div class="accordion-body">
-                            <table>
-                                <tr>
-                                    <td>&#8226; No Subcategories</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <button
-                                            type="button" class="btn btn-primary" id="add-sub-cat-button"
-                                            onclick="enable_edit_mode(this)">+Add Subcategory</button>
-                                        <label for="new-subcategory-dynamic-made-${numNewParentCategoriesMadeInSession}""
-                                            class="form-label" style="display: none;">Enter New Name</label>
-                                        <input type="text" class="form-control"
-                                            data-parent-cat-id="${data.id}"
-                                            id="new-subcategory-dynamic-made-${numNewParentCategoriesMadeInSession}"
-                                            name="new-subcategory-dynamic-made-${numNewParentCategoriesMadeInSession}"
-                                            style="display: none;">
-                                        <br>
-                                        <button id="save-sub-cat-button-dynamic-made-${numNewParentCategoriesMadeInSession}"
-                                            type="button" class="btn btn-success submit-create-category"
-                                            onclick="save_new_subcategory(this)" style="display: none;"
-                                            data-bs-toggle="modal" data-bs-target="#confirm-category-submit">Save
-                                        </button>
-                                        <button id="discard-sub-cat-button-dynamic-made-${numNewParentCategoriesMadeInSession}"
-                                            type="button" class="btn btn-danger"
-                                            onclick="cancel_new_subcategory(this)" style="display: none">Cancel
-                                         </button>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                 </div>
-          `;
+          // if(!($('#categoryAccordionPanels').children().length > 0)){
+          //   let noSubcategoriesDiv = `
+          //     <tr data-has-none="true">
+          //        <td>No Subcategories</td>
+          //      </tr>
+          //   `;
+          //   $('#categoryAccordionPanels').append(noSubcategoriesDiv);
+          // }
 
-          $('#categoryAccordionPanels').append(newAccordionItem);
-
-          $('#success-modal-message').text("Successfully created new Parent Category - \"" + data['name'] + "\"");
+          $('#success-modal-message').text("Successfully deleted Subcategory");
           $('#success-modal').modal('show');
 
 
           fill_current_categories();
-
-
         },
         error: function(xhr) {
           $("#wait-modal").on('shown.bs.modal', function () {
             $('#wait-modal').modal('hide');
           });
 
-          $('#failed-modal-message-header').text("Creation Failed");
+          $('#failed-modal-message-header').text("Delete Failed");
           var responseMessagesString = '';
           let responseMessages = xhr.responseJSON['messages'];
-          for(let i = 0; i < responseMessages.length; i++){
-            responseMessagesString += ((i+1) + ". " + responseMessages[i]['message'] + "\n");
+          console.log(xhr);
+          testing = xhr;
+          if (responseMessages !== undefined) {
+            for (let i = 0; i < responseMessages.length; i++) {
+              responseMessagesString += ((i + 1) + ". " + responseMessages[i]['message'] + "\n");
+            }
+            $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+          } else {
+            $('#failed-modal-message').text("Error Message: \nNo available Error Message.");
           }
-          $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+
           $('#failed-modal').modal('show');
         }
       });
     }
 
-    // function cancel_new_subcategory(element) {
-    //   $(element).hide();
-    //   $(element).siblings().hide();
-    //   $(element).siblings('#add-sub-cat-button').show();
-    // }
+
+
+
 
     /*
     Clicking on the expand button, expands all groups
     */
-    $('#expand-option').on('click', function() {
+    $('.expand-option').on('click', function() {
       $('.accordion-button').removeClass('collpased');
       $('.accordion-collapse').collapse('show');
     });
@@ -1356,63 +1883,887 @@
     /*
     Clicking on the collapse button, collapses all groups
     */
-    $('#collapse-option').on('click', function() {
+    $('.collapse-option').on('click', function() {
       $('.accordion-button').addClass('collpased');
       $('.accordion-collapse').collapse('hide');
     });
 
+    /*
+    Expand all accordions by default
+    */
     $('#edit-categories-modal-button').on('click', function() {
       $('.accordion-button').removeClass('collpased');
       $('.accordion-collapse').collapse('show');
     });
 
-    // function display_new_category_details(){
-    //   $('#display-new-category-name').text($('#category-name').val());
-    //   $('#display-new-parent-category').text($('#current-categories option:selected').text());
-    // }
-    // $('#submit-create-category').click(display_new_category_details);
-
-    // $('#create-category-form').submit(
-    //         function (e) {
-    //           e.preventDefault();
-    //
-    //           const form = $(this);
-    //           const url = form.attr('action');
-    //           const data = {
-    //             'name': $('#category-name').val(),
-    //             'parentID': $('#current-categories option:selected').val()
-    //           }
-    //
-    //           $.ajax({
-    //             type: "POST",
-    //             url: url,
-    //             contentType: "application/json",
-    //             data: JSON.stringify(data), // serializes the form's elements.
-    //             beforeSend: function(xhr) {
-    //               xhr.setRequestHeader(
-    //                       $('meta[name=_csrf_header]').attr('content'),
-    //                       $('meta[name=_csrf]').attr('content')
-    //               )
-    //             },
-    //             success: function(data)
-    //             {
-    //               fill_current_categories();
-    //               $('#create-category-form-modal').modal('hide');
-    //               $('#confirm-category-submit').modal('hide');
-    //               $('#create-category-success-modal').modal('show');
-    //             },
-    //             error: function(xhr) {
-    //               $('#confirm-category-submit').modal('hide');
-    //               $('#create-product-group-fail-message').text("Error Message:\'"+ xhr.responseJSON.message +"\'")
-    //               $('#create-product-group-fail-modal').modal('show');
-    //             }
-    //           });
-    //         }
-    // );
-
     //End Categories
     //-----------------------------------------------------------------------------------------------------------------------
+    //Start Options
+
+    /**
+     * Gets all current attributes from the database. If:
+     * (1) - There are no categories, dont let them submit at all
+     * (2) - Load all the existing categories into the <select> tags
+     */
+    // function fill_current_categories(){
+    //   $.ajax({
+    //     type: "GET",
+    //     url: '/api/secured/categories/',
+    //     beforeSend: function(xhr) {
+    //       // xhr.setRequestHeader(
+    //       //         $('meta[name=_csrf_header]').attr('content'),
+    //       //         $('meta[name=_csrf]').attr('content')
+    //       // )
+    //     },
+    //     success: function(data)
+    //     {
+    //       if(jQuery.isEmptyObject(data['categories'])){
+    //         $("#submit-create-product-group").prop("disabled", true);
+    //         $('#if-no-categories').css("display", "");
+    //       }
+    //       else{
+    //         $('#if-no-categories').css("display", "none");
+    //         $('#categories').empty();
+    //         for(let i = 0; i < data['categories'].length; i++){
+    //           if(data['categories'][i]['parent'] === null){
+    //             if(i === 0){
+    //               $('#categories').append($('<option>', {
+    //                 selected: true,
+    //                 value: data['categories'][i]['id'],
+    //                 text : data['categories'][i]['name']
+    //               }));
+    //             }
+    //             else{
+    //               $('#categories').append($('<option>', {
+    //                 value: data['categories'][i]['id'],
+    //                 text : data['categories'][i]['name']
+    //               }));
+    //             }
+    //             $('#categories option:last').css('background-color', '#f5f5f5');
+    //             let subcategoriesList = data['categories'][i]['subcategories'];
+    //             for(let i = 0; i < subcategoriesList.length; i++){
+    //               $('#categories').append($('<option>', {
+    //                 value: subcategoriesList[i]['id'],
+    //                 text : " - " + subcategoriesList[i]['name']
+    //               }));
+    //             }
+    //           }
+    //         }
+    //       }
+    //     },
+    //     error: function(xhr) {
+    //       console.log(xhr);
+    //       testing = xhr;
+    //       $("#wait-modal").on('shown.bs.modal', function () {
+    //         $('#wait-modal').modal('hide');
+    //       });
+    //
+    //       $('#failed-modal-message-header').text("Data Retrieval Failed");
+    //       var responseMessagesString = '';
+    //       let responseMessages = xhr.responseJSON['messages'];
+    //
+    //       if (responseMessages !== undefined) {
+    //         for (let i = 0; i < responseMessages.length; i++) {
+    //           responseMessagesString += ((i + 1) + ". " + responseMessages[i]['message'] + "\n");
+    //         }
+    //         $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+    //       } else {
+    //         $('#failed-modal-message').text("Error Message: \nNo available Error Message.");
+    //       }
+    //
+    //       $('#failed-modal').modal('show');
+    //     }
+    //   });
+    // }
+
+    function delete_option(element){
+      $.ajax({
+        type: "DELETE",
+        url: '/api/secured/options/'.concat($(element).data('id')),
+        beforeSend: function(xhr) {
+          // xhr.setRequestHeader(
+          //         $('meta[name=_csrf_header]').attr('content'),
+          //         $('meta[name=_csrf]').attr('content')
+          // )
+          $('#confirm-delete-modal').modal('hide');
+
+          $('#wait-modal-title').text("Deleting Option...");
+          $('#wait-modal').modal('show');
+        },
+        success: function(data)
+        {
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+
+          $('#option-accordion-'+$(element).data('id')).remove();
+
+          if(!($('#optionAccordionPanels').children().length > 0)){
+            let noOptionsDiv = `
+              <div data-has-none="true">
+                No Options Here
+              </div>
+            `;
+
+            $('#optionAccordionPanels').append(noOptionsDiv);
+          }
+
+          $('#success-modal-message').text("Successfully deleted Option");
+          $('#success-modal').modal('show');
+
+
+          //fill_current_categories();
+        },
+        error: function(xhr) {
+          console.log(xhr);
+          testing = xhr;
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          $('#failed-modal-message-header').text("Delete Failed");
+          var responseMessagesString = '';
+          let responseMessages = xhr.responseJSON['messages'];
+
+          if (responseMessages !== undefined) {
+            for (let i = 0; i < responseMessages.length; i++) {
+              responseMessagesString += ((i + 1) + ". " + responseMessages[i]['message'] + "\n");
+            }
+            $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+          } else {
+            $('#failed-modal-message').text("Error Message: \nNo available Error Message.");
+          }
+
+          $('#failed-modal').modal('show');
+        }
+      });
+    }
+
+    /**
+     * Create Option Part 1 of 2
+     */
+    function display_new_option_details(){
+      $('#display-new-option-name').text($('#new-option-input').val());
+      $('#confirm-option-submit').modal('show');
+    }
+
+    var optionSecondaryCounter = 0;
+
+    /**
+     * Create Parent Category Part 2 of 2
+     */
+    function save_new_option(){
+      const data = {
+        'name': $('#new-option-input').val()
+      }
+
+      $.ajax({
+        type: "POST",
+        url: '/api/secured/options',
+        contentType: "application/json",
+        data: JSON.stringify(data), // serializes the form's elements.
+        beforeSend: function(xhr) {
+          // xhr.setRequestHeader(
+          //         $('meta[name=_csrf_header]').attr('content'),
+          //         $('meta[name=_csrf]').attr('content')
+          // )
+          $('#create-new-option-modal').modal('hide');
+          $('#confirm-option-submit').modal('hide');
+
+          $('#wait-modal-title').text("Saving Option...");
+          $('#wait-modal').modal('show');
+        },
+        success: function(data)
+        {
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          optionSecondaryCounter--;
+
+          let newAccordionItem = `
+              <div class="accordion-item"
+                 id="option-accordion-${data.id}">
+              <h2 class="accordion-header"
+                  id="panelsStayOpen-heading-${parentCategorySecondaryCounter}">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                        id="option-text-${data.id}"
+                        data-bs-target="#panelsStayOpen-collapse-${parentCategorySecondaryCounter}" aria-expanded="true"
+                        aria-controls="panelsStayOpen-collapse-${parentCategorySecondaryCounter}">${data.name}
+                </button>
+              </h2>
+              <div id="panelsStayOpen-collapse-${parentCategorySecondaryCounter}" class="accordion-collapse collapse"
+                   aria-labelledby="panelsStayOpen-heading-${parentCategorySecondaryCounter}">
+                <div class="accordion-body">
+                  <button type="button" class="btn btn-warning"
+                          id="option-edit-text-${data.id}"
+                          data-option-id="${data.id}"
+                          onclick="display_edit_option_modal(this)">Edit &quot;${data.name}&quot;</button>
+                  <button type="button" class="btn btn-danger"
+                          id="option-delete-text-${data.id}"
+                          data-id="${data.id}"
+                          data-type-of-delete="option"
+                          data-name="${data.name}"
+                          onclick="display_delete_modal(this)">Delete &quot;${data.name}&quot;</button>
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Option Values</th>
+                        <th scope="col">Edit</th>
+                        <th scope="col">Delete</th>
+                      </tr>
+                    </thead>
+                    <tbody id="option-values-table-${parentCategorySecondaryCounter}">
+                      <tr data-has-none="true">
+                        <td>No Option Values</td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td>
+                          <button type="button" class="btn btn-primary" id="add-option-value-button"
+                                  data-option-value-table-id="${parentCategorySecondaryCounter}"
+                                  data-option-id="${data.id}"
+                                  data-option-name="${data.name}"
+                                  onclick="display_create_option_value_modal(this)">+Add Option Value</button>
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
+            </div>
+          `;
+
+          $('#optionAccordionPanels').append(newAccordionItem);
+
+          $('#success-modal-message').text("Successfully created new Option - \"" + data['name'] + "\"");
+          $('#success-modal').modal('show');
+
+
+          //fill_current_categories();
+        },
+        error: function(xhr) {
+          console.log(xhr);
+          testing = xhr;
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          $('#failed-modal-message-header').text("Creation Failed");
+          var responseMessagesString = '';
+          let responseMessages = xhr.responseJSON['messages'];
+
+          if (responseMessages !== undefined) {
+            for (let i = 0; i < responseMessages.length; i++) {
+              responseMessagesString += ((i + 1) + ". " + responseMessages[i]['message'] + "\n");
+            }
+            $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+          } else {
+            $('#failed-modal-message').text("Error Message: \nNo available Error Message.");
+          }
+
+          $('#failed-modal').modal('show');
+        }
+      });
+    }
+
+    /**
+     * Edit Parent Category Part 1 of 3
+     */
+    function display_edit_option_modal(element){
+      $.ajax({
+        type: "GET",
+        url: '/api/secured/options/'.concat($(element).data("option-id")),
+        success: function(data)
+        {
+          $('#display-current-option-name').text(data['name']);
+
+          $('#edit-option-input').removeData('option-id');
+          $('#edit-option-input').attr('data-option-id', $(element).data("option-id"));
+
+          $('#edit-option-modal').modal('show');
+        },
+        error: function(xhr) {
+          console.log(xhr);
+          testing = xhr;
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          $('#failed-modal-message-header').text("Data Retrieval Failed");
+          var responseMessagesString = '';
+          let responseMessages = xhr.responseJSON['messages'];
+
+          if (responseMessages !== undefined) {
+            for (let i = 0; i < responseMessages.length; i++) {
+              responseMessagesString += ((i + 1) + ". " + responseMessages[i]['message'] + "\n");
+            }
+            $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+          } else {
+            $('#failed-modal-message').text("Error Message: \nNo available Error Message.");
+          }
+
+          $('#failed-modal').modal('show');
+        }
+      });
+    }
+
+    /**
+     * Edit Parent Category Part 2 of 3
+     */
+    function display_edit_option_details(){
+      $.ajax({
+        type: "GET",
+        url: '/api/secured/options/'.concat($('#edit-option-input').data("option-id")),
+        success: function(data)
+        {
+          $('#display-currently-stored-option-name').text(data['name'])
+          $('#display-new-edit-option-name').text($('#edit-option-input').val());
+
+          $('#confirm-edit-option-modal').modal('show');
+        },
+        error: function(xhr) {
+          console.log(xhr);
+          testing = xhr;
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          $('#failed-modal-message-header').text("Data Retrieval Failed");
+          var responseMessagesString = '';
+          let responseMessages = xhr.responseJSON['messages'];
+
+          if (responseMessages !== undefined) {
+            for (let i = 0; i < responseMessages.length; i++) {
+              responseMessagesString += ((i + 1) + ". " + responseMessages[i]['message'] + "\n");
+            }
+            $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+          } else {
+            $('#failed-modal-message').text("Error Message: \nNo available Error Message.");
+          }
+
+          $('#failed-modal').modal('show');
+        }
+      });
+    }
+
+    /**
+     * Edit Parent Category Part 3 of 3
+     */
+    function save_edit_option(){
+      const data = {
+        'name': $('#edit-option-input').val()
+      }
+
+      $.ajax({
+        type: "PATCH",
+        url: '/api/secured/options/'.concat($('#edit-option-input').data("option-id")),
+        contentType: "application/json",
+        data: JSON.stringify(data), // serializes the form's elements.
+        beforeSend: function(xhr) {
+          // xhr.setRequestHeader(
+          //         $('meta[name=_csrf_header]').attr('content'),
+          //         $('meta[name=_csrf]').attr('content')
+          // )
+          $('#edit-option-modal').modal('hide');
+          $('#confirm-edit-option-modal').modal('hide');
+
+          $('#wait-modal-title').text("Saving Option...");
+          $('#wait-modal').modal('show');
+        },
+        success: function(data)
+        {
+          console.log(data);
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          let oldName = $('#option-text-'+data['id']).text();
+          $('#option-text-'+data['id']).text(data['name']);
+          $('#option-edit-text-'+data['id']).text("Edit \""+data['name']+"\"");
+          $('#option-delete-text-'+data['id']).text("Delete \""+data['name']+"\"");
+          $('#option-delete-text-'+data['id']).removeData('name');
+          $('#option-delete-text-'+data['id']).attr('data-name', data['name']);
+
+
+          $('#success-modal-message').text("Successfully edited Option - \"" + oldName + "\" to - \"" + data['name'] + "\"");
+          $('#success-modal').modal('show');
+
+
+          //fill_current_categories();
+        },
+        error: function(xhr) {
+          console.log(xhr);
+          testing = xhr;
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          $('#failed-modal-message-header').text("Edit Failed");
+          var responseMessagesString = '';
+          let responseMessages = xhr.responseJSON['messages'];
+
+          if (responseMessages !== undefined) {
+            for (let i = 0; i < responseMessages.length; i++) {
+              responseMessagesString += ((i + 1) + ". " + responseMessages[i]['message'] + "\n");
+            }
+            $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+          } else {
+            $('#failed-modal-message').text("Error Message: \nNo available Error Message.");
+          }
+
+          $('#failed-modal').modal('show');
+        }
+      });
+    }
+
+    /**
+     * Create Subcategory Part 1 of 3
+     */
+    function display_create_option_value_modal(element){
+      $('#new-option-value-input-label').text("Enter New Option Value for Option \""+$(element).data('option-name')+"\"");
+
+      $('#new-option-value-input').removeData('option-value-table-id');
+      $('#new-option-value-input').removeData('option-id');
+      $('#new-option-value-input').removeData('option-name');
+
+      $('#new-option-value-input').attr('data-option-value-table-id', $(element).data("option-value-table-id"));
+      $('#new-option-value-input').attr('data-option-id', $(element).data("option-id"));
+      $('#new-option-value-input').attr('data-option-name', $(element).data("option-name"));
+
+      $('#create-new-option-value-modal').modal('show');
+    }
+
+    /**
+     * Create Subcategory Part 2 of 3
+     */
+    function display_new_option_value_details(element){
+      $('#display-new-option-value').text($('#new-option-value-input').val());
+      $('#display-for-option-name').text($('#new-option-value-input').data("option-name"));
+
+      $('#confirm-new-option-value-modal').modal('show');
+    }
+
+    var optionValueSecondaryCounter = 0;
+
+    /**
+     * Create Subcategory Part 3 of 3
+     */
+    function save_new_option_value() {
+      const data = {
+        'value': $('#new-option-value-input').val()
+      }
+
+      console.log("POST Option Value Data:");
+      console.log(data);
+
+      $.ajax({
+        type: "POST",
+        url: '/api/secured/options/'.concat($('#new-option-value-input').data('option-id')).concat("/values"),
+        contentType: "application/json",
+        data: JSON.stringify(data), // serializes the form's elements.
+        beforeSend: function(xhr) {
+          // xhr.setRequestHeader(
+          //         $('meta[name=_csrf_header]').attr('content'),
+          //         $('meta[name=_csrf]').attr('content')
+          // )
+          $('#create-new-option-value-modal').modal('hide');
+          $('#confirm-new-option-value-modal').modal('hide');
+
+          $('#wait-modal-title').text("Saving Option Value...");
+          $('#wait-modal').modal('show');
+        },
+        success: function(data)
+        {
+          console.log(data);
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          optionValueSecondaryCounter--;
+
+          let optionValueRow = `
+                 <tr id="option-value-row-${data.id}">
+                     <td id="option-value-text-${data.id}">
+                        ${data.value}
+                     </td>
+                     <td style="padding: 5px;">
+                            <button class="btn btn-outline-primary button-edit"
+                                    type="button" style="font-size: 15px;"
+                                    data-option-id="${data.id}"
+                                    data-option-value-id="${data.id}"
+                                    onclick="display_edit_option_value_modal(this)">
+                              <i class="far fa-edit"></i>
+                            </button>
+                     </td>
+                     <td style="padding: 5px;">
+                          <button class="btn btn-outline-primary button-edit"
+                                  type="button" style="font-size: 15px;"
+                                  data-id="${data.id}"
+                                  data-type-of-delete="option_value"
+                                  data-name="${data.value}"
+                                  onclick="display_delete_modal(this)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                              <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                              <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                            </svg>
+                          </button>
+                     </td>
+                 </tr>
+          `;
+
+          let optionValueTableId = $('#new-option-value-input').data("option-value-table-id");
+          if($($('#option-values-table-'+optionValueTableId).children()[0]).data('has-none') === true){
+            $("#option-values-table-"+optionValueTableId).html(optionValueRow);
+          }
+          else {
+            $("#option-values-table-"+optionValueTableId).append(optionValueRow);
+          }
+
+          $('#success-modal-message').text("Successfully created new Option Value - \"" + data['value'] + "\"");
+          $('#success-modal').modal('show');
+
+
+          //fill_current_categories();
+        },
+        error: function(xhr) {
+          console.log(xhr);
+          testing = xhr;
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          $('#failed-modal-message-header').text("Creation Failed");
+          var responseMessagesString = '';
+          let responseMessages = xhr.responseJSON['messages'];
+
+          if (responseMessages !== undefined) {
+            for (let i = 0; i < responseMessages.length; i++) {
+              responseMessagesString += ((i + 1) + ". " + responseMessages[i]['message'] + "\n");
+            }
+            $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+          } else {
+            $('#failed-modal-message').text("Error Message: \nNo available Error Message.");
+          }
+
+          $('#failed-modal').modal('show');
+        }
+      });
+    }
+
+    /**
+     * Edit Subcategory Part 1 of 3
+     */
+    function display_edit_option_value_modal(element){
+      $.ajax({
+        type: "GET",
+        url: '/api/secured/options/'.concat($(element).data("option-id")).concat("/values/").concat($(element).data("option-value-id")),
+        success: function(data)
+        {
+          $('#display-current-option-value').text(data['value']);
+
+          $('#edit-option-value-input').removeData('option-value-id');
+          $('#edit-option-value-input').attr('data-option-value-id', $(element).data("option-value-id"));
+
+          $('#edit-option-value-input').removeData('option-id');
+          $('#edit-option-value-input').attr('data-option-id', $(element).data("option-id"));
+
+          $('#edit-option-value-modal').modal('show');
+        },
+        error: function(xhr) {
+          console.log(xhr);
+          testing = xhr;
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          $('#failed-modal-message-header').text("Data Retrieval Failed");
+          var responseMessagesString = '';
+          let responseMessages = xhr.responseJSON['messages'];
+
+          if (responseMessages !== undefined) {
+            for (let i = 0; i < responseMessages.length; i++) {
+              responseMessagesString += ((i + 1) + ". " + responseMessages[i]['message'] + "\n");
+            }
+            $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+          } else {
+            $('#failed-modal-message').text("Error Message: \nNo available Error Message.");
+          }
+
+          $('#failed-modal').modal('show');
+        }
+      });
+    }
+
+    /**
+     * Edit Parent Category Part 2 of 3
+     */
+    function display_edit_option_value_details(){
+      $.ajax({
+        type: "GET",
+        url: '/api/secured/options/'.
+        concat($('#edit-option-value-input').data("option-id")).
+        concat("/values/").
+        concat($('#edit-option-value-input').data("option-value-id")),
+        success: function(data)
+        {
+          $('#display-currently-stored-option-value').text(data['value'])
+          $('#display-new-edit-option-value').text($('#edit-option-value-input').val());
+
+          $('#confirm-edit-option-value-modal').modal('show');
+        },
+        error: function(xhr) {
+          console.log(xhr);
+          testing = xhr;
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          $('#failed-modal-message-header').text("Data Retrieval Failed");
+          var responseMessagesString = '';
+          let responseMessages = xhr.responseJSON['messages'];
+
+          if (responseMessages !== undefined) {
+            for (let i = 0; i < responseMessages.length; i++) {
+              responseMessagesString += ((i + 1) + ". " + responseMessages[i]['message'] + "\n");
+            }
+            $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+          } else {
+            $('#failed-modal-message').text("Error Message: \nNo available Error Message.");
+          }
+
+          $('#failed-modal').modal('show');
+        }
+      });
+    }
+
+    /**
+     * Edit Parent Category Part 3 of 3
+     */
+    function save_edit_option_value(){
+      const data = {
+        'value': $('#edit-option-value-input').val()
+      }
+
+      $.ajax({
+        type: "PATCH",
+        url: '/api/secured/options/'.
+        concat($('#edit-option-value-input').data("option-id")).
+        concat("/values/").
+        concat($('#edit-option-value-input').data("option-value-id")),
+        contentType: "application/json",
+        data: JSON.stringify(data), // serializes the form's elements.
+        beforeSend: function(xhr) {
+          // xhr.setRequestHeader(
+          //         $('meta[name=_csrf_header]').attr('content'),
+          //         $('meta[name=_csrf]').attr('content')
+          // )
+          $('#edit-option-value-modal').modal('hide');
+          $('#confirm-edit-option-value-modal').modal('hide');
+
+          $('#wait-modal-title').text("Saving Option Value...");
+          $('#wait-modal').modal('show');
+        },
+        success: function(data)
+        {
+          console.log(data);
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          let oldValue = $('#option-value-text-'+data['id']).text();
+          $('#option-value-text-'+data['id']).text(data['value']);
+          $($('#option-value-text-'+data['id']).next().next().children()[0]).removeData('name');
+          $($('#option-value-text-'+data['id']).next().next().children()[0]).attr('data-name', data['value']);
+
+
+
+          $('#success-modal-message').text("Successfully edited Option Value - \"" + oldValue + "\" to - \"" + data['value'] + "\"");
+          $('#success-modal').modal('show');
+
+
+          //fill_current_categories();
+        },
+        error: function(xhr) {
+          console.log(xhr);
+          testing = xhr;
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          $('#failed-modal-message-header').text("Edit Failed");
+          var responseMessagesString = '';
+          let responseMessages = xhr.responseJSON['messages'];
+
+          if (responseMessages !== undefined) {
+            for (let i = 0; i < responseMessages.length; i++) {
+              responseMessagesString += ((i + 1) + ". " + responseMessages[i]['message'] + "\n");
+            }
+            $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+          } else {
+            $('#failed-modal-message').text("Error Message: \nNo available Error Message.");
+          }
+
+          $('#failed-modal').modal('show');
+        }
+      });
+
+    }
+
+    // function delete_option_value(element){
+    //   $.ajax({
+    //     type: "DELETE",
+    //     url: ,
+    //     beforeSend: function(xhr) {
+    //       // xhr.setRequestHeader(
+    //       //         $('meta[name=_csrf_header]').attr('content'),
+    //       //         $('meta[name=_csrf]').attr('content')
+    //       // )
+    //       $('#confirm-delete-modal').modal('hide');
+    //
+    //       $('#wait-modal-title').text("Deleting Option Value...");
+    //       $('#wait-modal').modal('show');
+    //     },
+    //     success: function(data)
+    //     {
+    //       $("#wait-modal").on('shown.bs.modal', function () {
+    //         $('#wait-modal').modal('hide');
+    //       });
+    //
+    //       $('#option-value-row-'+$(element).data('id')).remove();
+    //
+    //       // if(!($('#categoryAccordionPanels').children().length > 0)){
+    //       //   let noSubcategoriesDiv = `
+    //       //     <tr data-has-none="true">
+    //       //        <td>No Subcategories</td>
+    //       //      </tr>
+    //       //   `;
+    //       //   $('#categoryAccordionPanels').append(noSubcategoriesDiv);
+    //       // }
+    //
+    //       $('#success-modal-message').text("Successfully deleted Option Value");
+    //       $('#success-modal').modal('show');
+    //
+    //
+    //       //fill_current_categories();
+    //     },
+    //     error: function(xhr) {
+    //       $("#wait-modal").on('shown.bs.modal', function () {
+    //         $('#wait-modal').modal('hide');
+    //       });
+    //
+    //       $('#failed-modal-message-header').text("Delete Failed");
+    //       var responseMessagesString = '';
+    //       let responseMessages = xhr.responseJSON['messages'];
+    //       console.log(xhr);
+    //       testing = xhr;
+    //       if (responseMessages !== undefined) {
+    //         for (let i = 0; i < responseMessages.length; i++) {
+    //           responseMessagesString += ((i + 1) + ". " + responseMessages[i]['message'] + "\n");
+    //         }
+    //         $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+    //       } else {
+    //         $('#failed-modal-message').text("Error Message: \nNo available Error Message.");
+    //       }
+    //
+    //       $('#failed-modal').modal('show');
+    //     }
+    //   });
+    // }
+
+    /*
+    Expand all accordions by default
+    */
+    $('#edit-options-modal-button').on('click', function() {
+      $('.accordion-button').removeClass('collpased');
+      $('.accordion-collapse').collapse('show');
+    });
+
+
+    $("#add-new-option-button").click(function(){
+      var lastId = $(".product-option:last").attr("id");
+      var splitId = lastId.split("-");
+      var nextIndex = parseInt(splitId[2]) + 1;
+
+      const newDiv = `
+        <div class="product-option" id="product-option-${nextIndex}">
+            <label for="option-name-${nextIndex}" class="form-check-label">Option Name</label>
+            <select class="form-select" id="option-name-${nextIndex}" name="option-name-${nextIndex}">
+            </select>
+            <button class="delete-product-option btn button-edit" id="delete-product-option-${nextIndex}" onclick="delete_option(${nextIndex})">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                </svg>
+            </button>
+
+
+            <span>Option Values</span>
+            <input type="text" class="form-control" id="option-name-${nextIndex}-value-${nextIndex}"
+            name="option-name-${nextIndex}-value-${nextIndex}">
+        </div>`;
+
+      $(".product-option:last").after(newDiv);
+    });
+
+    function delete_option(id){
+      var deleteIndex = id;
+
+      console.log(deleteIndex);
+      $("#product-option-" + deleteIndex).remove();
+    }
+
+    function add_option_value(parentId){
+
+    }
+
+    $('#has-options').change(
+            function(){
+              // let displayValue = $('#options-select-container').css('display');
+              // if(displayValue == 'none'){
+              //   $('#options-select-container').show();
+              // }
+              // else{
+              //   $('#options-select-container').hide();
+              // }
+              $('#options-select-container').toggle();
+            }
+    );
+
+    //End Options
+    //-----------------------------------------------------------------------------------------------------------------------
     //Start Products
+
+    // function display_new_product_group_details(){
+    //     $('#display-new-name').text($('#name').val());
+    //     $('#display-new-brand').text($('#brand').val());
+    //     $('#display-new-price').text("$" + $('#price').val());
+    //     if ($('#is-published').is(":checked")){
+    //         $('#display-new-is-published').text("Yes");
+    //     }
+    //     else{
+    //         $('#display-new-is-published').text("No");
+    //     }
+    //     if ($('#is-big-item').is(":checked")){
+    //         $('#display-new-is-big-item').text("Yes");
+    //     }
+    //     else{
+    //         $('#display-new-is-big-item').text("No");
+    //     }
+    //     if ($('#is-waitlistable').is(":checked")){
+    //         $('#display-new-is-waitlisted').text("Yes");
+    //     }
+    //     else{
+    //         $('#display-new-is-waitlisted').text("No");
+    //     }
+    //     $('#display-new-description').text($('#description').val());
+    //     $('#display-new-category').text($('#categories option:selected').text());
+    // }
+
+    //$('#submit-create-product-group').click(display_new_product_group_details);
+
     function set_all_low_stock_input(){
       $('.lowStockLimitInput').each(function (){
         $(this).val($('#changeAllLowStockLimitInput').val());
@@ -1600,50 +2951,6 @@
 
     }/* odometer_increment() */
 
-
-    // $('#create-product-group-form').submit(
-    //     function (e) {
-    //         e.preventDefault();
-    //
-    //         const form = $(this);
-    //         const url = form.attr('action');
-    //         const data = {
-    //             'name': $('#name').val(),
-    //             'brand': $('#brand').val(),
-    //             'price': parseFloat($("#price").val()).toFixed(2),
-    //             'isPublished': $('#is-published').is(':checked'),
-    //             'isBigItem': $('#is-big-item').is(':checked'),
-    //             'isWaitlistable': $('#is-waitlistable').is(':checked'),
-    //             'description': $('#description').val(),
-    //             'categoryID': $('#categories option:selected').val()
-    //         }
-    //
-    //         $.ajax({
-    //             type: "POST",
-    //             url: url,
-    //             contentType: "application/json",
-    //             data: JSON.stringify(data), // serializes the form's elements.
-    //             beforeSend: function(xhr) {
-    //                 xhr.setRequestHeader(
-    //                     $('meta[name=_csrf_header]').attr('content'),
-    //                     $('meta[name=_csrf]').attr('content')
-    //                 )
-    //             },
-    //             success: function(data)
-    //             {
-    //                 $('#confirm-product-group-create-modal').modal('hide');
-    //                 $('#create-product-group-success-modal').modal('show');
-    //                 submit_product_forms(data['ID']);
-    //             },
-    //             error: function(xhr) {
-    //                 $('#confirm-product-group-create-modal').modal('hide');
-    //                 $('#create-product-group-fail-message').text("Error Message:\'"+ xhr.responseJSON.message +"\'")
-    //                 $('#create-product-group-fail-modal').modal('show');
-    //             }
-    //         });
-    //     }
-    // );
-
     const showError = (input, message) => {
       const formField = input.parent();
 
@@ -1785,11 +3092,26 @@
           submit_product_forms(data['ID']);
         },
         error: function(xhr) {
-          console.log("Modal should hide...");
-          $('#wait-modal').modal('hide');
-          //$('#confirm-product-group-create-modal').modal('hide');
-          $('#create-product-group-fail-message').text("Error Message:\'"+ xhr.responseJSON.message +"\'")
-          $('#create-product-group-fail-modal').modal('show');
+          console.log(xhr);
+          testing = xhr;
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          $('#failed-modal-message-header').text("Creation Failed");
+          var responseMessagesString = '';
+          let responseMessages = xhr.responseJSON['messages'];
+
+          if (responseMessages !== undefined) {
+            for (let i = 0; i < responseMessages.length; i++) {
+              responseMessagesString += ((i + 1) + ". " + responseMessages[i]['message'] + "\n");
+            }
+            $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+          } else {
+            $('#failed-modal-message').text("Error Message: \nNo available Error Message.");
+          }
+
+          $('#failed-modal').modal('show');
         }
       });
     }
@@ -1834,158 +3156,32 @@
             $('#create-product-group-success-modal').modal('show');
           },
           error: function(xhr) {
-            $('#wait-modal').modal('hide');
-            // $('#confirm-submit').modal('hide');
-            $('#create-product-group-fail-message').text("Error Message:\'"+ xhr.responseJSON.message +"\'")
-            $('#create-product-group-fail-modal').modal('show');
+            console.log(xhr);
+            testing = xhr;
+            $("#wait-modal").on('shown.bs.modal', function () {
+              $('#wait-modal').modal('hide');
+            });
+
+            $('#failed-modal-message-header').text("Creation Failed");
+            var responseMessagesString = '';
+            let responseMessages = xhr.responseJSON['messages'];
+
+            if (responseMessages !== undefined) {
+              for (let i = 0; i < responseMessages.length; i++) {
+                responseMessagesString += ((i + 1) + ". " + responseMessages[i]['message'] + "\n");
+              }
+              $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+            } else {
+              $('#failed-modal-message').text("Error Message: \nNo available Error Message.");
+            }
+
+            $('#failed-modal').modal('show');
           }
         });
       }
       else {
         $('#wait-modal').modal('hide');
         $('#create-product-group-success-modal').modal('show');
-      }
-    }
-
-    let num_attributes = 0;
-    let iterator_for_attribute_input = 0;
-    let arr_attribute_html_ids = [];
-    function generate_create_attribute_form(){
-      num_attributes = 0;
-      iterator_for_attribute_input = 0;
-      arr_attribute_html_ids = [];
-      $('#attributes-create-new-modal').modal('hide');
-      const blankForm = `<table id="create-attribute-table" class="table table-hover">
-            <tbody id="create-attribute-table-body">
-              <tr>
-                <td>
-                  New Attribute Name (Ex. Size, Color,...)
-                </td>
-                <td>
-                  <input type="text" id="attribute-group-name" name="attribute-group-name" class="form-control" placeholder="Ex. Size">
-                </td>
-              </tr>
-              <tr id="first-row-replaced">
-                  <td rowspan="2">No Attribute Options Entered</td>
-              </tr>
-            </tbody>
-            <tfoot>
-            <td rowspan="2"><button class="btn btn-outline-primary btn-sm space" onclick="add_input_for_attributes()">Add Attribute Option+</button></td>
-            </tfoot>
-          </table>`;
-      $('#attributes-create-new-modal2-body').html(blankForm);
-      $('#create-attributes-landing-modal').modal('hide');
-      $('#attributes-create-new-modal').modal('hide');
-      $('#attributes-create-new-modal2').modal('show');
-    }
-
-
-    function add_input_for_attributes(){
-      if(num_attributes === 0){
-        $('#first-row-replaced').html("<td>" +
-                "<input type=\"text\" class=\"form-control\" id='attribute-value"+iterator_for_attribute_input+"' " +
-                "name='attribute-value"+iterator_for_attribute_input+"'>" +
-                "</td>" +
-                "<td>" +
-                "<button id='"+iterator_for_attribute_input+"' class=\"btn btn-outline-danger btn-sm space\" onclick='remove_attribute_input(this)'>Remove Attribute</button>" +
-                "</td>");
-      }
-      else{
-        $('#create-attribute-table-body').append("<tr><td>" +
-                "<input type=\"text\" class=\"form-control\" id='attribute-value"+iterator_for_attribute_input+"' " +
-                "name='attribute-value"+iterator_for_attribute_input+"'>" +
-                "</td>" +
-                "<td>" +
-                "<button id='"+iterator_for_attribute_input+"' class=\"btn btn-outline-danger btn-sm space\" onclick='remove_attribute_input(this)'>Remove Attribute</button>" +
-                "</td></tr>");
-      }
-      num_attributes++;
-      arr_attribute_html_ids.push(iterator_for_attribute_input);
-      iterator_for_attribute_input++;
-    }
-
-    function remove_attribute_input(buttonElement){
-      console.log("BEGIN: " + arr_attribute_html_ids);
-      let removedIdNumber = parseInt(buttonElement.id);
-      buttonElement.closest('tr').remove();
-      num_attributes--;
-      if(num_attributes === 0){
-        $('#create-attribute-table-body').append("<tr id='first-row-replaced'><td>No Attributes entered.</td></tr>");
-      }
-      for(let i = 0; i < arr_attribute_html_ids.length; i++) {
-        if(removedIdNumber === parseInt(arr_attribute_html_ids[i])) {
-          arr_attribute_html_ids.splice(i, 1);
-        }
-      }
-      console.log("END: " + arr_attribute_html_ids);
-    }
-
-    function submit_attribute(){
-      const data = {
-        'name': $('#attribute-group-name').val().trim()
-      }
-
-      $.ajax({
-        type: "POST",
-        url: '/management/api/attribute_group',
-        contentType: "application/json",
-        data: JSON.stringify(data), // serializes the form's elements.
-        beforeSend: function(xhr) {
-          xhr.setRequestHeader(
-                  $('meta[name=_csrf_header]').attr('content'),
-                  $('meta[name=_csrf]').attr('content')
-          );
-          $('#attributes-create-new-modal2').modal('hide');
-          $('#wait-modal').modal('show');
-        },
-        success: function(data)
-        {
-          submit_attributes(data['ID']);
-        },
-        error: function(xhr) {
-          $('#confirm-create-attribute-group-modal').modal('hide');
-          $('#create-attribute-group-fail-message').text("Error Message:\'"+ xhr.responseJSON.message +"\'")
-          $('#create-attribute-group-fail-modal').modal('show');
-        }
-      });
-    }
-
-    function submit_attributes(agID){
-      let attributes = [];
-      for(let i = 0; i < arr_attribute_html_ids.length; i++){
-        attributes.push({
-          'attributeGroupID': agID,
-          "value": $('#attribute-value'+arr_attribute_html_ids[i]+'').val()
-        });
-      }
-      console.log(attributes);
-      if(attributes.length !== 0){
-        $.ajax({
-          type: "POST",
-          url: '/management/api/attribute/batch',
-          contentType: "application/json",
-          data: JSON.stringify(attributes), // serializes the form's elements.
-          beforeSend: function(xhr) {
-            xhr.setRequestHeader(
-                    $('meta[name=_csrf_header]').attr('content'),
-                    $('meta[name=_csrf]').attr('content')
-            )
-          },
-          success: function()
-          {
-            $('#wait-modal').modal('hide');
-          },
-          error: function(xhr) {
-            console.log("Modal Should Hide");
-            $('#wait-modal').modal('hide');
-            // $('#confirm-submit').modal('hide');
-            $('#create-product-group-fail-message').text("Error Message:\'"+ xhr.responseJSON.message +"\'")
-            $('#create-product-group-fail-modal').modal('show');
-          }
-        });
-      }
-      else {
-        $('#wait-modal').modal('hide');
       }
     }
 
