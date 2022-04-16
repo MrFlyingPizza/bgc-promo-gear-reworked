@@ -31,7 +31,8 @@ module.exports = {
             patterns: [
                 {
                     from: path.resolve(__dirname, 'dist'),
-                    to: '../../target/classes/static/javascript'
+                    to: '../../target/classes/static/javascript',
+                    noErrorOnMissing: true
                 }
             ]
         })
