@@ -39,11 +39,13 @@ public class MSGraphSyncedUserService extends AADOAuth2UserService {
         UUID oid = UUID.fromString(graphUser.id);
         ca.bgcengineering.promogearreworked.persistence.entities.User updatedUser = userRepo.findByOid(oid).map(user -> {
             user.setDisplayName(graphUser.displayName);
+            user.setEmail(graphUser.mail);
             return user;
         }).orElseGet(() -> {
             ca.bgcengineering.promogearreworked.persistence.entities.User user = new ca.bgcengineering.promogearreworked.persistence.entities.User();
             user.setOid(UUID.fromString(graphUser.id));
             user.setDisplayName(graphUser.displayName);
+            user.setEmail(graphUser.mail);
             user.setCredit(storeDefaults.getStartingCredits());
             return user;
         });

@@ -18,11 +18,13 @@ public abstract class SecuredUserMapper {
     @Mapping(source = "locationId", target = "location")
     @Mapping(target = "oid", ignore = true)
     @Mapping(target = "displayName", ignore = true)
+    @Mapping(target = "email", ignore = true)
     public abstract User fromUpdate(SecuredUserUpdate userUpdate, @MappingTarget User user);
 
     @Mapping(source = "locationId", target = "location")
     @Mapping(target = "oid", ignore = true)
     @Mapping(target = "displayName", ignore = true)
+    @Mapping(target = "email", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     public abstract User fromPartialUpdate(SecuredUserPartialUpdate userPartialUpdate, @MappingTarget User user);
 
