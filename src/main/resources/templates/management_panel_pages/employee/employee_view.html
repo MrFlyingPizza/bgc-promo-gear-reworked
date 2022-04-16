@@ -77,7 +77,7 @@
             let date = new Date(data);
             let dateFormat = "";
 
-            return new Date(data).toLocaleDateString('en-us', { month:"short", day:"numeric", year:"numeric" });
+            return new Date(data).toLocaleString('en-us', { month:"short", day:"numeric", year:"numeric", timeZone: 'UTC' });
         }
 
         var dollarRender = function (data) {
