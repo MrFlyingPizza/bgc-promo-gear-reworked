@@ -41,7 +41,8 @@ public class SecuredInventoryLevelController {
     }
 
     @GetMapping
-    private SecuredInventoryLevelBatchResponse getInventoryLevelBatch(@QuerydslPredicate(root = InventoryLevel.class) Predicate predicate, Pageable pageable,
+    private SecuredInventoryLevelBatchResponse getInventoryLevelBatch(@QuerydslPredicate(root = InventoryLevel.class) Predicate predicate,
+                                                                      Pageable pageable,
                                                                       @RequestParam(defaultValue = "false") Boolean paged) {
         if (!paged) {
             pageable = Pageable.unpaged();

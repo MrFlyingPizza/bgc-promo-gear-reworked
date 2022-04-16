@@ -2,7 +2,7 @@ const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin')
 
 module.exports = {
-    mode: 'development',
+    mode: 'production',
     entry: {
         cart: './src/cart.tsx'
     },
@@ -31,7 +31,8 @@ module.exports = {
             patterns: [
                 {
                     from: path.resolve(__dirname, 'dist'),
-                    to: '../../target/classes/static/javascript'
+                    to: '../../target/classes/static/javascript',
+                    noErrorOnMissing: true
                 }
             ]
         })
