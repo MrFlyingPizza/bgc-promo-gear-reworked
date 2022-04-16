@@ -1,7 +1,7 @@
 import * as React from "react";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {Box, CircularProgress, Container, Grid} from "@mui/material";
+import {Box, CircularProgress, Container, Grid, LinearProgress, Typography} from "@mui/material";
 import {grey} from "@mui/material/colors";
 import {ICartItem} from "./ICartItem";
 import CartContent from "./CartContent";
@@ -24,17 +24,29 @@ function Cart() {
             setLoading(false);
         });
     },[]);
+    
+    const Header = (props: {title: string}) => {
+        return (
+            <Typography align={"center"} variant={"h6"}>{props.title}</Typography>
+        )
+    }
 
     return (
-        <Container maxWidth={"md"} sx={{backgroundColor: grey[50], minHeight: "80vh", mt: 4, mb: 4}}>
+        <Container disableGutters maxWidth={"md"} sx={{backgroundColor: "white", minHeight: "80vh", mt: 4, mb: 4}}>
+            {isLoading && <LinearProgress/>}
             <Box sx={{justifyContent: "center"}}>
                 <Grid container spacing={2}>
-                    {isLoading && <CircularProgress/>}
                     <Grid item xs={8}>
-                        {items && <CartContent items={items}/>}
+                        <Header title={"Items"}/>
+                        <Container>
+                            {items && <CartContent items={items}/>}
+                        </Container>
                     </Grid>
                     <Grid item xs={4}>
-                        {items && <CartSummary items={items}/>}
+                        <Header title={"Summary"}/>
+                        <Container>
+                            {items && <CartSummary items={items}/>}
+                        </Container>
                     </Grid>
                 </Grid>
             </Box>
