@@ -1,7 +1,7 @@
 import * as React from "react";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {CircularProgress, Container, Grid} from "@mui/material";
+import {Box, CircularProgress, Container, Grid} from "@mui/material";
 import {grey} from "@mui/material/colors";
 import {ICartItem} from "./ICartItem";
 import CartContent from "./CartContent";
@@ -26,16 +26,18 @@ function Cart() {
     },[]);
 
     return (
-        <Container maxWidth={"md"} sx={{backgroundColor: grey[50], minHeight: "100px", m: 4}}>
-            <Grid justifyContent={"center"} container spacing={2}>
-                {isLoading && <CircularProgress/>}
-                <Grid item xs={8}>
-                    {items && <CartContent items={items}/>}
+        <Container maxWidth={"md"} sx={{backgroundColor: grey[50], minHeight: "80vh", mt: 4, mb: 4}}>
+            <Box sx={{justifyContent: "center"}}>
+                <Grid container spacing={2}>
+                    {isLoading && <CircularProgress/>}
+                    <Grid item xs={8}>
+                        {items && <CartContent items={items}/>}
+                    </Grid>
+                    <Grid item xs={4}>
+                        {items && <CartSummary items={items}/>}
+                    </Grid>
                 </Grid>
-                <Grid item xs={4}>
-                    {items && <CartSummary items={items}/>}
-                </Grid>
-            </Grid>
+            </Box>
         </Container>
     );
 }
