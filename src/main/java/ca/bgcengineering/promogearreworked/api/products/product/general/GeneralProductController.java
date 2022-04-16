@@ -6,14 +6,12 @@ import ca.bgcengineering.promogearreworked.api.products.product.general.dto.Gene
 import ca.bgcengineering.promogearreworked.api.products.product.general.dto.GeneralProductMapper;
 import ca.bgcengineering.promogearreworked.api.products.product.general.dto.GeneralProductResponse;
 import ca.bgcengineering.promogearreworked.persistence.entities.Product;
+import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,9 +32,13 @@ public class GeneralProductController {
     }
 
     @GetMapping
-    private GeneralProductBatchResponse getProductBatch() {
-        List<Product> result = handlerService.handleProductBatchGet();
-        return mapper.toBatchResponse(result);
+    private GeneralProductBatchResponse getProductBatch(@QuerydslPredicate Predicate predicate,
+                                                        Pageable pageable,
+                                                        @RequestParam(defaultValue = "false") Boolean paged) {
+        if (!paged) {
+            pageable = Pageable.unpaged();
+        }
+        return mapper.toBatchResponse(handlerService.handleProductBatchGet(predicate, pageable));
     }
 
 }
