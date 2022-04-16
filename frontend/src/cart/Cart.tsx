@@ -1,7 +1,7 @@
 import * as React from "react";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {Container, Grid, Paper} from "@mui/material";
+import {Box, CircularProgress, Container, Grid, LinearProgress, Typography} from "@mui/material";
 import {grey} from "@mui/material/colors";
 import {ICartItem} from "./ICartItem";
 import CartContent from "./CartContent";
@@ -13,29 +13,43 @@ function Cart() {
 
     const [items, setItems] = useState<ICartItem[]>(null);
 
+    const [isLoading, setLoading] = useState<Boolean>(true);
+
     useEffect(()=>{
-        axios.get(`${url}/api/users/me/cart_items`)
-            .then((response) => {
-                setItems(response.data.cartItems);
-            }).catch((error) => {
-                console.log(error);
-            });
+        axios.get(`${url}/api/users/me/cart_items`).then((response) => {
+            setItems(response.data.cartItems);
+        }).catch((error) => {
+            console.log(error);
+        }).finally(() => {
+            setLoading(false);
+        });
     },[]);
+    
+    const Header = (props: {title: string}) => {
+        return (
+            <Typography align={"center"} variant={"h6"}>{props.title}</Typography>
+        )
+    }
 
     return (
-        <Container maxWidth={"sm"} sx={{backgroundColor: grey[100], minHeight: "500px"}}>
-            <Grid container spacing={2}>
-                <Grid item xs={8}>
-                    <Paper elevation={2}>
-                        {items && <CartContent items={items}/>}
-                    </Paper>
+        <Container disableGutters maxWidth={"md"} sx={{backgroundColor: "white", minHeight: "80vh", mt: 4, mb: 4}}>
+            {isLoading && <LinearProgress/>}
+            <Box sx={{justifyContent: "center"}}>
+                <Grid container spacing={2}>
+                    <Grid item xs={8}>
+                        <Header title={"Items"}/>
+                        <Container>
+                            {items && <CartContent items={items}/>}
+                        </Container>
+                    </Grid>
+                    <Grid item xs={4}>
+                        <Header title={"Summary"}/>
+                        <Container>
+                            {items && <CartSummary items={items}/>}
+                        </Container>
+                    </Grid>
                 </Grid>
-                <Grid item xs={4}>
-                    <Paper elevation={2}>
-                        {items && <CartSummary items={items}/>}
-                    </Paper>
-                </Grid>
-            </Grid>
+            </Box>
         </Container>
     );
 }
