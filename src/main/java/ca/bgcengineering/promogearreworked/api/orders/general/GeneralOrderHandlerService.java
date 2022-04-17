@@ -29,6 +29,7 @@ public class GeneralOrderHandlerService {
     private final GlobalInventoryLevelService inventoryService;
     private final GeneralOrderMapper mapper;
     private final OrderQuantityProcessor quantityProcessor;
+    private final CartItemService cartItemService;
 
     private void splitOrderItems(List<GeneralOrderCreate.NestedOrderItem> orderItems,
                                  List<GeneralOrderCreate.NestedOrderItem> readyPortion,
@@ -67,15 +68,11 @@ public class GeneralOrderHandlerService {
 
     @Transactional
     List<Order> handleOrderCreate(@Valid GeneralOrderCreate orderCreate) {
-//        // empty the cart of the submitter
-//        cartItemService.deleteCartItems(orderCreate.getSubmitterId());
-//        // deduct credit through user update
-//        userService.updateUser(orderCreate.getSubmitterId(), orderCreate.getTotalCost(), (deductedCredit, target) -> {
-//            target.setCredit(target.getCredit().subtract(deductedCredit));
-//            return target;
-//        });
-        return splitOrder(orderCreate).stream().map(order -> service.createOrder(order, mapper::fromCreate))
+        List<Order> orders = splitOrder(orderCreate).stream().map(order -> service.createOrder(order, mapper::fromCreate))
                 .collect(Collectors.toList());
+        // empty the cart of the submitter
+        cartItemService.deleteCartItems(orderCreate.getSubmitterId());
+        return orders;
     }
 
     @Transactional
