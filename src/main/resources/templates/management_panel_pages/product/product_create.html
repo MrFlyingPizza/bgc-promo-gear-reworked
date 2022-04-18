@@ -41,6 +41,11 @@
     .active {
       display: block;
     }
+
+    .product-option{
+      border-bottom: 1px solid black;
+      padding: 20px;
+    }
   </style>
 </head>
 <div layout:fragment="content">
@@ -61,7 +66,7 @@
     <div class="card">
       <div class="card-body">
         <!-- Form to create a product_group -->
-        <form id="create-product-group-form" action="/api/secured/products" method="post" class="row g-3">
+        <form id="create-product-info-form" class="row g-3">
           <div class="col-12 form-field">
             <label for="name" class="form-label">Product Name:</label>
             <input type="text" class="form-control" id="name" name="name" required style="border-color: #dc3545">
@@ -74,14 +79,14 @@
           </div>
           <div class="col-md-6 form-field">
             <label for="price" class="form-label">Price ($CAD):</label>
-            <input type="number" step=".01" class="form-control" id="price" name="price" required style="border-color: #dc3545">
+            <input type="number" step=".01" min="0" class="form-control" id="price" name="price" required style="border-color: #dc3545">
             <small style="color: #dc3545">Price cannot be blank.</small>
           </div>
-          <div class="col-md-12 form-field">
-            <label for="is-published" class="form-check-label">Do you want this product to be published?</label>
-            <input type="checkbox" class="form-check-input" id="is-published" name="is-published">
-            <div class="form-text">(A published product is one that shows up on the marketplace)</div>
-          </div>
+<!--          <div class="col-md-12 form-field">-->
+<!--            <label for="is-published" class="form-check-label">Do you want this product to be published?</label>-->
+<!--            <input type="checkbox" class="form-check-input" id="is-published" name="is-published">-->
+<!--            <div class="form-text">(A published product is one that shows up on the marketplace)</div>-->
+<!--          </div>-->
           <div class="col-md-12 form-field">
             <label for="is-big-item" class="form-check-label">Is this product a "Big Item"?</label>
             <input type="checkbox" class="form-check-input" id="is-big-item" name="is-big-item">
@@ -103,109 +108,87 @@
 
             </select>
           </div>
-          <div class="col-12">
-            <button class="btn btn-outline-primary" id="edit-categories-modal-button"
-                   style="float: right;" data-bs-toggle="modal" data-bs-target="#edit-categories-modal">
-              Edit Categories
-            </button>
-          </div>
-          <p class="text-center" id="if-no-categories" style="display: none; color: red;">
+          <small class="text-center" id="if-no-categories" style="display: none; color: red;">
             There are no categories in the database.
             Please make one before creating a product
             as all products MUST be assigned to a category.
-          </p>
-          <!--        &lt;!&ndash; Show the user a popup modal allowing them to confirm the info they are trying to submit &ndash;&gt;-->
-          <!--        <div class="modal fade" id="confirm-product-group-create-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">-->
-          <!--          <div class="modal-dialog">-->
-          <!--            <div class="modal-content">-->
-          <!--              <div class="modal-header">-->
-          <!--                <h5 class="modal-title">Confirm Submit</h5>-->
-          <!--                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-          <!--              </div>-->
-          <!--              <div class="modal-body">-->
-          <!--                Are you sure you want to submit the following details?-->
-          <!--                <table class="table">-->
-          <!--                  <tr>-->
-          <!--                    <th>Name</th>-->
-          <!--                    <td id="display-new-name"></td>-->
-          <!--                  </tr>-->
-          <!--                  <tr>-->
-          <!--                    <th>Brand</th>-->
-          <!--                    <td id="display-new-brand"></td>-->
-          <!--                  </tr>-->
-          <!--                  <tr>-->
-          <!--                    <th>Price</th>-->
-          <!--                    <td id="display-new-price"></td>-->
-          <!--                  </tr>-->
-          <!--                  <tr>-->
-          <!--                    <th>Is Published</th>-->
-          <!--                    <td id="display-new-is-published"></td>-->
-          <!--                  </tr>-->
-          <!--                  <tr>-->
-          <!--                    <th>Is Big Item</th>-->
-          <!--                    <td id="display-new-is-big-item"></td>-->
-          <!--                  </tr>-->
-          <!--                  <tr>-->
-          <!--                    <th>Is Waitlistable</th>-->
-          <!--                    <td id="display-new-is-waitlisted"></td>-->
-          <!--                  </tr>-->
-          <!--                  <tr>-->
-          <!--                    <th>Description</th>-->
-          <!--                    <td id="display-new-description"></td>-->
-          <!--                  </tr>-->
-          <!--                  <tr>-->
-          <!--                    <th>Category</th>-->
-          <!--                    <td id="display-new-category"></td>-->
-          <!--                  </tr>-->
-          <!--                </table>-->
-          <!--              </div>-->
-          <!--              <div class="modal-footer">-->
-          <!--                <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>-->
-          <!--                <input class="btn btn-outline-primary" type="submit" value="Submit">-->
-          <!--              </div>-->
-          <!--            </div>-->
-          <!--          </div>-->
-          <!--        </div>-->
+          </small>
         </form>
-      </div>
-    </div>
-    <br>
-    <div class="card">
-      <div class="card-body" style="text-align: center;">
-        <h4>Upload Media</h4>
-        <form method="POST" enctype="multipart/form-data" id="file-upload-form">
-          <p><label for="image-upload" style="cursor: pointer;">Click To Upload File</label></p>
-          <input type="file" accept="image/jpeg, image/png" name="image" id="image-upload"
-                 style="display: none;">
-        </form>
-        <span id="image-upload-result"></span>
-        <div id="uploaded-images-container"
-             style="display: none; width: 100%; height: 300px;">
-
+        <br>
+        <div class="col-12">
+          <button class="btn btn-outline-primary" id="edit-categories-modal-button"
+                  style="float: right;" data-bs-toggle="modal" data-bs-target="#edit-categories-modal">
+            Edit Categories
+          </button>
+        </div>
+        <br>
+        <br>
+        <div class="col-12 text-center">
+          <label for="has-options" class="form-check-label">This product has options, like size or colour</label>
+          <input type="checkbox" class="form-check-input" id="has-options" name="has-options">
+        </div>
+        <br>
+        <br>
+        <div class="row d-flex justify-content-center" id="solo-low-stock-limit-container">
+          <div class="col-6">
+            <label for="solo-product-low-stock-limit" class="form-label" id="solo-low-stock-limit-label">Low Stock Limit:</label>
+            <input type="number" id="solo-product-low-stock-limit" class="form-control" min="0" value="0">
+          </div>
+        </div>
+        <br>
+        <br>
+        <div class="col-12" id="no-variant-submit-container">
+          <button class="btn btn-success" id="no-variant-submit" style="float: right;"
+                  onclick="display_new_product_details(0)">Save</button>
         </div>
       </div>
     </div>
+<!--    <br>-->
+<!--    <div class="card">-->
+<!--      <div class="card-body" style="text-align: center;">-->
+<!--        <h4>Upload Media</h4>-->
+<!--        <form method="POST" enctype="multipart/form-data" id="file-upload-form">-->
+<!--          <p><label for="image-upload" style="cursor: pointer;">Click To Upload File</label></p>-->
+<!--          <input type="file" accept="image/jpeg, image/png" name="image" id="image-upload"-->
+<!--                 style="display: none;">-->
+<!--        </form>-->
+<!--        <span id="image-upload-result"></span>-->
+<!--        <div id="uploaded-images-container"-->
+<!--             style="display: none; width: 100%; height: 300px;">-->
+
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
     <br>
-    <div class="card">
+    <div class="card" id="options-container" style="display:none;">
       <div class="card-body" style="text-align: center;">
         <h4>Options</h4>
-        <label for="has-options" class="form-check-label">This product options, like size or colour</label>
-        <input type="checkbox" class="form-check-input" id="has-options" name="has-options">
-        <br>
-        <div id="options-select-container" style="display: none;">
+        <div id="options-select-container">
           <small><i>Select which options you would like your product to have</i></small>
           <div class="product-option" id="product-option-1">
+            <h5>Option 1</h5>
             <label for="option-name-1" class="form-check-label">Option Name</label>
-            <select class="form-select" id="option-name-1" name="option-name-1">
+            <select class="form-select option-select" id="option-name-1" name="option-name-1" onchange="fillOptionValueSelects(this)">
+              <option th:each="option : ${options}" th:value="${option.getId()}" th:text="${option.getName()}"
+                      th:selected="${optionStat.index == 0}"></option>
             </select>
-            <!-- <button class="delete-product-option" id="delete-product-option-1" onclick="delete_option(1)">Delete Option</button> -->
 
+            <p class="text-center" id="if-no-option-values-1" style="display: none; color: red;">
+              There are no Option Values in the database for this Option. Please make one
+              using the "Edit Options" button.
+            </p>
+            <div id="option-values-container-1" class="option-values-container">
+              <label for="product-option-value-1-1" class="form-check-label">Value Name</label>
+              <select class="product-option-values-1 form-select" id="product-option-value-1-1">
 
-<!--            <span>Option Values</span>-->
-<!--            <input type="text" class="form-control" id="option-name-1-value-1" name="option-name-1-value-1">-->
-<!--            <button></button>-->
+              </select>
+            </div>
+            <br>
+            <button class="btn btn-primary" id="add-option-value-1" onclick="add_option_value(1)">
+              + Add Option Value
+            </button>
           </div>
-
+          <br>
           <button class="btn btn-primary" id="add-new-option-button">+ Add another option</button>
         </div>
 
@@ -213,14 +196,15 @@
                 style="float: left;" data-bs-toggle="modal" data-bs-target="#edit-options-modal">
           Edit Options
         </button>
-        <button style="float: right;" class="btn btn-outline-primary" onclick="create_all_possible_products()">Continue</button>
+        <button style="float: right;" class="btn btn-outline-primary" id="generate-variants-button"
+                onclick="create_all_possible_variants()">Generate Variants</button>
       </div>
     </div>
   </div>
   <!--  </div>-->
 
   <br>
-  <div class="card">
+  <div class="card" style="display: none;" id="variants-card">
     <div class="card-body">
       <!--      <section id="create-part-two" style="display: none">-->
       <h3 style="text-align: center">Variants</h3>
@@ -241,7 +225,7 @@
             <thead>
             <tr>
               <th scope="col">Variant</th>
-              <th scope="col">Image File</th>
+<!--              <th scope="col">Is In Use</th>-->
               <th scope="col">Low Stock Limit</th>
             </tr>
             </thead>
@@ -249,14 +233,14 @@
             </tbody>
             <tfoot>
             <th scope="row">Change All Low Stock Limit</th>
-            <td><input type="number" id="changeAllLowStockLimitInput" min="0" value="0"></td>
+            <td><input type="number" id="changeAllLowStockLimitInput" class="form-control" min="0" value="0"></td>
             <td><button type="button" class="btn btn-primary rounded-pill text-decoration-none" onclick="set_all_low_stock_input()">Set All</button></td>
             </tfoot>
           </table>
         </div>
       </form>
       <div class="col-md-12">
-        <button class="btn btn-success" style="float: right;" onclick="submit_all()">Save</button>
+        <button class="btn btn-success" style="float: right;" onclick="display_new_product_details(1)">Save</button>
         <!--      <input class="btn btn-outline-primary" id="submit-create-product-group" type="button"-->
         <!--             value="Submit" data-bs-toggle="modal" data-bs-target="#confirm-product-group-create-modal">-->
       </div>
@@ -960,48 +944,56 @@
     </div>
   </div>
 
-
-
-
-
-
-  <!-- CREATE PRODUCT_GROUP SUCCESS/FAIL POPUP MODALS -->
-  <div class="modal fade" id="create-product-group-success-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+  <div class="modal fade" id="confirm-create-product-modal" tabindex="-1" role="dialog"
+       aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Complete</h5>
-          <!--          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+          <h5 class="modal-title">Create Product</h5>
         </div>
-        <div class="modal-body text-center">
-          <span style="font-size: 35px;font-weight: bold;">Successfully Created</span><br>
-          <i class="fa fa-check-circle-o rubberBand animated" style="font-size: 100px;color: rgb(122, 214, 94);height: 41px;"></i>
+        <div class="modal-body">
+          Are you sure you want to submit the following details?
+          <table class="table">
+            <tr>
+              <th>Name</th>
+              <td id="display-new-name"></td>
+            </tr>
+            <tr>
+              <th>Brand</th>
+              <td id="display-new-brand"></td>
+            </tr>
+            <tr>
+              <th>Price</th>
+              <td id="display-new-price"></td>
+            </tr>
+<!--            <tr>-->
+<!--              <th>Is Published</th>-->
+<!--              <td id="display-new-is-published"></td>-->
+<!--            </tr>-->
+            <tr>
+              <th>Is Big Item</th>
+              <td id="display-new-is-big-item"></td>
+            </tr>
+            <tr>
+              <th>Is Waitlistable</th>
+              <td id="display-new-is-waitlisted"></td>
+            </tr>
+            <tr>
+              <th>Description</th>
+              <td id="display-new-description"></td>
+            </tr>
+            <tr>
+              <th>Category</th>
+              <td id="display-new-category"></td>
+            </tr>
+          </table>
         </div>
-        <div class="modal-footer" id="success-footer">
-          <a id="success-redirect" class="btn btn-outline-default" href="/management/product">View Product</a>
+        <div class="modal-footer" id="confirm-create-product-modal-footer">
+
         </div>
       </div>
     </div>
   </div>
-  <div class="modal fade" id="create-product-group-fail-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Failed to Create</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body text-center">
-          <span style="font-size: 35px;font-weight: bold;">Creation Failed</span><br>
-          <i class="fa fa-close rubberBand animated" style="font-size: 100px;color: rgb(242, 15, 0);height: 41px;"></i><br>
-          <p class="text-start" id="create-product-group-fail-message"></p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
 
   <div class="modal fade" id="wait-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -1256,7 +1248,7 @@
     */
      function save_new_parent_category(){
       const data = {
-        'name': $('#new-parent-category-input').val(),
+        'name': $('#new-parent-category-input').val().trim(),
         'parentId': null
       }
 
@@ -1458,7 +1450,7 @@
      */
     function save_edit_parent_category(){
       const data = {
-        'name': $('#edit-parent-category-input').val()
+        'name': $('#edit-parent-category-input').val().trim()
       }
 
       $.ajax({
@@ -1557,7 +1549,7 @@
      */
     function save_new_subcategory() {
       const data = {
-        'name': $('#new-subcategory-input').val(),
+        'name': $('#new-subcategory-input').val().trim(),
         'parentId': $('#new-subcategory-input').data('parent-cat-id')
       }
 
@@ -1742,7 +1734,7 @@
      */
     function save_edit_subcategory(){
       const data = {
-        'name': $('#edit-subcategory-input').val()
+        'name': $('#edit-subcategory-input').val().trim()
       }
 
       $.ajax({
@@ -1977,6 +1969,8 @@
     // }
 
     function delete_option(element){
+      alert('Function Not Implemented Yet!');
+      return;
       $.ajax({
         type: "DELETE",
         url: '/api/secured/options/'.concat($(element).data('id')),
@@ -2055,7 +2049,7 @@
      */
     function save_new_option(){
       const data = {
-        'name': $('#new-option-input').val()
+        'name': $('#new-option-input').val().trim()
       }
 
       $.ajax({
@@ -2254,7 +2248,7 @@
      */
     function save_edit_option(){
       const data = {
-        'name': $('#edit-option-input').val()
+        'name': $('#edit-option-input').val().trim()
       }
 
       $.ajax({
@@ -2353,7 +2347,7 @@
      */
     function save_new_option_value() {
       const data = {
-        'value': $('#new-option-value-input').val()
+        'value': $('#new-option-value-input').val().trim()
       }
 
       console.log("POST Option Value Data:");
@@ -2544,7 +2538,7 @@
      */
     function save_edit_option_value(){
       const data = {
-        'value': $('#edit-option-value-input').val()
+        'value': $('#edit-option-value-input').val().trim()
       }
 
       $.ajax({
@@ -2612,66 +2606,68 @@
 
     }
 
-    // function delete_option_value(element){
-    //   $.ajax({
-    //     type: "DELETE",
-    //     url: ,
-    //     beforeSend: function(xhr) {
-    //       // xhr.setRequestHeader(
-    //       //         $('meta[name=_csrf_header]').attr('content'),
-    //       //         $('meta[name=_csrf]').attr('content')
-    //       // )
-    //       $('#confirm-delete-modal').modal('hide');
-    //
-    //       $('#wait-modal-title').text("Deleting Option Value...");
-    //       $('#wait-modal').modal('show');
-    //     },
-    //     success: function(data)
-    //     {
-    //       $("#wait-modal").on('shown.bs.modal', function () {
-    //         $('#wait-modal').modal('hide');
-    //       });
-    //
-    //       $('#option-value-row-'+$(element).data('id')).remove();
-    //
-    //       // if(!($('#categoryAccordionPanels').children().length > 0)){
-    //       //   let noSubcategoriesDiv = `
-    //       //     <tr data-has-none="true">
-    //       //        <td>No Subcategories</td>
-    //       //      </tr>
-    //       //   `;
-    //       //   $('#categoryAccordionPanels').append(noSubcategoriesDiv);
-    //       // }
-    //
-    //       $('#success-modal-message').text("Successfully deleted Option Value");
-    //       $('#success-modal').modal('show');
-    //
-    //
-    //       //fill_current_categories();
-    //     },
-    //     error: function(xhr) {
-    //       $("#wait-modal").on('shown.bs.modal', function () {
-    //         $('#wait-modal').modal('hide');
-    //       });
-    //
-    //       $('#failed-modal-message-header').text("Delete Failed");
-    //       var responseMessagesString = '';
-    //       let responseMessages = xhr.responseJSON['messages'];
-    //       console.log(xhr);
-    //       testing = xhr;
-    //       if (responseMessages !== undefined) {
-    //         for (let i = 0; i < responseMessages.length; i++) {
-    //           responseMessagesString += ((i + 1) + ". " + responseMessages[i]['message'] + "\n");
-    //         }
-    //         $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
-    //       } else {
-    //         $('#failed-modal-message').text("Error Message: \nNo available Error Message.");
-    //       }
-    //
-    //       $('#failed-modal').modal('show');
-    //     }
-    //   });
-    // }
+    function delete_option_value(element){
+      alert('Function Not Implemented Yet!');
+      return;
+      $.ajax({
+        type: "DELETE",
+        url: '/api/secured/options/',
+        beforeSend: function(xhr) {
+          // xhr.setRequestHeader(
+          //         $('meta[name=_csrf_header]').attr('content'),
+          //         $('meta[name=_csrf]').attr('content')
+          // )
+          $('#confirm-delete-modal').modal('hide');
+
+          $('#wait-modal-title').text("Deleting Option Value...");
+          $('#wait-modal').modal('show');
+        },
+        success: function(data)
+        {
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          $('#option-value-row-'+$(element).data('id')).remove();
+
+          // if(!($('#categoryAccordionPanels').children().length > 0)){
+          //   let noSubcategoriesDiv = `
+          //     <tr data-has-none="true">
+          //        <td>No Subcategories</td>
+          //      </tr>
+          //   `;
+          //   $('#categoryAccordionPanels').append(noSubcategoriesDiv);
+          // }
+
+          $('#success-modal-message').text("Successfully deleted Option Value");
+          $('#success-modal').modal('show');
+
+
+          //fill_current_categories();
+        },
+        error: function(xhr) {
+          $("#wait-modal").on('shown.bs.modal', function () {
+            $('#wait-modal').modal('hide');
+          });
+
+          $('#failed-modal-message-header').text("Delete Failed");
+          var responseMessagesString = '';
+          let responseMessages = xhr.responseJSON['messages'];
+          console.log(xhr);
+          testing = xhr;
+          if (responseMessages !== undefined) {
+            for (let i = 0; i < responseMessages.length; i++) {
+              responseMessagesString += ((i + 1) + ". " + responseMessages[i]['message'] + "\n");
+            }
+            $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+          } else {
+            $('#failed-modal-message').text("Error Message: \nNo available Error Message.");
+          }
+
+          $('#failed-modal').modal('show');
+        }
+      });
+    }
 
     /*
     Expand all accordions by default
@@ -2689,26 +2685,37 @@
 
       const newDiv = `
         <div class="product-option" id="product-option-${nextIndex}">
+            <h5>Option ${nextIndex}</h5>
             <label for="option-name-${nextIndex}" class="form-check-label">Option Name</label>
-            <select class="form-select" id="option-name-${nextIndex}" name="option-name-${nextIndex}">
+            <select class="form-select option-select" id="option-name-${nextIndex}" name="option-name-${nextIndex}"
+                    onchange="fillOptionValueSelects(this)">
             </select>
-            <button class="delete-product-option btn button-edit" id="delete-product-option-${nextIndex}" onclick="delete_option(${nextIndex})">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                </svg>
+            <p class="text-center" id="if-no-option-values-${nextIndex}" style="display: none; color: red;">
+              There are no Option Values in the database for this Option. Please make one
+              using the "Edit Options" button.
+            </p>
+
+            <div id="option-values-container-${nextIndex}" class="option-values-container">
+                <label for="product-option-value-nextIndex-1" class="form-check-label">Value Name</label>
+                <select class="product-option-values-${nextIndex} form-select" id="product-option-value-${nextIndex}-1">
+
+                </select>
+            </div>
+            <br>
+            <button class="btn btn-primary" id="add-option-value-${nextIndex}" onclick="add_option_value(${nextIndex})">
+             + Add Option Value
             </button>
-
-
-            <span>Option Values</span>
-            <input type="text" class="form-control" id="option-name-${nextIndex}-value-${nextIndex}"
-            name="option-name-${nextIndex}-value-${nextIndex}">
+            <button class="delete-product-option btn btn-danger" id="delete-product-option-${nextIndex}" onclick="delete_option_input(${nextIndex})">
+                Delete Option
+            </button>
         </div>`;
 
       $(".product-option:last").after(newDiv);
+      let currentOptions = $('#option-name-1').html();
+      $('#option-name-'+nextIndex).html(currentOptions);
     });
 
-    function delete_option(id){
+    function delete_option_input(id){
       var deleteIndex = id;
 
       console.log(deleteIndex);
@@ -2716,53 +2723,156 @@
     }
 
     function add_option_value(parentId){
+      var lastId = $('.product-option-values-'+parentId+':last').attr("id");
+      var splitId = lastId.split("-");
+      var nextIndex = parseInt(splitId[4]) + 1;
+      let newOptionValue=`
+        <label for="product-option-value-${parentId}-${nextIndex}" id="product-option-value-${parentId}-${nextIndex}-label"
+               class="form-check-label">Value Name</label>
+        <select class="product-option-values-${parentId} form-select" id="product-option-value-${parentId}-${nextIndex}">
 
+        </select>
+
+        <button class="delete-option-value btn btn-danger" id="delete-product-option-value-${parentId}-${nextIndex}"
+                onclick="delete_option_value_input(${parentId}, ${nextIndex}, this)">
+            Delete Value
+        </button>
+
+        `;
+      $('#option-values-container-'+parentId).append(newOptionValue);
+      let currentOptionValues = $('#product-option-value-'+parentId+'-1').html();
+      $('#product-option-value-'+parentId+"-"+nextIndex).html(currentOptionValues);
+    }
+
+    function delete_option_value_input(parentId, optionValueId, deleteButton){
+      $("#product-option-value-" + parentId + "-" + optionValueId).remove();
+      $(deleteButton).remove();
+      $("#product-option-value-" + parentId + "-" + optionValueId+"-label").remove();
     }
 
     $('#has-options').change(
             function(){
-              // let displayValue = $('#options-select-container').css('display');
-              // if(displayValue == 'none'){
-              //   $('#options-select-container').show();
-              // }
-              // else{
-              //   $('#options-select-container').hide();
-              // }
-              $('#options-select-container').toggle();
+              $('#options-container').toggle();
+              if(this.checked){
+                $('#no-variant-submit-container').css('display', 'none');
+                $('#no-variant-submit').css('display', 'none');
+                $('#solo-low-stock-limit-label').css('display', 'none');
+                $('#solo-product-low-stock-limit').css('display', 'none');
+                $('#solo-low-stock-limit-container').css('display', 'none');
+                $('#generate-variants-button').css('display', '');
+              }
+              else{
+                $('#no-variant-submit-container').css('display', '');
+                $('#no-variant-submit').css('display', '');
+                $('#solo-low-stock-limit-label').css('display', '');
+                $('#solo-product-low-stock-limit').css('display', '');
+                $('#solo-low-stock-limit-container').css('display', '');
+                $('#generate-variants-button').css('display', 'none');
+              }
             }
     );
+
+    function fillOptionValueSelects(selectElement){
+      var idValue = parseInt($(selectElement).attr('id').split("-")[2]);
+      $.ajax({
+        type: "GET",
+        url: '/api/secured/options/'.concat($(selectElement).val()).concat("/values"),
+        success: function(data)
+        {
+          if(jQuery.isEmptyObject(data['values'])){
+            $('#if-no-option-values-'+idValue).css("display", "");
+            $('.product-option-values-'+idValue).each(function(index, element) {
+                      $(this).empty();
+                    }
+            );
+          }
+          else{
+            $('#if-no-option-values-'+idValue).css("display", "none");
+            $('.product-option-values-'+idValue).each(function(index, element){
+              $(this).empty();
+              for(let i = 0; i < data['values'].length; i++){
+                if(i === 0){
+                  $(this).append($('<option>', {
+                    selected: true,
+                    value: data['values'][i]['id'],
+                    text : data['values'][i]['value']
+                  }));
+                }
+                else{
+                  $(this).append($('<option>', {
+                    value: data['values'][i]['id'],
+                    text : data['values'][i]['value']
+                  }));
+                }
+              }
+            });
+          }
+        },
+        error: function(xhr) {
+          console.log(xhr);
+          testing = xhr;
+
+          $('#failed-modal-message-header').text("Data Retrieval Failed");
+          var responseMessagesString = '';
+          let responseMessages = xhr.responseJSON['messages'];
+
+          if (responseMessages !== undefined) {
+            for (let i = 0; i < responseMessages.length; i++) {
+              responseMessagesString += ((i + 1) + ". " + responseMessages[i]['message'] + "\n");
+            }
+            $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+          } else {
+            $('#failed-modal-message').text("Error Message: \nNo available Error Message.");
+          }
+
+          $('#failed-modal').modal('show');
+        }
+      });
+    }
+
+    function updateOptionSelects(){
+
+    }
 
     //End Options
     //-----------------------------------------------------------------------------------------------------------------------
     //Start Products
 
-    // function display_new_product_group_details(){
-    //     $('#display-new-name').text($('#name').val());
-    //     $('#display-new-brand').text($('#brand').val());
-    //     $('#display-new-price').text("$" + $('#price').val());
-    //     if ($('#is-published').is(":checked")){
-    //         $('#display-new-is-published').text("Yes");
-    //     }
-    //     else{
-    //         $('#display-new-is-published').text("No");
-    //     }
-    //     if ($('#is-big-item').is(":checked")){
-    //         $('#display-new-is-big-item').text("Yes");
-    //     }
-    //     else{
-    //         $('#display-new-is-big-item').text("No");
-    //     }
-    //     if ($('#is-waitlistable').is(":checked")){
-    //         $('#display-new-is-waitlisted').text("Yes");
-    //     }
-    //     else{
-    //         $('#display-new-is-waitlisted').text("No");
-    //     }
-    //     $('#display-new-description').text($('#description').val());
-    //     $('#display-new-category').text($('#categories option:selected').text());
-    // }
+    function display_new_product_details(typeOfSubmit){
+        $('#display-new-name').text($('#name').val());
+        $('#display-new-brand').text($('#brand').val());
+        $('#display-new-price').text("$" + $('#price').val());
+        // if ($('#is-published').is(":checked")){
+        //     $('#display-new-is-published').text("Yes");
+        // }
+        // else{
+        //     $('#display-new-is-published').text("No");
+        // }
+        if ($('#is-big-item').is(":checked")){
+            $('#display-new-is-big-item').text("Yes");
+        }
+        else{
+            $('#display-new-is-big-item').text("No");
+        }
+        if ($('#is-waitlistable').is(":checked")){
+            $('#display-new-is-waitlisted').text("Yes");
+        }
+        else{
+            $('#display-new-is-waitlisted').text("No");
+        }
+        $('#display-new-description').text($('#description').val());
+        $('#display-new-category').text($('#categories option:selected').text());
 
-    //$('#submit-create-product-group').click(display_new_product_group_details);
+        let modalFooter = `
+        <button class="btn btn-outline-default" data-bs-dismiss="modal">Return</button>
+        <button id="save-new-product-button-${typeOfSubmit}"
+                  class="btn btn-success"
+                  onclick="submit_all(${typeOfSubmit})">Save</button>
+        `;
+        $('#confirm-create-product-modal-footer').empty();
+        $('#confirm-create-product-modal-footer').html(modalFooter);
+        $('#confirm-create-product-modal').modal('show');
+    }
 
     function set_all_low_stock_input(){
       $('.lowStockLimitInput').each(function (){
@@ -2791,68 +2901,105 @@
     function finish_products_table(valueCombinations, idCombinations){
       $('#finishProductsFormBody').html("");
       for(let i = 0; i < valueCombinations.length; i++){
-        $('#finishProductsFormBody').append("<tr id='product-create"+(i+1)+"' data-attrids='"+idCombinations[i]+"'>" +
+        $('#finishProductsFormBody').append("<tr id='product-create"+(i+1)+"' data-value-ids='"+idCombinations[i]+"'>" +
                 "            <td>"+valueCombinations[i].toString().replaceAll(" ", "/")+"</td>\n" +
-                "            <td><select id='product-image-select"+(i+1)+"' class='product-image-select'></select></td>\n" +
-                "            <td><input id='product-low-stock-limit-input"+(i+1)+"' class=\"lowStockLimitInput\" type=\"number\" min=\"0\" value=\"0\"></td>" +
+                // "            <td><select id='product-image-select"+(i+1)+"' class='product-image-select'></select></td>\n" +
+                // "            <td><input type=\"checkbox\" id='product-is-in-use-input'"+(i+1)+"' checked></td>" +
+                "            <td><input id='product-low-stock-limit-input"+(i+1)+"' class=\"lowStockLimitInput form-control\" type=\"number\" min=\"0\" value=\"0\"></td>" +
                 "            <td><button type=\"button\" class=\"btn btn-danger rounded-pill text-decoration-none\" id='deleteVariant"+(i+1)+"' onclick='delete_variant("+(i+1)+")'>Disable</button></td>" +
                 "           </tr>");
       }
-      $('#finishProductsForm').data("count", valueCombinations.length);
-      $('.product-image-select').each(function (i, obj) {
-        for(let i = 0; i < imageUrls.length; i++){
-          $(this).append($('<option>', {
-            value: imageUrls[i],
-            text : imageUrls[i]
-          }));
-        }
-      });
-      $('#create-part-two').css("display", "");
+
+      $('#finishProductsForm').removeData('count');
+      $('#finishProductsForm').attr('data-count', valueCombinations.length);
+      // $('.product-image-select').each(function (i, obj) {
+      //   for(let i = 0; i < imageUrls.length; i++){
+      //     $(this).append($('<option>', {
+      //       value: imageUrls[i],
+      //       text : imageUrls[i]
+      //     }));
+      //   }
+      // });
       deleteTracker = [];
       //$('#create-part-one').css("display", "none");
     }
 
-    var allAttributeValues;
-    var allAttributeIDS;
     var valueCombinations;
     var idCombinations;
-    function create_all_possible_products(){
-      //$('#create-part-two').css("display", "none");
-      let totalNumAttributesOnPage = parseInt($('#attributesTable tr:last').data("index"))+1;
-      //let allAttributes = new Array(totalNumAttributesOnPage);
-      //console.log(totalNumAttributesOnPage);
-      allAttributeValues = new Array(totalNumAttributesOnPage);
-      allAttributeIDS = new Array(totalNumAttributesOnPage);
-      for(let i = 0; i < allAttributeValues.length; i++){
-        allAttributeValues[i] = [];
-        allAttributeIDS[i] = [];
+
+    var allOptionValues;
+    var allOptionValueIds;
+    function create_all_possible_variants(){
+      // $('#variants-card').css("display", "");
+      // let numberOfOptions = $('.product-option').length;
+      // let totalNumAttributesOnPage = parseInt($('#attributesTable tr:last').data("index"))+1;
+      // //let allAttributes = new Array(totalNumAttributesOnPage);
+      // //console.log(totalNumAttributesOnPage);
+      // allAttributeValues = new Array(totalNumAttributesOnPage);
+      // allAttributeIDS = new Array(totalNumAttributesOnPage);
+      // for(let i = 0; i < allAttributeValues.length; i++){
+      //   allAttributeValues[i] = [];
+      //   allAttributeIDS[i] = [];
+      // }
+      // for(let i = 0; i < allAttributeValues.length; i++){
+      //   let selectionString = 'selection'+i;
+      //   $("input[name="+selectionString+"]:checked").each(function(index, input){
+      //     allAttributeValues[i].push(input.dataset.attrvalue);
+      //     allAttributeIDS[i].push(input.dataset.attrid);
+      //   });
+      // }
+      // let allAttributeValuesFiltered = allAttributeValues.filter(function(el){
+      //   return el.length > 0;
+      // });
+      // let allAttributeIDSFiltered = allAttributeIDS.filter(function(el){
+      //   return el.length > 0;
+      // });
+      // allAttributeValues = allAttributeValuesFiltered;
+      // allAttributeIDS = allAttributeIDSFiltered;
+      //
+      // valueCombinations = generate_all_attribute_combinations(allAttributeValues);
+      // idCombinations = generate_all_attribute_combinations(allAttributeIDS);
+      //
+      // finish_products_table(valueCombinations, idCombinations);
+
+      $('#variants-card').css("display", "");
+      let numberOfOptions = $('.product-option').length;
+
+      allOptionValues = new Array(numberOfOptions);
+      allOptionValueIds = new Array(numberOfOptions);
+      for(let i = 0; i < numberOfOptions; i++){
+        allOptionValues[i] = [];
+        allOptionValueIds[i] = [];
       }
-      for(let i = 0; i < allAttributeValues.length; i++){
-        let selectionString = 'selection'+i;
-        $("input[name="+selectionString+"]:checked").each(function(index, input){
-          allAttributeValues[i].push(input.dataset.attrvalue);
-          allAttributeIDS[i].push(input.dataset.attrid);
+      let optionDomNumbers = [];
+      $('.product-option').each(function(index, element){
+        let optionDomNumber = parseInt($(this).attr('id').split("-")[2]);
+        optionDomNumbers.push(optionDomNumber);
+      });
+      console.assert(optionDomNumbers.length == numberOfOptions);
+      for(let i = 0; i < numberOfOptions; i++){
+        $('.product-option-values-'+optionDomNumbers[i]).each(function(index, element){
+          allOptionValues[i].push($(this).find('option:selected').text());
+          allOptionValueIds[i].push(parseInt($(this).val()));
         });
       }
-      let allAttributeValuesFiltered = allAttributeValues.filter(function(el){
+      console.log(allOptionValues);
+      console.log(allOptionValueIds);
+      let allOptionValuesFiltered = allOptionValues.filter(function(el){
         return el.length > 0;
       });
-      let allAttributeIDSFiltered = allAttributeIDS.filter(function(el){
+      let allOptionValueIDSFiltered = allOptionValueIds.filter(function(el){
         return el.length > 0;
       });
-      allAttributeValues = allAttributeValuesFiltered;
-      allAttributeIDS = allAttributeIDSFiltered;
+      allOptionValues = allOptionValuesFiltered;
+      allOptionValueIds = allOptionValueIDSFiltered;
 
-      valueCombinations = generate_all_attribute_combinations(allAttributeValues);
-      idCombinations = generate_all_attribute_combinations(allAttributeIDS);
+      valueCombinations = generate_all_attribute_combinations(allOptionValues);
+      idCombinations = generate_all_attribute_combinations(allOptionValueIds);
 
       finish_products_table(valueCombinations, idCombinations);
     }
 
-    // function go_back_to_part_one(){
-    //     $('#create-part-two').css("display", "none");
-    //     $('#create-part-one').css("display", "");
-    // }
 
     function generate_all_attribute_combinations(allAttributeArrays){
 
@@ -3015,6 +3162,12 @@
       else if(price.val().length === 0){
         showError(price, 'Price cannot be blank.');
       }
+      else if(parseFloat(price.val()) < 0.00){
+        showError(price, 'Price cannot be negative.')
+      }
+      else if(parseFloat(price.val()) === 0.00){
+        showError(price, 'Price cannot be zero.')
+      }
       else {
         showSuccess(price);
         valid = true;
@@ -3035,7 +3188,7 @@
       return valid;
     };
 
-    $('#create-product-group-form').on('input', function(e){
+    $('#create-product-info-form').on('input', function(e){
       switch(e.target.id) {
         case 'name':
           checkName();
@@ -3054,24 +3207,38 @@
 
 
 
-    function submit_all(){
+    function submit_all(typeOfSubmit){
 
       let isFormValid = checkName() && checkPrice() && checkBrand() && checkDescription();
       if(!isFormValid){
         $('html, body').animate({ scrollTop: 0 }, 'fast');
         return;
       }
-      const url = '/management/api/product';
+      const url = '/api/secured/products';
+
+      let optionIds = [];
+      //typeOfSubmit = 0 - no Options + Variants
+      //typeOfSubmit = 1 - has Options + Variants
+      if(typeOfSubmit === 1){
+        $('.option-select').each(function(index, element){
+          optionIds.push(parseInt($(this).val()));
+        });
+      }
+
       const data = {
         'name': $('#name').val(),
         'brand': $('#brand').val(),
         'price': parseFloat($("#price").val()).toFixed(2),
-        'isPublished': $('#is-published').is(':checked'),
+        // 'isPublished': $('#is-published').is(':checked'),
+        'isPublished': false,
         'isBigItem': $('#is-big-item').is(':checked'),
-        'isWaitlistable': $('#is-waitlistable').is(':checked'),
+        'isWaitListEnabled': $('#is-waitlistable').is(':checked'),
         'description': $('#description').val(),
-        'categoryID': $('#categories option:selected').val()
+        'categoryId': $('#categories option:selected').val(),
+        'optionIds': optionIds
       }
+      console.log("Product Info Data:\n");
+      console.log(data);
 
       $.ajax({
         type: "POST",
@@ -3079,17 +3246,20 @@
         contentType: "application/json",
         data: JSON.stringify(data), // serializes the form's elements.
         beforeSend: function(xhr) {
-          xhr.setRequestHeader(
-                  $('meta[name=_csrf_header]').attr('content'),
-                  $('meta[name=_csrf]').attr('content')
-          );
+          // xhr.setRequestHeader(
+          //         $('meta[name=_csrf_header]').attr('content'),
+          //         $('meta[name=_csrf]').attr('content')
+          // );
+          $('#confirm-create-product-modal').modal('hide');
+
+          $('#wait-modal-title').text("Saving Product...");
           $('#wait-modal').modal('show');
         },
         success: function(data)
         {
           //$('#confirm-product-group-create-modal').modal('hide');
           //$('#create-product-group-success-modal').modal('show');
-          submit_product_forms(data['ID']);
+          submit_product_forms(data['id'], typeOfSubmit);
         },
         error: function(xhr) {
           console.log(xhr);
@@ -3098,7 +3268,7 @@
             $('#wait-modal').modal('hide');
           });
 
-          $('#failed-modal-message-header').text("Creation Failed");
+          $('#failed-modal-message-header').text("Product Info Creation Failed");
           var responseMessagesString = '';
           let responseMessages = xhr.responseJSON['messages'];
 
@@ -3116,53 +3286,109 @@
       });
     }
 
-    function submit_product_forms(pgid){
-      let products = [];
-      let numProducts = parseInt($('#finishProductsForm').data("count"));
-      for(let j = 0; j < numProducts; j++){
-        if(deleteTracker.includes(j+1)){
-          continue;
+    function submit_product_forms(productId, typeOfSubmit){
+      if(typeOfSubmit === 1){
+        let variants = [];
+        let numVariants = parseInt($('#finishProductsForm').data("count"));
+        for(let j = 0; j < numVariants; j++){
+          if(deleteTracker.includes(j+1)){
+            continue;
+          }
+          let optionValues = [];
+          let arrayOfValueIds = $("#product-create"+(j+1)).data("value-ids").toString().split(" ").map(i=>Number(i));
+          for(let k = 0; k < arrayOfValueIds.length; k++){
+            optionValues.push(arrayOfValueIds[k]);
+          }
+          const variant = {
+            // 'imagePath': $('#product-image-select'+(j+1)).val(),
+            'isInUse': true,
+            'waitListThreshold': parseInt($("#product-low-stock-limit-input"+(j+1)).val()),
+            'optionValueIds': optionValues
+          }
+          console.log(variant);
+          $.ajax({
+            type: "POST",
+            url: '/api/secured/products/'.concat(productId).concat('/variants'),
+            contentType: "application/json",
+            data: JSON.stringify(variant), // serializes the form's elements.
+            beforeSend: function(xhr) {
+              // xhr.setRequestHeader(
+              //         $('meta[name=_csrf_header]').attr('content'),
+              //         $('meta[name=_csrf]').attr('content')
+              // )
+            },
+            success: function()
+            {
+              // $('#success-redirect').attr("href", "/management/product/update?id="+pgid)
+            },
+            error: function(xhr) {
+              console.log(xhr);
+              testing = xhr;
+              $("#wait-modal").on('shown.bs.modal', function () {
+                $('#wait-modal').modal('hide');
+              });
+
+              $('#failed-modal-message-header').text("Product Variant Creation Failed");
+              var responseMessagesString = '';
+              let responseMessages = xhr.responseJSON['messages'];
+
+              if (responseMessages !== undefined) {
+                for (let i = 0; i < responseMessages.length; i++) {
+                  responseMessagesString += ((i + 1) + ". " + responseMessages[i]['message'] + "\n");
+                }
+                $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+              } else {
+                $('#failed-modal-message').text("Error Message: \nNo available Error Message.");
+              }
+
+              $('#failed-modal').modal('show');
+              return;
+            }
+          });
         }
-        let attributes = [];
-        let arrayOfAttrIDs = $("#product-create"+(j+1)).data("attrids").toString().split(" ").map(i=>Number(i));
-        for(let k = 0; k < arrayOfAttrIDs.length; k++){
-          attributes.push({ "ID": arrayOfAttrIDs[k]});
-        }
-        const product = {
-          'imagePath': $('#product-image-select'+(j+1)).val(),
-          'PGID': pgid,
-          'lowStockLimit': $("#product-low-stock-limit-input"+(j+1)).val(),
-          'attributes': attributes
-        }
-        products.push(product);
+        $("#wait-modal").on('shown.bs.modal', function () {
+          $('#wait-modal').modal('hide');
+        });
+
+        $('#success-modal-message').text("Successfully created Product + Variants!");
+        $('#success-modal').modal('show');
       }
-      console.log(products);
-      if(products.length !== 0){
+      else {
+        const variant = {
+          // 'imagePath': $('#product-image-select'+(j+1)).val(),
+          'isInUse': true,
+          'waitListThreshold': parseInt($("#solo-product-low-stock-limit").val()),
+          'optionValueIds': []
+        }
+        console.log(variant);
         $.ajax({
           type: "POST",
-          url: '/management/api/product_variant/batch',
+          url: '/api/secured/products/'.concat(productId).concat('/variants'),
           contentType: "application/json",
-          data: JSON.stringify(products), // serializes the form's elements.
-          beforeSend: function(xhr) {
-            xhr.setRequestHeader(
-                    $('meta[name=_csrf_header]').attr('content'),
-                    $('meta[name=_csrf]').attr('content')
-            )
+          data: JSON.stringify(variant), // serializes the form's elements.
+          beforeSend: function (xhr) {
+            // xhr.setRequestHeader(
+            //         $('meta[name=_csrf_header]').attr('content'),
+            //         $('meta[name=_csrf]').attr('content')
+            // )
           },
-          success: function()
-          {
-            $('#success-redirect').attr("href", "/management/product/update?id="+pgid)
-            $('#wait-modal').modal('hide');
-            $('#create-product-group-success-modal').modal('show');
+          success: function () {
+            // $('#success-redirect').attr("href", "/management/product/update?id="+pgid)
+            $("#wait-modal").on('shown.bs.modal', function () {
+              $('#wait-modal').modal('hide');
+            });
+
+            $('#success-modal-message').text("Successfully created Solo Product!");
+            $('#success-modal').modal('show');
           },
-          error: function(xhr) {
+          error: function (xhr) {
             console.log(xhr);
             testing = xhr;
             $("#wait-modal").on('shown.bs.modal', function () {
               $('#wait-modal').modal('hide');
             });
 
-            $('#failed-modal-message-header').text("Creation Failed");
+            $('#failed-modal-message-header').text("Solo Product Variant Creation Failed");
             var responseMessagesString = '';
             let responseMessages = xhr.responseJSON['messages'];
 
@@ -3178,10 +3404,6 @@
             $('#failed-modal').modal('show');
           }
         });
-      }
-      else {
-        $('#wait-modal').modal('hide');
-        $('#create-product-group-success-modal').modal('show');
       }
     }
 
