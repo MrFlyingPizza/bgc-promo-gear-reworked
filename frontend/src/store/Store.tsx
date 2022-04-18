@@ -2,7 +2,6 @@ import * as React from "react";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {Box, CircularProgress, Container, Grid, LinearProgress, Typography} from "@mui/material";
-import Button from 'react-bootstrap/Button';
 import {grey} from "@mui/material/colors";
 
 import {IProductItem} from "./IProductItem";
