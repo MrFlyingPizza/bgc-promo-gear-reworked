@@ -4,11 +4,14 @@ import ca.bgcengineering.promogearreworked.persistence.entities.*;
 import ca.bgcengineering.promogearreworked.persistence.repositories.OfficeLocationRepository;
 import ca.bgcengineering.promogearreworked.persistence.repositories.ProductVariantRepository;
 import ca.bgcengineering.promogearreworked.persistence.repositories.UserRepository;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 

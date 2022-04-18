@@ -1,5 +1,6 @@
 package ca.bgcengineering.promogearreworked.api.orders;
 
+import ca.bgcengineering.promogearreworked.api.orders.exceptions.InsufficientCreditException;
 import ca.bgcengineering.promogearreworked.api.orders.exceptions.NoCartItemException;
 import ca.bgcengineering.promogearreworked.api.orders.exceptions.OrderNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,12 @@ public class OrderExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     private String handleOrderNotFound(OrderNotFoundException exception) {
         return "Order could not be found.";
+    }
+
+    @ExceptionHandler(InsufficientCreditException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    private String handleInsufficientCredit(InsufficientCreditException exception) {
+        return "Insufficient credit to complete this order.";
     }
 
 }

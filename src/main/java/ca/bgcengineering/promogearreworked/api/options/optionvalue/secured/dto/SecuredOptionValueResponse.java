@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecuredOptionValueResponse {
 
-    private final Long id;
+    private final Long valueId;
+    private final Long optionId;
+    private final String name;
     private final String value;
 
 }

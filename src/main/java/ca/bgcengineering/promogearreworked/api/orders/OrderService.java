@@ -22,6 +22,7 @@ public class OrderService {
     private final OrderExtraInfoRepository extraInfoRepo;
     private final OrderItemRepository orderItemRepo;
     private final OrderInventoryManagerService inventoryManager;
+    private final OrderUserManagerService userManager;
 
     public boolean checkOrderExists(Long orderId) {
         return orderRepo.existsById(orderId);
@@ -46,7 +47,8 @@ public class OrderService {
             item.setOrderId(orderId);
             orderItemRepo.save(item);
         }
-        inventoryManager.manage(order, null);
+        inventoryManager.manage(order);
+        userManager.manage(order);
         return order;
     }
 
@@ -58,6 +60,7 @@ public class OrderService {
         Order updatedOrder = mapper.apply(source, order);
         assert order.getId().equals(orderId);
         inventoryManager.manage(order, previousOrder);
+        userManager.manage(order, previousOrder);
         return orderRepo.saveAndFlush(updatedOrder);
     }
 
