@@ -1,9 +1,9 @@
-export interface ICategoryItem {
+export interface ISelectedCategoryItem {
     id: number,
     name: string,
 
-    subcategories?: {
+    parent?: {
         id: number,
         name: string
-    }[]
+    }
 }
