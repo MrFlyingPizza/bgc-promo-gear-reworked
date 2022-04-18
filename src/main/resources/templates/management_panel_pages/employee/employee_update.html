@@ -11,41 +11,58 @@
         Return to Employees
     </button>
 
-    <p class="text-center">Note: Only fill in the fields you like to be changed.</p>
-<!--    <p class="text-center" id="ifNoLocations" style="display: none; color: red;">-->
-<!--        There are no locations in the database.-->
-<!--        Please make one before editing an employee-->
-<!--        as all employees MUST be assigned to a location.-->
-<!--    </p>-->
+    <!--  Displaying locations in a table  -->
+    <div class="card shadow" style="margin: 20px;">
+        <div class="card-header py-3" style="background: rgb(248,248,252);">
+            <p class="m-0 fw-bold" style="color: #36366f;">User Update</p>
+        </div>
+        <div class="card-body">
 
-    <div class="container mt-5">
-        <!--   Form to update employee     -->
-        <form th:action="'/management/api/employee/'+${employee?.getID()}" method="post" class="row g-3" id="update-employee-form">
-            <div class="col-md-6">
-                <label for="credit" class="form-label">Credit:</label>
-                <input type="number" step=".01" class="form-control" id="credit" name="credit" th:placeholder="${employee?.getCredit()}">
-            </div>
-<!--            <div class="col-md-6">-->
-<!--                <label for="location" class="form-label">Location:</label>-->
-<!--                <select name="location" id="location" class="form-select" required>-->
+        <p class="text-center">Note: Only fill in the fields you like to be changed.</p>
+    <!--    <p class="text-center" id="ifNoLocations" style="display: none; color: red;">-->
+    <!--        There are no locations in the database.-->
+    <!--        Please make one before editing an employee-->
+    <!--        as all employees MUST be assigned to a location.-->
+    <!--    </p>-->
 
-<!--                </select>-->
-<!--            </div>-->
-            <div class="col-md-6">
-                <label for="last-big-item-timestamp" class="form-label">Last Big Item Timestamp:</label>
-                <input type="datetime-local" class="form-control" id="last-big-item-timestamp" name="last-big-item-timestamp">
-                <p th:text="'Old Value: ' + ${employee?.getLastBigItemTimeStamp()}"></p>
-            </div>
-            <div class="col-md-12">
-                <!-- Update Employee Button -->
-                <input class="btn btn-outline-primary" id="submit-update-employee" type="button"
-                       th:attr="onclick=|get_currently_stored_employee('${employee?.getID()}')|" value="Submit Update" disabled>
-                <!-- Delete Employee Button -->
-                <input class="btn btn-outline-primary" id="submit-delete-employee" type="button" value="Delete"
-                       data-bs-toggle="modal" data-bs-target="#confirm-employee-delete-modal">
-            </div>
+        <div class="container mt-5">
+            <!--   Form to update employee     -->
+            <form th:action="'/api/secured/users/'+${employee?.id}" method="post" class="row g-3" id="update-employee-form">
+                <div class="col-md-6">
+                    <label for="credit" class="form-label">Credit (CAD):</label>
+                    <input type="number" step=".01" class="form-control" id="credit" name="credit" th:placeholder="${employee?.credit}">
+                </div>
+                <div class="col-md-6">
+                    <label for="location" class="form-label">Location:</label>
+                    <select name="location" id="location" class="form-select">
+                        <option th:each="location : ${locations}" th:value="${location?.getId()}" th:text="${location?.getName()}"
+                                th:selected="${location?.getName()} == ${employee?.location?.name} ? true : false"></option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="owedCredit" class="form-label">Owed Credit (CAD):</label>
+                    <input type="number" step=".01" class="form-control" id="owedCredit" name="owedCredit" th:placeholder="${employee?.owedCredit}">
+                </div>
+                <div class="col-md-6">
+                    <label for="last-big-item-timestamp" class="form-label">Last Big Item Date:</label>
+                    <input type="date" class="form-control" id="last-big-item-timestamp" name="last-big-item-timestamp" >
+                    <p th:text="'Old Value: ' + ${#temporals.format(employee?.lastBigItemDate)}"></p>
+                </div>
 
-            <!-- Show the user a popup modal allowing them to confirm the info they are trying to submit -->
+                <div class="col-md-12">
+                    <!-- Update Employee Button -->
+                    <input class="btn btn-outline-primary" id="submit-update-employee" type="button"
+                           th:attr="onclick=|get_currently_stored_employee('${employee?.id}')|" value="Submit Update" disabled>
+                    <!-- Delete Employee Button -->
+                    <!-- <input class="btn btn-outline-primary" id="submit-delete-employee" type="button" value="Delete"
+                           data-bs-toggle="modal" data-bs-target="#confirm-employee-delete-modal"> -->
+                </div>
+
+        </div>
+    </div>
+
+
+        <!-- Show the user a popup modal allowing them to confirm the info they are trying to submit -->
             <div class="modal fade" id="confirm-employee-update-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -54,7 +71,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <p th:text="'Are you sure you want to make the following changes to \'' + ${employee?.getfName()} + ' ' + ${employee?.getlName()} + '\'?'"></p>
+                            <p th:text="'Are you sure you want to make the following changes to \'' + ${employee?.displayName} + '\'?'"></p>
                             <table class="table">
                                 <tr>
                                     <th>Attribute</th>
@@ -66,13 +83,18 @@
                                     <td id="currently-stored-credit"></td>
                                     <td id="display-new-credit"></td>
                                 </tr>
-<!--                                <tr id="locationRow">-->
-<!--                                    <td style="font-weight: bold">Location</td>-->
-<!--                                    <td id="currentlyStoredLocationName"></td>-->
-<!--                                    <td id="displayNewLocationName"></td>-->
-<!--                                </tr>-->
+                                <tr id="owedCredit-row">
+                                    <td style="font-weight: bold">Owed Credit</td>
+                                    <td id="currently-stored-owed-credit"></td>
+                                    <td id="display-new-owed-credit"></td>
+                                </tr>
+                                <tr id="locationRow">
+                                    <td style="font-weight: bold">Location</td>
+                                    <td id="currently-stored-location-name"></td>
+                                    <td id="display-new-location-name"></td>
+                                </tr>
                                 <tr id="last-big-item-timestamp-row">
-                                    <td style="font-weight: bold">Last Big Item Timestamp</td>
+                                    <td style="font-weight: bold">Last Big Item Date</td>
                                     <td id="currently-stored-last-big-item-timestamp"></td>
                                     <td id="display-new-last-big-item-timestamp"></td>
                                 </tr>
@@ -138,7 +160,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-default" data-bs-dismiss="modal">Cancel</button>
-                        <button class="btn btn-outline-primary" th:attr="onclick=|delete_employee('${employee?.getID()}')|">Delete</button>
+                        <button class="btn btn-outline-primary" th:attr="onclick=|delete_employee('${employee?.id}')|">Delete</button>
                     </div>
                 </div>
             </div>

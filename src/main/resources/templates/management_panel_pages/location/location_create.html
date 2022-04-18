@@ -11,6 +11,12 @@
     Return to Locations
   </button>
 
+  <!--  Displaying locations in a table  -->
+  <div class="card shadow" style="margin: 20px;">
+    <div class="card-header py-3" style="background: rgb(248,248,252);">
+      <p class="m-0 fw-bold" style="color: #36366f;">Location Create</p>
+    </div>
+    <div class="card-body">
 
   <div class="container mt-5">
     <!-- Form to create a location   -->
@@ -22,7 +28,14 @@
       </div>
       <div class="col-md-4">
         <label for="country" class="form-label">Country:</label>
-        <input type="text" class="form-control" id="country" name="country" required>
+        <input type="text"  list ="countries" class="form-control" id="country" name="country" required>
+        <datalist id="countries">
+          <option>Canada</option>
+          <option>USA</option>
+          <option>Chile</option>
+          <option>Dominican Republic</option>
+          <option>Australia</option>
+        </datalist>
       </div>
       <div class="col-md-4">
         <label for="province" class="form-label">State/Province:</label>
@@ -98,6 +111,9 @@
         </div>
       </div>
     </form>
+
+  </div>
+</div>
 
     <!--   Display a checkbox popup if a location is created successfully   -->
     <div class="modal fade" id="create-location-success-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

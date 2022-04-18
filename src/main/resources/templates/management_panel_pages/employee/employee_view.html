@@ -11,7 +11,7 @@
     <!--  Displaying locations in a table  -->
     <div class="card shadow" style="margin: 20px;">
         <div class="card-header py-3" style="background: rgb(248,248,252);">
-            <p class="m-0 fw-bold" style="color: #36366f;">Location Info</p>
+            <p class="m-0 fw-bold" style="color: #36366f;">User Info</p>
         </div>
         <div class="card-body">
 
@@ -77,7 +77,13 @@
             let date = new Date(data);
             let dateFormat = "";
 
-            return new Date(data).toLocaleDateString('en-us', { month:"short", day:"numeric", year:"numeric" });
+            return new Date(data).toLocaleString('en-us', { month:"short", day:"numeric", year:"numeric", timeZone: 'UTC' });
+        }
+
+        var dollarRender = function (data) {
+            let credit = data.toFixed(2);
+            let result = "$" + credit;
+            return result;
         }
 
         $(document).ready( function () {
@@ -94,11 +100,11 @@
                     { data: "id" },
                     { data: "displayName" },
                     { data: "displayName" },
-                    { data: "credit" },
-                    { data: "owedCredit" },
+                    { data: "credit", "render" : dollarRender },
+                    { data: "owedCredit", "render" : dollarRender },
                     { data: "lastBigItemDate", "render" : dateRender },
                     { data: "location.name", defaultContent: 'None' },
-                    { data: "id" },
+                    { data: "oid" },
                 ],
 
                 "lengthMenu": [ [25, 50, -1], [25, 50, "All"] ],
@@ -111,7 +117,7 @@
                 columnDefs : [
                     { targets: [7],
                         render: function (data, type, row) {
-                            return '<a href="/management/location/update?id=' + row.id +' ">' +
+                            return '<a href="/management/employee/update?id=' + row.oid +' ">' +
                                 '<button class="btn btn-outline-primary button-edit" type="button">' +
                                 '<i class="far fa-edit"></i>' +
                                 '</button>' +

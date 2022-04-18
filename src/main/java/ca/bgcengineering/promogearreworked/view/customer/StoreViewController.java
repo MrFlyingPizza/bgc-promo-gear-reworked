@@ -12,7 +12,7 @@ public class StoreViewController {
 
     @GetMapping(path={"","/products"})
     public String showMarketplace(Model model) {
-        return "store_pages/marketplace";
+        return "store_pages/store";
     }
 
     @GetMapping("/product")
