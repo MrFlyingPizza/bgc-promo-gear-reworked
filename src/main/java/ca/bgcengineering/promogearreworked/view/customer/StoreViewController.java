@@ -15,6 +15,7 @@ public class StoreViewController {
         return "store_pages/store";
     }
 
+    /*
     @GetMapping("/product")
     public String showProductPage(Model model, @RequestParam int id){
         return "store_pages/product_listing";
@@ -29,7 +30,26 @@ public class StoreViewController {
     public String showCheckoutOrderPage(){
         return "store_pages/checkout";
     }
+    */
 
+    @GetMapping("/product")
+    public String showProductPage(Model model, @RequestParam int id){
+        return "error_pages/constructionStore";
+    }
 
+    @GetMapping("cart")
+    public String showCartPage(){
+        return "error_pages/constructionStore";
+    }
+
+    @GetMapping("checkout")
+    public String showCheckoutOrderPage(){
+        return "error_pages/constructionStore";
+    }
+
+    @GetMapping("orders")
+    public String showMyOrdersPage(){
+        return "error_pages/constructionStore";
+    }
 
 }
