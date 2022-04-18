@@ -2,7 +2,10 @@ package ca.bgcengineering.promogearreworked.api.options.optionvalue;
 
 import ca.bgcengineering.promogearreworked.api.options.exceptions.OptionValueNotFoundException;
 import ca.bgcengineering.promogearreworked.persistence.entities.OptionValue;
+import ca.bgcengineering.promogearreworked.persistence.entities.QOptionValue;
+import ca.bgcengineering.promogearreworked.persistence.entities.QProductVariant;
 import ca.bgcengineering.promogearreworked.persistence.repositories.OptionValueRepository;
+import ca.bgcengineering.promogearreworked.persistence.repositories.ProductVariantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +18,16 @@ import java.util.function.Function;
 public class OptionValueService {
 
     private final OptionValueRepository valueRepo;
+    private final ProductVariantRepository variantRepo;
 
     public boolean checkOptionValueExistsOnOption(Long optionId, Long valueId) {
         assert optionId != null && valueId != null;
         return valueRepo.existsByOptionIdAndId(optionId, valueId);
+    }
+
+    public boolean checkOptionValueReferenced(Long valueId) {
+        assert valueId != null;
+        return !valueRepo.getById(valueId).getProductVariants().isEmpty();
     }
 
     public OptionValue getOptionValue(Long id) {

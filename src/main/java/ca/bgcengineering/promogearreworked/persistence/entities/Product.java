@@ -1,6 +1,7 @@
 package ca.bgcengineering.promogearreworked.persistence.entities;
 
 import ca.bgcengineering.promogearreworked.persistence.auditing.Auditable;
+import com.querydsl.core.annotations.QueryInit;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,6 +29,7 @@ public class Product extends Auditable {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id", nullable = false)
+    @QueryInit({"id", "parent"})
     private Category category;
 
     @Lob
