@@ -1,9 +1,9 @@
 package ca.bgcengineering.promogearreworked.api.products.product.general.dto;
 
+import ca.bgcengineering.promogearreworked.api.products.variant.ProductVariantAvailability;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -33,7 +33,7 @@ public class GeneralProductResponse {
         }
         private final Long id;
         private final Long imageId;
-        private final Integer waitListThreshold;
+        private final ProductVariantAvailability availability;
         private final List<NestedOptionValue> options;
     }
 

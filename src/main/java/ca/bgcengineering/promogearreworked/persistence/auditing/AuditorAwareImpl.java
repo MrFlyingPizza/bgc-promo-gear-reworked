@@ -1,24 +1,22 @@
 package ca.bgcengineering.promogearreworked.persistence.auditing;
 
+import ca.bgcengineering.promogearreworked.configuration.DbBackedUser;
 import ca.bgcengineering.promogearreworked.persistence.entities.User;
-import ca.bgcengineering.promogearreworked.persistence.repositories.UserRepository;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 public class AuditorAwareImpl implements AuditorAware<User> {
 
-    private final UserRepository repo;
-
     @Override
+    @NonNull
     public Optional<User> getCurrentAuditor() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -26,10 +24,8 @@ public class AuditorAwareImpl implements AuditorAware<User> {
             return Optional.empty();
         }
 
-        if (authentication.getPrincipal() instanceof OidcUser) {
-            OidcUser oidcUser = (OidcUser) authentication.getPrincipal();
-            UUID oid = UUID.fromString(oidcUser.getClaim("oid"));
-            return repo.findByOid(oid);
+        if (authentication.getPrincipal() instanceof DbBackedUser) {
+            return Optional.ofNullable(((DbBackedUser) authentication.getPrincipal()).getUser());
         }
         return Optional.empty();
     }

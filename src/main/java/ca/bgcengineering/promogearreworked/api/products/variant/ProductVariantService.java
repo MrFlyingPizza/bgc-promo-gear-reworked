@@ -4,10 +4,10 @@ import ca.bgcengineering.promogearreworked.api.products.exceptions.ProductVarian
 import ca.bgcengineering.promogearreworked.persistence.entities.*;
 import ca.bgcengineering.promogearreworked.persistence.repositories.InventoryLevelRepository;
 import ca.bgcengineering.promogearreworked.persistence.repositories.OfficeLocationRepository;
-import ca.bgcengineering.promogearreworked.persistence.repositories.ProductRepository;
 import ca.bgcengineering.promogearreworked.persistence.repositories.ProductVariantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -21,19 +21,8 @@ import java.util.stream.Collectors;
 public class ProductVariantService {
 
     private final ProductVariantRepository variantRepo;
-    private final ProductRepository productRepo;
     private final InventoryLevelRepository inventoryLevelRepo;
     private final OfficeLocationRepository officeLocationRepo;
-
-    public boolean checkProductVariantExists(Long variantId) {
-        assert variantId != null;
-        return variantRepo.existsById(variantId);
-    }
-
-    public boolean checkProductVariantExistsOnProduct(Long productId, Long variantId) {
-        assert productId != null && variantId != null;
-        return variantRepo.existsByProductIdAndId(productId, variantId);
-    }
 
     private boolean checkProductVariantHasExpectedOptions(ProductVariant variant) {
         assert variant != null;
@@ -47,6 +36,32 @@ public class ProductVariantService {
     private boolean checkProductVariantOptionsValid(ProductVariant productVariant) {
         assert productVariant != null;
         return checkProductVariantHasExpectedOptions(productVariant);
+    }
+
+    public boolean checkProductVariantExists(Long variantId) {
+        assert variantId != null;
+        return variantRepo.existsById(variantId);
+    }
+
+    public boolean checkProductVariantExistsOnProduct(Long productId, Long variantId) {
+        assert productId != null && variantId != null;
+        return variantRepo.existsByProductIdAndId(productId, variantId);
+    }
+
+    @Transactional(readOnly = true)
+    public ProductVariantAvailability getProductVariantAvailability(Long variantId) {
+        assert variantId != null;
+        ProductVariant variant = variantRepo.getById(variantId);
+        int apparentQuantity = variant.getGlobalInventoryLevel().getApparentQuantity();
+        ProductVariantAvailability availability;
+        if (apparentQuantity > 0) {
+            availability = ProductVariantAvailability.AVAILABLE;
+        } else if (variant.getProduct().getIsWaitListEnabled()) {
+            availability = ProductVariantAvailability.WAIT_LIST;
+        } else {
+            availability = ProductVariantAvailability.UNAVAILABLE;
+        }
+        return availability;
     }
 
     public ProductVariant getProductVariant(Long variantId) {

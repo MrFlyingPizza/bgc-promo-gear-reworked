@@ -8,9 +8,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/management/transfer")
 public class TransferViewController {
 
+    /*
     @GetMapping(path={"", "view"})
     public String showViewTransfers(){
         return "management_panel_pages/transfer/transfer_view";
+    }
+     */
+
+    @GetMapping(path={"", "view"})
+    public String showViewTransfers(){
+        return "error_pages/constructionAdmin";
     }
 }
 

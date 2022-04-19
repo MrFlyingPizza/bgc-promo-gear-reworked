@@ -6,6 +6,7 @@ import {grey} from "@mui/material/colors";
 
 import {IProductItem} from "./IProductItem";
 import {ICategoryItem} from "./ICategoryItem";
+import {ISelectedCategoryItem} from "./ISelectedCategoryItem";
 
 function Store() {
 
@@ -14,25 +15,32 @@ function Store() {
     const [items, setItems] = useState<IProductItem[]>(null);
     const [categories, setCategories] = useState<ICategoryItem[]>(null);
     const [itemStatus, setItemStatus] = useState<{[id : number] : {isWaitlisted : boolean, isOutOfStock : boolean}}>({});
+    const [selectedCategory, setSelectedCategory] = useState<ISelectedCategoryItem>(null);
 
     //TODO: Switch back to general product API (temporary measure to get needed attributes)
     useEffect(()=>{
-        axios.get(`${url}/api/secured/products?isPublished=true`).then((response) => {
+        let categoryQuery = "";
+
+        if(selectedCategory){
+            categoryQuery = '&category.id=' + selectedCategory.id;
+        }
+
+        axios.get(`${url}/api/secured/products?isPublished=true` + categoryQuery).then((response) => {
             setItems(response.data.products);
         }).catch((error) => {
             console.log(error);
         }).finally(() => {
         });
+    },[selectedCategory]);
 
+    useEffect(()=>{
         axios.get(`${url}/api/categories`).then((response) => {
             let tempCategories = response.data.categories;
-            console.log(response.data.categories);
             for(let key in tempCategories){
                 if(tempCategories[key].parent != null){
                     delete tempCategories[key];
                 }
             }
-            console.log(tempCategories);
             setCategories(tempCategories);
         }).catch((error) => {
             console.log(error);
@@ -97,8 +105,14 @@ function Store() {
         } else {
             return;
         }
+    }
 
-
+    const BreadcrumbParent = () => {
+        if(selectedCategory){
+            return <li className="breadcrumb-item"><a className="no-style-link"><span>{selectedCategory.name}</span></a></li>;
+        } else {
+            return <li className="breadcrumb-item"><a className="no-style-link"><span>All</span></a></li>;
+        }
     }
 
     //Returns main image of product, otherwise shows default image
@@ -132,10 +146,8 @@ function Store() {
                         <div>
                             <div id="breadcrumb-container">
                                 <ol className="breadcrumb">
-                                    <li className="breadcrumb-item"><a className="no-style-link"
-                                                                       href="#"><span>Promotional Gear</span></a></li>
-                                    <li className="breadcrumb-item"><a className="no-style-link" href="#"><span>All</span></a>
-                                    </li>
+                                    <li className="breadcrumb-item" onClick={() => setSelectedCategory(null)}><a className="no-style-link"><span>Promotional Gear</span></a></li>
+                                    <BreadcrumbParent />
                                 </ol>
                             </div>
                         </div>
@@ -143,14 +155,19 @@ function Store() {
                     <div className="d-flex" id="bottom-container">
                         <div id="category-container"><span style={{fontWeight: 'bold'}}>Categories</span>
                             <div id="categories">
+                                <div className="category-group"><span className="category_name" onClick={() => setSelectedCategory(null)}>All</span>
+                                </div>
                                 { categories && categories.map((category) => (
-                                    <div className="category-group"><a className="no-style-link" href="#"><span
-                                        className="category_name">{category.name}</span></a>
+                                    <div className="category-group"><span
+                                        className="category_name">{category.name}</span>
                                         { category.subcategories && category.subcategories.map((subcategory) => (
                                         <div className="d-flex flex-column subcategory-group"><a className="no-style-link"
-                                                                                                 href="#"><span>{subcategory.name}</span></a>
+                                                                                                 onClick={() => setSelectedCategory(subcategory)}><span>{subcategory.name}</span></a>
                                         </div>
                                         ))}
+                                        <div className="d-flex flex-column subcategory-group"><a className="no-style-link"
+                                                                                                 onClick={() => setSelectedCategory(category)}><span>Other</span></a>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
@@ -178,6 +195,9 @@ function Store() {
                                 </a>
                             ))
                             }
+                            <div>
+                                {(items == null || items.length < 1) ? <span>No items found.</span> : ""}
+                            </div>
                         </div>
                     </div>
                 </div>

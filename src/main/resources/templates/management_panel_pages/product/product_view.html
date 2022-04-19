@@ -13,135 +13,398 @@
         <div class="card-header py-3" style="background: rgb(248,248,252);">
             <p class="m-0 fw-bold" style="color: #36366f;">Product Info</p>
         </div>
+
+        <!--  Inventory Body -->
         <div class="card-body">
 
             <div id="length_search_row" class="row">
                 <div id="length_input" class="col-sm-12 col-md-5"></div>
                 <div id="search_input" class="col-sm-12 col-md-7"></div>
-
             </div>
 
-            <!--            <div class="d-flex flex-row flex-wrap table-bar">-->
+            <div class="d-flex flex-row flex-wrap table-bar">
 
 
-            <!--                <div class="filter-buttons">-->
-            <!--                    <div class="filter-label" style="font-size: 11px;"><span style="font-size: inherit;">Is Product Published?:</span></div>-->
-            <!--                    <div class="d-flex flex-wrap">-->
-            <!--                        <div class="radio-buttons">-->
-            <!--                            <input type="radio" class="btn-check" name="options" id="option1" autocomplete="off" onclick="location.href='/management/product'"/>-->
-            <!--                            <label class="btn btn-outline-primary button-filter" for="option1">All</label>-->
-            <!--                            <a th:href="@{/product}"></a>-->
-            <!--                        </div>-->
-            <!--                        <div class="radio-buttons">-->
-            <!--                            <input type="radio" class="btn-check" name="options" id="option2" autocomplete="off" onclick="location.href='/management/product?isPub=1'"/>-->
-            <!--                            <label class="btn btn-outline-primary button-filter" for="option2">Published Only</label>-->
-            <!--                            <a th:href="@{/product(isPub='1')}"></a>-->
-            <!--                        </div>-->
-            <!--                        <div class="radio-buttons">-->
-            <!--                            <input type="radio" class="btn-check" name="options" id="option3" autocomplete="off" onclick="location.href='/management/product?isPub=0'"/>-->
-            <!--                            <label class="btn btn-outline-primary button-filter" for="option3">Non-Published Only</label>-->
-            <!--                            <a th:href="@{/product(isPub='0')}"></a>-->
-            <!--                        </div>-->
-            <!--                    </div>-->
-            <!--                </div>-->
-            <!--            </div>-->
+                <div class="filter-buttons">
+                    <div class="filter-label" style="font-size: 11px;"><span style="font-size: inherit;">Categories:</span></div>
+                    <button class="btn btn-outline-primary btn-sm button-filter" id="expand-option" type="button">Expand</button>
+                    <button class="btn btn-outline-primary btn-sm button-filter" id="collapse-option" type="button">Collapse</button>
+                </div>
+
+
+                <div class="filter-buttons">
+                    <div class="filter-label" style="font-size: 11px;"><span style="font-size: inherit;">Is Product Published?:</span></div>
+                    <div class="d-flex flex-wrap">
+                        <div class="radio-buttons">
+                            <input type="radio" class="btn-check" name="isPubGroup" id="pub_option1" autocomplete="off" onclick="filter(6, '')"/>
+                            <label class="btn btn-outline-primary button-filter" for="pub_option1">All</label>
+                        </div>
+                        <div class="radio-buttons">
+                            <input type="radio" class="btn-check" name="isPubGroup" id="pub_option2" autocomplete="off" onclick="filter(6, '✓')" checked/>
+                            <label class="btn btn-outline-primary button-filter" for="pub_option2">Published</label>
+                        </div>
+                        <div class="radio-buttons">
+                            <input type="radio" class="btn-check" name="isPubGroup" id="pub_option3" autocomplete="off" onclick="filter(6, '✕')"/>
+                            <label class="btn btn-outline-primary button-filter" for="pub_option3">Non-Published</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-buttons">
+                    <div class="filter-label" style="font-size: 11px;"><span style="font-size: inherit;">Is Big Item?:</span></div>
+                    <div class="d-flex flex-wrap">
+                        <div class="radio-buttons">
+                            <input type="radio" class="btn-check" name="isBigGroup" id="big_option1" autocomplete="off" onclick="filter(7, '')" checked/>
+                            <label class="btn btn-outline-primary button-filter" for="big_option1">All</label>
+                        </div>
+                        <div class="radio-buttons">
+                            <input type="radio" class="btn-check" name="isBigGroup" id="big_option2" autocomplete="off" onclick="filter(7, '✓')"/>
+                            <label class="btn btn-outline-primary button-filter" for="big_option2">Big</label>
+                        </div>
+                        <div class="radio-buttons">
+                            <input type="radio" class="btn-check" name="isBigGroup" id="big_option3" autocomplete="off" onclick="filter(7, '✕')"/>
+                            <label class="btn btn-outline-primary button-filter" for="big_option3">Small</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-buttons">
+                    <div class="filter-label" style="font-size: 11px;"><span style="font-size: inherit;">Is Waitlistable?:</span></div>
+                    <div class="d-flex flex-wrap">
+                        <div class="radio-buttons">
+                            <input type="radio" class="btn-check" name="isWaitGroup" id="wait_option1" autocomplete="off" onclick="filter(8, '')" checked/>
+                            <label class="btn btn-outline-primary button-filter" for="wait_option1">All</label>
+                        </div>
+                        <div class="radio-buttons">
+                            <input type="radio" class="btn-check" name="isWaitGroup" id="wait_option2" autocomplete="off" onclick="filter(8, '✓')"/>
+                            <label class="btn btn-outline-primary button-filter" for="wait_option2">Waitlist</label>
+                        </div>
+                        <div class="radio-buttons">
+                            <input type="radio" class="btn-check" name="isWaitGroup" id="wait_option3" autocomplete="off" onclick="filter(8, '✕')"/>
+                            <label class="btn btn-outline-primary button-filter" for="wait_option3">No Waitlist</label>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
             <div class="table-responsive table mt-2" id="dataTable-1" role="grid" aria-describedby="dataTable_info">
-                <table class="table my-0" id="dataTable">
+                <table class="table my-0" id="dataTable" width="100%">
                     <thead>
                     <tr>
                         <th scope="col">Product ID</th>
+                        <th scope="col">Parent Category</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Product ID</th>
                         <th scope="col">Name</th>
                         <th scope="col">Brand</th>
-                        <th scope="col">Category</th>
-                        <th scope="col">Price</th>
                         <th scope="col">Published</th>
                         <th scope="col">Big Item</th>
                         <th scope="col">Waitlistable</th>
-                        <th scope="col">Edit</th>
+                        <th scope="col">Action</th>
                     </tr>
                     </thead>
-                    <tbody>
-                    <!--                    <tr th:each="product : ${products}">-->
-                    <!--                        <th scope="row" th:text="${product?.getID()} ?: 'N/A'"></th>-->
-                    <!--                        <td th:text="${product?.getName()} ?: 'N/A'"></td>-->
-                    <!--                        <td th:text="${product?.getBrand()} ?: 'N/A'"></td>-->
-                    <!--                        <td th:text="${product?.getPrice() != null} ? '$' + ${#numbers.formatDecimal(product?.getPrice(), 0, 'COMMA', 2, 'POINT')} : 'N/A'"></td>-->
-                    <!--                        <td th:switch="${product?.getIsPublished()}">-->
-                    <!--                            <p th:case="true">Yes</p>-->
-                    <!--                            <p th:case="false">No</p>-->
-                    <!--                            <p th:case="*">N/A</p>-->
-                    <!--                        </td>-->
-                    <!--                        <td th:switch="${product?.getIsBigItem()}">-->
-                    <!--                            <p th:case="true">Yes</p>-->
-                    <!--                            <p th:case="false">No</p>-->
-                    <!--                            <p th:case="*">N/A</p>-->
-                    <!--                        </td>-->
-                    <!--                        <td th:switch="${product?.getIsWaitlistable()}">-->
-                    <!--                            <p th:case="true">Yes</p>-->
-                    <!--                            <p th:case="false">No</p>-->
-                    <!--                            <p th:case="*">N/A</p>-->
-                    <!--                        </td>-->
-                    <!--                        <td>-->
-                    <!--                            <a class="btn btn-primary rounded-pill text-decoration-none" th:href="'/management/product/update?id='+${product?.getID()}">EDIT</a>-->
-                    <!--                        </td>-->
-                    <!--                    </tr>-->
-                    </tbody>
+                    <!-- Form to update inventory -->
+                    <form id="update-inventory-form" action="/management/api/office_stock/batch" method="post" class="row g-3">
+                        <tbody id="inventory-body">
+                        <tr>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                            <td>None</td>
+                        </tr>
+                        </tbody>
+                    </form>
                     <tfoot>
                     <tr>
                         <td><strong>Product ID</strong></td>
+                        <td><strong>Parent Category</strong></td>
+                        <td><strong>Category</strong></td>
+                        <td><strong>Product ID</strong></td>
                         <td><strong>Name</strong></td>
                         <td><strong>Brand</strong></td>
-                        <td><strong>Category</strong></td>
-                        <td><strong>Price</strong></td>
                         <td><strong>Published</strong></td>
                         <td><strong>Big Item</strong></td>
                         <td><strong>Waitlistable</strong></td>
-                        <td><strong>Edit</strong></td>
+                        <td><strong>Action</strong></td>
                     </tr>
                     </tfoot>
                 </table>
             </div>
         </div>
     </div>
-    <div th:if="${#lists.isEmpty(products)}">
-        No Existing Products
-    </div>
+
+
+
 
     <script>
+        var table;
+        var dataTable;
+        var skuTable;
+        var toCollapseAll = false;
+        var singleSKUSubmit = false; //whether submitting inventory for regular view or for single item view
+        var confirmBeforeEdit = false; //checks whether confirmation editing message has appeared yet when attempting to edit inventory
+        var selectedLocationID = "-1";
+        var lastUrl = "";
+
+        let updateData = {};      //updating data in main inventory panel
+        let updateDataPopup = {}; //updating data through pop-up
+
+
+
+        //Render boolean values as checkmark/x icon
+        var booleanToCheckmark = function (data) {
+            if(data == true){
+                return "✓";
+            } else{
+                return "✕";
+            }
+        }
+
+        // Logic for parent category
+        // If product category has a parent, return parent name in parent category column
+        // If it doesn't have a parent, it is directly part of a level 1 category, and therefore renders it in the
+        // parent category column
+        var categoryParentRender = function (data) {
+            let parent = data["parent"];
+            let currentName = data["name"];
+            if(parent == null){
+                return currentName;
+            } else {
+                let parentName = parent["name"];
+                return parentName;
+            }
+        }
+
+        // Logic for child category
+        // If product category has a parent, return direct category name into child column,
+        // Otherwise, that means category is level 1 category, and returns 'No Group' for child category column
+        var categoryChildRender = function (data) {
+            let parent = data["parent"];
+            let currentName = data["name"];
+            if(parent == null){
+                return "No Group";
+            } else {
+                return currentName;
+            }
+        }
+
+        var categoryParentRender = function (data) {
+            let parent = data["parent"];
+            let currentName = data["name"];
+            if(parent == null){
+                return currentName;
+            } else {
+                let parentName = parent["name"];
+                return parentName;
+            }
+        }
+
+
+        var renderActionButtons  = function (id) {
+            let updateUrl = "/product/update?id=" + id;
+            return '<span class="button-action">' +
+                '<a href="' + updateUrl + '">' +
+                '<button class="btn btn-outline-primary button-edit" type="button" style="font-size: 15px;" data-sku="' + id + '">' +
+                '<i class="far fa-edit"></i>' +
+                '</button>' +
+                '</a>' +
+                '</span>';
+        }
+
+
         $(document).ready( function () {
+            var collapsedGroups = {};   //used to track collapsed groups
+            //Variables for DataTable setup
+            var groupParent = [];       //temp variable to track group parents
+            var parentID;           //temp variable to track group parent id
+            var prodGroupCounter = 1; //temp variable to count productGroups
+            var subGroupCounter = 10;    //temp variable to count subgroups
+            var groupCounter = 1;       //variable to count number of groups
+
 
             //Using DataTable
-            var table = $('#dataTable').DataTable( {
+            table = $('#dataTable').DataTable( {
 
-                "lengthMenu": [ [15, 25, 50, 100, -1], [15, 25, 50, 100, "All"] ],
+                processing: true,
+                ajax: {
+                    url: '/api/secured/products',
+                    cache: true,
+                    dataSrc: "products",
+                },
+                columns: [
+                    { data: "id" },
+                    { data: "category", "render": categoryParentRender},
+                    { data: "category", "render":  categoryChildRender},
+                    { data: "id" },
+                    { data: "name" },
+                    { data: "brand" },
+                    { data: "isPublished", "render": booleanToCheckmark},
+                    { data: "isBigItem", "render": booleanToCheckmark },
+                    { data: "isWaitListEnabled", "render": booleanToCheckmark },
+                    { data: "id", "render" : renderActionButtons }
+                ],
+                order: [ [1, 'asc'], [2, 'asc'], [0, 'asc'], [4, 'asc'] ],
+                rowGroup: {
+                    dataSrc: [  function(row) {
+                        return categoryParentRender(row.category);
+                    },
+                        function(row) {
+                            return categoryChildRender(row.category);
+                        }],
+
+                    startRender: function(rows, group, level) {
+                        groupParent[level] = group;
+                        var groupName = '';
+                        console.log("Level: " + level);
+                        console.log("Group: " + group);
+                        console.log("groupParent[" + level + "]: "  + groupParent[level]);
+
+
+                        for (var i = 0; i < level; i++) {
+                            console.log("For loop i: " + i);
+                            console.log("groupParent[" + i + "]: "  + groupParent[i]);
+                            groupName += groupParent[i];
+                            if (collapsedGroups[groupName]) {
+                                return;
+                            }
+                        }
+
+                        //If not parent, name subgroup "parentName-subGroupCounter"
+                        if(level != 0) {
+                            groupName += "-" + subGroupCounter;
+                            //Otherwise name parent by group name
+                        } else{
+                            groupName = group;
+                        }
+
+                        console.log("groupName: "  + groupName);
+
+                        //Controls whether default is collapsed or expanded
+                        if (((typeof(collapsedGroups[groupName]) == 'undefined')
+                            || (collapsedGroups[groupName] === null)) && level != 0) {
+                            collapsedGroups[groupName] = true;   //set to true to expand
+                        }
+
+                        var collapsed = collapsedGroups[groupName];
+                        rows.nodes().each(function(r) {r.style.display = (collapsed ? 'none' : '');});
+                        var groupModify = $('<tr/>').append('<td colspan="6">' + group + ' (' + rows.count() + ')</td>').append('<td></td>').attr('data-name', groupName).toggleClass('collapsed', collapsed);
+
+                        console.log("collapsedGroups[groupName]: "  + collapsedGroups[groupName]);
+
+                        //TODO: subGroupCounter shouldn't have 10 added by default
+                        //If parent level, add amount of subgroups data
+                        if(level == 0){
+                            groupModify.attr('data-subgroups', subGroupCounter + 10);
+                        }
+
+                        //restart subgroup counter if parent, else increment
+                        if(level == 0){
+                            subGroupCounter = 1;
+                        } else {
+                            subGroupCounter++;
+                        }
+
+                        return groupModify;
+                    }
+                },
+                columnDefs: [ {
+                    targets: [0, 1, 2],
+                    visible: false
+                } ],
+
+
+                "lengthMenu": [ [100, 50, 25, 10, -1], [100, 50, 25, 10, "All"] ],
                 language : {
                     sLengthMenu: "Show&nbsp _MENU_", // changing label for page length filter
                     search: "_INPUT_",               // changing label for search filter
                     searchPlaceholder: "Search..."   // changing search filter placeholder
-                }
+                },
             } );
+
+            $('#dataTable tbody').on('click', 'tr.dtrg-level-0', function() {
+
+                var subgroups = $(this).data('subgroups');  //number of parent's subgroups
+                var name = $(this).data('name');
+                var toCollapse;
+                for (var i = 1; i <= (subgroups); i++) {
+                    var subgroupName = name + '-' + i;
+                    //Decides whether to collapse or expand everything based on first group
+                    if (i == 1){
+                        toCollapse = !collapsedGroups[subgroupName];
+                    }
+                    collapsedGroups[subgroupName] = toCollapse; //sets each group to opposite of first row's state
+                    table.draw(false);
+                }
+
+            });
+
+
+            $('#dataTable tbody').on('click', 'tr.dtrg-level-1', function() {
+                var name = $(this).data('name');
+                collapsedGroups[name] = !collapsedGroups[name];
+                table.draw(false);
+            });
+
+            /*
+                Clicking on the expand button, expands all groups
+            */
+            $('#expand-option').on('click', function() {
+                $(".dtrg-level-1").each(function() {
+                    console.log($(this).data('name'));
+                    var name = $(this).data('name');
+                    collapsedGroups[name] = false;
+                    table.draw(false);
+                });
+            });
+
+            /*
+            Clicking on the collapse button, collapses all groups
+            */
+            $('#collapse-option').on('click', function() {
+                $(".dtrg-level-1").each(function() {
+                    console.log($(this).data('name'));
+                    var name = $(this).data('name');
+                    collapsedGroups[name] = true;
+                    table.draw(false);
+                });
+            });
+
+            function collapseToggle(toggle){
+                toCollapse = false;
+                dataTable.columns.adjust().draw();
+            }
+
             $('#dataTable_filter').appendTo('#search_input'); // adding search filter to div
             $('#dataTable_length').appendTo('#length_input'); // adding length filter to div
             $('#dataTable_wrapper').find('div:first').remove(); //remove empty row holding previous filters
 
+            //Sets default value of column 5 (Published) to yes
+            table.columns(6).search("✓").draw();
 
-            $.urlParam = function(name){
-                var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
-                if (results==null) {
-                    return null;
-                }
-                return decodeURI(results[1]) || 0;
-            }
-
-            if($.urlParam('isPub') == 0){
-                $("#option3").prop("checked", true);
-            } else if($.urlParam('isPub') == 1){
-                $("#option2").prop("checked", true);
-            } else{
-                $("#option1").prop("checked", true);
-            }
-
+            dataTable = table;
         } );
+
+        /**
+         * Performs filter for specified column and input
+         * (Hidden columns must also be accounted for)
+         * @param col column number of table
+         * @param input input for filtering
+         */
+        function filter(col, input){
+            dataTable.columns(col).search(input).draw();
+        }
+
+
+
+
     </script>
+
+
 </div>
 </html>

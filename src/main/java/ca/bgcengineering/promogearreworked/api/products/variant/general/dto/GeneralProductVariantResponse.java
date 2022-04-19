@@ -1,5 +1,6 @@
 package ca.bgcengineering.promogearreworked.api.products.variant.general.dto;
 
+import ca.bgcengineering.promogearreworked.api.products.variant.ProductVariantAvailability;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -38,5 +39,6 @@ public class GeneralProductVariantResponse {
     private final NestedProductImage image;
     private final Integer waitListThreshold;
     private final List<NestedOptionValue> options;
+    private final ProductVariantAvailability availability;
 
 }

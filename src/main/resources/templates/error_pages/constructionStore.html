@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{front_layout.html}">
+<head>
+    <title>Product Not Found</title>
+</head>
+
+<div layout:fragment="content">
+    <!--  Heading  -->
+    <h2 style="text-align: center; padding-top: 15px;">Under Construction</h2>
+    <!--  Displaying product groups in a table  -->
+    <div class="card shadow" style="margin: 20px; height: 450px; padding-bottom: 20px;">
+        <div class="card-header py-3" style="background: rgb(248,248,252);">
+            <p class="m-0 fw-bold" style="color: #36366f; text-align: center;">This page is currently being updated.</p>
+        </div>
+        <div class="card-body" style="display: flex; justify-content: center;">
+
+            <div style="margin: auto;">
+                <img th:src="@{/images/constructionImage.png}" />
+            </div>
+        </div>
+    </div>
+
+
+</div>
+</html>

@@ -33,6 +33,7 @@ public class Product extends Auditable {
     private Category category;
 
     @Lob
+    @Basic(fetch = FetchType.LAZY)
     @Column(name = "description", nullable = false)
     private String description;
 
