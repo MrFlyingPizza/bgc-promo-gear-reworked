@@ -1,15 +1,14 @@
 package ca.bgcengineering.promogearreworked.api.orders.general;
 
-import ca.bgcengineering.promogearreworked.api.inventorylevels.globalinventorylevel.GlobalInventoryLevelService;
+import ca.bgcengineering.promogearreworked.api.orders.OrderService;
 import ca.bgcengineering.promogearreworked.api.orders.aspects.orderpartitioning.ItemPartitions;
 import ca.bgcengineering.promogearreworked.api.orders.aspects.orderpartitioning.OrderQuantityProcessor;
+import ca.bgcengineering.promogearreworked.api.orders.exceptions.InvalidWaitListItemException;
 import ca.bgcengineering.promogearreworked.api.orders.general.dto.GeneralOrderCreate;
-import ca.bgcengineering.promogearreworked.api.users.cartitem.CartItemService;
-import ca.bgcengineering.promogearreworked.api.users.user.UserService;
-import ca.bgcengineering.promogearreworked.persistence.entities.GlobalInventoryLevel;
-import ca.bgcengineering.promogearreworked.persistence.entities.Order;
-import ca.bgcengineering.promogearreworked.api.orders.OrderService;
 import ca.bgcengineering.promogearreworked.api.orders.general.dto.GeneralOrderMapper;
+import ca.bgcengineering.promogearreworked.api.users.cartitem.CartItemService;
+import ca.bgcengineering.promogearreworked.persistence.entities.Order;
+import ca.bgcengineering.promogearreworked.persistence.repositories.ProductVariantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,28 +25,10 @@ import java.util.stream.Collectors;
 public class GeneralOrderHandlerService {
 
     private final OrderService service;
-    private final GlobalInventoryLevelService inventoryService;
     private final GeneralOrderMapper mapper;
     private final OrderQuantityProcessor quantityProcessor;
     private final CartItemService cartItemService;
-
-    private void splitOrderItems(List<GeneralOrderCreate.NestedOrderItem> orderItems,
-                                 List<GeneralOrderCreate.NestedOrderItem> readyPortion,
-                                 List<GeneralOrderCreate.NestedOrderItem> waitingPortion) {
-        for (GeneralOrderCreate.NestedOrderItem orderItem : orderItems) {
-            GlobalInventoryLevel inventoryLevel = inventoryService.getGlobalInventoryLevel(orderItem.getVariantId());
-            if (inventoryLevel.getApparentQuantity() >= orderItem.getQuantity()) {
-                readyPortion.add(orderItem);
-            } else if (inventoryLevel.getApparentQuantity() > 0) {
-                int availableAmount = inventoryLevel.getApparentQuantity();
-                readyPortion.add(orderItem.toBuilder().quantity(availableAmount).build());
-                int waitingAmount = orderItem.getQuantity() - availableAmount;
-                waitingPortion.add(orderItem.toBuilder().quantity(waitingAmount).build());
-            } else {
-                waitingPortion.add(orderItem);
-            }
-        }
-    }
+    private final ProductVariantRepository variantRepo;
 
     private List<GeneralOrderCreate> splitOrder(GeneralOrderCreate orderCreate) {
 
@@ -55,6 +36,14 @@ public class GeneralOrderHandlerService {
 
         List<GeneralOrderCreate.NestedOrderItem> submissionItems = partition.getAvailable();
         List<GeneralOrderCreate.NestedOrderItem> waitingItems = partition.getUnavailable();
+
+        // check waitlist items are waitlistable
+        for (GeneralOrderCreate.NestedOrderItem item : waitingItems) {
+            final Long variantId = item.getVariantId();
+            if (!variantRepo.getById(variantId).getProduct().getIsWaitListEnabled()) {
+                throw new InvalidWaitListItemException(variantId);
+            }
+        }
 
         List<GeneralOrderCreate> orders = new ArrayList<>();
         if (!submissionItems.isEmpty()) {
