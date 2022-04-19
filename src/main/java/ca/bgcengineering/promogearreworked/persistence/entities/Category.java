@@ -1,5 +1,6 @@
 package ca.bgcengineering.promogearreworked.persistence.entities;
 
+import com.querydsl.core.annotations.QueryInit;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,6 +25,7 @@ public class Category {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "parent_id")
+    @QueryInit("id")
     private Category parent;
 
     @OneToMany(mappedBy = "parent")

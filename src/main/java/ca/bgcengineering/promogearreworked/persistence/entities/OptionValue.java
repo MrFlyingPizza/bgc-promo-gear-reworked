@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Set;
 
 @Table(name = "option_value")
 @Entity
@@ -23,5 +24,8 @@ public class OptionValue implements Serializable {
     @ManyToOne
     @JoinColumn(name = "option_id")
     private Option option;
+
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "optionValues")
+    private Set<ProductVariant> productVariants;
 
 }

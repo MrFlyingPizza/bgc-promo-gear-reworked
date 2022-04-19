@@ -77,5 +77,16 @@ public class SecuredOptionValueController {
         optionValuePartialUpdate.setId(valueId);
         return mapper.toResponse(handlerService.handleOptionValuePartialUpdate(optionValuePartialUpdate));
     }
-    // TODO: 2022-03-08 implement delete
+
+    @DeleteMapping("/{valueId}")
+    private void deleteOptionValue(@PathVariable Long optionId,
+                                                         @PathVariable Long valueId) {
+        if (!optionService.checkOptionExists(optionId)) {
+            throw new OptionNotFoundException();
+        }
+        if (!valueService.checkOptionValueExistsOnOption(optionId, valueId)) {
+            throw new OptionValueNotFoundException();
+        }
+        valueService.deleteOptionValue(valueId);
+    }
 }

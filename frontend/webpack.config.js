@@ -4,11 +4,14 @@ const CopyPlugin = require('copy-webpack-plugin')
 module.exports = {
     mode: 'production',
     entry: {
-        cart: './src/cart.tsx'
+        cart: './src/cart.tsx',
+        store: './src/store.tsx'
     },
-    devtool: 'inline-source-map',
+    //devtool: 'inline-source-map', // remove to reduce size for production build
     watchOptions: {
-        ignored: '**/node_modules'
+        aggregateTimeout: 25000,
+        poll: 30000,
+        ignored: ['**/node_modules', '/node_modules/', 'node_modules']
     },
     module: {
         rules: [
@@ -18,6 +21,7 @@ module.exports = {
                 exclude: /node_modules/,
             },
         ],
+
     },
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],
