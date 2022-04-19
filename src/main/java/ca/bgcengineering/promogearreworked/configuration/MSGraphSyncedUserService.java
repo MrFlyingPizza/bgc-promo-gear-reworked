@@ -5,12 +5,17 @@ import com.azure.spring.autoconfigure.aad.AADAuthenticationProperties;
 import ca.bgcengineering.promogearreworked.persistence.repositories.UserRepository;
 import com.microsoft.graph.models.User;
 import com.microsoft.graph.requests.GraphServiceClient;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.oidc.OidcIdToken;
+import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 
 import java.time.Clock;
+import java.util.Collection;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -30,14 +35,14 @@ public class MSGraphSyncedUserService extends AADOAuth2UserService {
     }
 
     @Override
-    public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
+    public DbBackedUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
         User graphUser = graphClient.users(userRequest.getIdToken().getClaim("oid")).buildRequest().get();
         if (graphUser == null) {
             throw new OAuth2AuthenticationException("Could not obtain the information for the user to be authenticated.");
         }
         assert graphUser.id != null; // this should never be null as specified by Microsoft documentation.
         UUID oid = UUID.fromString(graphUser.id);
-        ca.bgcengineering.promogearreworked.persistence.entities.User updatedUser = userRepo.findByOid(oid).map(user -> {
+        ca.bgcengineering.promogearreworked.persistence.entities.User dbUser = userRepo.findByOid(oid).map(user -> {
             user.setDisplayName(graphUser.displayName);
             user.setEmail(graphUser.mail);
             return user;
@@ -49,7 +54,8 @@ public class MSGraphSyncedUserService extends AADOAuth2UserService {
             user.setCredit(storeDefaults.getStartingCredits());
             return user;
         });
-        userRepo.saveAndFlush(updatedUser);
-        return super.loadUser(userRequest);
+        userRepo.saveAndFlush(dbUser);
+        OidcUser oidcUser = super.loadUser(userRequest);
+        return new DbBackedUser(dbUser, oidcUser);
     }
 }
