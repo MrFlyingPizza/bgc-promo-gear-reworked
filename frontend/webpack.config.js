@@ -7,7 +7,7 @@ module.exports = {
         cart: './src/cart.tsx',
         store: './src/store.tsx'
     },
-    devtool: 'inline-source-map',
+    //devtool: 'inline-source-map', // remove to reduce size for production build
     watchOptions: {
         aggregateTimeout: 25000,
         poll: 30000,
