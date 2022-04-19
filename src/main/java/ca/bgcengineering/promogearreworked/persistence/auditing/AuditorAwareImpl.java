@@ -2,7 +2,7 @@ package ca.bgcengineering.promogearreworked.persistence.auditing;
 
 import ca.bgcengineering.promogearreworked.configuration.DbBackedUser;
 import ca.bgcengineering.promogearreworked.persistence.entities.User;
-import ca.bgcengineering.promogearreworked.persistence.repositories.UserRepository;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.Authentication;
@@ -15,9 +15,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuditorAwareImpl implements AuditorAware<User> {
 
-    private final UserRepository repo;
-
     @Override
+    @NonNull
     public Optional<User> getCurrentAuditor() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
