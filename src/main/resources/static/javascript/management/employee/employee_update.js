@@ -1,32 +1,10 @@
 //JS Object that dynamically contains only form input values that are changed
 const updateData = {};
+let currentLocation;
 
-//KEEP THIS. NEEDED FOR LATER
-//Upon page load, if:
-// (1) - There are no locations, dont let them submit at all
-// (2) - Load all the existing locations into the <select> and set the default to the current value
-// $(document).ready(function(){
-//     if(jQuery.isEmptyObject(allLocations)){
-//         $("#location").prop("disabled", true);
-//         $("#credit").prop("disabled", true);
-//         $("#lastBigItemTimeStamp").prop("disabled", true);
-//         $('#ifNoLocations').css("display", "");
-//     }
-//     else{
-//         $.each(allLocations, function (i, location) {
-//             if(allLocations.length === 1){
-//                 updateData['locationID'] = location['id'];
-//             }
-//             $('#location').append($('<option>', {
-//                 value: location['id'],
-//                 text : location['name']
-//             }));
-//             if(location['name'] === oldLocationName){
-//                 $('#location').val(location['id']).attr("selected", "selected");
-//             }
-//         });
-//     }
-// });
+$(document).ready(function() {
+    currentLocation = $('#location option:selected').text();
+})
 
 /**
  * Activates/Deactivates "Submit Update" button whenever updateData is non-empty/empty respectively
@@ -40,30 +18,42 @@ function check_button_activation(){
     }
 }
 
-// function check_if_location_changed(){
-//     if($("#location").text() === oldLocationName){
-//         delete updateData['locationID'];
-//     }
-//     else{
-//         updateData['locationID'] = $("#location").val();
-//     }
-// }
+//checks if location has changed from original value
+$("#location").change(function (){
+    let newLocation = $('#location option:selected').text();
+    if(newLocation != currentLocation){
+        updateData['locationId'] = $('#location').val();
+        check_button_activation();
+    } else {
+        delete updateData['locationId'];
+    }
+})
 
 //The following JQuery .change()'s dynamically change:
 // (1) the content of updateData and
 // (2) the activation of the "Submit Update" button
 $("#credit").change(function (){
     updateData['credit'] = parseFloat($("#credit").val()).toFixed(2);
-    //check_if_location_changed();
+    if(!$("#credit").val()){
+        delete updateData['credit'];
+    }
     check_button_activation();
 })
-// $("#location").change(function (){
-//     check_if_location_changed();
-//     check_button_activation();
-// })
+
+$("#owedCredit").change(function (){
+    updateData['owedCredit'] = parseFloat($("#owedCredit").val()).toFixed(2);
+    if(!$("#owedCredit").val()){
+        delete updateData['owedCredit'];
+    }
+    check_button_activation();
+})
+
 $("#last-big-item-timestamp").change(function (){
-    updateData['lastBigItemTimeStamp'] = new Date($("#last-big-item-timestamp").val()).toISOString();
-    //check_if_location_changed();
+    if(!$("#last-big-item-timestamp").val()){
+        delete updateData['lastBigItemDate'];
+    } else {
+        updateData['lastBigItemDate'] = new Date($("#last-big-item-timestamp").val()).toISOString();
+    }
     check_button_activation();
 })
 
@@ -74,8 +64,11 @@ $("#last-big-item-timestamp").change(function (){
  */
 function display_new_details(){
     $('#display-new-credit').text($('#credit').val());
-    //$('#displayNewLocationName').text($('#location').val());
-    $('#display-new-last-big-item-timestamp').text($('#last-big-item-timestamp').val());
+    $('#display-new-owed-credit').text($('#owedCredit').val());
+    $('#display-new-location-name').text($('#location option:selected').text());
+    if(updateData["lastBigItemDate"] && updateData["lastBigItemDate"] != null) {
+        $('#display-new-last-big-item-timestamp').text(new Date($("#last-big-item-timestamp").val()).toISOString().split('T')[0]);
+    }
 }
 
 /**
@@ -104,11 +97,23 @@ function display_currently_stored_values(currentData){
     else{
         $('#currently-stored-credit').text(currentData['credit']);
     }
-    if(currentData['lastBigItemTimeStamp'] === null){
+    if(currentData['owedCredit'] === null){
+        $('#currently-stored-owed-credit').text("None");
+    }
+    else{
+        $('#currently-stored-owed-credit').text(currentData['owedCredit']);
+    }
+    if(currentData['lastBigItemDate'] === null){
         $('#currently-stored-last-big-item-timestamp').text("None");
     }
     else{
-        $('#currently-stored-last-big-item-timestamp').text(currentData['lastBigItemTimeStamp']);
+        $('#currently-stored-last-big-item-timestamp').text(new Date(currentData['lastBigItemDate']).toISOString().split('T')[0]);
+    }
+    if(currentData['locationId'] === null){
+        $('#currently-stored-location-name').text("None");
+    }
+    else{
+        $('#currently-stored-location-name').text(currentLocation);
     }
     // $('#currentlyStoredLocationName').text(currentData['location']);
 }
@@ -124,13 +129,19 @@ function hide_rows(){
     else{
         $("#credit-row").css("display", "none");
     }
-    // if(('location' in updateData)){
-    //     $("#locationRow").css("display", "");
-    // }
-    // else{
-    //     $("#locationRow").css("display", "none");
-    // }
-    if(('lastBigItemTimeStamp' in updateData)){
+    if(('owedCredit' in updateData)){
+        $("#owedCredit-row").css("display", "");
+    }
+    else{
+        $("#owedCredit-row").css("display", "none");
+    }
+    if(('locationId' in updateData)){
+         $("#locationRow").css("display", "");
+    }
+    else{
+         $("#locationRow").css("display", "none");
+    }
+    if(('lastBigItemDate' in updateData)){
         $("#last-big-item-timestamp-row").css("display", "");
     }
     else{
@@ -168,13 +179,7 @@ function display_confirm_update_modal(currentData){
 function get_currently_stored_employee(id){
     $.ajax({
         type: "GET",
-        url: '/management/api/employee/'.concat(id.toString()),
-        beforeSend: function(xhr) {
-            xhr.setRequestHeader(
-                $('meta[name=_csrf_header]').attr('content'),
-                $('meta[name=_csrf]').attr('content')
-            )
-        },
+        url: '/api/secured/users/'.concat(id.toString()),
         success: function(data)
         {
             display_confirm_update_modal(data);
@@ -195,16 +200,10 @@ $('#update-employee-form').submit(
         const url = form.attr('action');
 
         $.ajax({
-            type: "PUT",
+            type: "PATCH",
             url: url,
             contentType: "application/json",
             data: JSON.stringify(updateData), // serializes the form's elements.
-            beforeSend: function(xhr) {
-                xhr.setRequestHeader(
-                    $('meta[name=_csrf_header]').attr('content'),
-                    $('meta[name=_csrf]').attr('content')
-                )
-            },
             success: function()
             {
                 $('#confirm-employee-update-modal').modal('hide');

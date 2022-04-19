@@ -41,7 +41,7 @@ public class OrderUserManagerService {
         if (currentStatus == Order.Status.CANCELLED && previousStatus == Order.Status.CANCELLED) {
             return;
         } else if (currentStatus == Order.Status.CANCELLED) {
-            change = currentOrder.getTotalCost().negate();
+            change = previousOrder.getTotalCost().negate();
         } else if (previousStatus == Order.Status.CANCELLED) {
             change = currentOrder.getTotalCost();
         } else {
