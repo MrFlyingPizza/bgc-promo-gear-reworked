@@ -34,7 +34,7 @@ public class ProductViewController {
 
     @GetMapping("/update")
     public String showUpdateProduct(Model model, @RequestParam int id){
-        return "management_panel_pages/product/product_update";
+        return "error_pages/constructionStore";
     }
 
 

@@ -47,6 +47,32 @@
       <div class="d-none d-sm-block topbar-divider"></div>
       <li class="nav-item dropdown no-arrow"></li>
     </ul>
-    <p style="height: 8px;">Admin Name</p>
+    <p id="admin-name" style="height: 8px;"></p>
   </div>
+
+  <script>
+
+    window.onload = function () {
+      $.ajax({
+        type: "GET",
+        url: '/api/users/me',
+        success: function(data)
+        {
+          if(data["displayName"] == null){
+            console.log("User is not assigned name");
+          } else {
+            let displayName = data["displayName"];
+            let adminName = document.querySelector('#admin-name');
+            adminName.innerHTML = displayName;
+          }
+        },
+        error: function(xhr) {
+          console.log("user not found");
+        }
+      });
+    }
+
+  </script>
+
+
 </nav>
