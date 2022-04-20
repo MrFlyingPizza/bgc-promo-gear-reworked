@@ -22,19 +22,21 @@ function Store() {
     const url = `${location.protocol}//${location.host}`
 
     const [isLoadingProducts, setIsLoadingProducts] = useState(true);
-    const [items, setItems] = useState<Product[]>(null);
+    const [isLoadingCategories, setIsLoadingCategories] = useState(true);
+    const [products, setProducts] = useState<Product[]>(null);
     const [categories, setCategories] = useState<Category[]>(null);
     const [selectedCategory, setSelectedCategory] = useState<SelectedCategory>(null);
 
     //TODO: Switch back to general product API (temporary measure to get needed attributes)
     useEffect(() => {
+        setProducts([]);
         setIsLoadingProducts(true);
         let params = {
             "isPublished": true,
             "category.id": selectedCategory?.id
         };
         axios.get(`${url}/api/secured/products`, {params: params}).then((response) => {
-            setItems(response.data.products);
+            setProducts(response.data.products);
         }).catch((error) => {
             console.log(error);
         }).finally(() => {
@@ -43,11 +45,13 @@ function Store() {
     }, [selectedCategory]);
 
     useEffect(() => {
+        setIsLoadingCategories(true);
         axios.get(`${url}/api/categories`).then((response) => {
-            setCategories(response.data.categories.filter((category: { parent: Category; }) => category.parent != null));
+            setCategories(response.data.categories.filter((category: { parent: Category }) => category.parent == null));
         }).catch((error) => {
             console.log(error);
         }).finally(() => {
+            setIsLoadingCategories(false);
         });
     }, []);
 
@@ -84,9 +88,6 @@ function Store() {
                                     </li>
                                 )
                             }
-                            <li className="breadcrumb-item">
-                                {isLoadingProducts && <CircularProgress/>}
-                            </li>
                         </ol>
                     </div>
                 </div>
@@ -116,12 +117,14 @@ function Store() {
                             </div>
                         ))}
                     </div>
+                    {isLoadingCategories && <CircularProgress/>}
                 </div>
                 <div className="gallery-container">
                     {
-                        items?.length > 0 && items.map((item) => (<ProductCard key={item.id} item={item}/>))
+                        products?.length > 0 && products.map((item) => (<ProductCard key={item.id} item={item}/>))
                         || (!isLoadingProducts && <span>No items found.</span>)
                     }
+                    {isLoadingProducts && <CircularProgress/>}
                 </div>
             </div>
         </div>
