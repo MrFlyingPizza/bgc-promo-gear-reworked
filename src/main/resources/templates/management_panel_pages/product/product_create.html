@@ -166,16 +166,22 @@
                 <option th:each="option : ${options}" th:value="${option.getId()}" th:text="${option.getName()}"
                         th:selected="${optionStat.index == 0}"></option>
               </select>
-
+              <small id="if-duplicate-option-1" style="color: #dc3545; display: none;">Cannot have duplicated Options or Values!</small>
               <p class="text-center" id="if-no-option-values-1" style="display: none; color: red;">
                 There are no Option Values in the database for this Option. Please make one
                 using the "Edit Options" button.
               </p>
-              <div id="option-values-container-1" class="option-values-container">
-                <label for="product-option-value-1-1" class="form-check-label">Value Name</label>
-                <select class="product-option-values-1 form-select" id="product-option-value-1-1">
+              <div id="option-values-container-1" class="option-values-container container">
+                <div class="row justify-content-center">
+                  <div class="col-lg-8 col-md-12 align-items-start">
+                    <label for="product-option-value-1-1" class="form-check-label">Value Name</label>
+                    <select class="product-option-values-1 product-option-value form-select" id="product-option-value-1-1">
+                    </select>
+                  </div>
+                  <div class="col p-3">
 
-                </select>
+                  </div>
+                </div>
               </div>
               <br>
               <button class="btn btn-primary" id="add-option-value-1" onclick="add_option_value(1)">
@@ -191,7 +197,7 @@
             Edit Options
           </button>
           <button style="float: right;" class="btn btn-outline-primary" id="generate-variants-button"
-                  onclick="create_all_possible_variants()">Generate Variants</button>
+                  onclick="check_options_are_unique()">Generate Variants</button>
         </div>
       </div>
     </div>
@@ -714,7 +720,7 @@
                       <td style="padding: 5px;">
                         <button class="btn btn-outline-primary button-edit"
                                 type="button" style="font-size: 15px;"
-                                th:data-id="${optionValue?.getId()}"
+                                th:data-id="${option?.getId()}+'-'+${optionValue?.getId()}"
                                 th:data-type-of-delete="option_value"
                                 th:data-name="${optionValue?.getValue()}"
                                 onclick="display_delete_modal(this)">
@@ -1044,8 +1050,8 @@
     </div>
   </div>
 
-  <div class="modal fade" id="wait-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+  <div class="modal" id="wait-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="wait-modal-title"></h5>
@@ -1124,6 +1130,7 @@
      */
     $(document).ready(function(){
       fill_current_categories();
+      fill_options_on_page_load();
     });
 
     /**
@@ -1212,9 +1219,7 @@
         error: function(xhr) {
           console.log(xhr);
           testing = xhr;
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           $('#failed-modal-message-header').text("Data Retrieval Failed");
           var responseMessagesString = '';
@@ -1250,9 +1255,7 @@
         },
         success: function(data)
         {
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
 
           $('#category-accordion-'+$(element).data('id')).remove();
@@ -1276,9 +1279,7 @@
         error: function(xhr) {
           console.log(xhr);
           testing = xhr;
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           $('#failed-modal-message-header').text("Delete Failed");
           var responseMessagesString = '';
@@ -1335,9 +1336,7 @@
         },
         success: function(data)
         {
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           parentCategorySecondaryCounter--;
 
@@ -1408,9 +1407,7 @@
         error: function(xhr) {
           console.log(xhr);
           testing = xhr;
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           $('#failed-modal-message-header').text("Creation Failed");
           var responseMessagesString = '';
@@ -1449,9 +1446,7 @@
         error: function(xhr) {
           console.log(xhr);
           testing = xhr;
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           $('#failed-modal-message-header').text("Data Retrieval Failed");
           var responseMessagesString = '';
@@ -1488,9 +1483,7 @@
         error: function(xhr) {
           console.log(xhr);
           testing = xhr;
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           $('#failed-modal-message-header').text("Data Retrieval Failed");
           var responseMessagesString = '';
@@ -1537,9 +1530,7 @@
         success: function(data)
         {
           console.log(data);
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           let oldName = $('#parent-category-text-'+data['id']).text();
           $('#parent-category-text-'+data['id']).text(data['name']);
@@ -1558,9 +1549,7 @@
         error: function(xhr) {
           console.log(xhr);
           testing = xhr;
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           $('#failed-modal-message-header').text("Edit Failed");
           var responseMessagesString = '';
@@ -1640,9 +1629,7 @@
         success: function(data)
         {
           console.log(data);
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           subcategorySecondaryCounter--;
 
@@ -1692,9 +1679,7 @@
         error: function(xhr) {
           console.log(xhr);
           testing = xhr;
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           $('#failed-modal-message-header').text("Creation Failed");
           var responseMessagesString = '';
@@ -1733,9 +1718,7 @@
         error: function(xhr) {
           console.log(xhr);
           testing = xhr;
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           $('#failed-modal-message-header').text("Data Retrieval Failed");
           var responseMessagesString = '';
@@ -1772,9 +1755,7 @@
         error: function(xhr) {
           console.log(xhr);
           testing = xhr;
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           $('#failed-modal-message-header').text("Data Retrieval Failed");
           var responseMessagesString = '';
@@ -1821,9 +1802,7 @@
         success: function(data)
         {
           console.log(data);
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           let oldName = $('#subcategory-text-'+data['id']).text();
           $('#subcategory-text-'+data['id']).text(data['name']);
@@ -1841,9 +1820,7 @@
         error: function(xhr) {
           console.log(xhr);
           testing = xhr;
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           $('#failed-modal-message-header').text("Edit Failed");
           var responseMessagesString = '';
@@ -1880,9 +1857,7 @@
         },
         success: function(data)
         {
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           $('#subcategory-row-'+$(element).data('id')).remove();
 
@@ -1902,9 +1877,7 @@
           fill_current_categories();
         },
         error: function(xhr) {
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           $('#failed-modal-message-header').text("Delete Failed");
           var responseMessagesString = '';
@@ -2011,9 +1984,7 @@
     //     error: function(xhr) {
     //       console.log(xhr);
     //       testing = xhr;
-    //       $("#wait-modal").on('shown.bs.modal', function () {
-    //         $('#wait-modal').modal('hide');
-    //       });
+    //       $('#wait-modal').modal('hide');
     //
     //       $('#failed-modal-message-header').text("Data Retrieval Failed");
     //       var responseMessagesString = '';
@@ -2051,9 +2022,7 @@
         },
         success: function(data)
         {
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
 
           $('#option-accordion-'+$(element).data('id')).remove();
@@ -2077,9 +2046,7 @@
         error: function(xhr) {
           console.log(xhr);
           testing = xhr;
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           $('#failed-modal-message-header').text("Delete Failed");
           var responseMessagesString = '';
@@ -2135,9 +2102,7 @@
         },
         success: function(data)
         {
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           optionSecondaryCounter--;
 
@@ -2206,9 +2171,7 @@
         error: function(xhr) {
           console.log(xhr);
           testing = xhr;
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           $('#failed-modal-message-header').text("Creation Failed");
           var responseMessagesString = '';
@@ -2247,9 +2210,7 @@
         error: function(xhr) {
           console.log(xhr);
           testing = xhr;
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           $('#failed-modal-message-header').text("Data Retrieval Failed");
           var responseMessagesString = '';
@@ -2286,9 +2247,7 @@
         error: function(xhr) {
           console.log(xhr);
           testing = xhr;
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           $('#failed-modal-message-header').text("Data Retrieval Failed");
           var responseMessagesString = '';
@@ -2335,9 +2294,7 @@
         success: function(data)
         {
           console.log(data);
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           let oldName = $('#option-text-'+data['id']).text();
           $('#option-text-'+data['id']).text(data['name']);
@@ -2356,9 +2313,7 @@
         error: function(xhr) {
           console.log(xhr);
           testing = xhr;
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           $('#failed-modal-message-header').text("Edit Failed");
           var responseMessagesString = '';
@@ -2437,22 +2392,20 @@
         success: function(data)
         {
           console.log(data);
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           optionValueSecondaryCounter--;
 
           let optionValueRow = `
-                 <tr id="option-value-row-${data.id}">
-                     <td id="option-value-text-${data.id}">
+                 <tr id="option-value-row-${data.valueId}">
+                     <td id="option-value-text-${data.valueId}">
                         ${data.value}
                      </td>
                      <td style="padding: 5px;">
                             <button class="btn btn-outline-primary button-edit"
                                     type="button" style="font-size: 15px;"
-                                    data-option-id="${data.id}"
-                                    data-option-value-id="${data.id}"
+                                    data-option-id="${data.optionId}"
+                                    data-option-value-id="${data.valueId}"
                                     onclick="display_edit_option_value_modal(this)">
                               <i class="far fa-edit"></i>
                             </button>
@@ -2460,7 +2413,7 @@
                      <td style="padding: 5px;">
                           <button class="btn btn-outline-primary button-edit"
                                   type="button" style="font-size: 15px;"
-                                  data-id="${data.id}"
+                                  data-id="${data.optionId}-${data.valueId}"
                                   data-type-of-delete="option_value"
                                   data-name="${data.value}"
                                   onclick="display_delete_modal(this)">
@@ -2490,9 +2443,7 @@
         error: function(xhr) {
           console.log(xhr);
           testing = xhr;
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           $('#failed-modal-message-header').text("Creation Failed");
           var responseMessagesString = '';
@@ -2534,9 +2485,7 @@
         error: function(xhr) {
           console.log(xhr);
           testing = xhr;
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           $('#failed-modal-message-header').text("Data Retrieval Failed");
           var responseMessagesString = '';
@@ -2576,9 +2525,7 @@
         error: function(xhr) {
           console.log(xhr);
           testing = xhr;
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           $('#failed-modal-message-header').text("Data Retrieval Failed");
           var responseMessagesString = '';
@@ -2628,9 +2575,7 @@
         success: function(data)
         {
           console.log(data);
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           let oldValue = $('#option-value-text-'+data['valueId']).text();
           $('#option-value-text-'+data['valueId']).text(data['value']);
@@ -2648,9 +2593,7 @@
         error: function(xhr) {
           console.log(xhr);
           testing = xhr;
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           $('#failed-modal-message-header').text("Edit Failed");
           var responseMessagesString = '';
@@ -2672,11 +2615,16 @@
     }
 
     function delete_option_value(element){
-      alert('Function Not Implemented Yet!');
-      return;
+      let combinedId = $(element).data('id');
+      let splitId = combinedId.split("-");
+      let optionId = splitId[0];
+      let optionValueId = splitId[1];
       $.ajax({
         type: "DELETE",
-        url: '/api/secured/options/',
+        url: '/api/secured/options/'.
+        concat(optionId).
+        concat("/values/").
+        concat(optionValueId),
         beforeSend: function(xhr) {
           // xhr.setRequestHeader(
           //         $('meta[name=_csrf_header]').attr('content'),
@@ -2689,11 +2637,10 @@
         },
         success: function(data)
         {
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
-          $('#option-value-row-'+$(element).data('id')).remove();
+          let dataId = $(element).removeData('id');
+          $('[data-id='+dataId+']').parent().parent().remove();
 
           // if(!($('#categoryAccordionPanels').children().length > 0)){
           //   let noSubcategoriesDiv = `
@@ -2711,9 +2658,7 @@
           //fill_current_categories();
         },
         error: function(xhr) {
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           $('#failed-modal-message-header').text("Delete Failed");
           var responseMessagesString = '';
@@ -2755,29 +2700,41 @@
             <select class="form-select option-select" id="option-name-${nextIndex}" name="option-name-${nextIndex}"
                     onchange="fillOptionValueSelects(this)">
             </select>
+            <small id="if-duplicate-option-${nextIndex}" style="color: #dc3545; display: none;">Cannot have duplicated Options or Values!</small>
             <p class="text-center" id="if-no-option-values-${nextIndex}" style="display: none; color: red;">
               There are no Option Values in the database for this Option. Please make one
               using the "Edit Options" button.
             </p>
 
-            <div id="option-values-container-${nextIndex}" class="option-values-container">
-                <label for="product-option-value-nextIndex-1" class="form-check-label">Value Name</label>
-                <select class="product-option-values-${nextIndex} form-select" id="product-option-value-${nextIndex}-1">
+            <div id="option-values-container-${nextIndex}" class="option-values-container container">
+                <div class="row justify-content-center">
+                  <div class="col-lg-8 col-md-12 align-items-start">
+                    <label for="product-option-value-nextIndex-1" class="form-check-label">Value Name</label>
+                    <select class="product-option-values-${nextIndex} product-option-value form-select" id="product-option-value-${nextIndex}-1">
+                    </select>
+                  </div>
+                  <div class="col p-3">
 
-                </select>
+                  </div>
+                </div>
             </div>
             <br>
             <button class="btn btn-primary" id="add-option-value-${nextIndex}" onclick="add_option_value(${nextIndex})">
              + Add Option Value
             </button>
             <button class="delete-product-option btn btn-danger" id="delete-product-option-${nextIndex}" onclick="delete_option_input(${nextIndex})">
-                Delete Option
+                Remove Option
             </button>
         </div>`;
 
       $(".product-option:last").after(newDiv);
       let currentOptions = $('#option-name-1').html();
+      let currentOptionValues = $('#product-option-value-1-1').html();
       $('#option-name-'+nextIndex).html(currentOptions);
+      $('#product-option-value-'+nextIndex+'-1').html(currentOptionValues);
+      if($('#if-no-option-values-1').is(":visible")){
+        $('#if-no-option-values-'+nextIndex).toggle();
+      }
     });
 
     function delete_option_input(id){
@@ -2792,17 +2749,20 @@
       var splitId = lastId.split("-");
       var nextIndex = parseInt(splitId[4]) + 1;
       let newOptionValue=`
-        <label for="product-option-value-${parentId}-${nextIndex}" id="product-option-value-${parentId}-${nextIndex}-label"
-               class="form-check-label">Value Name</label>
-        <select class="product-option-values-${parentId} form-select" id="product-option-value-${parentId}-${nextIndex}">
-
-        </select>
-
-        <button class="delete-option-value btn btn-danger" id="delete-product-option-value-${parentId}-${nextIndex}"
-                onclick="delete_option_value_input(${parentId}, ${nextIndex}, this)">
-            Delete Value
-        </button>
-
+                <div class="row justify-content-center">
+                  <div class="col-lg-8 col-md-12 align-items-start">
+                    <label for="product-option-value-${parentId}-${nextIndex}" id="product-option-value-${parentId}-${nextIndex}-label"
+                           class="form-check-label">Value Name</label>
+                    <select class="product-option-values-${parentId} product-option-value form-select" id="product-option-value-${parentId}-${nextIndex}">
+                    </select>
+                  </div>
+                  <div class="col p-3">
+                    <button class="delete-option-value btn btn-danger" id="delete-product-option-value-${parentId}-${nextIndex}"
+                            onclick="delete_option_value_input(${parentId}, ${nextIndex}, this)">
+                        Remove Value
+                    </button>
+                  </div>
+                </div>
         `;
       $('#option-values-container-'+parentId).append(newOptionValue);
       let currentOptionValues = $('#product-option-value-'+parentId+'-1').html();
@@ -2810,9 +2770,10 @@
     }
 
     function delete_option_value_input(parentId, optionValueId, deleteButton){
-      $("#product-option-value-" + parentId + "-" + optionValueId).remove();
-      $(deleteButton).remove();
-      $("#product-option-value-" + parentId + "-" + optionValueId+"-label").remove();
+      $(deleteButton).parent().parent().remove();
+      // $("#product-option-value-" + parentId + "-" + optionValueId).remove();
+      // $(deleteButton).remove();
+      // $("#product-option-value-" + parentId + "-" + optionValueId+"-label").remove();
     }
 
     $('#has-options').change(
@@ -2824,7 +2785,7 @@
                 $('#solo-low-stock-limit-label').css('display', 'none');
                 $('#solo-product-low-stock-limit').css('display', 'none');
                 $('#solo-low-stock-limit-container').css('display', 'none');
-                $('#variants-card').css('display', 'none');
+                // $('#variants-card').css('display', 'none');
                 $('#generate-variants-button').css('display', '');
               }
               else{
@@ -2833,7 +2794,7 @@
                 $('#solo-low-stock-limit-label').css('display', '');
                 $('#solo-product-low-stock-limit').css('display', '');
                 $('#solo-low-stock-limit-container').css('display', '');
-                $('#variants-card').css('display', '');
+                // $('#variants-card').css('display', '');
                 $('#generate-variants-button').css('display', 'none');
               }
             }
@@ -2895,6 +2856,60 @@
           $('#failed-modal').modal('show');
         }
       });
+    }
+
+    function fill_options_on_page_load(){
+      let optionId = $('#option-name-1').val();
+      if(optionId !== null){
+        $.ajax({
+          type: "GET",
+          url: '/api/secured/options/'.concat(optionId).concat("/values"),
+          success: function(data)
+          {
+            if(jQuery.isEmptyObject(data['values'])){
+              $('#if-no-option-values-1').css("display", "");
+              $('#product-option-value-1-1').empty();
+            }
+            else{
+              $('#if-no-option-values-1').css("display", "none");
+              for(let i = 0; i < data['values'].length; i++){
+                if(i === 0){
+                  $('#product-option-value-1-1').append($('<option>', {
+                    selected: true,
+                    value: data['values'][i]['valueId'],
+                    text : data['values'][i]['value']
+                  }));
+                }
+                else{
+                  $('#product-option-value-1-1').append($('<option>', {
+                    value: data['values'][i]['valueId'],
+                    text : data['values'][i]['value']
+                  }));
+                }
+              }
+            }
+          },
+          error: function(xhr) {
+            console.log(xhr);
+            testing = xhr;
+
+            $('#failed-modal-message-header').text("Data Retrieval Failed");
+            var responseMessagesString = '';
+            let responseMessages = xhr.responseJSON['messages'];
+
+            if (responseMessages !== undefined) {
+              for (let i = 0; i < responseMessages.length; i++) {
+                responseMessagesString += ((i + 1) + ". " + responseMessages[i]['message'] + "\n");
+              }
+              $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+            } else {
+              $('#failed-modal-message').text("Error Message: \nNo available Error Message.");
+            }
+
+            $('#failed-modal').modal('show');
+          }
+        });
+      }
     }
 
     function updateOptionSelects(){
@@ -2989,6 +3004,80 @@
       // });
       deleteTracker = [];
       //$('#create-part-one').css("display", "none");
+    }
+
+
+    function check_options_are_unique(){
+      $('#variants-card').css('display', 'none');
+
+      let optionIds = [];
+      $('.option-select').each(function(index, element){
+        optionIds.push(parseInt($(this).val()));
+
+        $(this).css('border-color', '#28a745');
+        $(this).next().css('display', 'none');
+      });
+
+      let numberOfOptions = $('.product-option').length;
+
+      let optionValueIds = [];
+      let optionDomNumbers = [];
+      $('.product-option').each(function(index, element){
+        let optionDomNumber = parseInt($(this).attr('id').split("-")[2]);
+        optionDomNumbers.push(optionDomNumber);
+      });
+      console.assert(optionDomNumbers.length == numberOfOptions);
+      for(let i = 0; i < numberOfOptions; i++){
+        $('.product-option-values-'+optionDomNumbers[i]).each(function(index, element){
+          $(this).css('border-color', '#28a745');
+          $(this).parent().parent().parent().prev().prev().css('display', 'none');
+          optionValueIds.push(parseInt($(this).val()));
+        });
+      }
+
+      console.log("Option Ids");
+      console.log(optionIds);
+      console.log("Option Value Ids");
+      console.log(optionValueIds);
+
+
+      let duplicatedOptionIds = optionIds.filter((element, index, array) => array.indexOf(element) !== index);
+      console.log("Duplicated Option Ids");
+      console.log(duplicatedOptionIds);
+      if(duplicatedOptionIds.length !== 0){
+        let duplicatedOptions = [];
+        $('.option-select').each(function(index, element){
+          if(duplicatedOptionIds.includes(parseInt($(this).val()))){
+            duplicatedOptions.push($(this).attr('id'));
+            $(this).css('border-color', '#dc3545');
+            $(this).next().text('Cannot have duplicated Options!');
+            $(this).next().css('display', '');
+          }
+        });
+        $('html, body').animate({ scrollTop: $('#'+duplicatedOptions[0]).offset().top}, 'fast');
+      }
+
+      let duplicatedOptionValueIds = optionValueIds.filter((element, index, array) => array.indexOf(element) !== index);
+      console.log("Duplicated Option Value Ids");
+      console.log(duplicatedOptionValueIds);
+      if(duplicatedOptionValueIds.length !== 0){
+        let duplicatedOptionValues = [];
+        $('.product-option-value').each(function(index, element){
+          if(duplicatedOptionValueIds.includes(parseInt($(this).val()))){
+            duplicatedOptionValues.push($(this).attr('id'));
+            $(this).css('border-color', '#dc3545');
+            $(this).parent().parent().parent().prev().prev().text('Cannot have duplicated or invalid Values!');
+            $(this).parent().parent().parent().prev().prev().css('display', '');
+          }
+        });
+        if(duplicatedOptionIds.length === 0){
+          $('html, body').animate({ scrollTop: $('#'+duplicatedOptionValues[0]).offset().top}, 'fast');
+        }
+      }
+
+      if(duplicatedOptionIds.length === 0 && duplicatedOptionValueIds.length === 0){
+        create_all_possible_variants();
+      }
     }
 
     var valueCombinations;
@@ -3278,6 +3367,7 @@
 
       let isFormValid = checkName() && checkPrice() && checkBrand() && checkDescription();
       if(!isFormValid){
+        $('#confirm-create-product-modal').modal('hide');
         $('html, body').animate({ scrollTop: 0 }, 'fast');
         return;
       }
@@ -3331,9 +3421,7 @@
         error: function(xhr) {
           console.log(xhr);
           testing = xhr;
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           $('#failed-modal-message-header').text("Product Info Creation Failed");
           var responseMessagesString = '';
@@ -3394,9 +3482,7 @@
             error: function(xhr) {
               console.log(xhr);
               testing = xhr;
-              $("#wait-modal").on('shown.bs.modal', function () {
-                $('#wait-modal').modal('hide');
-              });
+              $('#wait-modal').modal('hide');
 
               $('#failed-modal-message-header').text("Product Variant Creation Failed");
               var responseMessagesString = '';
@@ -3443,9 +3529,7 @@
           error: function (xhr) {
             console.log(xhr);
             testing = xhr;
-            $("#wait-modal").on('shown.bs.modal', function () {
-              $('#wait-modal').modal('hide');
-            });
+            $('#wait-modal').modal('hide');
 
             $('#failed-modal-message-header').text("Solo Product Variant Creation Failed");
             var responseMessagesString = '';
@@ -3509,9 +3593,7 @@
         error: function(xhr) {
           console.log(xhr);
           testing = xhr;
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           $('#failed-modal-message-header').text("Data Retrieval Failed");
           var responseMessagesString = '';
@@ -3536,9 +3618,7 @@
       $('#create-product-part-2-images').removeData("product-id");
       $('#create-product-part-2-images').attr("data-product-id", productId);
       $('#create-product-part-2-images').css('display', '');
-      $("#wait-modal").on('shown.bs.modal', function () {
-        $('#wait-modal').modal('hide');
-      });
+      $('#wait-modal').modal('hide');
 
       $('#success-modal-message').text("Successfully created Product + Variants!");
       $('#success-modal').modal('show');
@@ -3552,10 +3632,12 @@
 
     }
 
-    function assign_image(src){
+    function assign_image(src, id){
       let rowNumber = $('#images-modal').data('variant-row-number');
       $('#variant-post-image-'+rowNumber).removeData('image-src');
       $('#variant-post-image-'+rowNumber).attr("data-image-src", src);
+      $('#variant-post-image-'+rowNumber).removeData('image-id');
+      $('#variant-post-image-'+rowNumber).attr("data-image-id", id);
       $('#variant-post-image-display-'+rowNumber).attr("src", src);
       $('#images-modal').modal('hide');
     }
@@ -3598,9 +3680,7 @@
           $('#wait-modal').modal('show');
         },
         success: function (data) {
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
           $("#image-upload-result").text("Success");
           $("#image-upload-result").css('color', 'green');
           $("#uploaded-images-container").css('display', 'flex');
@@ -3608,14 +3688,14 @@
           $("#file-upload-form").prop("disabled", false);
           const newImage = `
                     <div style="flex: 1;">
-                        <img src="${data.src}" style="max-width: 100%; max-height: 300px;">
+                        <img src="${data.src}" data-id="${data.id}"style="max-width: 100%; max-height: 300px;">
                     </div>
                 `;
           $("#uploaded-images-container").append(newImage);
 
           const imageChooser = `
-                    <div style="flex: 1;" class="image-modal-display" onclick="assign_image('${data.src}')">
-                        <img src="${data.src}" style="max-width: 100%; max-height: 300px;">
+                    <div style="flex: 1;" class="image-modal-display" onclick="assign_image('${data.src}', '${data.id}')">
+                        <img src="${data.src}" data-id="${data.id}" style="max-width: 100%; max-height: 300px;">
                     </div>
                 `;
 
@@ -3634,14 +3714,9 @@
 
         },
         error: function (e) {
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
           console.log(xhr);
           testing = xhr;
-          $("#wait-modal").on('shown.bs.modal', function () {
-            $('#wait-modal').modal('hide');
-          });
+          $('#wait-modal').modal('hide');
 
           $('#failed-modal-message-header').text("Media Upload Failed");
           var responseMessagesString = '';
@@ -3677,7 +3752,7 @@
       for(let j = 0; j < numVariants; j++){
         let variantId = parseInt($("#variant-post-image-"+(j+1)).data("variant-id"));
         const updateData = {
-          'imageId': $("#variant-post-image-"+(j+1)).data("image-src")
+          'imageId': parseInt($("#variant-post-image-"+(j+1)).data("image-id"))
         };
         console.log(updateData);
         $.ajax({
@@ -3695,9 +3770,7 @@
           success: function()
           {
             if(j === numVariants-1){
-              $("#wait-modal").on('shown.bs.modal', function () {
-                $('#wait-modal').modal('hide');
-              });
+              $('#wait-modal').modal('hide');
 
               $('#success-modal-message').text("Successfully updated Variant Images!");
               $('#success-modal').modal('show');;
@@ -3707,9 +3780,7 @@
           error: function(xhr) {
             console.log(xhr);
             testing = xhr;
-            $("#wait-modal").on('shown.bs.modal', function () {
-              $('#wait-modal').modal('hide');
-            });
+            $('#wait-modal').modal('hide');
 
             $('#failed-modal-message-header').text("Product Variant Update Failed");
             var responseMessagesString = '';
