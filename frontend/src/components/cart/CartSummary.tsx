@@ -1,12 +1,12 @@
-import {ICartItem} from "./ICartItem";
-import {Box, Button, Container, List, ListItem, ListItemText, Paper, Typography} from "@mui/material";
+
+import {Button, Container, List, ListItem, ListItemText, Paper} from "@mui/material";
 import * as React from "react";
 import {useState} from "react";
-import {grey} from "@mui/material/colors";
+import {CartItem} from "types/CartItem";
 
-function CartSummary(props: {items: ICartItem[]}) {
+function CartSummary(props: { items: CartItem[] }) {
 
-    const [items, setItems] = useState<ICartItem[]>(props.items);
+    const [items, setItems] = useState<CartItem[]>(props.items);
 
     const summaryItems = items.map(item => {
         return (<ListItemText key={item.variant.id} primary={item.product.name} secondary={item.quantity}/>);

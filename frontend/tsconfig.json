@@ -1,5 +1,14 @@
 {
   "compilerOptions": {
+    "baseUrl": "src",
+    "paths": {
+      "types/*": [
+        "types/*"
+      ],
+      "components/*": [
+        "components/*"
+      ]
+    },
     "allowSyntheticDefaultImports": true,
     "outDir": "./dist/",
     "noImplicitAny": true,

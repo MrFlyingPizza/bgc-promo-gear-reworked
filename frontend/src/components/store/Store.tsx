@@ -1,0 +1,131 @@
+import * as React from "react";
+import {useEffect, useState} from "react";
+import axios from "axios";
+import {CircularProgress, Typography} from "@mui/material";
+
+import {Product} from "types/Product";
+import {Category} from "types/Category";
+import ProductCard from "./product_card/ProductCard";
+
+interface SelectedCategory {
+    id: number,
+    name: string,
+
+    parent?: {
+        id: number,
+        name: string
+    }
+}
+
+function Store() {
+
+    const url = `${location.protocol}//${location.host}`
+
+    const [isLoadingProducts, setIsLoadingProducts] = useState(true);
+    const [items, setItems] = useState<Product[]>(null);
+    const [categories, setCategories] = useState<Category[]>(null);
+    const [selectedCategory, setSelectedCategory] = useState<SelectedCategory>(null);
+
+    //TODO: Switch back to general product API (temporary measure to get needed attributes)
+    useEffect(() => {
+        setIsLoadingProducts(true);
+        let params = {
+            "isPublished": true,
+            "category.id": selectedCategory?.id
+        };
+        axios.get(`${url}/api/secured/products`, {params: params}).then((response) => {
+            setItems(response.data.products);
+        }).catch((error) => {
+            console.log(error);
+        }).finally(() => {
+            setIsLoadingProducts(false);
+        });
+    }, [selectedCategory]);
+
+    useEffect(() => {
+        axios.get(`${url}/api/categories`).then((response) => {
+            setCategories(response.data.categories.filter((category: { parent: Category; }) => category.parent != null));
+        }).catch((error) => {
+            console.log(error);
+        }).finally(() => {
+        });
+    }, []);
+
+    const Header = (props: { title: string }) => {
+        return (
+            <Typography align={"center"} variant={"h6"}>{props.title}</Typography>
+        )
+    }
+
+    return (
+        <div className="d-flex flex-column" id="store-container">
+            <div className="d-flex" id="top-container">
+                <div id="empty-space"/>
+                <div>
+                    <div id="breadcrumb-container">
+                        <ol className="breadcrumb">
+                            <li className="breadcrumb-item" onClick={() => setSelectedCategory(null)}>
+                                <a className="no-style-link">
+                                    <span>Promotional Gear</span>
+                                </a>
+                            </li>
+                            {
+                                selectedCategory && (
+                                    <li className="breadcrumb-item">
+                                        <a className="no-style-link">
+                                            <span>{selectedCategory.name}</span>
+                                        </a>
+                                    </li>
+                                ) || (
+                                    <li className="breadcrumb-item">
+                                        <a className="no-style-link">
+                                            <span>All</span>
+                                        </a>
+                                    </li>
+                                )
+                            }
+                            <li className="breadcrumb-item">
+                                {isLoadingProducts && <CircularProgress/>}
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+            <div className="d-flex" id="bottom-container">
+                <div id="category-container">
+                    <span style={{fontWeight: 'bold'}}>Categories</span>
+                    <div id="categories">
+                        <div className="category-group">
+                            <span className="category_name" onClick={() => setSelectedCategory(null)}>All</span>
+                        </div>
+                        {categories && categories.map((category) => (
+                            <div key={category.id} className="category-group"><span
+                                className="category_name">{category.name}</span>
+                                {category.subcategories && category.subcategories.map((subcategory) => (
+                                    <div key={subcategory.id} className="d-flex flex-column subcategory-group">
+                                        <a className="no-style-link" onClick={() => setSelectedCategory(subcategory)}>
+                                            <span>{subcategory.name}</span>
+                                        </a>
+                                    </div>
+                                ))}
+                                <div className="d-flex flex-column subcategory-group">
+                                    <a className="no-style-link" onClick={() => setSelectedCategory(category)}>
+                                        <span>Other</span>
+                                    </a>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <div className="gallery-container">
+                    {
+                        items?.length > 0 && items.map((item) => (<ProductCard key={item.id} item={item}/>))
+                        || (!isLoadingProducts && <span>No items found.</span>)
+                    }
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export default Store;

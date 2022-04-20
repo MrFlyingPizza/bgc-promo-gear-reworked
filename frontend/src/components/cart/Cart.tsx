@@ -1,17 +1,16 @@
 import * as React from "react";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {Box, CircularProgress, Container, Grid, LinearProgress, Typography} from "@mui/material";
-import {grey} from "@mui/material/colors";
-import {ICartItem} from "./ICartItem";
+import {Box, Container, Grid, LinearProgress, Typography} from "@mui/material";
 import CartContent from "./CartContent";
 import CartSummary from "./CartSummary";
+import {CartItem} from "types/CartItem";
 
 function Cart() {
 
     const url = `${location.protocol}//${location.host}`
 
-    const [items, setItems] = useState<ICartItem[]>(null);
+    const [items, setItems] = useState<CartItem[]>(null);
 
     const [isLoading, setLoading] = useState<Boolean>(true);
 

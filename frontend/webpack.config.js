@@ -1,13 +1,14 @@
 const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin')
+const {TsconfigPathsPlugin} = require("tsconfig-paths-webpack-plugin");
 
 module.exports = {
-    mode: 'production',
+    mode: 'development',
     entry: {
-        cart: './src/cart.tsx',
-        store: './src/store.tsx'
+        cart: './src/pages/cart/cart.tsx',
+        store: './src/pages/store/store.tsx'
     },
-    //devtool: 'inline-source-map', // remove to reduce size for production build
+    devtool: 'inline-source-map', // remove to reduce size for production build
     watchOptions: {
         aggregateTimeout: 25000,
         poll: 30000,
@@ -25,6 +26,9 @@ module.exports = {
     },
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],
+        plugins: [
+            new TsconfigPathsPlugin()
+        ]
     },
     output: {
         filename: '[name].bundle.js',
