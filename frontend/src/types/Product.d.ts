@@ -1,4 +1,6 @@
-export interface IProductItem {
+import ProductVariantAvailability from "./ProductVariantAvailability";
+
+export interface Product {
     id: number,
     name: string,
     brand: string,
@@ -7,13 +9,15 @@ export interface IProductItem {
     isBigItem: boolean,
 
     images: {
-       src: string,
-       position: number,
+        alt: string,
+        src: string,
+        position: number,
     }[]
 
     variants: {
         id: number,
         imageId: number,
+        availability: ProductVariantAvailability,
         options: {
             valueId: number,
             optionId: number,
@@ -22,10 +26,10 @@ export interface IProductItem {
         }[]
     }[]
 
-    category : {
+    category: {
         id: number,
         name: string,
-        parent:{
+        parent: {
             id: number,
             name: string
         }
