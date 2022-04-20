@@ -31,4 +31,9 @@ public class IndexViewController {
         return "front_pages/warranty";
     }
 
+    @GetMapping("/team")
+    public String showTeamPage() {
+        return "front_pages/team";
+    }
+
 }

@@ -3,11 +3,15 @@
   <title>Update Product</title>
 </head>
 <div layout:fragment="content">
-  <div style="text-align: center">
-    <!-- Return to viewing locations button -->
-    <button class="btn btn-outline-primary" style="float: left;" onclick="location.href='/management/product/'">
+
+  <!--  <div id="create-part-one">-->
+  <div style="margin-bottom: 2em;">
+    <!-- Return to viewing products button -->
+    <a class="btn btn-outline-primary" href="/management/product/" id="return-to-products-button">
       Return to Products
-    </button><br><br>
+    </a>
+  </div>
+  <div>
     <!-- Heading -->
     <h2 style="text-align: center">Update Product</h2>
     <p class="text-center">Note: Only fill in the fields you like to be changed</p>
@@ -17,7 +21,7 @@
     <div class="card">
       <div class="card-body">
         <!-- Form to create a product_group -->
-        <form id="update-product-group-form" th:action="'/management/api/product/'+${product?.getID()}" method="post" class="row g-3">
+        <form id="update-product-group-form" th:action="'/api/secured/products/'+${product?.getId()}" method="post" class="row g-3">
           <div class="col-12">
             <label for="name" class="form-label">Product Name:</label>
             <input type="text" class="form-control" id="name" name="name" th:placeholder="${product?.getName()}">
@@ -43,9 +47,9 @@
             <div class="form-text">(A "Big Item" is one that can only be ordered once per year)</div>
           </div>
           <div class="col-md-4">
-            <label for="is-waitlistable" class="form-check-label">Is this product "waitlistable"?</label>
-            <input type="checkbox" class="form-check-input" id="is-waitlistable" name="is-waitlistable"
-                   th:checked="${product?.getIsWaitlistable()}" th:data-initial-waitlistable-value="${product?.getIsWaitlistable()}">
+            <label for="is-wait-list-enabled" class="form-check-label">Is this product "waitlistable"?</label>
+            <input type="checkbox" class="form-check-input" id="is-wait-list-enabled" name="is-wait-list-enabled"
+                   th:checked="${product?.getIsWaitListEnabled()}" th:data-initial-waitlistable-value="${product?.getIsWaitListEnabled()}">
             <div class="form-text">(A "Waitlistable Item" is one that can recieve waitlist orders when the stock is low)</div>
           </div>
           <div class="col-12">
@@ -54,7 +58,7 @@
           </div>
           <div class="col-md-6">
             <label for="categories" class="form-label">Choose New Category:</label>
-            <select name="categories" id="categories" class="form-select" th:data-initial-category-id="${product?.getCategory()?.getID()}">
+            <select name="categories" id="categories" class="form-select" th:data-initial-category-id="${product?.getCategory()?.getId()}">
 
             </select>
             <div class="form-text" th:text="'Current Category: ' + ${product?.getCategory()?.getName()}"></div>
@@ -62,7 +66,7 @@
           <div class="col-md-12">
             <!--   Update Location Button     -->
             <input class="btn btn-outline-primary" id="submit-update-product-group" type="button"
-                   th:attr="onclick=|get_currently_stored_product_group('${product?.getID()}')|" value="Submit Update" disabled>
+                   th:attr="onclick=|get_currently_stored_product_group(${product?.getId()})|" value="Submit Update" disabled>
             <!-- Delete Location Button -->
             <input class="btn btn-outline-primary" id="submit-delete-product-group" type="button"
                    value="Delete" data-bs-toggle="modal" data-bs-target="#confirm-delete-location-modal">
@@ -114,10 +118,10 @@
                       <td id="currently-stored-is-big-item"></td>
                       <td id="display-new-is-big-item"></td>
                     </tr>
-                    <tr id="is-waitlistable-row">
+                    <tr id="is-wait-list-enabled-row">
                       <td style="font-weight: bold">Is Waitlistable</td>
-                      <td id="currently-stored-is-waitlistable"></td>
-                      <td id="display-new-is-waitlistable"></td>
+                      <td id="currently-stored-is-wait-list-enabled"></td>
+                      <td id="display-new-is-wait-list-enabled"></td>
                     </tr>
                     <tr id="description-row">
                       <td style="font-weight: bold">Description</td>
@@ -142,40 +146,40 @@
       </div>
     </div>
     <br>
-    <div class="card">
-      <div class="card-body">
-        <h3 style="text-align: center">Variants</h3>
-        <div class="table-responsive">
-          <table id="variantsTable" class="table table-striped table-hover">
-            <thead>
-            <tr>
-              <th scope="col">Variant</th>
-              <th scope="col">Low Stock Limit</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="product : ${product?.getProducts()}">
-              <!--                                    <td th:text="${product?.getImagePath()} ?: 'N/A'"></td>-->
-              <td>
-                <th:block th:each="attribute : ${product?.getAttributes()}">
-                  <span th:text="' ' + ${attribute?.getValue()} + ' /'"></span>
-                </th:block>
-              </td>
-              <td th:text="${product?.getLowStockLimit()} ?: 'N/A'">
+<!--    <div class="card">-->
+<!--      <div class="card-body">-->
+<!--        <h3 style="text-align: center">Variants</h3>-->
+<!--        <div class="table-responsive">-->
+<!--          <table id="variantsTable" class="table table-striped table-hover">-->
+<!--            <thead>-->
+<!--            <tr>-->
+<!--              <th scope="col">Variant</th>-->
+<!--              <th scope="col">Low Stock Limit</th>-->
+<!--            </tr>-->
+<!--            </thead>-->
+<!--            <tbody>-->
+<!--            <tr th:each="product : ${product?.getProducts()}">-->
+<!--              &lt;!&ndash;                                    <td th:text="${product?.getImagePath()} ?: 'N/A'"></td>&ndash;&gt;-->
+<!--              <td>-->
+<!--                <th:block th:each="attribute : ${product?.getAttributes()}">-->
+<!--                  <span th:text="' ' + ${attribute?.getValue()} + ' /'"></span>-->
+<!--                </th:block>-->
+<!--              </td>-->
+<!--              <td th:text="${product?.getLowStockLimit()} ?: 'N/A'">-->
 
-              </td>
-              <td>
-                <a class="btn btn-primary rounded-pill text-decoration-none" th:href="'/management/product_variant/update?id='+${product?.getSKU()}">EDIT</a>
-              </td>
-            </tr>
-            <tr th:if="${#lists.isEmpty(product?.getProducts())}">
-              <td rowspan="2">No Existing Products</td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+<!--              </td>-->
+<!--              <td>-->
+<!--                <a class="btn btn-primary rounded-pill text-decoration-none" th:href="'/management/product_variant/update?id='+${product?.getSKU()}">EDIT</a>-->
+<!--              </td>-->
+<!--            </tr>-->
+<!--            <tr th:if="${#lists.isEmpty(product?.getProducts())}">-->
+<!--              <td rowspan="2">No Existing Products</td>-->
+<!--            </tr>-->
+<!--            </tbody>-->
+<!--          </table>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
 
     <!-- CREATE PRODUCT_GROUP SUCCESS/FAIL POPUP MODALS -->
     <div class="modal fade" id="update-product-group-success-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -524,12 +528,12 @@
         }
         check_button_activation();
       });
-      $("#is-waitlistable").change(function (){
-        if($("#is-waitlistable").is(':checked') === $('#is-waitlistable').data("initial-waitlistable-value")){
-          delete updateData['isWaitlistable'];
+      $("#is-wait-list-enabled").change(function (){
+        if($("#is-wait-list-enabled").is(':checked') === $('#is-wait-list-enabled').data("initial-waitlistable-value")){
+          delete updateData['isWaitListEnabled'];
         }
         else{
-          updateData['isWaitlistable'] = $("#is-waitlistable").is(':checked');
+          updateData['isWaitListEnabled'] = $("#is-wait-list-enabled").is(':checked');
         }
         check_button_activation();
       });
@@ -579,11 +583,11 @@
         else{
           $('#currently-stored-is-big-item').text("No");
         }
-        if(currentData['isWaitlistable']){
-          $('#currently-stored-is-waitlistable').text("Yes");
+        if(currentData['isWaitListEnabled']){
+          $('#currently-stored-is-wait-list-enabled').text("Yes");
         }
         else{
-          $('#currently-stored-is-waitlistable').text("No");
+          $('#currently-stored-is-wait-list-enabled').text("No");
         }
         $('#currently-stored-description').text(currentData['description']);
         $('#currently-stored-category').text(currentData['category']['name'])
@@ -605,11 +609,11 @@
         else{
           $('#display-new-is-big-item').text("No");
         }
-        if ($('#is-waitlistable').is(":checked")){
-          $('#display-new-is-waitlistable').text("Yes");
+        if ($('#is-wait-list-enabled').is(":checked")){
+          $('#display-new-is-wait-list-enabled').text("Yes");
         }
         else{
-          $('#display-new-is-waitlistable').text("No");
+          $('#display-new-is-wait-list-enabled').text("No");
         }
         $('#display-new-description').text($('#description').val());
         $('#display-new-category').text($('#categories option:selected').text());
@@ -650,11 +654,11 @@
         else{
           $("#is-big-item-row").css("display", "none");
         }
-        if(('isWaitlistable' in updateData)){
-          $("#is-waitlistable-row").css("display", "");
+        if(('isWaitListEnabled' in updateData)){
+          $("#is-wait-list-enabled-row").css("display", "");
         }
         else{
-          $("#is-waitlistable-row").css("display", "none");
+          $("#is-wait-list-enabled-row").css("display", "none");
         }
         if(('description' in updateData)){
           $("#description-row").css("display", "");
@@ -695,17 +699,17 @@
        * Note: The function may show as unused, however it IS being used.
        *       It shows as unused since the function call is inside the following
        *       Thymeleaf attribute which is from location_update.html:
-       *       - th:attr="onclick=|get_currently_stored_product_group('${product?.getID()}')|"
+       *       - th:attr="onclick=|get_currently_stored_product_group('${product?.getId()}')|"
        */
       function get_currently_stored_product_group(id){
         $.ajax({
           type: "GET",
-          url: '/management/api/product/'.concat(id.toString()),
+          url: '/api/secured/products/'.concat(id.toString()),
           beforeSend: function(xhr) {
-            xhr.setRequestHeader(
-                    $('meta[name=_csrf_header]').attr('content'),
-                    $('meta[name=_csrf]').attr('content')
-            )
+            // xhr.setRequestHeader(
+            //         $('meta[name=_csrf_header]').attr('content'),
+            //         $('meta[name=_csrf]').attr('content')
+            // )
           },
           success: function(data)
           {
@@ -729,15 +733,15 @@
                 console.log(updateData);
 
                 $.ajax({
-                  type: "PUT",
+                  type: "PATCH",
                   url: url,
                   contentType: "application/json",
                   data: JSON.stringify(updateData), // serializes the form's elements.
                   beforeSend: function(xhr) {
-                    xhr.setRequestHeader(
-                            $('meta[name=_csrf_header]').attr('content'),
-                            $('meta[name=_csrf]').attr('content')
-                    )
+                    // xhr.setRequestHeader(
+                    //         $('meta[name=_csrf_header]').attr('content'),
+                    //         $('meta[name=_csrf]').attr('content')
+                    // )
                   },
                   success: function()
                   {
