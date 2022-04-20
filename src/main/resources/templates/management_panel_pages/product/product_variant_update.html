@@ -19,12 +19,11 @@
   </style>
 </head>
 <div layout:fragment="content">
-
   <!--  <div id="create-part-one">-->
   <div style="margin-bottom: 2em;">
     <!-- Return to viewing products button -->
-    <a class="btn btn-outline-primary" href="/management/product/" id="return-to-products-button">
-      Return to Products
+    <a class="btn btn-outline-primary" th:href="'/management/product/update?id='+${variant?.getProduct()?.getId()}" id="return-to-product-button">
+      Return to Product
     </a>
   </div>
   <div>
@@ -254,8 +253,7 @@
           </table>
         </div>
         <div class="col-md-12">
-          <button class="btn btn-success" style="float: right; margin-left: 10px;" onclick="">Save All + Publish</button>
-          <button class="btn btn-warning" style="float: right;" onclick="update_variant_images()">Save All + Not Publish</button>
+          <button class="btn btn-success" style="float: right;" onclick="update_variant_images()">Save All</button>
           <!--      <input class="btn btn-outline-primary" id="submit-create-product-group" type="button"-->
           <!--             value="Submit" data-bs-toggle="modal" data-bs-target="#confirm-product-group-create-modal">-->
         </div>
@@ -265,7 +263,7 @@
   </div>
 
 
-<!-- Start Categories -->
+  <!-- Start Categories -->
   <div class="modal fade" id="edit-categories-modal" tabindex="-1" role="dialog"
        aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
@@ -274,16 +272,16 @@
           <h5 class="modal-title">Edit Categories</h5>
         </div>
         <div class="modal-body">
-<!--          <h5 class="modal-title">Sample Title</h5>-->
+          <!--          <h5 class="modal-title">Sample Title</h5>-->
 
-<!--          <ul th:each="category : ${categories}" th:if="${category?.getParent()?.getId() == null}" id="myUL">-->
-<!--            <li><span th:text="${category?.getName()}" th:id="'category-'+${category?.getId()}" class="caret"></span>-->
-<!--              <ul th:if="${category?.getSubcategories() != null and !(category?.getSubcategories().isEmpty())}"-->
-<!--                  class="nested">-->
-<!--                <li th:each="subCategory : ${category?.getSubcategories()}" th:text="${subCategory?.getName()}"></li>-->
-<!--              </ul>-->
-<!--            </li>-->
-<!--          </ul>-->
+          <!--          <ul th:each="category : ${categories}" th:if="${category?.getParent()?.getId() == null}" id="myUL">-->
+          <!--            <li><span th:text="${category?.getName()}" th:id="'category-'+${category?.getId()}" class="caret"></span>-->
+          <!--              <ul th:if="${category?.getSubcategories() != null and !(category?.getSubcategories().isEmpty())}"-->
+          <!--                  class="nested">-->
+          <!--                <li th:each="subCategory : ${category?.getSubcategories()}" th:text="${subCategory?.getName()}"></li>-->
+          <!--              </ul>-->
+          <!--            </li>-->
+          <!--          </ul>-->
           <button class="btn btn-outline-primary btn-sm button-filter expand-option" type="button">Expand All</button>
           <button class="btn btn-outline-primary btn-sm button-filter collapse-option" type="button">Collapse All</button>
           <button class="btn btn-outline-primary btn-sm button-filter"
@@ -324,52 +322,52 @@
                           onclick="display_delete_modal(this)"></button>
                   <table class="table">
                     <thead>
-                      <tr>
-                        <th scope="col">Subcategory</th>
-                        <th scope="col">Edit</th>
-                        <th scope="col">Delete</th>
-                      </tr>
+                    <tr>
+                      <th scope="col">Subcategory</th>
+                      <th scope="col">Edit</th>
+                      <th scope="col">Delete</th>
+                    </tr>
                     </thead>
                     <tbody th:id="'subcategory-table-'+${categoryStat.index}">
-                      <tr th:if="${#lists.isEmpty(category?.getSubcategories())}" data-has-none="true">
-                        <td>No Subcategories</td>
-                      </tr>
-                      <tr th:each="subCategory : ${category?.getSubcategories()}"
-                          th:id="'subcategory-row-'+${subCategory?.getId()}">
-                        <td th:text="${subCategory?.getName()}" th:id="'subcategory-text-'+${subCategory?.getId()}"></td>
-                        <td style="padding: 5px;">
-                            <button class="btn btn-outline-primary button-edit"
-                                    type="button" style="font-size: 15px;"
-                                    th:data-subcat-id="${subCategory?.getId()}"
-                                    onclick="display_edit_subcategory_modal(this)">
-                              <i class="far fa-edit"></i>
-                            </button>
-                        </td>
-                        <td style="padding: 5px;">
-                          <button class="btn btn-outline-primary button-edit"
-                                  type="button" style="font-size: 15px;"
-                                  th:data-id="${subCategory?.getId()}"
-                                  th:data-type-of-delete="subcategory"
-                                  th:data-name="${subCategory?.getName()}"
-                                  onclick="display_delete_modal(this)">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                              <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                              <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                            </svg>
-                          </button>
-                        </td>
-                      </tr>
+                    <tr th:if="${#lists.isEmpty(category?.getSubcategories())}" data-has-none="true">
+                      <td>No Subcategories</td>
+                    </tr>
+                    <tr th:each="subCategory : ${category?.getSubcategories()}"
+                        th:id="'subcategory-row-'+${subCategory?.getId()}">
+                      <td th:text="${subCategory?.getName()}" th:id="'subcategory-text-'+${subCategory?.getId()}"></td>
+                      <td style="padding: 5px;">
+                        <button class="btn btn-outline-primary button-edit"
+                                type="button" style="font-size: 15px;"
+                                th:data-subcat-id="${subCategory?.getId()}"
+                                onclick="display_edit_subcategory_modal(this)">
+                          <i class="far fa-edit"></i>
+                        </button>
+                      </td>
+                      <td style="padding: 5px;">
+                        <button class="btn btn-outline-primary button-edit"
+                                type="button" style="font-size: 15px;"
+                                th:data-id="${subCategory?.getId()}"
+                                th:data-type-of-delete="subcategory"
+                                th:data-name="${subCategory?.getName()}"
+                                onclick="display_delete_modal(this)">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
                     </tbody>
                     <tfoot>
-                      <tr>
-                        <td>
-                          <button type="button" class="btn btn-primary" id="add-sub-cat-button"
-                                  th:data-subcat-table-id="${categoryStat.index}"
-                                  th:data-parent-cat-id="${category?.getId()}"
-                                  th:data-parent-cat-name="${category?.getName()}"
-                                  onclick="display_create_subcategory_modal(this)">+Add Subcategory</button>
-                        </td>
-                      </tr>
+                    <tr>
+                      <td>
+                        <button type="button" class="btn btn-primary" id="add-sub-cat-button"
+                                th:data-subcat-table-id="${categoryStat.index}"
+                                th:data-parent-cat-id="${category?.getId()}"
+                                th:data-parent-cat-name="${category?.getName()}"
+                                onclick="display_create_subcategory_modal(this)">+Add Subcategory</button>
+                      </td>
+                    </tr>
                     </tfoot>
                   </table>
                 </div>
@@ -606,9 +604,9 @@
       </div>
     </div>
   </div>
-<!-- End Categories-->
+  <!-- End Categories-->
 
-<!-- Start Options -->
+  <!-- Start Options -->
   <div class="modal fade" id="edit-options-modal" tabindex="-1" role="dialog"
        aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
@@ -939,7 +937,7 @@
       </div>
     </div>
   </div>
-<!-- End Options -->
+  <!-- End Options -->
   <div class="modal fade" id="confirm-delete-modal" tabindex="-1" role="dialog"
        aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -982,10 +980,10 @@
               <th>Price</th>
               <td id="display-new-price"></td>
             </tr>
-<!--            <tr>-->
-<!--              <th>Is Published</th>-->
-<!--              <td id="display-new-is-published"></td>-->
-<!--            </tr>-->
+            <!--            <tr>-->
+            <!--              <th>Is Published</th>-->
+            <!--              <td id="display-new-is-published"></td>-->
+            <!--            </tr>-->
             <tr>
               <th>Is Big Item</th>
               <td id="display-new-is-big-item"></td>
@@ -1262,7 +1260,7 @@
 
     /**
      * Create Parent Category Part 1 of 2
-    */
+     */
     function display_new_parent_category_details(){
       $('#display-new-parent-category-name').text($('#new-parent-category-input').val());
       $('#confirm-parent-category-submit').modal('show');
@@ -1272,8 +1270,8 @@
 
     /**
      * Create Parent Category Part 2 of 2
-    */
-     function save_new_parent_category(){
+     */
+    function save_new_parent_category(){
       const data = {
         'name': $('#new-parent-category-input').val().trim(),
         'parentId': null
@@ -1532,7 +1530,7 @@
 
     /**
      * Create Subcategory Part 1 of 3
-    */
+     */
     function display_create_subcategory_modal(element){
       $('#new-subcategory-input-label').text("Enter New Subcategory Name for Parent Category \""+$(element).data('parent-cat-name')+"\"");
 
@@ -2882,39 +2880,39 @@
     //Start Products
 
     function display_new_product_details(typeOfSubmit){
-        $('#display-new-name').text($('#name').val());
-        $('#display-new-brand').text($('#brand').val());
-        $('#display-new-price').text("$" + $('#price').val());
-        // if ($('#is-published').is(":checked")){
-        //     $('#display-new-is-published').text("Yes");
-        // }
-        // else{
-        //     $('#display-new-is-published').text("No");
-        // }
-        if ($('#is-big-item').is(":checked")){
-            $('#display-new-is-big-item').text("Yes");
-        }
-        else{
-            $('#display-new-is-big-item').text("No");
-        }
-        if ($('#is-waitlistable').is(":checked")){
-            $('#display-new-is-waitlisted').text("Yes");
-        }
-        else{
-            $('#display-new-is-waitlisted').text("No");
-        }
-        $('#display-new-description').text($('#description').val());
-        $('#display-new-category').text($('#categories option:selected').text());
+      $('#display-new-name').text($('#name').val());
+      $('#display-new-brand').text($('#brand').val());
+      $('#display-new-price').text("$" + $('#price').val());
+      // if ($('#is-published').is(":checked")){
+      //     $('#display-new-is-published').text("Yes");
+      // }
+      // else{
+      //     $('#display-new-is-published').text("No");
+      // }
+      if ($('#is-big-item').is(":checked")){
+        $('#display-new-is-big-item').text("Yes");
+      }
+      else{
+        $('#display-new-is-big-item').text("No");
+      }
+      if ($('#is-waitlistable').is(":checked")){
+        $('#display-new-is-waitlisted').text("Yes");
+      }
+      else{
+        $('#display-new-is-waitlisted').text("No");
+      }
+      $('#display-new-description').text($('#description').val());
+      $('#display-new-category').text($('#categories option:selected').text());
 
-        let modalFooter = `
+      let modalFooter = `
         <button class="btn btn-outline-default" data-bs-dismiss="modal">Return</button>
         <button id="save-new-product-button-${typeOfSubmit}"
                   class="btn btn-success"
                   onclick="submit_all(${typeOfSubmit})">Save</button>
         `;
-        $('#confirm-create-product-modal-footer').empty();
-        $('#confirm-create-product-modal-footer').html(modalFooter);
-        $('#confirm-create-product-modal').modal('show');
+      $('#confirm-create-product-modal-footer').empty();
+      $('#confirm-create-product-modal-footer').html(modalFooter);
+      $('#confirm-create-product-modal').modal('show');
     }
 
     function set_all_low_stock_input(){
@@ -3575,7 +3573,7 @@
 
       $('#create-product-part-1-info').css('opacity', 0.5);
       $('#create-product-part-1-info').css('pointer-events', 'none');
-      $('#return-to-products-button').css('display', 'none');
+      $('#return-to-product-button').css('display', 'none');
       $('#create-product-part-2-images').removeData("product-id");
       $('#create-product-part-2-images').attr("data-product-id", productId);
       $('#create-product-part-2-images').css('display', '');
