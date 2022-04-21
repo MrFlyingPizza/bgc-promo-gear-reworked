@@ -48,7 +48,7 @@ public class ProductVariant extends Auditable implements Serializable {
                     @JoinColumn(name = "option_id", referencedColumnName = "option_id")
             }
     )
-    private Set<OptionValue> optionValues;
+    private Set<OptionValue> optionValues = new java.util.LinkedHashSet<>();
 
     @OneToOne(mappedBy = "variant")
     private GlobalInventoryLevel globalInventoryLevel;
