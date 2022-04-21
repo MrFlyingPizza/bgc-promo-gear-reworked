@@ -23,17 +23,12 @@ public class VariantPartialUpdateExpectedOptionCountValidator extends ExpectedOp
     @Override
     @Transactional(readOnly = true)
     public boolean isValid(SecuredProductVariantPartialUpdate variantPartialUpdate, ConstraintValidatorContext constraintValidatorContext) {
-        ProductVariant variant = variantRepo.getById(variantPartialUpdate.getId());
-        final boolean isInUse = variantPartialUpdate.getIsInUse() == null ? variant.getIsInUse() : variantPartialUpdate.getIsInUse();
-        final Collection<?> values;
-        if (variantPartialUpdate.getOptionValueIds() == null) {
-            values = variant.getOptionValues();
-        } else {
-            values = variantPartialUpdate.getOptionValueIds();
-        }
-        if (variantPartialUpdate.getOptionValueIds() == null && !isInUse) {
-            return true;
-        }
-        return validate(values.size(), productRepo.getById(variantPartialUpdate.getProductId()).getOptions().size());
+        final Collection<?> values = variantPartialUpdate.getIsInUse() != null
+                && variantPartialUpdate.getIsInUse()
+                && variantPartialUpdate.getOptionValueIds() == null
+                ? variantRepo.getById(variantPartialUpdate.getId()).getOptionValues()
+                : variantPartialUpdate.getOptionValueIds();
+
+        return values == null || validate(values.size(), productRepo.getById(variantPartialUpdate.getProductId()).getOptions().size());
     }
 }

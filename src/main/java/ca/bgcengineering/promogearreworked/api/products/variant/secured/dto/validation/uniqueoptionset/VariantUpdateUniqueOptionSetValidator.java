@@ -23,7 +23,13 @@ public class VariantUpdateUniqueOptionSetValidator extends UniqueOptionSetValida
     @Override
     @Transactional(readOnly = true)
     public boolean isValid(SecuredProductVariantUpdate variantUpdate, ConstraintValidatorContext constraintValidatorContext) {
+
+        final Long variantId = variantUpdate.getId();
         return validate(variantUpdate.getOptionValueIds().stream().map(id -> optionValueRepo.getById(id)).collect(Collectors.toSet()),
-                productRepo.getById(variantUpdate.getProductId()).getVariants().stream().map(ProductVariant::getOptionValues).collect(Collectors.toList()));
+                productRepo.getById(variantUpdate.getProductId()).getVariants()
+                .stream()
+                .filter(iterVariant -> !iterVariant.getId().equals(variantId))
+                .map(ProductVariant::getOptionValues)
+                .collect(Collectors.toList()));
     }
 }
