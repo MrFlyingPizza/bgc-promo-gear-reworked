@@ -3,6 +3,7 @@ package ca.bgcengineering.promogearreworked.api.products.variant.secured.dto.val
 import ca.bgcengineering.promogearreworked.api.products.variant.secured.dto.SecuredProductVariantCreate;
 import ca.bgcengineering.promogearreworked.persistence.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -14,7 +15,8 @@ public class VariantCreateExpectedOptionCountValidator extends ExpectedOptionCou
     private ProductRepository productRepo;
 
     @Override
-    public boolean isValid(SecuredProductVariantCreate productVariantCreate, ConstraintValidatorContext constraintValidatorContext) {
-        return validate(productVariantCreate.getOptionValueIds(), productVariantCreate.getProductId(), productRepo);
+    @Transactional(readOnly = true)
+    public boolean isValid(SecuredProductVariantCreate variantCreate, ConstraintValidatorContext constraintValidatorContext) {
+        return validate(variantCreate.getOptionValueIds().size(), productRepo.getById(variantCreate.getProductId()).getOptions().size());
     }
 }

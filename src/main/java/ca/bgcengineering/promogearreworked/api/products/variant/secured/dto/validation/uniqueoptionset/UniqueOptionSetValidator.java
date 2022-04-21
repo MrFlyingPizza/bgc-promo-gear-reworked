@@ -13,15 +13,9 @@ import java.util.stream.Collectors;
 public abstract class UniqueOptionSetValidator {
 
     // assumes that there are the same number of option values as option that were specified for the product.
-    protected static boolean validate(Long productId,
-                               List<Long> optionValueIds,
-                               ProductRepository productRepo,
-                               OptionValueRepository optionValueRepo) {
-        Product product = productRepo.getById(productId);
-        Set<OptionValue> newOptionValues = optionValueIds.stream().map(id -> optionValueRepo.findById(id).orElseThrow())
-                .collect(Collectors.toSet());
-        for (ProductVariant variant : product.getVariants()) {
-            if (variant.getOptionValues().equals(newOptionValues)) {
+    protected static boolean validate(Set<OptionValue> candidateValueSet, List<Set<OptionValue>> existingValueSets) {
+        for (Set<OptionValue> existingValueSet : existingValueSets) {
+            if (candidateValueSet.equals(existingValueSet)) {
                 return false;
             }
         }
