@@ -6,8 +6,9 @@ import {CircularProgress, Typography} from "@mui/material";
 import {Product} from "types/Product";
 import {Category} from "types/Category";
 import ProductCard from "./product_card/ProductCard";
+import StoreContainer from "components/shared/StoreContainer";
 
-interface SelectedCategory {
+type SelectedCategory = {
     id: number,
     name: string,
 
@@ -61,7 +62,7 @@ function Store() {
     }
 
     return (
-        <div className="d-flex flex-column" id="store-container">
+        <StoreContainer>
             <div className="d-flex" id="top-container">
                 <div id="empty-space"/>
                 <div>
@@ -120,13 +121,13 @@ function Store() {
                 </div>
                 <div className="gallery-container">
                     {
-                        products?.length > 0 && products.map((item) => (<ProductCard key={item.id} item={item}/>))
+                        products?.length > 0 && products.map((item) => (<ProductCard key={item.id} product={item}/>))
                         || (!isLoadingProducts && <span>No items found.</span>)
                     }
                     {isLoadingProducts && <CircularProgress/>}
                 </div>
             </div>
-        </div>
+        </StoreContainer>
     );
 }
 
