@@ -7,9 +7,9 @@ import ProductVariantAvailability from "types/ProductVariantAvailability";
 import ProductCardImage from "components/store/product_card/ProductCardImage";
 import ProductCardOptions from "components/store/product_card/ProductCardOptions";
 
-function ProductCard(props: { item: Product }) {
+function ProductCard(props: { product: Product }) {
 
-    const [product] = useState(props.item);
+    const [product] = useState(props.product);
 
     const [shownVariant, setShownVariant] = useState(() => {
         const rank = (availability: ProductVariantAvailability): number =>
@@ -60,7 +60,6 @@ function ProductCard(props: { item: Product }) {
         return {value: variant.id.toString(), src: variant.image?.src, tooltip: tooltip};
     });
 
-    console.log(shownVariant.image);
     return (
         <Card style={{width: "300px"}}>
             <AvailabilityLabel availability={shownVariant.availability}/>
