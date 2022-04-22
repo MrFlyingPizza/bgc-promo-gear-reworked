@@ -32,12 +32,6 @@ public abstract class GeneralProductMapper {
                 page.getSort().isSorted());
     }
 
-    // only include valid product variants
-    @BeforeMapping
-    protected void removeInvalidProductVariants(Product product) {
-        product.setVariants(product.getVariants().stream().filter(ProductVariant::getIsInUse).collect(Collectors.toSet()));
-    }
-
     @Mapping(source = "optionValues", target = "options")
     @Mapping(source = "id", target = "availability")
     protected abstract GeneralProductResponse.NestedProductVariant map(ProductVariant productVariant);

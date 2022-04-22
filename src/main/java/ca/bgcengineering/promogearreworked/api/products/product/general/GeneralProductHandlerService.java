@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,16 +21,22 @@ public class GeneralProductHandlerService {
 
     private final ProductService productService;
 
+    private Set<ProductVariant> filterVariants(Set<ProductVariant> variants) {
+        return variants.stream().filter(ProductVariant::getIsInUse).collect(Collectors.toSet());
+    }
+
     Product handleProductGet(Long productId) {
-        return productService.getProduct(productId);
+        Product product = productService.getProduct(productId);
+        product.setVariants(filterVariants(product.getVariants()));
+        return product;
     }
 
     Page<Product> handleProductBatchGet(Predicate predicate, Pageable pageable) {
         QProduct product = QProduct.product;
         predicate = product.isPublished.eq(true).and(predicate);
         Page<Product> products = productService.getProducts(predicate, pageable);
-        products.forEach(item -> item.setVariants(item.getVariants().stream().filter(ProductVariant::getIsInUse).collect(Collectors.toSet())));
-        return productService.getProducts(predicate, pageable);
+        products.forEach(item -> item.setVariants(filterVariants(item.getVariants())));
+        return products;
     }
 
 }
