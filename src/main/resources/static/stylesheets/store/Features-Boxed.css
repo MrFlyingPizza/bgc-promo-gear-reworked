@@ -186,7 +186,7 @@ button {
     overflow: hidden;
 }
 
-.out-of-stock-label{
+.availability-label{
     background-color: white;
     border-radius: 6px;
     outline: 1.5px solid #dc3545;

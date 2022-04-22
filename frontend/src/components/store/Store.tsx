@@ -27,7 +27,6 @@ function Store() {
     const [categories, setCategories] = useState<Category[]>(null);
     const [selectedCategory, setSelectedCategory] = useState<SelectedCategory>(null);
 
-    //TODO: Switch back to general product API (temporary measure to get needed attributes)
     useEffect(() => {
         setProducts([]);
         setIsLoadingProducts(true);
@@ -35,7 +34,7 @@ function Store() {
             "isPublished": true,
             "category.id": selectedCategory?.id
         };
-        axios.get(`${url}/api/secured/products`, {params: params}).then((response) => {
+        axios.get(`${url}/api/products`, {params: params}).then((response) => {
             setProducts(response.data.products);
         }).catch((error) => {
             console.log(error);

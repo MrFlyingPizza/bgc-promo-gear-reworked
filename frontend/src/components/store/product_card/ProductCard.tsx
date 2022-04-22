@@ -1,49 +1,77 @@
 import * as React from "react";
 import {useState} from "react";
-import ProductCardImage from "./ProductCardImage";
-import ProductVariantAvailability from "types/ProductVariantAvailability";
 import {Chip} from "@mui/material";
 import {Product} from "types/Product";
+import {Card} from "react-bootstrap";
+import ProductVariantAvailability from "types/ProductVariantAvailability";
+import ProductCardImage from "components/store/product_card/ProductCardImage";
+import ProductCardOptions from "components/store/product_card/ProductCardOptions";
 
 function ProductCard(props: { item: Product }) {
 
     const [product] = useState(props.item);
-    const [shownVariant] = useState(product.variants[0]); // published products always have at least 1 variant
 
-    const StockLabel = (props: { availability: ProductVariantAvailability }) => {
+    const [shownVariant, setShownVariant] = useState(() => {
+        const rank = (availability: ProductVariantAvailability): number =>
+            availability == ProductVariantAvailability.AVAILABLE && 2
+            || availability == ProductVariantAvailability.WAIT_LIST && 1
+            || availability == ProductVariantAvailability.UNAVAILABLE && 0;
+        let initialVariant = product.variants[0];
+        product.variants.forEach(variant => {
+            if (rank(variant.availability) > rank(initialVariant.availability)) {
+                initialVariant = variant;
+            }
+        });
+        return initialVariant;
+    }); // published products always have at least 1 variant
+
+    const variantMap = new Map(product.variants.map(variant => {
+        return [variant.id.toString(), variant];
+    }));
+
+    const AvailabilityLabel = (props: { availability: ProductVariantAvailability }) => {
 
         const [availability] = useState(props.availability);
 
+        const AvailabilityChip = (props: { label: string, color: "info" | "warning" | "error" }) => {
+            return (
+                <Chip className={"availability-label"} label={props.label} variant={"filled"} size={"small"}
+                      color={props.color}/>
+            )
+        }
+
         return (
             availability == ProductVariantAvailability.AVAILABLE
-            && <Chip label={"Available"} variant={"outlined"} size={"small"} color={"info"}/>
+            && <AvailabilityChip label={"Available"} color={"info"}/>
             || availability == ProductVariantAvailability.WAIT_LIST
-            && <Chip label={"Wait-List"} variant={"outlined"} size={"small"} color={"warning"}/>
+            && <AvailabilityChip label={"Wait-List"} color={"warning"}/>
             || availability == ProductVariantAvailability.UNAVAILABLE
-            && <Chip label={"Unavailable"} variant={"outlined"} size={"small"} color={"error"}/>
+            && <AvailabilityChip label={"Unavailable"} color={"error"}/>
         )
     }
 
+    // <a href={"/store/product/?id=" + product.id} style={{textDecoration: 'none', color: 'black'}}>
+    //     <ProductCardImage image={shownVariant.image}/>
+    // </a>
+
+    const cartOptions = product.variants.map(variant => {
+        const tooltip = <ul>{variant.options.map(option => (
+            <li key={option.optionId}>{option.name} - {option.value}</li>))}</ul>;
+        return {value: variant.id.toString(), src: variant.image?.src, tooltip: tooltip};
+    });
+
+    console.log(shownVariant.image);
     return (
-        <a href={"/store/product/?id=" + product.id} style={{textDecoration: 'none', color: 'black'}}>
-            <div className="product-container">
-                <div className="image_container">
-                    <ProductCardImage image={product.images.length > 0 && product.images.sort((a, b) => {
-                        return a.position < b.position ? 0 : 1
-                    })[0]}
-                    />
-                    <StockLabel availability={shownVariant.availability}/>
-                    <div className="description-container">
-                        <span className={"description"}>{product.description}</span>
-                    </div>
-                </div>
-                <div className="product_name_container">
-                    <span className="product_name">
-                        {product.name}
-                    </span>
-                </div>
-            </div>
-        </a>
+        <Card style={{width: "300px"}}>
+            <AvailabilityLabel availability={shownVariant.availability}/>
+            <ProductCardImage image={shownVariant.image}/>
+            <Card.Body>
+                <Card.Title>{product.name}</Card.Title>
+                <ProductCardOptions initialValue={shownVariant.id.toString()} values={cartOptions}
+                                    onChange={value => setShownVariant(variantMap.get(value))}/>
+                <Card.Text>{product.description}</Card.Text>
+            </Card.Body>
+        </Card>
     )
 }
 
