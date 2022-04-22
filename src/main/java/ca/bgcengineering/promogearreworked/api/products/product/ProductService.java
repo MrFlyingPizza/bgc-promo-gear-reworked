@@ -3,6 +3,7 @@ package ca.bgcengineering.promogearreworked.api.products.product;
 import ca.bgcengineering.promogearreworked.api.products.exceptions.ProductNotFoundException;
 import ca.bgcengineering.promogearreworked.persistence.entities.Option;
 import ca.bgcengineering.promogearreworked.persistence.entities.Product;
+import ca.bgcengineering.promogearreworked.persistence.entities.QProduct;
 import ca.bgcengineering.promogearreworked.persistence.repositories.ProductRepository;
 import ca.bgcengineering.promogearreworked.persistence.repositories.ProductVariantRepository;
 import com.querydsl.core.types.Predicate;
@@ -27,6 +28,12 @@ public class ProductService {
     public boolean checkProductExists(Long productId) {
         assert productId != null;
         return repo.existsById(productId);
+    }
+
+    public boolean checkProductExistsAndIsPublished(Long productId) {
+        assert productId != null;
+        QProduct product = QProduct.product;
+        return repo.exists(product.id.eq(productId).and(product.isPublished.eq(true)));
     }
 
     public Product getProduct(Long productId) throws ProductNotFoundException {
