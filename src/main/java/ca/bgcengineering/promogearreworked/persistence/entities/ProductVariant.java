@@ -36,7 +36,7 @@ public class ProductVariant extends Auditable implements Serializable {
     @Column(name = "is_in_use", nullable = false)
     private Boolean isInUse;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "product_variant_has_option_value",
             joinColumns = {

@@ -67,11 +67,11 @@ public abstract class SecuredProductVariantMapper {
     }
 
     protected ProductImage mapProductImageFromId(Long imageId) {
-        return imageId == null || imageId == 0 ? null : imageRepo.getById(imageId);
+        return imageId == null || imageId == 0 ? null : imageRepo.findById(imageId).orElseThrow();
     }
 
     protected Product mapProductFromId(Long productId) {
-        return productId == null || productId == 0 ? null : productRepo.getById(productId);
+        return productId == null || productId == 0 ? null : productRepo.findById(productId).orElseThrow();
     }
 
     protected OptionValue map(Long optionValueId) {

@@ -24,20 +24,6 @@ public class ProductVariantService {
     private final InventoryLevelRepository inventoryLevelRepo;
     private final OfficeLocationRepository officeLocationRepo;
 
-    private boolean checkProductVariantHasExpectedOptions(ProductVariant variant) {
-        assert variant != null;
-        assert variant.getProduct() != null;
-        assert variant.getOptionValues() != null;
-        Set<Option> expectedOptions = variant.getProduct().getOptions();
-        Set<Option> givenOptions = variant.getOptionValues().stream().map(OptionValue::getOption).collect(Collectors.toSet());
-        return expectedOptions.equals(givenOptions);
-    }
-
-    private boolean checkProductVariantOptionsValid(ProductVariant productVariant) {
-        assert productVariant != null;
-        return checkProductVariantHasExpectedOptions(productVariant);
-    }
-
     public boolean checkProductVariantExists(Long variantId) {
         assert variantId != null;
         return variantRepo.existsById(variantId);
