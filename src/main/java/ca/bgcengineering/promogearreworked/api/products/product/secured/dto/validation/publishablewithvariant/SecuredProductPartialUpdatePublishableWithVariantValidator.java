@@ -3,7 +3,6 @@ package ca.bgcengineering.promogearreworked.api.products.product.secured.dto.val
 import ca.bgcengineering.promogearreworked.api.products.product.secured.dto.SecuredProductPartialUpdate;
 import ca.bgcengineering.promogearreworked.persistence.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -15,7 +14,6 @@ public class SecuredProductPartialUpdatePublishableWithVariantValidator extends 
     private ProductRepository repo;
 
     @Override
-    @Transactional
     public boolean isValid(SecuredProductPartialUpdate productPartialUpdate, ConstraintValidatorContext context) {
         return validate(productPartialUpdate.getId(), productPartialUpdate.getIsPublished(), repo);
     }

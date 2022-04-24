@@ -1,19 +1,18 @@
 package ca.bgcengineering.promogearreworked.api.products.variant;
 
 import ca.bgcengineering.promogearreworked.api.products.exceptions.ProductVariantNotFoundException;
-import ca.bgcengineering.promogearreworked.persistence.entities.*;
+import ca.bgcengineering.promogearreworked.persistence.entities.InventoryLevel;
+import ca.bgcengineering.promogearreworked.persistence.entities.OfficeLocation;
+import ca.bgcengineering.promogearreworked.persistence.entities.ProductVariant;
 import ca.bgcengineering.promogearreworked.persistence.repositories.InventoryLevelRepository;
 import ca.bgcengineering.promogearreworked.persistence.repositories.OfficeLocationRepository;
 import ca.bgcengineering.promogearreworked.persistence.repositories.ProductVariantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -34,7 +33,6 @@ public class ProductVariantService {
         return variantRepo.existsByProductIdAndId(productId, variantId);
     }
 
-    @Transactional(readOnly = true)
     public ProductVariantAvailability getProductVariantAvailability(Long variantId) {
         assert variantId != null;
         ProductVariant variant = variantRepo.getById(variantId);

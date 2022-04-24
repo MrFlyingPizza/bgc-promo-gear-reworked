@@ -64,12 +64,10 @@ public class GeneralOrderHandlerService {
         return orders;
     }
 
-    @Transactional
     List<Order> handleOrderBatchGet(Long userId) {
         return service.getOrders(userId);
     }
 
-    @Transactional
     Order handleOrderGet(Long userId, Long orderId) {
         return service.getOrder(userId, orderId);
     }
