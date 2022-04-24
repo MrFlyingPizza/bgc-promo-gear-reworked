@@ -5,7 +5,6 @@ import ca.bgcengineering.promogearreworked.api.products.variant.ProductVariantSe
 import ca.bgcengineering.promogearreworked.persistence.entities.OptionValue;
 import ca.bgcengineering.promogearreworked.persistence.entities.Product;
 import ca.bgcengineering.promogearreworked.persistence.entities.ProductVariant;
-import org.mapstruct.BeforeMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;

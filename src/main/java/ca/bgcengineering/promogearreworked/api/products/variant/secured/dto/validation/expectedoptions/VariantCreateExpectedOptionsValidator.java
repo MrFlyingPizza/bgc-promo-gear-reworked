@@ -4,7 +4,6 @@ import ca.bgcengineering.promogearreworked.api.products.variant.secured.dto.Secu
 import ca.bgcengineering.promogearreworked.persistence.repositories.ProductRepository;
 import ca.bgcengineering.promogearreworked.persistence.repositories.OptionValueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -20,7 +19,6 @@ public class VariantCreateExpectedOptionsValidator extends ExpectedOptionsValida
     private OptionValueRepository optionValueRepo;
 
     @Override
-    @Transactional(readOnly = true)
     public boolean isValid(SecuredProductVariantCreate variantCreate, ConstraintValidatorContext constraintValidatorContext) {
         return validate(variantCreate.getOptionValueIds().stream().map(id -> optionValueRepo.getById(id)).collect(Collectors.toSet()),
                 productRepo.getById(variantCreate.getProductId()).getOptions());
