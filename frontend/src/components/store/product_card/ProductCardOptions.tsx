@@ -1,8 +1,8 @@
 import * as React from "react";
-import {Badge, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Tooltip} from "@mui/material";
+import {FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Tooltip} from "@mui/material";
 import {ChangeEvent, ReactNode, useState} from "react";
 import {Image} from "react-bootstrap";
-import {blue, grey} from "@mui/material/colors";
+import CheckIcon from '@mui/icons-material/Check';
 
 function ProductCardOptions(props: {
     initialValue: string,
@@ -27,7 +27,7 @@ function ProductCardOptions(props: {
         );
 
         const checkIcon = (
-            <Badge variant={"dot"} color={"primary"}>{icon}</Badge>
+            <CheckIcon style={{height: 24, width: 24}}/>
         );
 
         const radio = <FormControlLabel key={item.value} control={<Radio icon={icon} checkedIcon={checkIcon}/>} label={null} value={item.value}/>;
