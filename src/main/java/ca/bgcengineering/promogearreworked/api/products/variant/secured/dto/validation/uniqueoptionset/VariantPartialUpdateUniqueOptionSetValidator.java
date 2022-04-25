@@ -7,7 +7,6 @@ import ca.bgcengineering.promogearreworked.persistence.repositories.ProductRepos
 import ca.bgcengineering.promogearreworked.persistence.repositories.OptionValueRepository;
 import ca.bgcengineering.promogearreworked.persistence.repositories.ProductVariantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -27,7 +26,6 @@ public class VariantPartialUpdateUniqueOptionSetValidator extends UniqueOptionSe
     private OptionValueRepository optionValueRepo;
 
     @Override
-    @Transactional(readOnly = true)
     public boolean isValid(SecuredProductVariantPartialUpdate variantPartialUpdate, ConstraintValidatorContext constraintValidatorContext) {
         Set<OptionValue> values = null;
         if (variantPartialUpdate.getIsInUse() != null && variantPartialUpdate.getIsInUse() && variantPartialUpdate.getOptionValueIds() == null) {

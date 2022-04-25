@@ -4,7 +4,6 @@ import ca.bgcengineering.promogearreworked.persistence.entities.GlobalInventoryL
 import ca.bgcengineering.promogearreworked.persistence.entities.OptionValue;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,12 +11,10 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public abstract class SecuredGlobalInventoryLevelMapper {
 
-    @Transactional
     @Mapping(source = "variant.product", target = "product")
     @Mapping(source = "variant.optionValues", target = "variant.options")
     public abstract SecuredGlobalInventoryLevelResponse toResponse(GlobalInventoryLevel inventoryLevel);
 
-    @Transactional
     public SecuredGlobalInventoryLevelBatchResponse toBatchResponse(List<GlobalInventoryLevel> globalInventoryLevels) {
         return new SecuredGlobalInventoryLevelBatchResponse(globalInventoryLevels.stream().map(this::toResponse).collect(Collectors.toList()));
     }

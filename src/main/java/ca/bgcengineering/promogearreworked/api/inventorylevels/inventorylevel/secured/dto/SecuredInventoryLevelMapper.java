@@ -7,7 +7,6 @@ import ca.bgcengineering.promogearreworked.persistence.repositories.UserReposito
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.stream.Collectors;
 
@@ -42,10 +41,8 @@ public abstract class SecuredInventoryLevelMapper {
 
     @Mapping(source = "variant.product", target = "product")
     @Mapping(source = "variant.optionValues", target = "variant.options")
-    @Transactional
     public abstract SecuredInventoryLevelResponse toResponse(InventoryLevel inventoryLevel);
 
-    @Transactional
     public SecuredInventoryLevelBatchResponse toBatchResponse(Page<InventoryLevel> page) {
         return new SecuredInventoryLevelBatchResponse(page.getContent().stream().map(this::toResponse).collect(Collectors.toList()),
                 page.getTotalPages(),

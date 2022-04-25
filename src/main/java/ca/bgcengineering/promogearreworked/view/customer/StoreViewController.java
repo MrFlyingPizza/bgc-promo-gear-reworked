@@ -3,6 +3,7 @@ package ca.bgcengineering.promogearreworked.view.customer;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -32,9 +33,10 @@ public class StoreViewController {
     }
     */
 
-    @GetMapping("/product")
-    public String showProductPage(Model model, @RequestParam int id){
-        return "error_pages/constructionStore";
+    @GetMapping("/product/{productId}")
+    public String showProductPage(Model model, @PathVariable Long productId){
+        model.addAttribute("productId", productId);
+        return "store_pages/product";
     }
 
     @GetMapping("cart")

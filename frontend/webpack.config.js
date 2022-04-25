@@ -6,7 +6,8 @@ module.exports = {
     mode: 'production',
     entry: {
         cart: './src/pages/cart/cart.tsx',
-        store: './src/pages/store/store.tsx'
+        store: './src/pages/store/store.tsx',
+        product: './src/pages/product/product.tsx',
     },
     watchOptions: {
         aggregateTimeout: 25000,
