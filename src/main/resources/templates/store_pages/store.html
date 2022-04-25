@@ -3,19 +3,7 @@
 <head>
     <title>Store</title>
 </head>
-<div layout:fragment="content">
-    <div class="card-store-container" style="padding: 0 0;margin-top: 20px;margin-bottom: 20px;">
-        <div class="card shadow-sm" style="margin: 18px;">
-            <div class="card-body" style="padding: 18px 40px 0;">
-                <div class="align-items-stretch front-content" style="font-family: 'Poppins', sans-serif;">
-
-                    <div layout:fragment="react-content" id="store-root">
-                        <script th:src="@{/javascript/store.bundle.js}"></script>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
+<div layout:fragment="content" id="store-root">
+    <script th:src="@{/javascript/store.bundle.js}"></script>
 </div>
 </html>
