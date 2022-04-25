@@ -1,7 +1,8 @@
 import * as React from "react";
-import {FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Tooltip} from "@mui/material";
+import {Badge, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Tooltip} from "@mui/material";
 import {ChangeEvent, ReactNode, useState} from "react";
 import {Image} from "react-bootstrap";
+import {blue, grey} from "@mui/material/colors";
 
 function ProductCardOptions(props: {
     initialValue: string,
@@ -22,18 +23,16 @@ function ProductCardOptions(props: {
         const src = item.src || "https://i.pinimg.com/originals/3e/84/09/3e8409dcdd012b4bcda84a710f2d1052.jpg";
 
         const icon = (
-            <Image style={{height: 32, width: 32, objectFit: "contain"}} roundedCircle src={src}/>
+            <Image style={{height: 24, width: 24, objectFit: "contain"}} roundedCircle src={src}/>
         );
 
         const checkIcon = (
-            <Image style={{height: 32, width: 32, objectFit: "contain"}} rounded src={src}/>
+            <Badge variant={"dot"} color={"primary"}>{icon}</Badge>
         );
 
-        return (
-            <Tooltip key={item.value} title={item.tooltip}>
-                <FormControlLabel control={<Radio icon={icon} checkedIcon={checkIcon}/>} label={null} value={item.value}/>
-            </Tooltip>
-        )
+        const radio = <FormControlLabel key={item.value} control={<Radio icon={icon} checkedIcon={checkIcon}/>} label={null} value={item.value}/>;
+
+        return item.tooltip && <Tooltip key={item.value} title={item.tooltip}>{radio}</Tooltip> || radio;
     });
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>, value: string) => {

@@ -1,6 +1,6 @@
 import * as React from "react";
 import {useState} from "react";
-import {Chip} from "@mui/material";
+import {Chip, List, ListItem, ListItemText} from "@mui/material";
 import {Product} from "types/Product";
 import {Card} from "react-bootstrap";
 import ProductVariantAvailability from "types/ProductVariantAvailability";
@@ -55,8 +55,16 @@ function ProductCard(props: { product: Product }) {
     // </a>
 
     const cartOptions = product.variants.map(variant => {
-        const tooltip = <ul>{variant.options.map(option => (
-            <li key={option.optionId}>{option.name} - {option.value}</li>))}</ul>;
+        const tooltip = (
+            variant.options.length > 0 &&
+            <List>
+                {variant.options.map(option => (
+                    <ListItem key={option.optionId}>
+                        <Chip color={"primary"} label={option.value}/>
+                    </ListItem>
+                ))}
+            </List>
+        );
         return {value: variant.id.toString(), src: variant.image?.src, tooltip: tooltip};
     });
 
