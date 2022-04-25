@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{front_layout.html}">
+<head>
+    <title>Product</title>
+</head>
+
+<div layout:fragment="content" id="product-root" th:data-productId="${productId}">
+    <script th:src="@{/javascript/product.bundle.js}"></script>
+</div>
+</html>

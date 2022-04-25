@@ -1,19 +1,18 @@
 package ca.bgcengineering.promogearreworked.api.products.variant;
 
 import ca.bgcengineering.promogearreworked.api.products.exceptions.ProductVariantNotFoundException;
-import ca.bgcengineering.promogearreworked.persistence.entities.*;
+import ca.bgcengineering.promogearreworked.persistence.entities.InventoryLevel;
+import ca.bgcengineering.promogearreworked.persistence.entities.OfficeLocation;
+import ca.bgcengineering.promogearreworked.persistence.entities.ProductVariant;
 import ca.bgcengineering.promogearreworked.persistence.repositories.InventoryLevelRepository;
 import ca.bgcengineering.promogearreworked.persistence.repositories.OfficeLocationRepository;
 import ca.bgcengineering.promogearreworked.persistence.repositories.ProductVariantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -23,20 +22,6 @@ public class ProductVariantService {
     private final ProductVariantRepository variantRepo;
     private final InventoryLevelRepository inventoryLevelRepo;
     private final OfficeLocationRepository officeLocationRepo;
-
-    private boolean checkProductVariantHasExpectedOptions(ProductVariant variant) {
-        assert variant != null;
-        assert variant.getProduct() != null;
-        assert variant.getOptionValues() != null;
-        Set<Option> expectedOptions = variant.getProduct().getOptions();
-        Set<Option> givenOptions = variant.getOptionValues().stream().map(OptionValue::getOption).collect(Collectors.toSet());
-        return expectedOptions.equals(givenOptions);
-    }
-
-    private boolean checkProductVariantOptionsValid(ProductVariant productVariant) {
-        assert productVariant != null;
-        return checkProductVariantHasExpectedOptions(productVariant);
-    }
 
     public boolean checkProductVariantExists(Long variantId) {
         assert variantId != null;
@@ -48,7 +33,6 @@ public class ProductVariantService {
         return variantRepo.existsByProductIdAndId(productId, variantId);
     }
 
-    @Transactional(readOnly = true)
     public ProductVariantAvailability getProductVariantAvailability(Long variantId) {
         assert variantId != null;
         ProductVariant variant = variantRepo.getById(variantId);

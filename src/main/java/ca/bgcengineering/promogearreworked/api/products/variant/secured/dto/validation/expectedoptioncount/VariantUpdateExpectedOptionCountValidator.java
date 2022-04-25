@@ -8,13 +8,13 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 public class VariantUpdateExpectedOptionCountValidator extends ExpectedOptionCountValidator
-        implements ConstraintValidator<ExpectedOptionCount, SecuredProductVariantUpdate> { // TODO: 2022-03-19 check if patch works with this
+        implements ConstraintValidator<ExpectedOptionCount, SecuredProductVariantUpdate> {
 
     @Autowired
     private ProductRepository productRepo;
 
     @Override
-    public boolean isValid(SecuredProductVariantUpdate productVariantUpdate, ConstraintValidatorContext constraintValidatorContext) {
-        return validate(productVariantUpdate.getOptionValueIds(), productVariantUpdate.getProductId(), productRepo);
+    public boolean isValid(SecuredProductVariantUpdate variantUpdate, ConstraintValidatorContext constraintValidatorContext) {
+        return validate(variantUpdate.getOptionValueIds().size(), productRepo.getById(variantUpdate.getProductId()).getOptions().size());
     }
 }

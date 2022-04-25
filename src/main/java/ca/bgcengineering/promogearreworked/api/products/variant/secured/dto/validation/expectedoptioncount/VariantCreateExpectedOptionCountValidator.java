@@ -14,7 +14,7 @@ public class VariantCreateExpectedOptionCountValidator extends ExpectedOptionCou
     private ProductRepository productRepo;
 
     @Override
-    public boolean isValid(SecuredProductVariantCreate productVariantCreate, ConstraintValidatorContext constraintValidatorContext) {
-        return validate(productVariantCreate.getOptionValueIds(), productVariantCreate.getProductId(), productRepo);
+    public boolean isValid(SecuredProductVariantCreate variantCreate, ConstraintValidatorContext constraintValidatorContext) {
+        return validate(variantCreate.getOptionValueIds().size(), productRepo.getById(variantCreate.getProductId()).getOptions().size());
     }
 }

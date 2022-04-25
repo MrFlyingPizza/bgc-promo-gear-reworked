@@ -64,13 +64,11 @@ public class OrderService {
         return orderRepo.saveAndFlush(updatedOrder);
     }
 
-    @Transactional
     public List<Order> getOrders(Long userId) {
         assert userId != null;
         return orderRepo.findAllBySubmitterId(userId);
     }
 
-    @Transactional
     public Order getOrder(Long userId, Long orderId) {
         assert userId != null && orderId != null;
         return orderRepo.findBySubmitterIdAndId(userId, orderId);

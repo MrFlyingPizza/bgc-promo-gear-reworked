@@ -24,7 +24,7 @@ public class GeneralProductController {
 
     @GetMapping("/{productId}")
     private GeneralProductResponse getProduct(@PathVariable Long productId) {
-        if (!productService.checkProductExists(productId)) {
+        if (!productService.checkProductExistsAndIsPublished(productId)) {
             throw new ProductNotFoundException();
         }
         Product result = handlerService.handleProductGet(productId);

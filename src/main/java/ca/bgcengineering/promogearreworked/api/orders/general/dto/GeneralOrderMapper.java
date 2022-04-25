@@ -4,14 +4,10 @@ import ca.bgcengineering.promogearreworked.persistence.entities.*;
 import ca.bgcengineering.promogearreworked.persistence.repositories.OfficeLocationRepository;
 import ca.bgcengineering.promogearreworked.persistence.repositories.ProductVariantRepository;
 import ca.bgcengineering.promogearreworked.persistence.repositories.UserRepository;
-import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,15 +41,12 @@ public abstract class GeneralOrderMapper {
     @Mapping(source = "submitter.displayName", target = "submitter")
     @Mapping(source = "fulfiller.displayName", target = "fulfiller")
     @Mapping(source = "recipient.displayName", target = "recipient")
-    @Transactional
     public abstract GeneralOrderResponse toResponse(Order order);
 
-    @Transactional
     public GeneralOrderBatchResponse toBatchResponse(List<Order> orders) {
         return new GeneralOrderBatchResponse(orders.stream().map(this::toResponse).collect(Collectors.toList()));
     }
 
-    @Transactional
     public abstract List<GeneralOrderCreate.NestedOrderItem> cartItemsToOrderItems(List<CartItem> cartItems);
 
     @Mapping(source = "variant.product.price", target = "price")
@@ -66,7 +59,6 @@ public abstract class GeneralOrderMapper {
 
     @Mapping(source = "variant.product", target = "product")
     @Mapping(source = "variant.optionValues", target = "variant.options")
-    @Transactional
     protected abstract GeneralOrderResponse.NestedOrderItem map(OrderItem item);
 
     @Mapping(source = "id", target = "valueId")

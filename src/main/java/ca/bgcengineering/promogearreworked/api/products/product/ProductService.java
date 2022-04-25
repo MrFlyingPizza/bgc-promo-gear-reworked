@@ -3,6 +3,7 @@ package ca.bgcengineering.promogearreworked.api.products.product;
 import ca.bgcengineering.promogearreworked.api.products.exceptions.ProductNotFoundException;
 import ca.bgcengineering.promogearreworked.persistence.entities.Option;
 import ca.bgcengineering.promogearreworked.persistence.entities.Product;
+import ca.bgcengineering.promogearreworked.persistence.entities.QProduct;
 import ca.bgcengineering.promogearreworked.persistence.repositories.ProductRepository;
 import ca.bgcengineering.promogearreworked.persistence.repositories.ProductVariantRepository;
 import com.querydsl.core.types.Predicate;
@@ -10,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -29,12 +29,17 @@ public class ProductService {
         return repo.existsById(productId);
     }
 
+    public boolean checkProductExistsAndIsPublished(Long productId) {
+        assert productId != null;
+        QProduct product = QProduct.product;
+        return repo.exists(product.id.eq(productId).and(product.isPublished.eq(true)));
+    }
+
     public Product getProduct(Long productId) throws ProductNotFoundException {
         assert productId != null;
         return repo.findById(productId).orElseThrow(ProductNotFoundException::new);
     }
 
-    @Transactional
     public Page<Product> getProducts(Predicate predicate, Pageable pageable) {
         return repo.findAll(predicate, pageable);
     }

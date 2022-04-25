@@ -5,7 +5,6 @@ import ca.bgcengineering.promogearreworked.api.products.variant.ProductVariantSe
 import ca.bgcengineering.promogearreworked.persistence.entities.OptionValue;
 import ca.bgcengineering.promogearreworked.persistence.entities.Product;
 import ca.bgcengineering.promogearreworked.persistence.entities.ProductVariant;
-import org.mapstruct.BeforeMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +29,6 @@ public abstract class GeneralProductMapper {
                 page.getNumberOfElements(),
                 page.getTotalElements(),
                 page.getSort().isSorted());
-    }
-
-    // only include valid product variants
-    @BeforeMapping
-    protected void removeInvalidProductVariants(Product product) {
-        product.setVariants(product.getVariants().stream().filter(ProductVariant::getIsInUse).collect(Collectors.toSet()));
     }
 
     @Mapping(source = "optionValues", target = "options")

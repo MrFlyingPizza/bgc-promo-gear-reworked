@@ -4,6 +4,7 @@ import ca.bgcengineering.promogearreworked.persistence.auditing.Auditable;
 import com.querydsl.core.annotations.QueryInit;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -34,6 +35,7 @@ public class Product extends Auditable {
 
     @Lob
     @Basic(fetch = FetchType.LAZY)
+    @Type(type = "org.hibernate.type.StringType")
     @Column(name = "description", nullable = false)
     private String description;
 

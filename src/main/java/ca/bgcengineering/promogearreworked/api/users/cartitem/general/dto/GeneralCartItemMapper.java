@@ -8,7 +8,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,19 +22,16 @@ public abstract class GeneralCartItemMapper {
     @Mapping(target = "user", ignore = true)
     public abstract CartItem fromCreate(GeneralCartItemCreate cartItemCreate);
 
-    @Transactional
     @Mapping(source  = "variantId", target = "variant")
     @Mapping(target = "user", ignore = true)
     public abstract CartItem fromUpdate(GeneralCartItemUpdate cartItemCreate, @MappingTarget CartItem cartItem);
 
     // no partial update because there is only one field but could be necessary in the future
 
-    @Transactional
     @Mapping(source = "variant.product", target = "product")
     @Mapping(source = "variant.optionValues", target = "variant.options")
     public abstract GeneralCartItemResponse toResponse(CartItem cartItem);
 
-    @Transactional
     public GeneralCartItemBatchResponse toBatchResponse(List<CartItem> cartItems) {
         return new GeneralCartItemBatchResponse(cartItems.stream().map(this::toResponse).collect(Collectors.toList()));
     }

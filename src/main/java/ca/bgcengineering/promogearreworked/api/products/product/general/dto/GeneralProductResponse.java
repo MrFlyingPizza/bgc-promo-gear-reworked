@@ -25,6 +25,15 @@ public class GeneralProductResponse {
 
         @Getter
         @RequiredArgsConstructor
+        static class NestedProductImage {
+            private final Long id;
+            private final String src;
+            private final String alt;
+            private final Integer position;
+        }
+
+        @Getter
+        @RequiredArgsConstructor
         static class NestedOptionValue {
             private final Long id;
             private final Long optionId;
@@ -32,18 +41,9 @@ public class GeneralProductResponse {
             private final String value;
         }
         private final Long id;
-        private final Long imageId;
+        private final NestedProductImage image;
         private final ProductVariantAvailability availability;
         private final List<NestedOptionValue> options;
-    }
-
-    @Getter
-    @RequiredArgsConstructor
-    static class NestedProductImage {
-        private final Long id;
-        private final String src;
-        private final String alt;
-        private final Integer position;
     }
 
     @Getter
@@ -59,7 +59,6 @@ public class GeneralProductResponse {
     private final String description;
     private final NestedCategory category;
     private final List<NestedProductVariant> variants;
-    private final List<NestedProductImage> images;
     private final List<NestedOption> options;
 
 }

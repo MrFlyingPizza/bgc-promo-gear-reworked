@@ -3,12 +3,13 @@ const CopyPlugin = require('copy-webpack-plugin')
 const {TsconfigPathsPlugin} = require("tsconfig-paths-webpack-plugin");
 
 module.exports = {
-    mode: 'production',
+    mode: 'development',
     entry: {
         cart: './src/pages/cart/cart.tsx',
         store: './src/pages/store/store.tsx',
         product: './src/pages/product/product.tsx',
     },
+    devtool: 'inline-source-map',
     watchOptions: {
         aggregateTimeout: 25000,
         poll: 30000,
