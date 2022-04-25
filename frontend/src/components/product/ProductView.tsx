@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
 import {Product, ProductImage} from "types/Product";
-import {LinearProgress} from "@mui/material";
+import {CircularProgress} from "@mui/material";
 import React from "react";
 import {Carousel, Col, Container, Row} from "react-bootstrap";
 import StoreContainer from "components/shared/StoreContainer";
@@ -27,27 +27,22 @@ function ProductView(props: { productId: number }) {
 
     const ProductImageCarousel = ({images}:{images: ProductImage[]}) => {
 
-        const ProductImageCarouselItem = (props: { image: ProductImage }) => {
+        const carouselItems = images.map(image => {
             return (
                 <Carousel.Item>
-                    <img key={props.image.id} src={props.image.src} alt={props.image.alt}/>
+                    <img className={"d-block w-100"} key={image.id} src={image.src} alt={image.alt}/>
                 </Carousel.Item>
-            );
-        }
+            )
+        });
 
         return (
-            <Carousel style={{height: "50vh"}}>
-                {
-                    images.map(image => <ProductImageCarouselItem key={image.id} image={image}/>)
-                }
-            </Carousel>
+            <Carousel variant={"dark"} interval={null}>{carouselItems}</Carousel>
         )
     }
 
     return (
-        product &&
         <StoreContainer>
-            {isLoading && <LinearProgress/>}
+            {isLoading && <CircularProgress/>}
             <Row>
                 {
                     (images && images.length > 0) &&
@@ -56,9 +51,9 @@ function ProductView(props: { productId: number }) {
                     </Col>
                 }
                 <Col>
-                    <h3>{product.name}</h3>
-                    <h4>{product.brand}</h4>
-                    <p>{product.description}</p>
+                    <h3>{product?.name}</h3>
+                    <h4>{product?.brand}</h4>
+                    <p>{product?.description}</p>
                 </Col>
             </Row>
         </StoreContainer>
