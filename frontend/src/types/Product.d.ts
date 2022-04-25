@@ -1,19 +1,21 @@
 import ProductVariantAvailability from "types/ProductVariantAvailability";
 
+export interface ProductImage {
+    id: number,
+    alt: string,
+    src: string
+}
+
 export interface ProductVariant {
     id: number,
-        imageId: number,
-        availability: ProductVariantAvailability,
-        image: {
-        id: number,
-            alt: string,
-            src: string
-    }
+    imageId: number,
+    availability: ProductVariantAvailability,
+    image: ProductImage,
     options: {
         valueId: number,
-            optionId: number,
-            name: string,
-            value: string
+        optionId: number,
+        name: string,
+        value: string
     }[]
 }
 
