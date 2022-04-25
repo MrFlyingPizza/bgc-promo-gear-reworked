@@ -40,7 +40,8 @@ module.exports = {
                 {
                     from: path.resolve(__dirname, 'dist'),
                     to: '../../target/classes/static/javascript',
-                    noErrorOnMissing: true
+                    noErrorOnMissing: true,
+                    force: true
                 }
             ]
         })

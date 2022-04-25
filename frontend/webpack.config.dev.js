@@ -6,7 +6,8 @@ module.exports = {
     mode: 'development',
     entry: {
         cart: './src/pages/cart/cart.tsx',
-        store: './src/pages/store/store.tsx'
+        store: './src/pages/store/store.tsx',
+        product: './src/pages/product/product.tsx',
     },
     devtool: 'inline-source-map',
     watchOptions: {
@@ -40,7 +41,8 @@ module.exports = {
                 {
                     from: path.resolve(__dirname, 'dist'),
                     to: '../../target/classes/static/javascript',
-                    noErrorOnMissing: true
+                    noErrorOnMissing: true,
+                    force: true
                 }
             ]
         })
