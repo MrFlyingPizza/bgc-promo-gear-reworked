@@ -6,17 +6,19 @@ export interface ProductImage {
     src: string
 }
 
+export interface OptionValue {
+    valueId: number,
+    optionId: number,
+    name: string,
+    value: string
+}
+
 export interface ProductVariant {
     id: number,
     imageId: number,
     availability: ProductVariantAvailability,
     image: ProductImage,
-    options: {
-        valueId: number,
-        optionId: number,
-        name: string,
-        value: string
-    }[]
+    options: OptionValue[]
 }
 
 export interface Product {

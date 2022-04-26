@@ -3,7 +3,7 @@ import axios from "axios";
 import {Product, ProductImage} from "types/Product";
 import {CircularProgress} from "@mui/material";
 import React from "react";
-import {Carousel, Col, Container, Row} from "react-bootstrap";
+import {Badge, Carousel, Col, Container, Row} from "react-bootstrap";
 import StoreContainer from "components/shared/StoreContainer";
 
 function ProductView(props: { productId: number }) {
@@ -51,8 +51,9 @@ function ProductView(props: { productId: number }) {
                     </Col>
                 }
                 <Col>
-                    <h3>{product?.name}</h3>
-                    <h4>{product?.brand}</h4>
+                    <Container>
+                        <h3>{product?.name}&nbsp;<Badge pill bg={"dark"}>{product?.brand}</Badge></h3>
+                    </Container>
                     <p>{product?.description}</p>
                 </Col>
             </Row>
