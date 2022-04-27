@@ -45,10 +45,10 @@ function ProductView(props: { productId: number }) {
         <StoreContainer>
             {isLoading && <CircularProgress/>}
             <Row>{(images && images.length > 0) &&
-                <Col>
+                <Col md>
                     <ProductImageCarousel images={images}/>
                 </Col>}
-                <Col>
+                <Col md>
                     <Container>
                         <h3>{product?.name}&nbsp;<Badge pill bg={"dark"}>{product?.brand}</Badge></h3>
                     </Container>{product &&
