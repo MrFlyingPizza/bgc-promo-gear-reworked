@@ -1,10 +1,11 @@
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {Product, ProductImage} from "types/Product";
+import {Product, ProductImage, ProductVariant} from "types/Product";
 import {CircularProgress} from "@mui/material";
 import React from "react";
 import {Badge, Carousel, Col, Container, Row} from "react-bootstrap";
 import StoreContainer from "components/shared/StoreContainer";
+import ProductOptionSelection from "components/product/ProductOptionSelection";
 
 function ProductView(props: { productId: number }) {
 
@@ -25,11 +26,11 @@ function ProductView(props: { productId: number }) {
         });
     }, []);
 
-    const ProductImageCarousel = ({images}:{images: ProductImage[]}) => {
+    const ProductImageCarousel = ({images}: { images: ProductImage[] }) => {
 
         const carouselItems = images.map(image => {
             return (
-                <Carousel.Item>
+                <Carousel.Item key={image.id}>
                     <img className={"d-block w-100"} key={image.id} src={image.src} alt={image.alt}/>
                 </Carousel.Item>
             )
@@ -43,17 +44,15 @@ function ProductView(props: { productId: number }) {
     return (
         <StoreContainer>
             {isLoading && <CircularProgress/>}
-            <Row>
-                {
-                    (images && images.length > 0) &&
-                    <Col>
-                        <ProductImageCarousel images={images}/>
-                    </Col>
-                }
+            <Row>{(images && images.length > 0) &&
+                <Col>
+                    <ProductImageCarousel images={images}/>
+                </Col>}
                 <Col>
                     <Container>
                         <h3>{product?.name}&nbsp;<Badge pill bg={"dark"}>{product?.brand}</Badge></h3>
-                    </Container>
+                    </Container>{product &&
+                    <ProductOptionSelection variants={product.variants} onResolve={variant => console.log(variant)}/>}
                     <p>{product?.description}</p>
                 </Col>
             </Row>
