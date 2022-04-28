@@ -1,6 +1,5 @@
 import * as React from "react";
 import {useState} from "react";
-import {Chip} from "@mui/material";
 import {Product} from "types/Product";
 import {Card} from "react-bootstrap";
 import ProductVariantAvailability from "types/ProductVariantAvailability";
