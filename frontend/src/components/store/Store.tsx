@@ -1,7 +1,7 @@
 import * as React from "react";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
-import {CircularProgress, Skeleton, Stack, Typography} from "@mui/material";
+import {CircularProgress, Skeleton, Stack} from "@mui/material";
 
 import {Product} from "types/Product";
 import {Category} from "types/Category";
@@ -55,12 +55,6 @@ function Store() {
             setIsLoadingCategories(false);
         });
     }, []);
-
-    const Header = (props: { title: string }) => {
-        return (
-            <Typography align={"center"} variant={"h6"}>{props.title}</Typography>
-        )
-    }
 
     const LoadingCard = () => {
         return (

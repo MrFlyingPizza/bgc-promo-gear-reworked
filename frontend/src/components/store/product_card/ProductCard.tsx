@@ -24,11 +24,9 @@ function ProductCard(props: { product: Product }) {
         });
         return initialVariant;
     }); // published products always have at least 1 variant
-
-    const variantMap = new Map(product.variants.map(variant => {
+    new Map(product.variants.map(variant => {
         return [variant.id.toString(), variant];
     }));
-
     const href = `/store/product/${product.id}`;
 
     return (
