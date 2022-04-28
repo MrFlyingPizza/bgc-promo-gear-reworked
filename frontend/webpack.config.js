@@ -1,6 +1,6 @@
 const path = require('path');
-const CopyPlugin = require('copy-webpack-plugin')
 const {TsconfigPathsPlugin} = require("tsconfig-paths-webpack-plugin");
+const FileManagerPlugin = require("filemanager-webpack-plugin");
 
 module.exports = {
     mode: 'production',
@@ -35,15 +35,14 @@ module.exports = {
         path: path.resolve(__dirname, 'dist'),
     },
     plugins: [
-        new CopyPlugin({
-            patterns: [
-                {
-                    from: path.resolve(__dirname, 'dist'),
-                    to: '../../target/classes/static/javascript',
-                    noErrorOnMissing: true,
-                    force: true
+        new FileManagerPlugin({
+            events: {
+                onEnd: {
+                    copy: [
+                        {source: './dist', destination: '../target/classes/static/javascript'}
+                    ]
                 }
-            ]
+            }
         })
     ]
 };

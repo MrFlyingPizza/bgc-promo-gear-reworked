@@ -1,12 +1,13 @@
 import * as React from "react";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {CircularProgress, Typography} from "@mui/material";
+import {CircularProgress, Skeleton, Stack, Typography} from "@mui/material";
 
 import {Product} from "types/Product";
 import {Category} from "types/Category";
 import ProductCard from "./product_card/ProductCard";
 import StoreContainer from "components/shared/StoreContainer";
+import {Container} from "react-bootstrap";
 
 type SelectedCategory = {
     id: number,
@@ -60,6 +61,15 @@ function Store() {
             <Typography align={"center"} variant={"h6"}>{props.title}</Typography>
         )
     }
+
+    const LoadingCard = () => (
+        <Stack spacing={1}>
+            <Skeleton variant={"rectangular"} width={300} height={300}/>
+            <Skeleton variant={"text"}/>
+            <Skeleton variant={"text"}/>
+            <Skeleton variant={"text"}/>
+        </Stack>
+    )
 
     return (
         <StoreContainer>
@@ -124,7 +134,7 @@ function Store() {
                         products?.length > 0 && products.map((item) => (<ProductCard key={item.id} product={item}/>))
                         || (!isLoadingProducts && <span>No items found.</span>)
                     }
-                    {isLoadingProducts && <CircularProgress/>}
+                    {isLoadingProducts && Array.from({length: 3}, (v, i) => <LoadingCard key={i}/>)}
                 </div>
             </div>
         </StoreContainer>
