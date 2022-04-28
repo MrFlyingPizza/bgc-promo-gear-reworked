@@ -57,7 +57,7 @@ function ProductCard(props: { product: Product }) {
             <ProductCardImage image={shownVariant.image} href={href}/>
             <Card.Body>
                 <Card.Title className={"text-center"}>
-                    <a href={href}>{product.name}</a>
+                    <a href={href} className={"text-decoration-none"}>{product.name}</a>
                 </Card.Title>
                 <VariantSelection initialVariant={shownVariant} variants={product.variants} onChange={value => setShownVariant(value)}/>
                 <Card.Text style={{maxHeight: "4.5em"}} className={"line-clamp text-center"}>{product.description}</Card.Text>

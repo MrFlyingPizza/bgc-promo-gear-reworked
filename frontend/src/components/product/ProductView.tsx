@@ -3,8 +3,7 @@ import axios from "axios";
 import {Product, ProductImage, ProductVariant} from "types/Product";
 import {CircularProgress} from "@mui/material";
 import React from "react";
-import {Badge, Card, Carousel, Col, Container, Row} from "react-bootstrap";
-import StoreContainer from "components/shared/StoreContainer";
+import {Accordion, Badge, Card, Carousel, Col, Container, Row} from "react-bootstrap";
 import ProductOptionSelection, {
     OptionValueGroup,
     SimpleOptionValue
@@ -60,7 +59,7 @@ function ProductView(props: { productId: number }) {
     const carousel = (
         <Carousel activeIndex={activeIndex} variant={"dark"} interval={null}
                   onSelect={index => setActiveIndex(index)}
-        >{images.map((image, index) => {
+        >{images.map((image) => {
             indexedImageIds.current.push(image.id);
             return (
                 <Carousel.Item key={image.id}>
@@ -82,31 +81,40 @@ function ProductView(props: { productId: number }) {
 
     return (
         <Container fluid={"md"} className={"mt-5 mb-5 min-vh-100"}>
-            {isLoading && <CircularProgress/>}
-            <Row>{(images && images.length > 0) &&
-                <Col>
-                    <Card className={"shadow-sm p-3"}>
+            <Card className={"shadow-sm p-3"}>
+                {isLoading && <CircularProgress/>}
+                <Row>{(images && images.length > 0) &&
+                    <Col sm>
                         <AvailabilityLabel availability={currentVariant?.availability} otherText={NO_SELECTION_TEXT}/>
                         {carousel}
-                    </Card>
-                </Col>}
-                <Col>{product &&
-                    <Card className={"shadow-sm p-3"}>
+                    </Col>}
+                    <Col sm>{product && <>
                         <Container className={"border-bottom border-2"}>
                             <h2>{product?.name}&nbsp;<Badge pill bg={"dark"}>{product?.brand}</Badge></h2>
                         </Container>{selectionPropertyValues &&
                         <Container className={"mt-3"}>
-                            <ProductOptionSelection
-                                onChange={handleSelectionChange}
-                                groups={selectionPropertyValues.current.optionGroups}
-                                options={selectionPropertyValues.current.options}
-                                relation={selectionPropertyValues.current.relation}
-                            />
-                            <p>{product?.description}</p>
+                            <Accordion defaultActiveKey={"0"} flush>
+                                <Accordion.Item eventKey={"0"}>
+                                    <Accordion.Header><h6>Options</h6></Accordion.Header>
+                                    <Accordion.Body>
+                                        <ProductOptionSelection
+                                            onChange={handleSelectionChange}
+                                            groups={selectionPropertyValues.current.optionGroups}
+                                            options={selectionPropertyValues.current.options}
+                                            relation={selectionPropertyValues.current.relation}
+                                        />
+                                    </Accordion.Body>
+                                </Accordion.Item>
+                                <Accordion.Item eventKey={"1"}>
+                                    <Accordion.Header><h6>Description</h6></Accordion.Header>
+                                    <Accordion.Body>{product?.description}</Accordion.Body>
+                                </Accordion.Item>
+                            </Accordion>
                         </Container>}
-                    </Card> || (!isLoading && <span>This product could not be found.</span>)}
-                </Col>
-            </Row>
+                    </> || (!isLoading && <span>This product could not be found.</span>)}
+                    </Col>
+                </Row>
+            </Card>
         </Container>
     )
 }

@@ -48,7 +48,7 @@ const OptionSelection = ({options, groups, relation, onChange}: ProductOptionSel
 
         return (
             <React.Fragment>
-                <FormLabel><h6>{name}</h6></FormLabel>
+                <FormLabel><h6 className={"user-select-none"}>{name}</h6></FormLabel>
                 <FormGroup row>{optionIds.map(optionId =>
                     <OptionCheckbox value={optionId}
                                     label={options.find(option => option.id == optionId).value}
