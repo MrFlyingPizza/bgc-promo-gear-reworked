@@ -1,18 +1,17 @@
 import {OptionValue, ProductVariant} from "types/Product";
-import React, {useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {FormControl, FormGroup, FormLabel} from "@mui/material";
-import OptionCheckbox, {OptionCheckboxControl} from "components/product/option_selection/OptionCheckbox";
+import OptionCheckbox from "components/product/option_selection/OptionCheckbox";
 import {
     findCompatibleOptions,
     mapAllOptionValues,
     partitionOptions,
-    relateOptions
+    relateOptions, resolveVariantFromOptions
 } from "components/product/option_selection/helpers";
-import ProductVariantAvailability from "types/ProductVariantAvailability";
 
 type ProductOptionSelectionProps = {
     variants: ProductVariant[],
-    onResolve: (variant: ProductVariant) => void
+    onChange: (variant: ProductVariant) => void
 }
 
 type OptionValueGroupFragmentProps = {
@@ -20,60 +19,47 @@ type OptionValueGroupFragmentProps = {
     options: OptionValue[]
 };
 
-const OptionSelection = ({variants}: ProductOptionSelectionProps) => {
+const OptionSelection = ({variants, onChange}: ProductOptionSelectionProps) => {
 
     function initRef() {
         const allOptionValues = mapAllOptionValues(variants);
-        const selectedOptions: OptionValue[] = [];
         return {
             allOptionValues: allOptionValues,
             optionPartitions: partitionOptions(allOptionValues),
             optionRelations: relateOptions(variants, allOptionValues),
-            controlRegistry: new Map<OptionValue, OptionCheckboxControl>(),
-            selectedOptions: selectedOptions
         }
     }
 
     const ref = useRef(initRef());
+    const [selectedOptions, setSelectedOptions] = useState<OptionValue[]>([]);
+    const [disabledOptions, setDisabledOptions] = useState<OptionValue[]>([]);
 
-    function processCompatibleOptions() {
-        if (ref.current.selectedOptions.length > 0) {
-            const compatibleOptions = findCompatibleOptions(ref.current.selectedOptions, ref.current.optionRelations);
-            ref.current.controlRegistry.forEach((control, option) => {
-                if (compatibleOptions.includes(option)) {
-                    control.enable();
-                } else {
-                    control.disable();
-                }
-            })
+    useEffect(() => {
+        if (selectedOptions.length > 0) {
+            const compatibleOptions = findCompatibleOptions(selectedOptions, ref.current.optionRelations);
+            setDisabledOptions(ref.current.allOptionValues.filter(option => !compatibleOptions.includes(option)));
         } else {
-            ref.current.controlRegistry.forEach(control => control.enable());
+            setDisabledOptions([]);
         }
-
-        variants.filter(variant => variant.availability == ProductVariantAvailability.AVAILABLE)
-    }
+        onChange(resolveVariantFromOptions(variants, selectedOptions));
+    }, [selectedOptions]);
 
     const OptionValueGroupFragment = ({name, options}: OptionValueGroupFragmentProps) => {
 
         function handleChange(option: OptionValue, checked: boolean) {
-            if (checked) {
-                ref.current.selectedOptions = [...ref.current.selectedOptions, option];
-            } else {
-                ref.current.selectedOptions = ref.current.selectedOptions.filter(selectedOption => selectedOption != option);
-            }
-            processCompatibleOptions();
-        }
-
-        function registerControl(option: OptionValue, control: OptionCheckboxControl) {
-            ref.current.controlRegistry.set(option, control);
+            setSelectedOptions(checked ? [...selectedOptions, option]
+                : selectedOptions.filter(selectedOption => selectedOption != option));
         }
 
         return (
             <React.Fragment>
                 <FormLabel>{name}</FormLabel>
                 <FormGroup row>{options.map(option =>
-                    <OptionCheckbox key={option.valueId} option={option} onChange={handleChange}
-                                    delegation={registerControl}/>)}
+                    <OptionCheckbox option={option}
+                                    disabled={disabledOptions.includes(option)}
+                                    checked={selectedOptions.includes(option)}
+                                    onChange={handleChange}
+                    />)}
                 </FormGroup>
             </React.Fragment>
         )

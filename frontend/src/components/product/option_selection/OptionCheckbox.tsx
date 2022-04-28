@@ -1,38 +1,18 @@
-import {Checkbox} from "@mui/material";
-import React, {ChangeEvent} from "react";
-import {useState} from "react";
+import {Checkbox, FormControlLabel} from "@mui/material";
+import React from "react";
 import {OptionValue} from "types/Product";
-
-export type OptionCheckboxControl = {
-    enable: () => void,
-    disable: () => void
-}
 
 export type OptionCheckboxProps = {
     option: OptionValue,
-    onChange: (option: OptionValue, checked: boolean) => void,
-    delegation: (option: OptionValue, control: OptionCheckboxControl) => void
+    checked: boolean,
+    disabled: boolean,
+    onChange: (option: OptionValue, checked: boolean) => void
 }
 
-const OptionCheckbox = ({option, onChange, delegation}: OptionCheckboxProps) => {
-
-    const [disabled, setDisabled] = useState(false);
-    const [checked, setChecked] = useState(false);
-
-    delegation(option, {
-        enable: () => setDisabled(false),
-        disable: () => setDisabled(true)
-    });
-
-    function handleChange(event: ChangeEvent<HTMLInputElement>) {
-        const checked = event.target.checked;
-        setChecked(checked);
-        onChange(option, checked);
-    }
-
-    return (
-        <Checkbox checked={checked} disabled={disabled} onChange={handleChange}/>
-    )
-};
+const OptionCheckbox = ({option, checked, disabled, onChange}: OptionCheckboxProps) => (
+    <FormControlLabel
+        control={<Checkbox checked={checked} disabled={disabled} onChange={(e) => onChange(option, e.target.checked)}/>}
+        label={<span className={"user-select-none"}>{option.value}</span>}/>
+);
 
 export default OptionCheckbox;
