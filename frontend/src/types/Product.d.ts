@@ -20,7 +20,6 @@ export interface OptionValue {
 
 export interface ProductVariant {
     id: number,
-    imageId: number,
     availability: ProductVariantAvailability,
     image: ProductImage,
     options: OptionValue[]

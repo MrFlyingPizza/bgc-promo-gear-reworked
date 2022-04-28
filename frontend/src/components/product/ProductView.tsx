@@ -3,7 +3,7 @@ import axios from "axios";
 import {Product, ProductImage, ProductVariant} from "types/Product";
 import {CircularProgress} from "@mui/material";
 import React from "react";
-import {Badge, Carousel, Col, Container, Row} from "react-bootstrap";
+import {Badge, Card, Carousel, Col, Container, Row} from "react-bootstrap";
 import StoreContainer from "components/shared/StoreContainer";
 import ProductOptionSelection, {
     OptionValueGroup,
@@ -54,47 +54,60 @@ function ProductView(props: { productId: number }) {
         });
     }, []);
 
-    const ProductImageCarousel = ({images}: { images: ProductImage[] }) => {
+    const indexedImageIds = useRef([]);
+    const [activeIndex, setActiveIndex] = useState(0);
 
-        const carouselItems = images.map(image => {
+    const carousel = (
+        <Carousel activeIndex={activeIndex} variant={"dark"} interval={null}
+                  onSelect={index => setActiveIndex(index)}
+        >{images.map((image, index) => {
+            indexedImageIds.current.push(image.id);
             return (
                 <Carousel.Item key={image.id}>
-                    <img className={"d-block w-100"} key={image.id} src={image.src} alt={image.alt}/>
+                    <img className={"d-block w-100 img-fluid"} key={image.id} src={image.src} alt={image.alt}/>
                 </Carousel.Item>
-            )
-        });
-
-        return (
-            <Carousel variant={"dark"} interval={null}>{carouselItems}</Carousel>
-        )
-    }
+            );
+        })}
+        </Carousel>
+    );
 
     const NO_SELECTION_TEXT = "Make a selection to see availability.";
 
+    function handleSelectionChange(options: number[]) {
+        const variant = resolveVariantFromOptions(product.variants, options);
+        setCurrentVariant(variant);
+        const activeIndex = variant?.image && indexedImageIds.current.findIndex((imageId) => imageId == variant.image.id);
+        activeIndex > -1 && setActiveIndex(activeIndex);
+    }
+
     return (
-        <StoreContainer>
+        <Container fluid={"md"} className={"mt-5 mb-5 min-vh-100"}>
             {isLoading && <CircularProgress/>}
             <Row>{(images && images.length > 0) &&
-            <Col md>
-                <ProductImageCarousel images={images}/>
-            </Col>}
-                <Col md>{product &&
-                <>
-                    <Container>
-                        <h3>{product?.name}&nbsp;<Badge pill bg={"dark"}>{product?.brand}</Badge></h3>
-                    </Container>{selectionPropertyValues &&
-                <ProductOptionSelection
-                    onChange={(options) => setCurrentVariant(resolveVariantFromOptions(product.variants, options))}
-                    groups={selectionPropertyValues.current.optionGroups}
-                    options={selectionPropertyValues.current.options}
-                    relation={selectionPropertyValues.current.relation}
-                />}
-                    <AvailabilityLabel availability={currentVariant?.availability} otherText={NO_SELECTION_TEXT}/>
-                    <p>{product?.description}</p>
-                </> || (!isLoading && <span>This product could not be found.</span>)}
+                <Col>
+                    <Card className={"shadow-sm p-3"}>
+                        <AvailabilityLabel availability={currentVariant?.availability} otherText={NO_SELECTION_TEXT}/>
+                        {carousel}
+                    </Card>
+                </Col>}
+                <Col>{product &&
+                    <Card className={"shadow-sm p-3"}>
+                        <Container className={"border-bottom border-2"}>
+                            <h2>{product?.name}&nbsp;<Badge pill bg={"dark"}>{product?.brand}</Badge></h2>
+                        </Container>{selectionPropertyValues &&
+                        <Container className={"mt-3"}>
+                            <ProductOptionSelection
+                                onChange={handleSelectionChange}
+                                groups={selectionPropertyValues.current.optionGroups}
+                                options={selectionPropertyValues.current.options}
+                                relation={selectionPropertyValues.current.relation}
+                            />
+                            <p>{product?.description}</p>
+                        </Container>}
+                    </Card> || (!isLoading && <span>This product could not be found.</span>)}
                 </Col>
             </Row>
-        </StoreContainer>
+        </Container>
     )
 }
 
