@@ -5,7 +5,7 @@ import {Product} from "types/Product";
 import {Card} from "react-bootstrap";
 import ProductVariantAvailability from "types/ProductVariantAvailability";
 import ProductCardImage from "components/store/product_card/ProductCardImage";
-import ProductCardOptions from "components/store/product_card/ProductCardOptions";
+import VariantSelection from "components/store/product_card/VariantSelection";
 
 function ProductCard(props: { product: Product }) {
 
@@ -50,33 +50,18 @@ function ProductCard(props: { product: Product }) {
         )
     }
 
-    // <a href={"/store/product/?id=" + product.id} style={{textDecoration: 'none', color: 'black'}}>
-    //     <ProductCardImage image={shownVariant.image}/>
-    // </a>
-
-    const cartOptions = product.variants.map(variant => {
-        const tooltip = (
-            variant.options.length > 0 &&
-            <List>
-                {variant.options.map(option => (
-                    <ListItem key={option.optionId}>
-                        <Chip color={"primary"} label={option.value}/>
-                    </ListItem>
-                ))}
-            </List>
-        );
-        return {value: variant.id.toString(), src: variant.image?.src, tooltip: tooltip};
-    });
+    const href = `/store/product/${product.id}`;
 
     return (
         <Card style={{width: "300px"}}>
             <AvailabilityLabel availability={shownVariant.availability}/>
-            <ProductCardImage image={shownVariant.image}/>
+            <ProductCardImage image={shownVariant.image} href={href}/>
             <Card.Body>
-                <Card.Title>{product.name}</Card.Title>
-                <ProductCardOptions initialValue={shownVariant.id.toString()} values={cartOptions}
-                                    onChange={value => setShownVariant(variantMap.get(value))}/>
-                <Card.Text>{product.description}</Card.Text>
+                <Card.Title className={"text-center"}>
+                    <a href={href}>{product.name}</a>
+                </Card.Title>
+                <VariantSelection initialVariant={shownVariant} variants={product.variants} onChange={value => setShownVariant(value)}/>
+                <Card.Text style={{maxHeight: "4em"}} className={"line-clamp text-center"}>{product.description}</Card.Text>
             </Card.Body>
         </Card>
     )

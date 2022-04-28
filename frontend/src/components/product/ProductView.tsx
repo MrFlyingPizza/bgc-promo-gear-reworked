@@ -5,7 +5,7 @@ import {CircularProgress} from "@mui/material";
 import React from "react";
 import {Badge, Carousel, Col, Container, Row} from "react-bootstrap";
 import StoreContainer from "components/shared/StoreContainer";
-import ProductOptionSelection from "components/product/ProductOptionSelection";
+import ProductOptionSelection from "components/product/option_selection/OptionSelection";
 
 function ProductView(props: { productId: number }) {
 
@@ -52,7 +52,7 @@ function ProductView(props: { productId: number }) {
                     <Container>
                         <h3>{product?.name}&nbsp;<Badge pill bg={"dark"}>{product?.brand}</Badge></h3>
                     </Container>{product &&
-                    <ProductOptionSelection variants={product.variants} onResolve={variant => console.log(variant)}/>}
+                    <ProductOptionSelection variants={product.variants} onResolve={(variant: ProductVariant) => console.log(variant)}/>}
                     <p>{product?.description}</p>
                 </Col>
             </Row>
