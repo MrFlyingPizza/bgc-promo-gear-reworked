@@ -1,11 +1,33 @@
 import * as React from "react";
 import {useState} from "react";
 import {Product} from "types/Product";
-import {Card} from "react-bootstrap";
+import {Card, Container} from "react-bootstrap";
 import ProductVariantAvailability from "types/ProductVariantAvailability";
 import ProductCardImage from "components/store/product_card/ProductCardImage";
 import VariantSelection from "components/store/product_card/VariantSelection";
 import AvailabilityLabel from "components/shared/AvailabilityLabel";
+import {Skeleton, Stack} from "@mui/material";
+
+export const LoadingCard = () => {
+    return (
+        <div className={"m-2"} style={{width: 300, height: 500}}>
+            <Stack spacing={2}>
+                <Skeleton variant={"rectangular"} width={300} height={300}/>
+                <Skeleton variant={"text"}/>
+                <Container className={"d-flex flex-wrap justify-content-center"}>
+                    <Stack spacing={2} direction={"row"}>
+                        <Skeleton variant={"circular"} width={24} height={24}/>
+                        <Skeleton variant={"circular"} width={24} height={24}/>
+                        <Skeleton variant={"circular"} width={24} height={24}/>
+                    </Stack>
+                </Container>
+                <Skeleton variant={"text"}/>
+                <Skeleton variant={"text"}/>
+                <Skeleton variant={"text"} width={"60%"}/>
+            </Stack>
+        </div>
+    )
+}
 
 function ProductCard(props: { product: Product }) {
 
@@ -30,7 +52,7 @@ function ProductCard(props: { product: Product }) {
     const href = `/store/product/${product.id}`;
 
     return (
-        <Card style={{width: "300px"}}>
+        <Card className={"m-2"} style={{width: "300px"}}>
             <AvailabilityLabel availability={shownVariant.availability} otherText={"Availability Unknown"}/>
             <ProductCardImage image={shownVariant.image} href={href}/>
             <Card.Body>

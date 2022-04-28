@@ -1,13 +1,12 @@
 import * as React from "react";
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {CircularProgress, Skeleton, Stack} from "@mui/material";
+import {CircularProgress} from "@mui/material";
 
 import {Product} from "types/Product";
 import {Category} from "types/Category";
-import ProductCard from "./product_card/ProductCard";
+import ProductCard, {LoadingCard} from "./product_card/ProductCard";
 import StoreContainer from "components/shared/StoreContainer";
-import {Container} from "react-bootstrap";
 
 type SelectedCategory = {
     id: number,
@@ -55,26 +54,6 @@ function Store() {
             setIsLoadingCategories(false);
         });
     }, []);
-
-    const LoadingCard = () => {
-        return (
-            <Container style={{width: 300, height: 500}}>
-                <Stack spacing={2}>
-                    <Skeleton variant={"rectangular"} width={300} height={300}/>
-                    <Container className={"d-flex flex-wrap justify-content-center"}>
-                        <Stack spacing={2} direction={"row"}>
-                            <Skeleton variant={"circular"} width={24} height={24}/>
-                            <Skeleton variant={"circular"} width={24} height={24}/>
-                            <Skeleton variant={"circular"} width={24} height={24}/>
-                        </Stack>
-                    </Container>
-                    <Skeleton variant={"text"}/>
-                    <Skeleton variant={"text"}/>
-                    <Skeleton variant={"text"} width={"60%"}/>
-                </Stack>
-            </Container>
-        )
-    }
 
     return (
         <StoreContainer>
@@ -134,12 +113,12 @@ function Store() {
                     </div>
                     {isLoadingCategories && <CircularProgress/>}
                 </div>
-                <div className="gallery-container">
+                <div className="d-flex justify-content-around flex-wrap align-items-start">
                     {
-                        products?.length > 0 && products.map((item) => (<ProductCard key={item.id} product={item}/>))
-                        || (!isLoadingProducts && <span>No items found.</span>)
+                        isLoadingProducts && Array.from({length: 3}, (v, i) => <LoadingCard key={i}/>)
+                        || products?.length > 0 && products.map(item => <ProductCard key={item.id} product={item}/>)
+                        || <span>No items found.</span>
                     }
-                    {isLoadingProducts && Array.from({length: 3}, (v, i) => <LoadingCard key={i}/>)}
                 </div>
             </div>
         </StoreContainer>
