@@ -1,63 +1,56 @@
-import {OptionValue, Product, ProductVariant} from "types/Product";
+import {Option, OptionValue, ProductVariant} from "types/Product";
+import {OptionValueGroup, SimpleOptionValue} from "components/product/option_selection/OptionSelection";
 
-type OptionPartition = {
-    name: string,
-    options: OptionValue[]
+export function collectAndSimplifyUniqueOptions(options: OptionValue[]): SimpleOptionValue[] {
+    const simpleOptionValues: SimpleOptionValue[] = [];
+    options.forEach(option =>
+        !simpleOptionValues.find((simpleOptionValue => simpleOptionValue.id == option.valueId))
+        && simpleOptionValues.push({id: option.valueId, value: option.value})
+    );
+    return simpleOptionValues;
 }
 
-export function optionArrayContains(options: OptionValue[], option: OptionValue) {
-    return options.every(existing => existing.valueId == option.valueId);
-}
+export function groupOptions(options: Option[], allOptionValues: OptionValue[]): OptionValueGroup[] {
+    const optionPartitionList: OptionValueGroup[] = [];
+    if (allOptionValues.length == 0 || options.length == 0) return optionPartitionList;
 
-export function mapAllOptionValues(variants: ProductVariant[]) {
-    const allOptionValues: OptionValue[] = [];
-    variants.map((variant: ProductVariant) => variant.options.forEach((option: OptionValue) =>
-        !optionArrayContains(allOptionValues, option) && allOptionValues.push(option)));
-    return allOptionValues;
-}
+    const optionPartitionMap = new Map<number, Set<number>>(options.map(option => [option.id, new Set()]));
 
-export function partitionOptions(allOptionValues: OptionValue[]) {
-    const optionPartitionMap = new Map<string, OptionValue[]>();
-    allOptionValues.forEach(value => {
-        let values = optionPartitionMap.get(value.name);
-        if (!values) {
-            values = [];
-            optionPartitionMap.set(value.name, values);
+    allOptionValues.forEach(value => optionPartitionMap.get(value.optionId).add(value.valueId));
+    return Array.from(optionPartitionMap).map(value => {
+        return {
+            name: options.find(option => option.id == value[0]).name,
+            optionIds: Array.from(value[1])
         }
-        values.push(value);
     });
-    const optionPartitionList: OptionPartition[] = [];
-    optionPartitionMap.forEach((values, name) => optionPartitionList.push({name, options: values}));
-    return optionPartitionList;
 }
 
-export function relateOptions(variants: ProductVariant[], allOptionValues: OptionValue[]) {
-    const optionRelationMap = new Map<OptionValue, OptionValue[]>(allOptionValues.map(option => [option, []]));
+export function relateOptions(variants: ProductVariant[], allOptionValues: OptionValue[]): Map<number, number[]> {
+    if (allOptionValues.length == 0) {
+        return new Map();
+    }
+    const optionRelationMap = new Map<number, Set<number>>(allOptionValues.map(option => [option.valueId, new Set()]));
     variants.forEach(variant => {
         variant.options.forEach(variantOption => {
-            let relatedValues = optionRelationMap.get(variantOption);
-            variant.options.forEach(x => !optionArrayContains(relatedValues, x) && relatedValues.push(x));
+            const relatedIds = optionRelationMap.get(variantOption.valueId);
+            variant.options.map(option => option.valueId).forEach((id) => relatedIds.add(id));
         });
     });
-    return optionRelationMap;
+    return new Map(Array.from(optionRelationMap).map(value => [value[0], Array.from(value[1])]));
 }
 
-export function findCompatibleOptions(targetOptions: OptionValue[], optionRelations: Map<OptionValue, OptionValue[]>) {
-    const compatibleOptions = [...targetOptions];
-    optionRelations.forEach((relatedOptions, option) => {
-        if (targetOptions.includes(option)) return;
-        let compatible = true;
-        targetOptions.every(targetOption => {
-            return compatible = relatedOptions.includes(targetOption);
-        });
-        if (compatible) {
-            compatibleOptions.push(option);
-        }
-    });
+export function findCompatibleOptions(sourceIds: number[], relations: Map<number, number[]>) {
+    const compatibleOptions = [...sourceIds];
+    relations.forEach((related, sourceId) => !sourceIds.includes(sourceId)
+        && sourceIds.every((sourceId) => related.includes(sourceId)) && compatibleOptions.push(sourceId));
     return compatibleOptions;
 }
 
-export function resolveVariantFromOptions(variants: ProductVariant[], targetOptions: OptionValue[]) {
-    const result = variants.filter(variant => targetOptions.every(targetOption => variant.options.includes(targetOption)));
-    return result.length > 0 ? result[0] : null;
+export function resolveVariantFromOptions(variants: ProductVariant[], targetOptionIds: number[]) {
+    if (targetOptionIds.length == 0) return null;
+    return variants.find(variant => {
+        return targetOptionIds.every(targetOptionId => {
+            return variant.options.length == targetOptionIds.length && variant.options.find(variantOption => variantOption.valueId == targetOptionId);
+        });
+    });
 }

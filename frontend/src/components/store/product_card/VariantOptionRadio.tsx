@@ -2,7 +2,7 @@ import {ProductVariant} from "types/Product";
 import {Chip, List, ListItem, Radio, Tooltip} from "@mui/material";
 import * as React from "react";
 import {Image} from "react-bootstrap";
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import CheckIcon from '@mui/icons-material/Check';
 
 export type VariantOptionRadioProps = {
     variant: ProductVariant,
@@ -23,8 +23,21 @@ const VariantOptionRadio = ({variant, checked, onClick}: VariantOptionRadioProps
 
     const src = variant.image?.src || "https://i.pinimg.com/originals/3e/84/09/3e8409dcdd012b4bcda84a710f2d1052.jpg";
     const icon = <Image style={{height: 24, width: 24, objectFit: "cover"}} roundedCircle src={src}/>;
-    const checkedIcon = <CheckCircleOutlineIcon style={{height: 24, width: 24}}/>;
-    const radio = <Radio checked={checked} key={variant.id} icon={icon} checkedIcon={checkedIcon} onClick={() => onClick(variant)}/>;
+    const checkedIcon = (
+        <>
+            {icon}
+            <CheckIcon sx={{
+                color: "black",
+                height: 32,
+                width: 32,
+                position: "absolute",
+                objectFit: "cover",
+                backgroundColor: "rgba(255, 255, 255, 0.7)"
+            }}/>
+        </>
+    );
+    const radio = <Radio checked={checked} key={variant.id} icon={icon} checkedIcon={checkedIcon}
+                         onClick={() => onClick(variant)}/>;
     return tooltip && <Tooltip key={variant.id} title={tooltip}>{radio}</Tooltip> || radio;
 }
 

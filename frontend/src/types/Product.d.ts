@@ -6,6 +6,11 @@ export interface ProductImage {
     src: string
 }
 
+export interface Option {
+    id: number,
+    name: string
+}
+
 export interface OptionValue {
     valueId: number,
     optionId: number,
@@ -21,6 +26,12 @@ export interface ProductVariant {
     options: OptionValue[]
 }
 
+export interface Category {
+    id: number,
+    name: string,
+    parent: Category
+}
+
 export interface Product {
     id: number,
     name: string,
@@ -28,14 +39,7 @@ export interface Product {
     description: string,
     isWaitListEnabled: boolean,
     isBigItem: boolean,
+    options: Option[],
     variants: ProductVariant[],
-
-    category: {
-        id: number,
-        name: string,
-        parent: {
-            id: number,
-            name: string
-        }
-    }
+    category: Category
 }

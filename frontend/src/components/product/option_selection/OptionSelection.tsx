@@ -1,63 +1,59 @@
-import {OptionValue, ProductVariant} from "types/Product";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {FormControl, FormGroup, FormLabel} from "@mui/material";
 import OptionCheckbox from "components/product/option_selection/OptionCheckbox";
 import {
-    findCompatibleOptions,
-    mapAllOptionValues,
-    partitionOptions,
-    relateOptions, resolveVariantFromOptions
+    findCompatibleOptions
 } from "components/product/option_selection/helpers";
 
-type ProductOptionSelectionProps = {
-    variants: ProductVariant[],
-    onChange: (variant: ProductVariant) => void
+export type SimpleOptionValue = {
+    id: number,
+    value: string
 }
 
-type OptionValueGroupFragmentProps = {
+export type OptionValueGroup = {
     name: string,
-    options: OptionValue[]
+    optionIds: number[]
 };
 
-const OptionSelection = ({variants, onChange}: ProductOptionSelectionProps) => {
+export type ProductOptionSelectionProps = {
+    options: SimpleOptionValue[],
+    groups: OptionValueGroup[],
+    relation: Map<number, number[]>,
+    onChange: (selectedIds: number[]) => void
+}
 
-    function initRef() {
-        const allOptionValues = mapAllOptionValues(variants);
-        return {
-            allOptionValues: allOptionValues,
-            optionPartitions: partitionOptions(allOptionValues),
-            optionRelations: relateOptions(variants, allOptionValues),
-        }
-    }
+const OptionSelection = ({options, groups, relation, onChange}: ProductOptionSelectionProps) => {
 
-    const ref = useRef(initRef());
-    const [selectedOptions, setSelectedOptions] = useState<OptionValue[]>([]);
-    const [disabledOptions, setDisabledOptions] = useState<OptionValue[]>([]);
+    const [selectedOptionIds, setSelectedOptions] = useState<number[]>([]);
+    const [disabledOptions, setDisabledOptions] = useState<number[]>([]);
 
     useEffect(() => {
-        if (selectedOptions.length > 0) {
-            const compatibleOptions = findCompatibleOptions(selectedOptions, ref.current.optionRelations);
-            setDisabledOptions(ref.current.allOptionValues.filter(option => !compatibleOptions.includes(option)));
+        if (selectedOptionIds.length > 0) {
+            const compatibleOptionIds = findCompatibleOptions(selectedOptionIds, relation);
+            setDisabledOptions(options.filter(option => !compatibleOptionIds.includes(option.id))
+                .map((option) => option.id));
         } else {
             setDisabledOptions([]);
         }
-        onChange(resolveVariantFromOptions(variants, selectedOptions));
-    }, [selectedOptions]);
+        onChange(selectedOptionIds);
+    }, [selectedOptionIds]);
 
-    const OptionValueGroupFragment = ({name, options}: OptionValueGroupFragmentProps) => {
+    const OptionValueGroupFragment = ({name, optionIds}: OptionValueGroup) => {
 
-        function handleChange(option: OptionValue, checked: boolean) {
-            setSelectedOptions(checked ? [...selectedOptions, option]
-                : selectedOptions.filter(selectedOption => selectedOption != option));
+        function handleChange(optionId: number, checked: boolean) {
+            const newSelectedOptions = checked ? [...selectedOptionIds, optionId]
+                : selectedOptionIds.filter(selectedOptionId => selectedOptionId != optionId);
+            setSelectedOptions(newSelectedOptions);
         }
 
         return (
             <React.Fragment>
                 <FormLabel>{name}</FormLabel>
-                <FormGroup row>{options.map(option =>
-                    <OptionCheckbox option={option}
-                                    disabled={disabledOptions.includes(option)}
-                                    checked={selectedOptions.includes(option)}
+                <FormGroup row>{optionIds.map(optionId =>
+                    <OptionCheckbox value={optionId}
+                                    label={options.find(option => option.id == optionId).value}
+                                    disabled={disabledOptions.find(disabledId => disabledId == optionId) && true}
+                                    checked={selectedOptionIds.find(checkedId => checkedId == optionId) && true}
                                     onChange={handleChange}
                     />)}
                 </FormGroup>
@@ -66,8 +62,8 @@ const OptionSelection = ({variants, onChange}: ProductOptionSelectionProps) => {
     };
 
     return (
-        <FormControl>{ref.current.optionPartitions.map(partition =>
-            <OptionValueGroupFragment key={partition.name} name={partition.name} options={partition.options}/>)}
+        <FormControl>{groups.map(group =>
+            <OptionValueGroupFragment key={group.name} name={group.name} optionIds={group.optionIds}/>)}
         </FormControl>
     )
 }

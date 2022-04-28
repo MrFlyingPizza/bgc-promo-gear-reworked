@@ -1,5 +1,5 @@
 import * as React from "react";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import axios from "axios";
 import {CircularProgress, Skeleton, Stack, Typography} from "@mui/material";
 
@@ -39,7 +39,7 @@ function Store() {
         axios.get(`${url}/api/products`, {params: params}).then((response) => {
             setProducts(response.data.products);
         }).catch((error) => {
-            console.log(error);
+            console.error(error);
         }).finally(() => {
             setIsLoadingProducts(false);
         });
@@ -50,7 +50,7 @@ function Store() {
         axios.get(`${url}/api/categories`).then((response) => {
             setCategories(response.data.categories.filter((category: { parent: Category }) => category.parent == null));
         }).catch((error) => {
-            console.log(error);
+            console.error(error);
         }).finally(() => {
             setIsLoadingCategories(false);
         });
@@ -62,14 +62,25 @@ function Store() {
         )
     }
 
-    const LoadingCard = () => (
-        <Stack spacing={1}>
-            <Skeleton variant={"rectangular"} width={300} height={300}/>
-            <Skeleton variant={"text"}/>
-            <Skeleton variant={"text"}/>
-            <Skeleton variant={"text"}/>
-        </Stack>
-    )
+    const LoadingCard = () => {
+        return (
+            <Container style={{width: 300, height: 500}}>
+                <Stack spacing={2}>
+                    <Skeleton variant={"rectangular"} width={300} height={300}/>
+                    <Container className={"d-flex flex-wrap justify-content-center"}>
+                        <Stack spacing={2} direction={"row"}>
+                            <Skeleton variant={"circular"} width={24} height={24}/>
+                            <Skeleton variant={"circular"} width={24} height={24}/>
+                            <Skeleton variant={"circular"} width={24} height={24}/>
+                        </Stack>
+                    </Container>
+                    <Skeleton variant={"text"}/>
+                    <Skeleton variant={"text"}/>
+                    <Skeleton variant={"text"} width={"60%"}/>
+                </Stack>
+            </Container>
+        )
+    }
 
     return (
         <StoreContainer>
