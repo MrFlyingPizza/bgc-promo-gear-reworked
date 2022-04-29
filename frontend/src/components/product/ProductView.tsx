@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import {ReactNode, useEffect, useRef, useState} from "react";
 import axios from "axios";
 import {Product, ProductImage, ProductVariant} from "types/Product";
 import {Alert, AlertColor, Button, CircularProgress, Snackbar} from "@mui/material";
@@ -19,7 +19,7 @@ import QuantityDialog from "components/product/QuantityDialog";
 
 type AlertContent = {
     severity: AlertColor,
-    message: string,
+    message: ReactNode,
 }
 
 type SelectionPropertyValues = {
@@ -43,11 +43,6 @@ function ProductView(props: { productId: number }) {
 
     const [isLoading, setIsLoading] = useState(false);
     const [product, setProduct] = useState<Product>();
-    const [currentVariant, setCurrentVariant] = useState<ProductVariant>();
-    const [images, setImages] = useState<ProductImage[]>([]);
-    const [dialogOpen, setDialogOpen] = useState(false);
-    const [alert, setAlert] = useState<AlertContent>();
-    const [snackbarOpen, setSnackbarOpen] = useState(false);
 
     const selectionPropertyValues = useRef<SelectionPropertyValues>();
 
@@ -66,7 +61,52 @@ function ProductView(props: { productId: number }) {
         });
     }, []);
 
-    //region Carousel
+    //region Snackbar Control
+    const [alert, setAlert] = useState<AlertContent>();
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+    function openSnackbar(alert: AlertContent) {
+        setAlert(alert);
+        setSnackbarOpen(true);
+    }
+
+    function closeSnackbar() {
+        setSnackbarOpen(false);
+    }
+
+    //endregion
+
+    //region Quantity Dialog Control
+    const [dialogOpen, setDialogOpen] = useState(false);
+
+    function handleQuantityConfirm(quantity: number) {
+        if (!currentVariant || !product) return;
+        let content: AlertContent = {
+            severity: "success",
+            message: <span>Added <b className={"font-monospace"}>{quantity} × {product.name}</b> to cart. MOCK</span>
+        };
+        // axios.post("/api/users/me/cart_items", {variantId: currentVariant.id, quantity: quantity}).then(() => {
+        //
+        // }).catch(() => {
+        //
+        // });
+        openSnackbar(content);
+    }
+
+    //endregion
+
+    //region Variant Selection Control
+    const [currentVariant, setCurrentVariant] = useState<ProductVariant>();
+
+    function handleSelectionChange(options: number[]) {
+        const variant = resolveVariantFromOptions(product.variants, options);
+        setCurrentVariant(variant);
+    }
+
+    //endregion
+
+    //region Carousel Control
+    const [images, setImages] = useState<ProductImage[]>([]);
     const indexedImageIds = useRef([]);
     const [activeIndex, setActiveIndex] = useState(0);
 
@@ -90,39 +130,9 @@ function ProductView(props: { productId: number }) {
     }, [currentVariant]);
     //endregion
 
-    //region Snackbar Controls
-    function openSnackbar(alert: AlertContent) {
-        setAlert(alert);
-        setSnackbarOpen(true);
-    }
-
-    function closeSnackbar() {
-        setSnackbarOpen(false);
-    }
-    //endregion
-
-    function handleSelectionChange(options: number[]) {
-        const variant = resolveVariantFromOptions(product.variants, options);
-        setCurrentVariant(variant);
-    }
-
-    function handleQuantityConfirm(quantity: number) {
-        if (!currentVariant || !product) return;
-        let alert: AlertContent = {
-            severity: "success",
-            message: `Added ${quantity} × ${product.name} to cart. MOCK`
-        };
-        // axios.post("/api/users/me/cart_items", {variantId: currentVariant.id, quantity: quantity}).then(() => {
-        //
-        // }).catch(() => {
-        //
-        // });
-        openSnackbar(alert);
-    }
-
     return (
         <Container fluid={"md"} className={"mt-5 mb-5 min-vh-100"}>
-            <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={closeSnackbar}>
+            <Snackbar open={snackbarOpen} autoHideDuration={3000} onClose={closeSnackbar}>
                 {alert && <Alert severity={alert.severity} onClose={closeSnackbar}>{alert.message}</Alert>}
             </Snackbar>
             <QuantityDialog open={dialogOpen} onClose={() => setDialogOpen(false)} onConfirm={handleQuantityConfirm}/>
@@ -137,10 +147,10 @@ function ProductView(props: { productId: number }) {
                         <>
                             <Container className={"border-bottom border-2"}>
                                 <h2>{product?.name}&nbsp;<Badge pill bg={"dark"}>{product?.brand}</Badge></h2>
-                            </Container>{
-                            selectionPropertyValues &&
+                            </Container>
                             <Container className={"mt-3"}>
-                                <Accordion defaultActiveKey={"0"} flush>
+                                <Accordion defaultActiveKey={"0"} flush>{
+                                    selectionPropertyValues &&
                                     <Accordion.Item eventKey={"0"}>
                                         <Accordion.Header><h6>Options</h6></Accordion.Header>
                                         <Accordion.Body>
@@ -160,13 +170,13 @@ function ProductView(props: { productId: number }) {
                                                 Add to cart
                                             </Button>
                                         </Accordion.Body>
-                                    </Accordion.Item>
+                                    </Accordion.Item>}
                                     <Accordion.Item eventKey={"1"}>
                                         <Accordion.Header><h6>Description</h6></Accordion.Header>
                                         <Accordion.Body>{product?.description}</Accordion.Body>
                                     </Accordion.Item>
                                 </Accordion>
-                            </Container>}
+                            </Container>
                         </> || (!isLoading && <span>This product could not be found.</span>)}
                     </Col>
                 </Row>
