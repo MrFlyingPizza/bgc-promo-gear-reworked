@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from "react";
 import axios from "axios";
 import {Product, ProductImage, ProductVariant} from "types/Product";
-import {Button, CircularProgress} from "@mui/material";
+import {Alert, AlertColor, Button, CircularProgress, Snackbar} from "@mui/material";
 import React from "react";
 import {Accordion, Badge, Card, Carousel, Col, Container, Row} from "react-bootstrap";
 import ProductOptionSelection, {
@@ -16,31 +16,38 @@ import {
 } from "components/product/option_selection/helpers";
 import AddShoppingCartSharpIcon from '@mui/icons-material/AddShoppingCartSharp';
 import QuantityDialog from "components/product/QuantityDialog";
-import CollapsibleAlert from "components/shared/CollapsibleAlert";
+
+type AlertContent = {
+    severity: AlertColor,
+    message: string,
+}
+
+type SelectionPropertyValues = {
+    optionGroups: OptionValueGroup[],
+    options: SimpleOptionValue[],
+    relation: Map<number, number[]>
+}
+
+function makeSelectionPropertyValues(product: Product) {
+    const allOptionValues = product.variants.map(variant => variant.options).reduce((prev, curr) => prev.concat(curr), []);
+    return {
+        optionGroups: groupOptions(product.options, allOptionValues),
+        options: collectAndSimplifyUniqueOptions(allOptionValues),
+        relation: relateOptions(product.variants, allOptionValues)
+    }
+}
 
 function ProductView(props: { productId: number }) {
+
+    const NO_SELECTION_TEXT = "Make a selection to see availability.";
 
     const [isLoading, setIsLoading] = useState(false);
     const [product, setProduct] = useState<Product>();
     const [currentVariant, setCurrentVariant] = useState<ProductVariant>();
     const [images, setImages] = useState<ProductImage[]>([]);
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [alerts, setAlerts] = useState<{ id: number, alert: JSX.Element }[]>([]);
-
-    function makeSelectionPropertyValues(product: Product) {
-        const allOptionValues = product.variants.map(variant => variant.options).reduce((prev, curr) => prev.concat(curr), []);
-        return {
-            optionGroups: groupOptions(product.options, allOptionValues),
-            options: collectAndSimplifyUniqueOptions(allOptionValues),
-            relation: relateOptions(product.variants, allOptionValues)
-        }
-    }
-
-    type SelectionPropertyValues = {
-        optionGroups: OptionValueGroup[],
-        options: SimpleOptionValue[],
-        relation: Map<number, number[]>
-    }
+    const [alert, setAlert] = useState<AlertContent>();
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
 
     const selectionPropertyValues = useRef<SelectionPropertyValues>();
 
@@ -59,6 +66,7 @@ function ProductView(props: { productId: number }) {
         });
     }, []);
 
+    //region Carousel
     const indexedImageIds = useRef([]);
     const [activeIndex, setActiveIndex] = useState(0);
 
@@ -76,44 +84,54 @@ function ProductView(props: { productId: number }) {
         </Carousel>
     );
 
-    const NO_SELECTION_TEXT = "Make a selection to see availability.";
+    useEffect(() => {
+        const activeIndex = currentVariant?.image && indexedImageIds.current.findIndex((imageId) => imageId == currentVariant.image.id);
+        activeIndex > -1 && setActiveIndex(activeIndex);
+    }, [currentVariant]);
+    //endregion
+
+    //region Snackbar Controls
+    function openSnackbar(alert: AlertContent) {
+        setAlert(alert);
+        setSnackbarOpen(true);
+    }
+
+    function closeSnackbar() {
+        setSnackbarOpen(false);
+    }
+    //endregion
 
     function handleSelectionChange(options: number[]) {
         const variant = resolveVariantFromOptions(product.variants, options);
         setCurrentVariant(variant);
-        const activeIndex = variant?.image && indexedImageIds.current.findIndex((imageId) => imageId == variant.image.id);
-        activeIndex > -1 && setActiveIndex(activeIndex);
-    }
-
-    function handleAlertClose(closedId: number) {
-        setAlerts(alerts.filter((value) => value.id != closedId));
     }
 
     function handleQuantityConfirm(quantity: number) {
-        let alert;
         if (!currentVariant || !product) return;
+        let alert: AlertContent = {
+            severity: "success",
+            message: `Added ${quantity} × ${product.name} to cart. MOCK`
+        };
         // axios.post("/api/users/me/cart_items", {variantId: currentVariant.id, quantity: quantity}).then(() => {
         //
         // }).catch(() => {
         //
         // });
-        const id = alerts.length;
-        alert = <CollapsibleAlert key={id} id={id} message={`Add ${quantity} × ${product.name} to cart. MOCK`}
-                                  severity={"success"} onClose={handleAlertClose}/>;
-        setAlerts([...alerts, {id, alert}]);
+        openSnackbar(alert);
     }
 
     return (
         <Container fluid={"md"} className={"mt-5 mb-5 min-vh-100"}>
-            <Container fluid>
-                {alerts.map(item => item.alert)}
-            </Container>
+            <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={closeSnackbar}>
+                {alert && <Alert severity={alert.severity} onClose={closeSnackbar}>{alert.message}</Alert>}
+            </Snackbar>
+            <QuantityDialog open={dialogOpen} onClose={() => setDialogOpen(false)} onConfirm={handleQuantityConfirm}/>
             <Card className={"shadow-sm p-3"}>
                 {isLoading && <CircularProgress/>}
                 <Row>{(images && images.length > 0) &&
-                <Col sm>
-                    {carousel}
-                </Col>}
+                    <Col sm>
+                        {carousel}
+                    </Col>}
                     <Col sm>{
                         product &&
                         <>
@@ -153,7 +171,6 @@ function ProductView(props: { productId: number }) {
                     </Col>
                 </Row>
             </Card>
-            <QuantityDialog open={dialogOpen} onClose={() => setDialogOpen(false)} onConfirm={handleQuantityConfirm}/>
         </Container>
     )
 }
