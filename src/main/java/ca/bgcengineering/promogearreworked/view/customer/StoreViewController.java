@@ -41,7 +41,7 @@ public class StoreViewController {
 
     @GetMapping("cart")
     public String showCartPage(){
-        return "error_pages/constructionStore";
+        return "store_pages/new_cart";
     }
 
     @GetMapping("checkout")
