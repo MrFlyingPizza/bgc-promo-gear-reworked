@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from "react";
 import axios from "axios";
 import {Product, ProductImage, ProductVariant} from "types/Product";
-import {CircularProgress} from "@mui/material";
+import {Button, CircularProgress} from "@mui/material";
 import React from "react";
 import {Accordion, Badge, Card, Carousel, Col, Container, Row} from "react-bootstrap";
 import ProductOptionSelection, {
@@ -14,6 +14,7 @@ import {
     groupOptions, relateOptions,
     resolveVariantFromOptions
 } from "components/product/option_selection/helpers";
+import AddShoppingCartSharpIcon from '@mui/icons-material/AddShoppingCartSharp';
 
 function ProductView(props: { productId: number }) {
 
@@ -85,7 +86,6 @@ function ProductView(props: { productId: number }) {
                 {isLoading && <CircularProgress/>}
                 <Row>{(images && images.length > 0) &&
                     <Col sm>
-                        <AvailabilityLabel availability={currentVariant?.availability} otherText={NO_SELECTION_TEXT}/>
                         {carousel}
                     </Col>}
                     <Col sm>{product && <>
@@ -97,12 +97,18 @@ function ProductView(props: { productId: number }) {
                                 <Accordion.Item eventKey={"0"}>
                                     <Accordion.Header><h6>Options</h6></Accordion.Header>
                                     <Accordion.Body>
+                                        <AvailabilityLabel availability={currentVariant?.availability}
+                                                           otherText={NO_SELECTION_TEXT}/>
                                         <ProductOptionSelection
                                             onChange={handleSelectionChange}
                                             groups={selectionPropertyValues.current.optionGroups}
                                             options={selectionPropertyValues.current.options}
                                             relation={selectionPropertyValues.current.relation}
                                         />
+                                        <Button disabled={!currentVariant}
+                                                startIcon={<AddShoppingCartSharpIcon/>}>
+                                            Add to cart
+                                        </Button>
                                     </Accordion.Body>
                                 </Accordion.Item>
                                 <Accordion.Item eventKey={"1"}>
