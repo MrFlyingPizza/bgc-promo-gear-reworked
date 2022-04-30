@@ -45,8 +45,7 @@ function ProductView({productId}: { productId: number }) {
     const selectionPropertyValues = useRef<SelectionPropertyValues>();
 
     function fetchProduct() {
-        return axios.get<Product>(`/api/products/${productId}`).then<Product>((response) => {
-            const product = response.data;
+        return axios.get<Product>(`/api/products/${productId}`).then<Product>(({data: product}) => {
             selectionPropertyValues.current = makeSelectionPropertyValues(product);
             product.variants.length == 1 && setCurrentVariant(product.variants[0]);
             setImages(product.variants.filter(variant => variant.image && true).map(variant => variant.image));
