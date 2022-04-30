@@ -16,6 +16,7 @@ import {
 } from "components/product/option_selection/helpers";
 import AddShoppingCartSharpIcon from '@mui/icons-material/AddShoppingCartSharp';
 import QuantityDialog from "components/product/QuantityDialog";
+import {useQuery} from "react-query";
 
 type AlertContent = {
     severity: AlertColor,
@@ -41,25 +42,11 @@ function ProductView(props: { productId: number }) {
 
     const NO_SELECTION_TEXT = "Make a selection to see availability.";
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [product, setProduct] = useState<Product>();
-
     const selectionPropertyValues = useRef<SelectionPropertyValues>();
 
-    useEffect(() => {
-        setIsLoading(true);
-        axios.get<Product>(`/api/products/${props.productId}`).then(response => {
-            const product = response.data;
-            selectionPropertyValues.current = makeSelectionPropertyValues(product);
-            setProduct(product);
-            product.variants.length == 1 && setCurrentVariant(product.variants[0]);
-            setImages(product.variants.filter(variant => variant.image && true).map(variant => variant.image));
-        }).catch(reason => {
-            console.error(reason);
-        }).finally(() => {
-            setIsLoading(false);
-        });
-    }, []);
+    const {isLoading, isError, data, error} = useQuery('product',
+        () =>
+    );
 
     //region Snackbar Control
     const [alert, setAlert] = useState<AlertContent>();
@@ -75,6 +62,8 @@ function ProductView(props: { productId: number }) {
     }
 
     //endregion
+
+
 
     //region Quantity Dialog Control
     const [dialogOpen, setDialogOpen] = useState(false);
