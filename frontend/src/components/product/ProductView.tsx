@@ -38,15 +38,23 @@ function makeSelectionPropertyValues(product: Product) {
     }
 }
 
-function ProductView(props: { productId: number }) {
+function ProductView({productId}: { productId: number }) {
 
     const NO_SELECTION_TEXT = "Make a selection to see availability.";
 
     const selectionPropertyValues = useRef<SelectionPropertyValues>();
 
-    const {isLoading, isError, data, error} = useQuery('product',
-        () =>
-    );
+    function fetchProduct() {
+        return axios.get<Product>(`/api/products/${productId}`).then<Product>((response) => {
+            const product = response.data;
+            selectionPropertyValues.current = makeSelectionPropertyValues(product);
+            product.variants.length == 1 && setCurrentVariant(product.variants[0]);
+            setImages(product.variants.filter(variant => variant.image && true).map(variant => variant.image));
+            return product;
+        });
+    }
+
+    const {isLoading, isError, data: product} = useQuery<Product>('product', fetchProduct, {retry: false});
 
     //region Snackbar Control
     const [alert, setAlert] = useState<AlertContent>();
@@ -62,7 +70,6 @@ function ProductView(props: { productId: number }) {
     }
 
     //endregion
-
 
 
     //region Quantity Dialog Control
@@ -127,7 +134,9 @@ function ProductView(props: { productId: number }) {
             <QuantityDialog open={dialogOpen} onClose={() => setDialogOpen(false)} onConfirm={handleQuantityConfirm}/>
             <Card className={"shadow-sm p-3"}>
                 {isLoading && <CircularProgress/>}
-                <Row>{(images && images.length > 0) &&
+                {isError && <span>This product could not be found.</span>}
+                <Row>{
+                    (images && images.length > 0) &&
                     <Col sm>
                         {carousel}
                     </Col>}
@@ -166,7 +175,7 @@ function ProductView(props: { productId: number }) {
                                     </Accordion.Item>
                                 </Accordion>
                             </Container>
-                        </> || (!isLoading && <span>This product could not be found.</span>)}
+                        </>}
                     </Col>
                 </Row>
             </Card>
