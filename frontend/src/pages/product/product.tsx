@@ -8,8 +8,10 @@ const productId = productContainer.dataset.productid;
 
 const queryClient = new QueryClient();
 productContainer && ReactDOM.createRoot(productContainer).render(productId &&
-    <QueryClientProvider client={queryClient}>
-        <ProductView productId={Number.parseInt(productId)}/>
-    </QueryClientProvider>
+    <React.StrictMode>
+        <QueryClientProvider client={queryClient}>
+            <ProductView productId={Number.parseInt(productId)}/>
+        </QueryClientProvider>
+    </React.StrictMode>
     || "No product"
 );
