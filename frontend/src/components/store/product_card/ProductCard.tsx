@@ -10,7 +10,7 @@ import {Skeleton, Stack} from "@mui/material";
 
 export const LoadingCard = () => {
     return (
-        <div className={"m-2"} style={{width: 300, height: 500}}>
+        <Container style={{width: 300, height: 500}}>
             <Stack spacing={2}>
                 <Skeleton variant={"rectangular"} width={300} height={300}/>
                 <Skeleton variant={"text"}/>
@@ -25,13 +25,11 @@ export const LoadingCard = () => {
                 <Skeleton variant={"text"}/>
                 <Skeleton variant={"text"} width={"60%"}/>
             </Stack>
-        </div>
+        </Container>
     )
 }
 
-function ProductCard(props: { product: Product }) {
-
-    const [product] = useState(props.product);
+function ProductCard({product}: { product: Product }) {
 
     const [shownVariant, setShownVariant] = useState(() => {
         const rank = (availability: ProductVariantAvailability): number =>
@@ -52,7 +50,7 @@ function ProductCard(props: { product: Product }) {
     const href = `/store/product/${product.id}`;
 
     return (
-        <Card className={"m-2"} style={{width: "300px"}}>
+        <Card style={{width: "300px"}}>
             <AvailabilityLabel availability={shownVariant.availability} otherText={"Availability Unknown"}/>
             <ProductCardImage image={shownVariant.image} href={href}/>
             <Card.Body>

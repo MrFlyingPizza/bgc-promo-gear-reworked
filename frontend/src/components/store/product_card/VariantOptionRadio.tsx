@@ -1,5 +1,5 @@
 import {ProductVariant} from "types/Product";
-import {Chip, List, ListItem, Radio, Tooltip, Zoom} from "@mui/material";
+import {Chip, List, ListItem, Radio, Tooltip} from "@mui/material";
 import * as React from "react";
 import {Image} from "react-bootstrap";
 import CheckIcon from '@mui/icons-material/Check';
@@ -26,16 +26,14 @@ const VariantOptionRadio = ({variant, checked, onClick}: VariantOptionRadioProps
     const checkedIcon = (
         <>
             {icon}
-            <Zoom in={checked}>
-                <CheckIcon sx={{
-                    color: "black",
-                    height: 32,
-                    width: 32,
-                    position: "absolute",
-                    objectFit: "cover",
-                    backgroundColor: "rgba(255, 255, 255, 0.7)"
-                }}/>
-            </Zoom>
+            <CheckIcon sx={{
+                color: "black",
+                height: 32,
+                width: 32,
+                position: "absolute",
+                objectFit: "cover",
+                backgroundColor: "rgba(255, 255, 255, 0.7)"
+            }}/>
         </>
     );
     const radio = <Radio checked={checked} key={variant.id} icon={icon} checkedIcon={checkedIcon}
