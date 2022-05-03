@@ -19,6 +19,8 @@ import {useQuery} from "react-query";
 import {Product} from "types/Product";
 import {ProductImage} from "types/ProductImage";
 import {ProductVariant} from "types/ProductVariant";
+import BGCPromoGearHeader from "components/shared/BGCPromoGearHeader";
+import BGCPromoGearFooter from "components/shared/BGCPromoGearFooter";
 
 type AlertContent = {
     severity: AlertColor,
@@ -128,61 +130,66 @@ function ProductView({productId}: { productId: number }) {
     //endregion
 
     return (
-        <Container fluid={"md"} className={"mt-5 mb-5 min-vh-100"}>
-            <Snackbar open={snackbarOpen} autoHideDuration={3000} onClose={closeSnackbar}>
-                {alert && <Alert severity={alert.severity} onClose={closeSnackbar}>{alert.message}</Alert>}
-            </Snackbar>
-            <QuantityDialog open={dialogOpen} onClose={() => setDialogOpen(false)} onConfirm={handleQuantityConfirm}/>
-            <Card className={"shadow-sm"}>
-                <Card.Body>
-                    {isLoading && <CircularProgress/>}
-                    {isError && <span>This product could not be found.</span>}
-                    <Row>{
-                        (images && images.length > 0) &&
-                        <Col sm>
-                            {carousel}
-                        </Col>}
-                        <Col sm>{
-                            product &&
-                            <>
-                                <Container className={"border-bottom border-2"}>
-                                    <h2>{product?.name}&nbsp;<Badge pill bg={"dark"}>{product?.brand}</Badge></h2>
-                                </Container>
-                                <Container className={"mt-3"}>
-                                    <Accordion defaultActiveKey={"0"} flush>{
-                                        selectionPropertyValues &&
-                                        <Accordion.Item eventKey={"0"}>
-                                            <Accordion.Header><h6>Options</h6></Accordion.Header>
-                                            <Accordion.Body>
-                                                <AvailabilityLabel availability={currentVariant?.availability}
-                                                                   otherText={NO_SELECTION_TEXT}/>{
-                                                product.variants.length > 1 &&
-                                                <ProductOptionSelection
-                                                    onChange={handleSelectionChange}
-                                                    groups={selectionPropertyValues.current.optionGroups}
-                                                    options={selectionPropertyValues.current.options}
-                                                    relation={selectionPropertyValues.current.relation}
-                                                />}
-                                                <Button disabled={!currentVariant}
-                                                        startIcon={<AddShoppingCartSharpIcon/>}
-                                                        onClick={() => setDialogOpen(true)}
-                                                >
-                                                    Add to cart
-                                                </Button>
-                                            </Accordion.Body>
-                                        </Accordion.Item>}
-                                        <Accordion.Item eventKey={"1"}>
-                                            <Accordion.Header><h6>Description</h6></Accordion.Header>
-                                            <Accordion.Body>{product?.description}</Accordion.Body>
-                                        </Accordion.Item>
-                                    </Accordion>
-                                </Container>
-                            </>}
-                        </Col>
-                    </Row>
-                </Card.Body>
-            </Card>
-        </Container>
+        <>
+            <BGCPromoGearHeader/>
+            <Container fluid={"md"} className={"mt-5 mb-5 min-vh-100"}>
+                <Snackbar open={snackbarOpen} autoHideDuration={3000} onClose={closeSnackbar}>
+                    {alert && <Alert severity={alert.severity} onClose={closeSnackbar}>{alert.message}</Alert>}
+                </Snackbar>
+                <QuantityDialog open={dialogOpen} onClose={() => setDialogOpen(false)} onConfirm={handleQuantityConfirm}/>
+                <Card className={"shadow-sm"}>
+                    <Card.Body>
+                        {isLoading && <CircularProgress/>}
+                        {isError && <span>This product could not be found.</span>}
+                        <Row>{
+                            (images && images.length > 0) &&
+                            <Col sm>
+                                {carousel}
+                            </Col>}
+                            <Col sm>{
+                                product &&
+                                <>
+                                    <Container className={"border-bottom border-2"}>
+                                        <h2>{product?.name}&nbsp;<Badge pill bg={"dark"}>{product?.brand}</Badge></h2>
+                                    </Container>
+                                    <Container className={"mt-3"}>
+                                        <Accordion defaultActiveKey={"0"} flush>{
+                                            selectionPropertyValues &&
+                                            <Accordion.Item eventKey={"0"}>
+                                                <Accordion.Header><h6>Options</h6></Accordion.Header>
+                                                <Accordion.Body>
+                                                    <AvailabilityLabel availability={currentVariant?.availability}
+                                                                       otherText={NO_SELECTION_TEXT}/>{
+                                                    product.variants.length > 1 &&
+                                                    <ProductOptionSelection
+                                                        onChange={handleSelectionChange}
+                                                        groups={selectionPropertyValues.current.optionGroups}
+                                                        options={selectionPropertyValues.current.options}
+                                                        relation={selectionPropertyValues.current.relation}
+                                                    />}
+                                                    <Button disabled={!currentVariant}
+                                                            startIcon={<AddShoppingCartSharpIcon/>}
+                                                            onClick={() => setDialogOpen(true)}
+                                                    >
+                                                        Add to cart
+                                                    </Button>
+                                                </Accordion.Body>
+                                            </Accordion.Item>}
+                                            <Accordion.Item eventKey={"1"}>
+                                                <Accordion.Header><h6>Description</h6></Accordion.Header>
+                                                <Accordion.Body>{product?.description}</Accordion.Body>
+                                            </Accordion.Item>
+                                        </Accordion>
+                                    </Container>
+                                </>}
+                            </Col>
+                        </Row>
+                    </Card.Body>
+                </Card>
+                <BGCPromoGearFooter/>
+            </Container>
+            <BGCPromoGearFooter/>
+        </>
     )
 }
 

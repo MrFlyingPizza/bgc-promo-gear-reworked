@@ -5,6 +5,7 @@
 </head>
 
 <main layout:fragment="content">
+    <nav th:replace="fragments/store/header :: header"></nav>
     <section>
         <h2 id="tempHeading2">Contact Us</h2>
         <br>
@@ -19,5 +20,6 @@
             mollit anim id est laborum."
         </p>
     </section>
+    <div th:replace="fragments/store/footer :: footer"></div>
 </main>
 </html>

@@ -6,6 +6,7 @@ import {Card, Col, Image, Row} from "react-bootstrap";
 import React from "react";
 import {Chip, List, TextField, Tooltip} from "@mui/material";
 import AvailabilityBadge from "components/shared/AvailabilityBadge";
+import placeholderSrc from "components/shared/PlaceholderImage";
 
 type CartContentItemProps = {
     initialItem: CartItem
@@ -38,8 +39,7 @@ const CartContentItem = ({
                     <Col>
                         <AvailabilityBadge availability={availability}>{image &&
                             <Image fluid {...imageSize} src={image.src} alt={image.alt}/>
-                            || <Image fluid {...imageSize} src={"https://pbs.twimg.com/media/EROmBrLXUAEf8_c.jpg"}
-                                      alt={"placeholder image"}/>}
+                            || <Image fluid {...imageSize} src={placeholderSrc()} alt={"placeholder image"}/>}
                         </AvailabilityBadge>
                     </Col>
                     <Col>

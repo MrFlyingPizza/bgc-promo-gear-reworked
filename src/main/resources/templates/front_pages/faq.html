@@ -5,6 +5,7 @@
 </head>
 
 <div layout:fragment="content">
+    <nav th:replace="fragments/store/header :: header"></nav>
     <div class="front-content">
         <div class="container" style="padding: 0px 0px;margin-top: 20px;margin-bottom: 20px;">
             <div class="card shadow-sm" style="margin: 18px;">
@@ -75,5 +76,6 @@
             </div>
         </div>
     </div>
+    <div th:replace="fragments/store/footer :: footer"></div>
 </div>
 </html>

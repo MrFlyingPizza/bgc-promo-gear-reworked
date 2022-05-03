@@ -3,6 +3,7 @@ import * as React from "react";
 import {Image} from "react-bootstrap";
 import CheckIcon from '@mui/icons-material/Check';
 import {ProductVariant} from "types/ProductVariant";
+import placeholderSrc from "components/shared/PlaceholderImage";
 
 export type VariantOptionRadioProps = {
     variant: ProductVariant,
@@ -21,7 +22,7 @@ const VariantOptionRadio = ({variant, checked, onClick}: VariantOptionRadioProps
         </List>
     );
 
-    const src = variant.image?.src || "https://i.pinimg.com/originals/3e/84/09/3e8409dcdd012b4bcda84a710f2d1052.jpg";
+    const src = variant.image?.src || placeholderSrc();
     const icon = <Image style={{height: 24, width: 24, objectFit: "cover"}} roundedCircle src={src}/>;
     const checkedIcon = (
         <>
