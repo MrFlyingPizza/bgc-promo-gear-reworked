@@ -8,19 +8,23 @@ type CartContentProps = {
     isLoading: boolean,
     isError: boolean,
     onRemove: () => void,
+    onUpdate: () => void,
     items: CartItem[]
 }
 
-const CartContent = ({items, isLoading, isError, onRemove}: CartContentProps) => {
+const CartContent = ({items, isLoading, isError, onRemove, onUpdate}: CartContentProps) => {
 
     return (
         <Card className={"shadow-sm"}>
             <Card.Header>Shopping Cart</Card.Header>
             <Card.Body>
-                {isLoading && <LinearProgress/> || items.length == 0 && "No items in cart."}
-                {isError && "Failed to load items."}
+                {
+                    isLoading && <LinearProgress/>
+                    || isError && "Failed to load items."
+                    || items.length == 0 && "No items in cart."
+                }
                 <Stack gap={2}>{items.map(item =>
-                    <CartContentItem key={item.variant.id} initialItem={item} onRemove={onRemove}/>)}
+                    <CartContentItem key={item.variant.id} initialItem={item} onRemove={onRemove} onUpdate={onUpdate}/>)}
                 </Stack>
             </Card.Body>
         </Card>

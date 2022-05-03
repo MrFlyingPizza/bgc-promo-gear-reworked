@@ -1,7 +1,7 @@
 import CartItem from "types/CartItem";
 import {useMutation} from "react-query";
 import axios from "axios";
-import {useState} from "react";
+import {useRef, useState} from "react";
 import {Card, Col, Container, Image, Row, Stack} from "react-bootstrap";
 import React from "react";
 import {Alert, Button, Chip, CircularProgress, Fade, TextField, Tooltip} from "@mui/material";
@@ -10,8 +10,9 @@ import placeholderSrc from "components/shared/PlaceholderImage";
 import CartItemUpdate from "types/CartItemUpdate";
 
 type CartContentItemProps = {
-    initialItem: CartItem
-    onRemove: () => void
+    initialItem: CartItem,
+    onRemove: () => void,
+    onUpdate: () => void
 }
 
 const CartContentItem = (
@@ -22,11 +23,13 @@ const CartContentItem = (
                 product: {name},
                 quantity: initialQuantity
             },
-        onRemove
+        onRemove,
+        onUpdate
     }: CartContentItemProps
 ) => {
 
     const [quantity, setQuantity] = useState(initialQuantity);
+    const acceptedQuantity = useRef(initialQuantity);
 
     const {
         mutate: updateItem,
@@ -35,7 +38,11 @@ const CartContentItem = (
     } = useMutation((cartItemUpdate: CartItemUpdate) =>
         axios.put(`/api/users/me/cart_items/${id}`, cartItemUpdate).then<CartItem>(response => response.data), {
         onSuccess: (data) => {
-            setQuantity(data.quantity);
+            acceptedQuantity.current = data.quantity;
+            onUpdate();
+        },
+        onError: () => {
+            setQuantity(acceptedQuantity.current);
         }
     });
 
@@ -80,10 +87,12 @@ const CartContentItem = (
                         <Col md={3}>
                             <Row className={"mt-2"}>
                                 <Col sm={6} md={12}>
-                                    <TextField disabled={isUpdating} label="Quantity" value={quantity}
-                                               type="number" variant="standard"
+                                    <TextField disabled={isUpdating} label="Quantity" value={quantity} type="number"
+                                               variant="standard" error={quantity < 1}
+                                               helperText={quantity < 1 && "Must be at least 1."}
+                                               inputProps={{min: 1}}
                                                onChange={event => setQuantity(parseInt(event.target.value))}
-                                               onBlur={() => updateItem({quantity: quantity})}/>
+                                               onBlur={() => quantity > 0 && updateItem({quantity: quantity})}/>
                                 </Col>
                                 <Col sm={6} md={12}>
                                     <Button disabled={isDeleting} onClick={() => deleteItem()}>Remove</Button>

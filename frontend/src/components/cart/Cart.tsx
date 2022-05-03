@@ -20,7 +20,7 @@ function Cart() {
                 <Row>
                     <Col md={12} lg={8}>
                         <CartContent isError={isError} isLoading={isLoading} items={items || []}
-                                     onRemove={() => refetch()}/>
+                                     onRemove={() => refetch()} onUpdate={() => refetch()}/>
                     </Col>
                     <Col md={12} lg={4}>
                         <CartSummary isError={isError} isLoading={isLoading} items={items || []}/>

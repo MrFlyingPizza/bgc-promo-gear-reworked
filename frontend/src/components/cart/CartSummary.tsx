@@ -15,8 +15,11 @@ function CartSummary({items, isLoading, isError}: CartSummaryProps) {
         <Card className={"shadow-sm"}>
             <Card.Header>Summary</Card.Header>
             <Card.Body>
-                {isLoading && <LinearProgress/> || items.length == 0 && "No items in cart."}
-                {isError && "Failed to load items."}
+                {
+                    isLoading && <LinearProgress/>
+                    || isError && "Failed to load items."
+                    || items.length == 0 && "No items in cart."
+                }
                 <ListGroup as={"ul"}>{items.map(({quantity, variant: {id, options}, product: {name}}: CartItem) => (
                     <Fade key={id} in={true} appear={true}>
                         <ListGroup.Item key={id}>
