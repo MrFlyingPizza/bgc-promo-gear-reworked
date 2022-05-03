@@ -1,7 +1,7 @@
 import {OptionValueGroup, SimpleOptionValue} from "components/product/option_selection/OptionSelection";
-import {OptionValue} from "types/OptionValue";
-import {ProductVariant} from "types/ProductVariant";
-import {Option} from "types/Option";
+import OptionValue from "types/OptionValue";
+import ProductVariant from "types/ProductVariant";
+import Option from "types/Option";
 
 export function collectAndSimplifyUniqueOptions(options: OptionValue[]): SimpleOptionValue[] {
     const simpleOptionValues: SimpleOptionValue[] = [];

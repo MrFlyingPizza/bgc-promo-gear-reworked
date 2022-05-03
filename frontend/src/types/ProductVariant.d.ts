@@ -1,9 +1,9 @@
 import ProductVariantAvailability from "types/ProductVariantAvailability";
-import {ProductImage} from "types/ProductImage";
-import {OptionValue} from "types/OptionValue";
+import ProductImage from "types/ProductImage";
+import OptionValue from "types/OptionValue";
 
 
-export interface ProductVariant {
+export default interface ProductVariant {
     id: number,
     availability: ProductVariantAvailability,
     image: ProductImage,

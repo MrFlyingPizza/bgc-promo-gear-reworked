@@ -1,6 +1,6 @@
 import * as React from "react";
 import {useState} from "react";
-import {Product} from "types/Product";
+import Product from "types/Product";
 import {Card, Container} from "react-bootstrap";
 import ProductVariantAvailability from "types/ProductVariantAvailability";
 import ProductCardImage from "components/store/product_card/ProductCardImage";

@@ -2,7 +2,7 @@ import {Chip, List, ListItem, Radio, Tooltip} from "@mui/material";
 import * as React from "react";
 import {Image} from "react-bootstrap";
 import CheckIcon from '@mui/icons-material/Check';
-import {ProductVariant} from "types/ProductVariant";
+import ProductVariant from "types/ProductVariant";
 import placeholderSrc from "components/shared/PlaceholderImage";
 
 export type VariantOptionRadioProps = {

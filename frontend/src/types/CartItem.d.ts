@@ -1,6 +1,6 @@
-import {ProductVariant} from "types/ProductVariant";
+import ProductVariant from "types/ProductVariant";
 
-export interface CartItem {
+export default interface CartItem {
     variant: ProductVariant,
     product: {
         id: number,

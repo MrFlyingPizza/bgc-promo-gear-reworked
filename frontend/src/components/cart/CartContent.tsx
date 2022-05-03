@@ -1,4 +1,4 @@
-import {CartItem} from "types/CartItem";
+import CartItem from "types/CartItem";
 import {Card, Stack} from "react-bootstrap";
 import React from "react";
 import CartContentItem from "components/cart/CartContentItem";
@@ -7,10 +7,12 @@ import {LinearProgress} from "@mui/material";
 type CartContentProps = {
     isLoading: boolean,
     isError: boolean,
+    onRemove: () => void,
     items: CartItem[]
 }
 
-const CartContent = ({items, isLoading, isError}: CartContentProps) => {
+const CartContent = ({items, isLoading, isError, onRemove}: CartContentProps) => {
+
     return (
         <Card className={"shadow-sm"}>
             <Card.Header>Shopping Cart</Card.Header>
@@ -18,7 +20,7 @@ const CartContent = ({items, isLoading, isError}: CartContentProps) => {
                 {isLoading && <LinearProgress/> || items.length == 0 && "No items in cart."}
                 {isError && "Failed to load items."}
                 <Stack gap={2}>{items.map(item =>
-                    <CartContentItem initialItem={item}/>)}
+                    <CartContentItem key={item.variant.id} initialItem={item} onRemove={onRemove}/>)}
                 </Stack>
             </Card.Body>
         </Card>

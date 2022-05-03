@@ -1,6 +1,6 @@
-import {ReactNode, useEffect, useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import axios from "axios";
-import {Alert, AlertColor, Button, CircularProgress, Snackbar} from "@mui/material";
+import {Button, CircularProgress} from "@mui/material";
 import React from "react";
 import {Accordion, Badge, Card, Carousel, Col, Container, Row} from "react-bootstrap";
 import ProductOptionSelection, {
@@ -16,16 +16,12 @@ import {
 import AddShoppingCartSharpIcon from '@mui/icons-material/AddShoppingCartSharp';
 import QuantityDialog from "components/product/QuantityDialog";
 import {useQuery} from "react-query";
-import {Product} from "types/Product";
-import {ProductImage} from "types/ProductImage";
-import {ProductVariant} from "types/ProductVariant";
+import Product from "types/Product";
+import ProductImage from "types/ProductImage";
+import ProductVariant from "types/ProductVariant";
 import BGCPromoGearHeader from "components/shared/BGCPromoGearHeader";
 import BGCPromoGearFooter from "components/shared/BGCPromoGearFooter";
-
-type AlertContent = {
-    severity: AlertColor,
-    message: ReactNode,
-}
+import AlertSnackbar, {AlertContent} from "components/shared/AlertSnackbar";
 
 type SelectionPropertyValues = {
     optionGroups: OptionValueGroup[],
@@ -80,16 +76,20 @@ function ProductView({productId}: { productId: number }) {
 
     function handleQuantityConfirm(quantity: number) {
         if (!currentVariant || !product) return;
-        let content: AlertContent = {
-            severity: "success",
-            message: <span>Added <b className={"font-monospace"}>{quantity} × {product.name}</b> to cart. MOCK</span>
-        };
-        // axios.post("/api/users/me/cart_items", {variantId: currentVariant.id, quantity: quantity}).then(() => {
-        //
-        // }).catch(() => {
-        //
-        // });
-        openSnackbar(content);
+        openSnackbar({
+            severity: "info",
+            message: <span>Adding <b className={"font-monospace"}>{quantity} × {product.name}</b> to cart…</span>,
+            autoHideDuration: null
+        })
+        axios.post("/api/users/me/cart_items", {variantId: currentVariant.id, quantity: quantity}).then(() => {
+            openSnackbar({
+                severity: "success",
+                message: <span>Added <b className={"font-monospace"}>{quantity} × {product.name}</b> to cart.</span>,
+                autoHideDuration: 3000
+            });
+        }).catch(() => {
+            openSnackbar({severity: "error", message: "Could not add product to cart!", autoHideDuration: 3000})
+        });
     }
 
     //endregion
@@ -132,21 +132,20 @@ function ProductView({productId}: { productId: number }) {
     return (
         <>
             <BGCPromoGearHeader/>
-            <Container fluid={"md"} className={"mt-5 mb-5 min-vh-100"}>
-                <Snackbar open={snackbarOpen} autoHideDuration={3000} onClose={closeSnackbar}>
-                    {alert && <Alert severity={alert.severity} onClose={closeSnackbar}>{alert.message}</Alert>}
-                </Snackbar>
-                <QuantityDialog open={dialogOpen} onClose={() => setDialogOpen(false)} onConfirm={handleQuantityConfirm}/>
+            <Container className={"mt-5 mb-5 min-vh-100"}>
+                <AlertSnackbar open={snackbarOpen} alert={alert} onClose={closeSnackbar}/>
+                <QuantityDialog open={dialogOpen} onClose={() => setDialogOpen(false)}
+                                onConfirm={handleQuantityConfirm}/>
                 <Card className={"shadow-sm"}>
                     <Card.Body>
                         {isLoading && <CircularProgress/>}
                         {isError && <span>This product could not be found.</span>}
                         <Row>{
                             (images && images.length > 0) &&
-                            <Col sm>
+                            <Col md>
                                 {carousel}
                             </Col>}
-                            <Col sm>{
+                            <Col md>{
                                 product &&
                                 <>
                                     <Container className={"border-bottom border-2"}>
@@ -186,7 +185,6 @@ function ProductView({productId}: { productId: number }) {
                         </Row>
                     </Card.Body>
                 </Card>
-                <BGCPromoGearFooter/>
             </Container>
             <BGCPromoGearFooter/>
         </>

@@ -1,8 +1,8 @@
-import {Category} from "types/Category";
-import {ProductVariant} from "types/ProductVariant";
-import {Option} from "types/Option";
+import Category from "types/Category";
+import ProductVariant from "types/ProductVariant";
+import Option from "types/Option";
 
-export interface Product {
+export default interface Product {
     id: number,
     name: string,
     brand: string,

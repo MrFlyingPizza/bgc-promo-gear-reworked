@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 import {makeVariantChunks} from "components/store/product_card/helpers";
 import {Carousel, Container} from "react-bootstrap";
 import VariantOptionRadio from "components/store/product_card/VariantOptionRadio";
-import {ProductVariant} from "types/ProductVariant";
+import ProductVariant from "types/ProductVariant";
 
 export type VariantSelectionProps = {
     initialVariant: ProductVariant,
