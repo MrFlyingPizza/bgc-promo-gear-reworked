@@ -2,9 +2,9 @@ import {CartItem} from "types/CartItem";
 import {useMutation} from "react-query";
 import axios from "axios";
 import {useState} from "react";
-import {Card, Col, Image, Row} from "react-bootstrap";
+import {Card, Col, Container, Image, Row, Stack} from "react-bootstrap";
 import React from "react";
-import {Chip, List, TextField, Tooltip} from "@mui/material";
+import {Button, Chip, List, TextField, Tooltip} from "@mui/material";
 import AvailabilityBadge from "components/shared/AvailabilityBadge";
 import placeholderSrc from "components/shared/PlaceholderImage";
 
@@ -35,30 +35,41 @@ const CartContentItem = ({
     return (
         <Card>
             <Card.Body>
-                <Row className={"border-left-primary "}>
-                    <Col>
-                        <AvailabilityBadge availability={availability}>{image &&
-                            <Image fluid {...imageSize} src={image.src} alt={image.alt}/>
-                            || <Image fluid {...imageSize} src={placeholderSrc()} alt={"placeholder image"}/>}
-                        </AvailabilityBadge>
+                <Row className={"border-left-primary"}>
+                    <Col md={3}>
+                        <Row>
+                            <Container fluid>
+                                <AvailabilityBadge availability={availability}>{image &&
+                                <Image className={"w-100 h-auto img-fluid"} {...imageSize} src={image.src}
+                                       alt={image.alt}/>
+                                || <Image className={"w-100 h-auto img-fluid"} {...imageSize} src={placeholderSrc()}
+                                          alt={"placeholder image"}/>}
+                                </AvailabilityBadge>
+                            </Container>
+                        </Row>
                     </Col>
-                    <Col>
+                    <Col md={6}>
                         <Row>
                             <h4>{name}</h4>
                         </Row>{
                         options.length > 0 &&
                         <Row>
-                            <List>{options.map(option =>
+                            <Stack className={"flex-wrap"} direction={"horizontal"} gap={1}>{options.map(option =>
                                 <Tooltip title={option.name}>
                                     <Chip variant={"filled"} color={"primary"} label={option.value}/>
                                 </Tooltip>)}
-                            </List>
+                            </Stack>
                         </Row>}
                     </Col>
-                    <Col sm={2}>
-                        <TextField defaultValue={quantity} label="Quantity" type="number"
-                                   InputLabelProps={{shrink: true,}}
-                                   variant="standard"/>
+                    <Col md={3}>
+                        <Row>
+                            <Col sm={6} md={12}>
+                                <TextField defaultValue={quantity} label="Quantity" type="number" variant="standard"/>
+                            </Col>
+                            <Col sm={6} md={12}>
+                                <Button>Remove</Button>
+                            </Col>
+                        </Row>
                     </Col>
                 </Row>
             </Card.Body>

@@ -18,10 +18,10 @@ function Cart() {
             <BGCPromoGearHeader/>
             <Container className={"mt-5 mb-5 min-vh-100"}>
                 <Row>
-                    <Col md={8}>
+                    <Col md={12} lg={8}>
                         <CartContent isError={isError} isLoading={isLoading} items={items || []}/>
                     </Col>
-                    <Col md={4}>
+                    <Col md={12} lg={4}>
                         <CartSummary isError={isError} isLoading={isLoading} items={items || []}/>
                     </Col>
                 </Row>
