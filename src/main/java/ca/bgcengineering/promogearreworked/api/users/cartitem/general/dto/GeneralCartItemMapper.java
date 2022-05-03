@@ -1,5 +1,7 @@
 package ca.bgcengineering.promogearreworked.api.users.cartitem.general.dto;
 
+import ca.bgcengineering.promogearreworked.api.products.variant.ProductVariantAvailability;
+import ca.bgcengineering.promogearreworked.api.products.variant.ProductVariantService;
 import ca.bgcengineering.promogearreworked.persistence.entities.CartItem;
 import ca.bgcengineering.promogearreworked.persistence.entities.OptionValue;
 import ca.bgcengineering.promogearreworked.persistence.entities.ProductVariant;
@@ -18,6 +20,9 @@ public abstract class GeneralCartItemMapper {
     @Autowired
     private ProductVariantRepository variantRepo;
 
+    @Autowired
+    private ProductVariantService variantService;
+
     @Mapping(source  = "variantId", target = "variant")
     @Mapping(target = "user", ignore = true)
     public abstract CartItem fromCreate(GeneralCartItemCreate cartItemCreate);
@@ -30,6 +35,7 @@ public abstract class GeneralCartItemMapper {
 
     @Mapping(source = "variant.product", target = "product")
     @Mapping(source = "variant.optionValues", target = "variant.options")
+    @Mapping(source = "variant.id", target = "variant.availability")
     public abstract GeneralCartItemResponse toResponse(CartItem cartItem);
 
     public GeneralCartItemBatchResponse toBatchResponse(List<CartItem> cartItems) {
@@ -43,5 +49,10 @@ public abstract class GeneralCartItemMapper {
 
     protected ProductVariant map(Long variantId) {
         return variantId != null && variantId != 0 ? variantRepo.getById(variantId) : null;
+    }
+
+    protected ProductVariantAvailability mapAvailability(Long variantId) {
+        if (variantId == null) return null;
+        return variantService.getProductVariantAvailability(variantId);
     }
 }
