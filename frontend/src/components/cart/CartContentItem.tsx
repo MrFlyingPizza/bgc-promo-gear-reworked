@@ -30,8 +30,6 @@ const CartContentItem = ({
         }
     });
 
-    const imageSize = {width: 300, height: 300};
-
     return (
         <Card>
             <Card.Body>
@@ -40,16 +38,16 @@ const CartContentItem = ({
                         <Row>
                             <Container fluid>
                                 <AvailabilityBadge availability={availability}>{image &&
-                                <Image className={"w-100 h-auto img-fluid"} {...imageSize} src={image.src}
+                                <Image className={"w-100 h-auto img-fluid"} src={image.src}
                                        alt={image.alt}/>
-                                || <Image className={"w-100 h-auto img-fluid"} {...imageSize} src={placeholderSrc()}
+                                || <Image className={"w-100 h-auto img-fluid"} src={placeholderSrc()}
                                           alt={"placeholder image"}/>}
                                 </AvailabilityBadge>
                             </Container>
                         </Row>
                     </Col>
                     <Col md={6}>
-                        <Row>
+                        <Row className={"mt-2"}>
                             <h4>{name}</h4>
                         </Row>{
                         options.length > 0 &&
@@ -62,7 +60,7 @@ const CartContentItem = ({
                         </Row>}
                     </Col>
                     <Col md={3}>
-                        <Row>
+                        <Row className={"mt-2"}>
                             <Col sm={6} md={12}>
                                 <TextField defaultValue={quantity} label="Quantity" type="number" variant="standard"/>
                             </Col>
