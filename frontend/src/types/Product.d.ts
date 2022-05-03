@@ -1,35 +1,6 @@
-import ProductVariantAvailability from "types/ProductVariantAvailability";
-
-export interface ProductImage {
-    id: number,
-    alt: string,
-    src: string
-}
-
-export interface Option {
-    id: number,
-    name: string
-}
-
-export interface OptionValue {
-    valueId: number,
-    optionId: number,
-    name: string,
-    value: string
-}
-
-export interface ProductVariant {
-    id: number,
-    availability: ProductVariantAvailability,
-    image: ProductImage,
-    options: OptionValue[]
-}
-
-export interface Category {
-    id: number,
-    name: string,
-    parent: Category
-}
+import {Category} from "types/Category";
+import {ProductVariant} from "types/ProductVariant";
+import {Option} from "types/Option";
 
 export interface Product {
     id: number,

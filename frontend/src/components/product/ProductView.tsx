@@ -1,6 +1,5 @@
 import {ReactNode, useEffect, useRef, useState} from "react";
 import axios from "axios";
-import {Product, ProductImage, ProductVariant} from "types/Product";
 import {Alert, AlertColor, Button, CircularProgress, Snackbar} from "@mui/material";
 import React from "react";
 import {Accordion, Badge, Card, Carousel, Col, Container, Row} from "react-bootstrap";
@@ -17,6 +16,9 @@ import {
 import AddShoppingCartSharpIcon from '@mui/icons-material/AddShoppingCartSharp';
 import QuantityDialog from "components/product/QuantityDialog";
 import {useQuery} from "react-query";
+import {Product} from "types/Product";
+import {ProductImage} from "types/ProductImage";
+import {ProductVariant} from "types/ProductVariant";
 
 type AlertContent = {
     severity: AlertColor,

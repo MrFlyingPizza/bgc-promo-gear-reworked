@@ -1,4 +1,4 @@
-import {ProductVariant} from "types/Product";
+import {ProductVariant} from "types/ProductVariant";
 
 export function makeVariantChunks(variants: ProductVariant[], chunkSize: number) {
     if (chunkSize == 0) {
