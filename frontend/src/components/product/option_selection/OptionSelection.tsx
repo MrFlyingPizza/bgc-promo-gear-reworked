@@ -50,7 +50,8 @@ const OptionSelection = ({options, groups, relation, onChange}: ProductOptionSel
             <React.Fragment>
                 <FormLabel><h6 className={"user-select-none"}>{name}</h6></FormLabel>
                 <FormGroup row>{optionIds.map(optionId =>
-                    <OptionCheckbox value={optionId}
+                    <OptionCheckbox key={optionId}
+                                    value={optionId}
                                     label={options.find(option => option.id == optionId).value}
                                     disabled={disabledOptions.find(disabledId => disabledId == optionId) && true}
                                     checked={selectedOptionIds.find(checkedId => checkedId == optionId) && true}
