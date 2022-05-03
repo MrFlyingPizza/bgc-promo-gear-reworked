@@ -3,8 +3,8 @@ import {useState} from "react";
 import axios from "axios";
 import {CircularProgress, Grid} from "@mui/material";
 
-import {Product} from "types/Product";
-import {Category} from "types/Category";
+import Product from "types/Product";
+import Category from "types/Category";
 import ProductCard, {LoadingCard} from "./product_card/ProductCard";
 import {useQuery} from "react-query";
 import {Card, Col, Container, Row} from "react-bootstrap";
@@ -38,7 +38,7 @@ function Store() {
     const [selectedCategory, setSelectedCategory] = useState<SelectedCategory>(null);
 
 
-    const loadingCards = isLoadingProducts && Array.from({length: 3}, (v, i) => (
+    const loadingCards = isLoadingProducts && Array.from({length: 4}, (v, i) => (
         <Grid item>
             <LoadingCard key={i}/>
         </Grid>
