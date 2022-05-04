@@ -1,20 +1,16 @@
 import * as React from "react";
 import {Card} from "react-bootstrap";
+import placeholderSrc from "components/shared/PlaceholderImage";
 
-const placeholder = (
-    <Card.Img
-        src={"https://i.pinimg.com/originals/3e/84/09/3e8409dcdd012b4bcda84a710f2d1052.jpg"}
-        alt={"Placeholder image for missing product image."}
-    />
-);
+const ProductCardImage = ({image, href}: {href: string, image: { alt: string, src: string } }) => {
 
-const ProductCardImage = (props: { image: { alt: string, src: string } }) => {
-
-    const image = props.image;
+    const imageData = image && {src: image.src, alt: image.alt} || {src: placeholderSrc(), alt: "placeholder image"};
 
     return (
-        (image && <Card.Img src={image.src} alt={image.alt}/>) || placeholder
-    )
+        <a href={href}>
+            <Card.Img style={{height: 300, objectFit: "cover"}} src={imageData.src} alt={imageData.alt}/>
+        </a>
+    );
 }
 
 export default ProductCardImage;

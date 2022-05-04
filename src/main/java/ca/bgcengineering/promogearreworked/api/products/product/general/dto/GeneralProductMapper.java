@@ -35,6 +35,7 @@ public abstract class GeneralProductMapper {
     @Mapping(source = "id", target = "availability")
     protected abstract GeneralProductResponse.NestedProductVariant map(ProductVariant productVariant);
 
+    @Mapping(source = "id", target = "valueId")
     @Mapping(source = "option.id", target = "optionId")
     @Mapping(source = "option.name", target = "name")
     protected abstract GeneralProductResponse.NestedProductVariant.NestedOptionValue map(OptionValue optionValue);

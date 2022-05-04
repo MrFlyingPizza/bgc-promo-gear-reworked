@@ -1,5 +1,6 @@
 package ca.bgcengineering.promogearreworked.api.users.cartitem.general.dto;
 
+import ca.bgcengineering.promogearreworked.api.products.variant.ProductVariantAvailability;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -30,6 +31,7 @@ public class GeneralCartItemResponse {
     static class NestedProductVariant {
         private final Long id;
         private final NestedProductImage image;
+        private final ProductVariantAvailability availability;
         private final List<NestedOptionValue> options;
     }
 

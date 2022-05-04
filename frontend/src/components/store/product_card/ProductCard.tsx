@@ -1,15 +1,35 @@
 import * as React from "react";
 import {useState} from "react";
-import {Chip, List, ListItem, ListItemText} from "@mui/material";
-import {Product} from "types/Product";
-import {Card} from "react-bootstrap";
+import Product from "types/Product";
+import {Card, Container} from "react-bootstrap";
 import ProductVariantAvailability from "types/ProductVariantAvailability";
 import ProductCardImage from "components/store/product_card/ProductCardImage";
-import ProductCardOptions from "components/store/product_card/ProductCardOptions";
+import VariantSelection from "components/store/product_card/VariantSelection";
+import AvailabilityLabel from "components/shared/AvailabilityLabel";
+import {Skeleton, Stack} from "@mui/material";
 
-function ProductCard(props: { product: Product }) {
+export const LoadingCard = () => {
+    return (
+        <React.Fragment>
+            <Stack spacing={2}>
+                <Skeleton variant={"rectangular"} height={300}/>
+                <Skeleton variant={"text"}/>
+                <Container className={"d-flex flex-wrap justify-content-center"}>
+                    <Stack spacing={2} direction={"row"}>
+                        <Skeleton variant={"circular"} width={24} height={24}/>
+                        <Skeleton variant={"circular"} width={24} height={24}/>
+                        <Skeleton variant={"circular"} width={24} height={24}/>
+                    </Stack>
+                </Container>
+                <Skeleton variant={"text"}/>
+                <Skeleton variant={"text"}/>
+                <Skeleton variant={"text"} width={"60%"}/>
+            </Stack>
+        </React.Fragment>
+    )
+}
 
-    const [product] = useState(props.product);
+function ProductCard({product}: { product: Product }) {
 
     const [shownVariant, setShownVariant] = useState(() => {
         const rank = (availability: ProductVariantAvailability): number =>
@@ -24,59 +44,21 @@ function ProductCard(props: { product: Product }) {
         });
         return initialVariant;
     }); // published products always have at least 1 variant
-
-    const variantMap = new Map(product.variants.map(variant => {
+    new Map(product.variants.map(variant => {
         return [variant.id.toString(), variant];
     }));
-
-    const AvailabilityLabel = (props: { availability: ProductVariantAvailability }) => {
-
-        const [availability] = useState(props.availability);
-
-        const AvailabilityChip = (props: { label: string, color: "info" | "warning" | "error" }) => {
-            return (
-                <Chip className={"availability-label"} label={props.label} variant={"filled"} size={"small"}
-                      color={props.color}/>
-            )
-        }
-
-        return (
-            availability == ProductVariantAvailability.AVAILABLE
-            && <AvailabilityChip label={"Available"} color={"info"}/>
-            || availability == ProductVariantAvailability.WAIT_LIST
-            && <AvailabilityChip label={"Wait-List"} color={"warning"}/>
-            || availability == ProductVariantAvailability.UNAVAILABLE
-            && <AvailabilityChip label={"Unavailable"} color={"error"}/>
-        )
-    }
-
-    // <a href={"/store/product/?id=" + product.id} style={{textDecoration: 'none', color: 'black'}}>
-    //     <ProductCardImage image={shownVariant.image}/>
-    // </a>
-
-    const cartOptions = product.variants.map(variant => {
-        const tooltip = (
-            variant.options.length > 0 &&
-            <List>
-                {variant.options.map(option => (
-                    <ListItem key={option.optionId}>
-                        <Chip color={"primary"} label={option.value}/>
-                    </ListItem>
-                ))}
-            </List>
-        );
-        return {value: variant.id.toString(), src: variant.image?.src, tooltip: tooltip};
-    });
+    const href = `/store/product/${product.id}`;
 
     return (
-        <Card style={{width: "300px"}}>
-            <AvailabilityLabel availability={shownVariant.availability}/>
-            <ProductCardImage image={shownVariant.image}/>
+        <Card>
+            <AvailabilityLabel availability={shownVariant.availability} otherText={"Availability Unknown"}/>
+            <ProductCardImage image={shownVariant.image} href={href}/>
             <Card.Body>
-                <Card.Title>{product.name}</Card.Title>
-                <ProductCardOptions initialValue={shownVariant.id.toString()} values={cartOptions}
-                                    onChange={value => setShownVariant(variantMap.get(value))}/>
-                <Card.Text>{product.description}</Card.Text>
+                <Card.Title className={"text-center"}>
+                    <a href={href} className={"text-decoration-none"}>{product.name}</a>
+                </Card.Title>
+                <VariantSelection initialVariant={shownVariant} variants={product.variants} onChange={value => setShownVariant(value)}/>
+                <Card.Text style={{maxHeight: "4.5em"}} className={"line-clamp text-center"}>{product.description}</Card.Text>
             </Card.Body>
         </Card>
     )
