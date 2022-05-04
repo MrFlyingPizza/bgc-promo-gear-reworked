@@ -1,7 +1,6 @@
 import * as React from "react";
-import {useState} from "react";
 import axios from "axios";
-import {CircularProgress, Grid} from "@mui/material";
+import {Accordion, AccordionDetails, AccordionSummary, CircularProgress} from "@mui/material";
 
 import Product from "types/Product";
 import Category from "types/Category";
@@ -26,48 +25,57 @@ function Store() {
         data: categories
     } = useQuery("categories", () => axios.get("/api/categories").then<Category[]>(response => response.data.categories));
 
+    const cardSize = {xs: 12, sm: 6, md: 12, lg: 6, xl: 4, xxl: 3};
+
     return (
         <>
             <BGCPromoGearHeader/>
             <Container fluid className={"mt-5 mb-5 min-vh-100 justify-content-center"}>
-                <Card className={"shadow-sm"}>
-                    <Card.Body>
+                <Row>
+                    <Col>
                         <Row>
+                            <h3>Promotional Gear</h3>
+                        </Row>
+                        <Row>
+                            <Col sm={12} md={5} lg={4} xxl={3}>
+                                <Card className={"shadow-sm"}>
+                                    <Card.Body>
+                                        <Card.Title>Filters</Card.Title>
+                                        <Accordion>
+                                            <AccordionSummary>Categories</AccordionSummary>
+                                            <AccordionDetails>{
+                                                isLoadingCategories && <div><CircularProgress/></div>
+                                                || isErrorCategories && "Failed to load categories."
+                                                || <CategorySelection categories={categories} onChange={console.log}/>}
+                                            </AccordionDetails>
+                                        </Accordion>
+                                    </Card.Body>
+                                </Card>
+                            </Col>
                             <Col>
-                                <Row>
-                                    <h3>Promotional Gear</h3>
-                                </Row>
-                                <Row>
-                                    <Col>
-                                        <Row>
-                                            <h6 className={"mb-3"}>Categories</h6>
-                                        </Row>
-                                        <Row>{
-                                            isLoadingCategories && <div><CircularProgress/></div>
-                                            || isErrorCategories && "Failed to load categories."
-                                            || <CategorySelection categories={categories} onChange={null}/>}
-                                        </Row>
-                                    </Col>
-                                    <Col xs={12} sm={8} lg={10}>
+                                <Card className={"shadow-sm"}>
+                                    <Card.Body>
                                         <Row>{isLoadingProducts &&
-                                        Array.from({length: 4}, (v, i) => (
-                                            <Col md={"auto"} key={i}>
-                                                <LoadingCard key={i}/>
-                                            </Col>
-                                        ))
-                                        || isErrorProducts && <span>Failed to load products.</span>
-                                        || products?.length > 0 && products.map(item => (
-                                            <Col md={"auto"} key={item.id}>
-                                                <ProductCard key={item.id} product={item}/>
-                                            </Col>))
-                                        || !isLoadingProducts && <span>No items found.</span>}
+                                            Array.from({length: 4}, (v, i) => (
+                                                <Col key={i} xs={12} {...cardSize}>
+                                                    <Row>
+                                                        <LoadingCard key={i}/>
+                                                    </Row>
+                                                </Col>
+                                            ))
+                                            || isErrorProducts && <span>Failed to load products.</span>
+                                            || products?.length > 0 && products.map(item => (
+                                                <Col key={item.id} {...cardSize}>
+                                                    <ProductCard key={item.id} product={item}/>
+                                                </Col>))
+                                            || !isLoadingProducts && <span>No items found.</span>}
                                         </Row>
-                                    </Col>
-                                </Row>
+                                    </Card.Body>
+                                </Card>
                             </Col>
                         </Row>
-                    </Card.Body>
-                </Card>
+                    </Col>
+                </Row>
             </Container>
             <BGCPromoGearFooter/>
         </>

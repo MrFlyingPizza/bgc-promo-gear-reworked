@@ -10,9 +10,9 @@ import {Skeleton, Stack} from "@mui/material";
 
 export const LoadingCard = () => {
     return (
-        <Container>
+        <React.Fragment>
             <Stack spacing={2}>
-                <Skeleton variant={"rectangular"} width={300} height={300}/>
+                <Skeleton variant={"rectangular"} height={300}/>
                 <Skeleton variant={"text"}/>
                 <Container className={"d-flex flex-wrap justify-content-center"}>
                     <Stack spacing={2} direction={"row"}>
@@ -25,7 +25,7 @@ export const LoadingCard = () => {
                 <Skeleton variant={"text"}/>
                 <Skeleton variant={"text"} width={"60%"}/>
             </Stack>
-        </Container>
+        </React.Fragment>
     )
 }
 
@@ -50,7 +50,7 @@ function ProductCard({product}: { product: Product }) {
     const href = `/store/product/${product.id}`;
 
     return (
-        <Card style={{minWidth: 300, maxWidth: 450}}>
+        <Card>
             <AvailabilityLabel availability={shownVariant.availability} otherText={"Availability Unknown"}/>
             <ProductCardImage image={shownVariant.image} href={href}/>
             <Card.Body>

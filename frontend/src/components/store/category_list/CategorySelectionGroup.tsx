@@ -16,7 +16,7 @@ const CategorySelectionGroup = (
     }: CategorySelectionGroupProps
 ) => {
 
-    const categories = [...subcategories, {id: parentId, name: parentName}];
+    const categories = [...subcategories, {id: parentId, name: subcategories.length > 0 ? "Other" : "All"}];
 
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
     const [open, setOpen] = useState(false);

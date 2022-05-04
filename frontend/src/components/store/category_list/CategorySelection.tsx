@@ -11,10 +11,10 @@ type CategorySelectionProps = {
 const CategorySelection = ({categories, onChange}: CategorySelectionProps) => {
     return (
         <List>{categories.map(category =>
-            <>
-                <Divider key={category.id + "d"}/>
-                <CategorySelectionGroup key={category.id} category={category} onSelect={console.log}/>
-            </>)}
+            <React.Fragment key={category.id}>
+                <Divider/>
+                <CategorySelectionGroup category={category} onSelect={onChange}/>
+            </React.Fragment>)}
         </List>
     )
 }
