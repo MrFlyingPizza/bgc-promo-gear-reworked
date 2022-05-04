@@ -1,5 +1,5 @@
 import Category from "types/Category";
-import {List} from "@mui/material";
+import {Divider, List} from "@mui/material";
 import CategorySelectionGroup from "components/store/category_list/CategorySelectionGroup";
 import React from "react";
 
@@ -11,7 +11,10 @@ type CategorySelectionProps = {
 const CategorySelection = ({categories, onChange}: CategorySelectionProps) => {
     return (
         <List>{categories.map(category =>
-            <CategorySelectionGroup category={category} onSelect={console.log}/>)}
+            <>
+                <Divider key={category.id + "d"}/>
+                <CategorySelectionGroup key={category.id} category={category} onSelect={console.log}/>
+            </>)}
         </List>
     )
 }

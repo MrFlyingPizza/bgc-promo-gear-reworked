@@ -1,4 +1,4 @@
-import {Checkbox, Collapse, List, ListItemButton, ListItemIcon, ListItemText} from "@mui/material";
+import {Checkbox, Collapse, List, ListItem, ListItemButton, ListItemIcon, ListItemText} from "@mui/material";
 import React, {useEffect} from "react";
 import {useState} from "react";
 import Category from "types/Category";
@@ -19,7 +19,7 @@ const CategorySelectionGroup = (
     const categories = [...subcategories, {id: parentId, name: parentName}];
 
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
 
     useEffect(() => onSelect(selectedIds), [selectedIds]);
 
@@ -57,7 +57,7 @@ const CategorySelectionGroup = (
 
     return (
         <>
-            <ListItemButton selected={selectedIds.length > 0} onClick={toggle}>
+            <ListItem disableGutters disablePadding>
                 <Collapse orientation={"horizontal"} in={open} timeout={"auto"} unmountOnExit>
                     <ListItemIcon>
                         <Checkbox checked={isAllSelected()}
@@ -65,11 +65,14 @@ const CategorySelectionGroup = (
                                   onChange={event => event.target.checked ? selectAll() : deselectAll()}/>
                     </ListItemIcon>
                 </Collapse>
-                <ListItemText primary={parentName}/>{open ? <ExpandLess /> : <ExpandMore />}
-            </ListItemButton>
+                <ListItemButton selected={selectedIds.length > 0} onClick={toggle}>
+                    <ListItemText primary={<h6>{parentName}</h6>}/>{open ? <ExpandLess/> : <ExpandMore/>}
+                </ListItemButton>
+            </ListItem>
             <Collapse in={open} timeout={"auto"} unmountOnExit>
                 <List disablePadding>{categories.map(({id, name}) => (
-                    <ListItemButton key={id} sx={{ pl: 4 }} onClick={() => isSelected(id) ? deselect(id) : select(id)}>
+                    <ListItemButton key={id} disableGutters sx={{pl: 4}}
+                                    onClick={() => isSelected(id) ? deselect(id) : select(id)}>
                         <ListItemIcon>
                             <Checkbox checked={isSelected(id)}/>
                         </ListItemIcon>

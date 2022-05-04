@@ -10,7 +10,7 @@ import {Skeleton, Stack} from "@mui/material";
 
 export const LoadingCard = () => {
     return (
-        <Container style={{width: 300, height: 500}}>
+        <Container>
             <Stack spacing={2}>
                 <Skeleton variant={"rectangular"} width={300} height={300}/>
                 <Skeleton variant={"text"}/>
@@ -50,7 +50,7 @@ function ProductCard({product}: { product: Product }) {
     const href = `/store/product/${product.id}`;
 
     return (
-        <Card style={{width: "300px"}}>
+        <Card style={{minWidth: 300, maxWidth: 450}}>
             <AvailabilityLabel availability={shownVariant.availability} otherText={"Availability Unknown"}/>
             <ProductCardImage image={shownVariant.image} href={href}/>
             <Card.Body>

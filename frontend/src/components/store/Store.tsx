@@ -12,16 +12,6 @@ import BGCPromoGearHeader from "components/shared/BGCPromoGearHeader";
 import BGCPromoGearFooter from "components/shared/BGCPromoGearFooter";
 import CategorySelection from "components/store/category_list/CategorySelection";
 
-type SelectedCategory = {
-    id: number,
-    name: string,
-
-    parent?: {
-        id: number,
-        name: string
-    }
-}
-
 function Store() {
 
     const {
@@ -36,49 +26,43 @@ function Store() {
         data: categories
     } = useQuery("categories", () => axios.get("/api/categories").then<Category[]>(response => response.data.categories));
 
-    const [selectedCategory, setSelectedCategory] = useState<SelectedCategory>(null);
-
-
-    const loadingCards = isLoadingProducts && Array.from({length: 4}, (v, i) => (
-        <Grid item>
-            <LoadingCard key={i}/>
-        </Grid>
-    ));
-
     return (
         <>
             <BGCPromoGearHeader/>
-            <Container fluid className={"mt-5 mb-5 min-vh-100"}>
+            <Container fluid className={"mt-5 mb-5 min-vh-100 justify-content-center"}>
                 <Card className={"shadow-sm"}>
                     <Card.Body>
                         <Row>
-                            <Col md={2}>
+                            <Col>
                                 <Row>
-                                    <h4>Categories</h4>
-                                </Row>
-                                <Row>{
-                                    isLoadingCategories && <div><CircularProgress/></div>
-                                    || isErrorCategories && "Failed to load categories."
-                                    || <CategorySelection categories={categories} onChange={null}/>}
-                                </Row>
-                            </Col>
-                            <Col md={10}>
-                                <Row>
-                                    <Container fluid className={"border-bottom border-2 mb-3"}>
-                                        <h3>Promotional Gear</h3>
-                                    </Container>
+                                    <h3>Promotional Gear</h3>
                                 </Row>
                                 <Row>
-                                    <Grid justifyContent={"center"} container spacing={{xs: 2, md: 3}}
-                                          columns={{xs: 4, sm: 8, md: 12}}>
-                                        {isLoadingProducts && loadingCards}
-                                        {isErrorProducts && <span>Failed to load products.</span>}
-                                        {products?.length > 0 && products.map(item => (
-                                                <Grid item key={item.id}>
-                                                    <ProductCard key={item.id} product={item}/>
-                                                </Grid>))
-                                            || !isLoadingProducts && <span>No items found.</span>}
-                                    </Grid>
+                                    <Col>
+                                        <Row>
+                                            <h6 className={"mb-3"}>Categories</h6>
+                                        </Row>
+                                        <Row>{
+                                            isLoadingCategories && <div><CircularProgress/></div>
+                                            || isErrorCategories && "Failed to load categories."
+                                            || <CategorySelection categories={categories} onChange={null}/>}
+                                        </Row>
+                                    </Col>
+                                    <Col xs={12} sm={8} lg={10}>
+                                        <Row>{isLoadingProducts &&
+                                        Array.from({length: 4}, (v, i) => (
+                                            <Col md={"auto"} key={i}>
+                                                <LoadingCard key={i}/>
+                                            </Col>
+                                        ))
+                                        || isErrorProducts && <span>Failed to load products.</span>
+                                        || products?.length > 0 && products.map(item => (
+                                            <Col md={"auto"} key={item.id}>
+                                                <ProductCard key={item.id} product={item}/>
+                                            </Col>))
+                                        || !isLoadingProducts && <span>No items found.</span>}
+                                        </Row>
+                                    </Col>
                                 </Row>
                             </Col>
                         </Row>
