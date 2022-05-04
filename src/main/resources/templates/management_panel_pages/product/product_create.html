@@ -254,8 +254,8 @@
           </table>
         </div>
         <div class="col-md-12">
-          <button class="btn btn-success" style="float: right; margin-left: 10px;" onclick="">Save All + Publish</button>
-          <button class="btn btn-warning" style="float: right;" onclick="update_variant_images()">Save All + Not Publish</button>
+          <button class="btn btn-success" style="float: right; margin-left: 10px;" onclick="update_variant_images(true)">Save All + Publish</button>
+          <button class="btn btn-warning" style="float: right;" onclick="update_variant_images(false)">Save All + Not Publish</button>
           <!--      <input class="btn btn-outline-primary" id="submit-create-product-group" type="button"-->
           <!--             value="Submit" data-bs-toggle="modal" data-bs-target="#confirm-product-group-create-modal">-->
         </div>
@@ -3704,7 +3704,7 @@
       });
     });
 
-    function update_variant_images(){
+    function update_variant_images(publish){
       $('#wait-modal-title').text("Updating Variants...");
       $('#wait-modal').modal('show');
       let productId = $('#finish-variants-table-2').data("product-id");
@@ -3731,10 +3731,57 @@
           success: function()
           {
             if(j === numVariants-1){
-              $('#wait-modal').modal('hide');
+              if(!publish){
+                $('#wait-modal').modal('hide');
 
-              $('#success-modal-message').text("Successfully updated Variant Images!");
-              $('#success-modal').modal('show');;
+                $('#success-modal-message').text("Successfully updated Variant Images ahd did not Publish!");
+                $('#success-modal').modal('show');
+              }
+
+              if(publish){
+                const publishProductData = {
+                  'isPublished': true
+                };
+                $.ajax({
+                  type: "PATCH",
+                  url: '/api/secured/products/'.concat(productId),
+                  contentType: "application/json",
+                  data: JSON.stringify(publishProductData), // serializes the form's elements.
+                  beforeSend: function(xhr) {
+                    // xhr.setRequestHeader(
+                    //         $('meta[name=_csrf_header]').attr('content'),
+                    //         $('meta[name=_csrf]').attr('content')
+                    // )
+                  },
+                  success: function()
+                  {
+                    $('#wait-modal').modal('hide');
+
+                    $('#success-modal-message').text("Successfully updated Variant Images and did publish!");
+                    $('#success-modal').modal('show');
+                  },
+                  error: function(xhr) {
+                    console.log(xhr);
+                    testing = xhr;
+                    $('#wait-modal').modal('hide');
+
+                    $('#failed-modal-message-header').text("Product Update Failed: Publishing Product");
+                    var responseMessagesString = '';
+                    let responseMessages = xhr.responseJSON['messages'];
+
+                    if (responseMessages !== undefined) {
+                      for (let i = 0; i < responseMessages.length; i++) {
+                        responseMessagesString += ((i + 1) + ". " + responseMessages[i]['message'] + "\n");
+                      }
+                      $('#failed-modal-message').text("Error Message: \n" + responseMessagesString);
+                    } else {
+                      $('#failed-modal-message').text("Error Message: \nNo available Error Message.");
+                    }
+
+                    $('#failed-modal').modal('show');
+                  }
+                });
+              }
             }
             // $('#success-redirect').attr("href", "/management/product/update?id="+pgid)
           },
