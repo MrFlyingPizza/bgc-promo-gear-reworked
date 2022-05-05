@@ -1,11 +1,13 @@
 import Category from "types/Category";
 import {Divider, List} from "@mui/material";
-import CategorySelectionGroup from "components/store/category_list/CategorySelectionGroup";
+import CategorySelectionGroup, {
+    CategorySelectionCallback
+} from "components/store/category_list/CategorySelectionGroup";
 import React from "react";
 
 type CategorySelectionProps = {
     categories: Category[],
-    onChange: (selectedIds: number[]) => void
+    onChange: CategorySelectionCallback
 };
 
 const CategorySelection = ({categories, onChange}: CategorySelectionProps) => {
@@ -13,7 +15,7 @@ const CategorySelection = ({categories, onChange}: CategorySelectionProps) => {
         <List>{categories.map(category =>
             <React.Fragment key={category.id}>
                 <Divider/>
-                <CategorySelectionGroup category={category} onSelect={onChange}/>
+                <CategorySelectionGroup category={category} onChange={onChange}/>
             </React.Fragment>)}
         </List>
     )

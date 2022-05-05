@@ -19,7 +19,7 @@ const VariantSelection = ({initialVariant, variants, onChange}: VariantSelection
         onChange(selectedVariant);
     }, [selectedVariant]);
 
-    const variantChunks = makeVariantChunks(variants, 5);
+    const variantChunks = makeVariantChunks(variants, 4);
 
     const VariantOptionRadios = ({variants}: { variants: ProductVariant[] }) => {
         return (

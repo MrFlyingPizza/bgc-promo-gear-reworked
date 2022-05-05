@@ -19,9 +19,20 @@ type StoreAlertProps = {
     onClose: () => void
 };
 
+type ProductGroup = {
+    name: string,
+    products: Product[]
+}
+
 function Store() {
 
-    const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
+    const [selectedCategoryIds, setSelectedCategoryIds] = useState<Set<number>>(new Set());
+
+    function handleCategoryChange(previousCategoryIds: number[], updatedCategoryIds: number[]) {
+        previousCategoryIds.forEach(id => selectedCategoryIds.delete(id));
+        updatedCategoryIds.forEach(id => selectedCategoryIds.add(id));
+        setSelectedCategoryIds(new Set(selectedCategoryIds));
+    }
 
     //region Alert Control
     const [alerts, setAlerts] = useState<StoreAlertProps[]>([]);
@@ -44,44 +55,51 @@ function Store() {
         isLoading: isLoadingCategories,
         isError: isErrorCategories,
         data: categories
-    } = useQuery("categories", () => axios.get("/api/categories").then<Category[]>(response => response.data.categories));
+    } = useQuery("categories", () => axios.get("/api/categories")
+        .then<Category[]>(response => response.data.categories.filter(({parent}: Category) => !parent)));
+
+    function getCategoryById(categoryId: number) {
+        return categories.find(({id}) => id == categoryId);
+    }
 
     //region Product Fetching
-    // const [isLoadingProducts, setIsLoadingProducts] = useState(true);
-    // const [products, setProducts] = useState<Product[]>([]);
-    //
-    // async function fetchProductsByCategoryId(categoryId: number) {
-    //     axios.get("/api/products/", {params: {"category.id": categoryId}}).then<Product>(({data}) => {
-    //         setProducts([...products, data]);
-    //         return data;
-    //     }).catch(() => addAlert({
-    //         id: categoryId,
-    //         severity: "error",
-    //         content: "",
-    //         onClose: () => removeAlert(categoryId)
-    //     }));
-    // }
-    //
-    // useEffect(() => {
-    //     selectedCategoryIds.forEach(selectedId => {
-    //         const params = {"category.id": selectedId};
-    //         axios.get("/api/products/", {params: params})
-    //     })
-    // }, [selectedCategoryIds]);
-    //endregion
+    const [isLoadingProducts, setIsLoadingProducts] = useState(true);
+    const [products, setProducts] = useState<Product[]>([]);
 
-    const {
-        isLoading: isLoadingProducts,
-        isError: isErrorProducts,
-        data: products
-    } = useQuery("products", () => axios.get("/api/products").then<Product[]>(response => response.data.products));
+    useEffect(() => {
+        const newProducts: Product[] = [];
+        setIsLoadingProducts(true);
+        const promises: Promise<Product[] | void>[] = [];
+        selectedCategoryIds.forEach((id) => promises.push(axios.get("/api/products/", {params: {"category.id": id}})
+            .then<Product[]>(({data}) => {
+                newProducts.push(...data.products);
+                return products;
+            }).catch(() => {
+                const category = getCategoryById(id);
+                const content = (
+                    <span>Failed to fetch products in <b>{category ? category.name : `Category #${id}.`}</b></span>
+                );
+                addAlert({
+                    id: id,
+                    severity: "error",
+                    content: content,
+                    onClose: () => removeAlert(id)
+                });
+            })
+        ));
+        Promise.all(promises).finally(() => {
+            setIsLoadingProducts(false);
+            setProducts(newProducts);
+        });
+    }, [selectedCategoryIds]);
+    //endregion
 
     const cardSize = {xs: 12, sm: 6, md: 12, lg: 6, xl: 4, xxl: 3};
 
     return (
         <>
             <BGCPromoGearHeader/>
-            <Container fluid className={"mt-5 mb-5 min-vh-100 justify-content-center"}>
+            <Container fluid={"xl"} className={"mt-5 mb-5 min-vh-100 justify-content-center"}>
                 <Row>
                     <Col>
                         <Row>
@@ -97,7 +115,8 @@ function Store() {
                                             <AccordionDetails>{
                                                 isLoadingCategories && <div><CircularProgress/></div>
                                                 || isErrorCategories && "Failed to load categories."
-                                                || <CategorySelection categories={categories} onChange={console.log}/>}
+                                                || <CategorySelection categories={categories}
+                                                                      onChange={handleCategoryChange}/>}
                                             </AccordionDetails>
                                         </Accordion>
                                     </Card.Body>

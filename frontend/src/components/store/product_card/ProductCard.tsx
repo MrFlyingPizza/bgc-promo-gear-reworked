@@ -50,7 +50,7 @@ function ProductCard({product}: { product: Product }) {
     const href = `/store/product/${product.id}`;
 
     return (
-        <Card>
+        <Card className={"mb-5"}>
             <AvailabilityLabel availability={shownVariant.availability} otherText={"Availability Unknown"}/>
             <ProductCardImage image={shownVariant.image} href={href}/>
             <Card.Body>
