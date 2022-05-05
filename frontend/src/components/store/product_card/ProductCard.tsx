@@ -12,7 +12,7 @@ export const LoadingCard = () => {
     return (
         <React.Fragment>
             <Stack spacing={2}>
-                <Skeleton variant={"rectangular"} height={300}/>
+                <Skeleton variant={"rectangular"} height={300} width={300}/>
                 <Skeleton variant={"text"}/>
                 <Container className={"d-flex flex-wrap justify-content-center"}>
                     <Stack spacing={2} direction={"row"}>
@@ -50,7 +50,7 @@ function ProductCard({product}: { product: Product }) {
     const href = `/store/product/${product.id}`;
 
     return (
-        <Card className={"mb-5"}>
+        <Card className={"mb-5"} style={{width: 300}}>
             <AvailabilityLabel availability={shownVariant.availability} otherText={"Availability Unknown"}/>
             <ProductCardImage image={shownVariant.image} href={href}/>
             <Card.Body>

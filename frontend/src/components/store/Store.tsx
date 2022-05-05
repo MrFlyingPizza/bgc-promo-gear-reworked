@@ -1,16 +1,25 @@
 import * as React from "react";
 import axios from "axios";
-import {Accordion, AccordionDetails, AccordionSummary, Alert, AlertColor, CircularProgress} from "@mui/material";
+import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
+    Alert,
+    AlertColor,
+    CircularProgress,
+    Skeleton
+} from "@mui/material";
 
 import Product from "types/Product";
 import Category from "types/Category";
 import ProductCard, {LoadingCard} from "./product_card/ProductCard";
-import {useQuery} from "react-query";
-import {Card, Col, Container, Row} from "react-bootstrap";
+import {useQueries, useQuery, UseQueryResult} from "react-query";
+import {Badge, Card, Col, Container, Row} from "react-bootstrap";
+import {Accordion as BSAccordion} from "react-bootstrap";
 import BGCPromoGearHeader from "components/shared/BGCPromoGearHeader";
 import BGCPromoGearFooter from "components/shared/BGCPromoGearFooter";
 import CategorySelection from "components/store/category_list/CategorySelection";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 
 type StoreAlertProps = {
     id: number,
@@ -20,7 +29,7 @@ type StoreAlertProps = {
 };
 
 type ProductGroup = {
-    name: string,
+    categoryId: number
     products: Product[]
 }
 
@@ -56,45 +65,31 @@ function Store() {
         isError: isErrorCategories,
         data: categories
     } = useQuery("categories", () => axios.get("/api/categories")
-        .then<Category[]>(response => response.data.categories.filter(({parent}: Category) => !parent)));
+        .then<Category[]>(response => response.data.categories.filter(({parent}: Category) => !parent))
+    );
 
     function getCategoryById(categoryId: number) {
+        if (categoryId == null) return null;
         return categories.find(({id}) => id == categoryId);
     }
 
     //region Product Fetching
-    const [isLoadingProducts, setIsLoadingProducts] = useState(true);
-    const [products, setProducts] = useState<Product[]>([]);
-
-    useEffect(() => {
-        const newProducts: Product[] = [];
-        setIsLoadingProducts(true);
-        const promises: Promise<Product[] | void>[] = [];
-        selectedCategoryIds.forEach((id) => promises.push(axios.get("/api/products/", {params: {"category.id": id}})
-            .then<Product[]>(({data}) => {
-                newProducts.push(...data.products);
-                return products;
-            }).catch(() => {
-                const category = getCategoryById(id);
-                const content = (
-                    <span>Failed to fetch products in <b>{category ? category.name : `Category #${id}.`}</b></span>
-                );
-                addAlert({
-                    id: id,
-                    severity: "error",
-                    content: content,
-                    onClose: () => removeAlert(id)
-                });
-            })
-        ));
-        Promise.all(promises).finally(() => {
-            setIsLoadingProducts(false);
-            setProducts(newProducts);
-        });
-    }, [selectedCategoryIds]);
+    const productQueryResults: UseQueryResult<ProductGroup>[] = useQueries(Array.from(selectedCategoryIds).map(categoryId => ({
+        queryKey: ["products", categoryId],
+        queryFn: () => {
+            return axios.get("/api/products", {params: {"category.id": categoryId}})
+                .then<ProductGroup>(response => ({categoryId: categoryId, products: response.data.products}));
+        }
+    })));
     //endregion
 
-    const cardSize = {xs: 12, sm: 6, md: 12, lg: 6, xl: 4, xxl: 3};
+    function resultComparator({data: a}: UseQueryResult<ProductGroup>, {data: b}: UseQueryResult<ProductGroup>) {
+        if (!a) return 1;
+        if (!b) return -1;
+        if (a.products.length == b.products.length) return 0;
+        if (b.products.length > a.products.length) return 1;
+        else return -1;
+    }
 
     return (
         <>
@@ -130,19 +125,44 @@ function Store() {
                                                 {content}
                                             </Alert>)}
                                         </Row>
-                                        <Row>{isLoadingProducts &&
-                                            Array.from({length: 4}, (v, i) => (
-                                                <Col key={i} xs={12} {...cardSize}>
-                                                    <Row>
-                                                        <LoadingCard key={i}/>
-                                                    </Row>
-                                                </Col>
-                                            ))
-                                            || products?.length > 0 && products.map(item => (
-                                                <Col key={item.id} {...cardSize}>
-                                                    <ProductCard key={item.id} product={item}/>
-                                                </Col>))
-                                            || <span>No items found.</span>}
+                                        <Row>
+                                            <BSAccordion>{productQueryResults.sort(resultComparator).map((
+                                                {data: group, isLoading, isError}, index
+                                            ) => (
+                                                group &&
+                                                <BSAccordion.Item key={group.categoryId} eventKey={index.toString()}>
+                                                    <BSAccordion.Header>{
+                                                        group.categoryId == 0 && "All Products"
+                                                        || (
+                                                            <>
+                                                                <Badge>{group.products?.length}</Badge>
+                                                                {getCategoryById(group.categoryId)?.name}
+                                                            </>
+                                                        ) || <Skeleton variant={"text"} width={50}/>}
+                                                    </BSAccordion.Header>
+                                                    <BSAccordion.Body>
+                                                        <Container>
+                                                            <Row>{
+                                                                isLoading && Array.from({length: 4}, (v, i) =>
+                                                                    <Col key={i} xs>
+                                                                        <LoadingCard key={i}/>
+                                                                    </Col>
+                                                                ) || isError &&
+                                                                <Alert severity={"error"}>
+                                                                    Failed to load products.
+                                                                </Alert>
+                                                                || group.products?.length > 0 && group.products.map(item => (
+                                                                    <Col key={item.id} xs>
+                                                                        <ProductCard key={item.id} product={item}/>
+                                                                    </Col>
+                                                                )) ||
+                                                                <span>No items found.</span>}
+                                                            </Row>
+                                                        </Container>
+                                                    </BSAccordion.Body>
+                                                </BSAccordion.Item>
+                                            ))}
+                                            </BSAccordion>
                                         </Row>
                                     </Card.Body>
                                 </Card>
