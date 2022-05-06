@@ -81,6 +81,7 @@ function Store() {
                 .then<ProductGroup>(response => ({categoryId: categoryId, products: response.data.products}));
         }
     })));
+
     //endregion
 
     function resultComparator({data: a}: UseQueryResult<ProductGroup>, {data: b}: UseQueryResult<ProductGroup>) {
@@ -126,7 +127,10 @@ function Store() {
                                             </Alert>)}
                                         </Row>
                                         <Row>
-                                            <BSAccordion>{productQueryResults.sort(resultComparator).map((
+                                            <BSAccordion flush alwaysOpen
+                                                         defaultActiveKey={productQueryResults.filter(({data}) => data)
+                                                             .map(({data}) => data.categoryId.toString())}
+                                            >{productQueryResults.sort(resultComparator).map((
                                                 {data: group, isLoading, isError}, index
                                             ) => (
                                                 group &&
