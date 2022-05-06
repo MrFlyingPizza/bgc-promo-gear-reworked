@@ -6,7 +6,7 @@ import {
     AccordionSummary,
     Alert,
     AlertColor,
-    CircularProgress,
+    CircularProgress, LinearProgress,
     Skeleton
 } from "@mui/material";
 
@@ -74,7 +74,7 @@ function Store() {
     }
 
     //region Product Fetching
-    const productQueryResults: UseQueryResult<ProductGroup>[] = useQueries(Array.from(selectedCategoryIds).map(categoryId => ({
+    const productQueries: UseQueryResult<ProductGroup>[] = useQueries(Array.from(selectedCategoryIds).map(categoryId => ({
         queryKey: ["products", categoryId],
         queryFn: () => {
             return axios.get("/api/products", {params: {"category.id": categoryId}})
@@ -95,7 +95,7 @@ function Store() {
     return (
         <>
             <BGCPromoGearHeader/>
-            <Container fluid={"xl"} className={"mt-5 mb-5 min-vh-100 justify-content-center"}>
+            <Container className={"mt-5 mb-5 min-vh-100 justify-content-center"}>
                 <Row>
                     <Col>
                         <Row>
@@ -128,13 +128,14 @@ function Store() {
                                         </Row>
                                         <Row>
                                             <BSAccordion flush alwaysOpen
-                                                         defaultActiveKey={productQueryResults.filter(({data}) => data)
-                                                             .map(({data}) => data.categoryId.toString())}
-                                            >{productQueryResults.sort(resultComparator).map((
+                                                         defaultActiveKey={Array.from(selectedCategoryIds).map(id =>
+                                                             id.toString()
+                                                         )}>{productQueries.sort(resultComparator).map((
                                                 {data: group, isLoading, isError}, index
                                             ) => (
                                                 group &&
-                                                <BSAccordion.Item key={group.categoryId} eventKey={index.toString()}>
+                                                <BSAccordion.Item key={group.categoryId}
+                                                                  eventKey={group.categoryId.toString()}>
                                                     <BSAccordion.Header>{
                                                         group.categoryId == 0 && "All Products"
                                                         || (
@@ -143,20 +144,17 @@ function Store() {
                                                                 {getCategoryById(group.categoryId)?.name}
                                                             </>
                                                         ) || <Skeleton variant={"text"} width={50}/>}
+                                                        {isLoading && <CircularProgress/>}
                                                     </BSAccordion.Header>
                                                     <BSAccordion.Body>
                                                         <Container>
                                                             <Row>{
-                                                                isLoading && Array.from({length: 4}, (v, i) =>
-                                                                    <Col key={i} xs>
-                                                                        <LoadingCard key={i}/>
-                                                                    </Col>
-                                                                ) || isError &&
+                                                                isError &&
                                                                 <Alert severity={"error"}>
                                                                     Failed to load products.
                                                                 </Alert>
                                                                 || group.products?.length > 0 && group.products.map(item => (
-                                                                    <Col key={item.id} xs>
+                                                                    <Col key={item.id} xs={12} lg={6} xxl={4}>
                                                                         <ProductCard key={item.id} product={item}/>
                                                                     </Col>
                                                                 )) ||
