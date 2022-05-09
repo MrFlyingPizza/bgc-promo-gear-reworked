@@ -54,13 +54,20 @@ function Store() {
     );
 
     //region Product Fetching
-    const productQueries: UseQueryResult<Product[]>[] = useQueries(Array.from(selectedCategoryIds).map(categoryId => ({
-        queryKey: ["products", categoryId],
-        queryFn: () => {
-            return axios.get("/api/products", {params: {"category.id": categoryId}})
-                .then<Product[]>(({data}) => data.products);
-        }
-    })));
+    const productQueries: UseQueryResult<Product[]>[] = useQueries(selectedCategoryIds.size > 0 ?
+        Array.from(selectedCategoryIds).map(categoryId => ({
+            queryKey: ["products", categoryId],
+            queryFn: () => {
+                return axios.get("/api/products", {params: {"category.id": categoryId}})
+                    .then<Product[]>(({data}) => data.products);
+            }
+        })) : [{
+            queryKey: ["products", null],
+            queryFn: () => {
+                return axios.get("/api/products").then<Product[]>(({data}) => data.products);
+            }
+        }]
+    );
 
     //endregion
 
