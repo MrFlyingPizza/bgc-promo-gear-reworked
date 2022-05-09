@@ -63,7 +63,7 @@ const CategorySelectionGroup = (
     }
 
     return (
-        <>
+        <List>
             <ListItem disableGutters disablePadding>
                 <Collapse orientation={"horizontal"} in={open} timeout={"auto"} unmountOnExit>
                     <ListItemIcon>
@@ -87,7 +87,7 @@ const CategorySelectionGroup = (
                     </ListItemButton>))}
                 </List>
             </Collapse>
-        </>
+        </List>
     );
 }
 
