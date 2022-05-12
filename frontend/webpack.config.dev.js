@@ -5,7 +5,7 @@ const FileManagerPlugin = require("filemanager-webpack-plugin");
 module.exports = {
     mode: 'development',
     entry: {
-        cart: './src/pages/cart/cart.tsx',
+        checkout: './src/pages/checkout/checkout.tsx',
         store: './src/pages/store/store.tsx',
         product: './src/pages/product/product.tsx',
     },

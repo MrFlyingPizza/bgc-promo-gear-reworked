@@ -8,7 +8,7 @@ import BGCPromoGearHeader from "components/shared/BGCPromoGearHeader";
 import BGCPromoGearFooter from "components/shared/BGCPromoGearFooter";
 import {Container, Grid} from "@mui/material";
 
-function Cart() {
+function Checkout() {
 
     const {isLoading, isError, data: items, refetch} = useQuery("cart_items", () =>
         axios.get("/api/users/me/cart_items").then<CartItem[]>(response => response.data.cartItems));
@@ -32,4 +32,4 @@ function Cart() {
     );
 }
 
-export default Cart;
+export default Checkout;

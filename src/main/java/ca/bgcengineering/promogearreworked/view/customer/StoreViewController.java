@@ -5,7 +5,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/store")
@@ -39,14 +38,9 @@ public class StoreViewController {
         return "store_pages/product";
     }
 
-    @GetMapping("cart")
-    public String showCartPage(){
-        return "store_pages/new_cart";
-    }
-
     @GetMapping("checkout")
-    public String showCheckoutOrderPage(){
-        return "error_pages/constructionStore";
+    public String showCartPage(){
+        return "/store_pages/checkout";
     }
 
     @GetMapping("orders")

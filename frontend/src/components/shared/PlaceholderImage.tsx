@@ -11,8 +11,11 @@ const sadCatPics = [
     "/images/sad_cats/10.jpg"
 ];
 
+const noImagePlaceholder = "/images/No_Image_Placeholder.png";
+
 const placeholderSrc = () => {
-    return sadCatPics[Math.floor(Math.random() * sadCatPics.length)];
+    //return sadCatPics[Math.floor(Math.random() * sadCatPics.length)];
+    return noImagePlaceholder;
 }
 
 export default placeholderSrc;

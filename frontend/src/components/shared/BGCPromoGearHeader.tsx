@@ -36,8 +36,8 @@ const BGCPromoGearHeader = () => {
                                                                             borderRadius: 20,
                                                                             color: "#333333"
                                                                         }}
-                                                                        href="/store/cart"
-                                                                        data-bs-target="cart.html"><span>checkout&nbsp;
+                                                                        href="/store/checkout"
+                                                                        data-bs-target="checkout.html"><span>checkout&nbsp;
                         <i className="fa fa-shopping-cart m-auto"/></span></a><a className="login" href="#"
                                                                                  style={{
                                                                                      marginLeft: 16,
