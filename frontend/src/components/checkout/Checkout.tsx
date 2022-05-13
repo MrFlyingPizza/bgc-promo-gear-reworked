@@ -6,7 +6,7 @@ import {useQuery} from "react-query";
 import CartContent from "components/checkout/CartContent";
 import BGCPromoGearHeader from "components/shared/BGCPromoGearHeader";
 import BGCPromoGearFooter from "components/shared/BGCPromoGearFooter";
-import {Button, Collapse, Container, Grid, Stack} from "@mui/material";
+import {Button, Container, Grid, Grow, Stack} from "@mui/material";
 import {useState} from "react";
 import OrderForm from "components/checkout/OrderForm";
 
@@ -26,27 +26,29 @@ function Checkout() {
             <BGCPromoGearHeader/>
             <Container className={"mt-5 mb-5 min-vh-100"}>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} sm={8}>
-                        <Collapse in={isCompleting}>
-                            <div>
-                                <OrderForm/>
-                            </div>
-                        </Collapse>
-                        <Collapse in={!isCompleting}>
-                            <div>
-                                <CartContent isError={isError} isLoading={isLoading} items={items || []}
-                                             onRemove={() => refetch()} onUpdate={() => refetch()}/>
-                            </div>
-                        </Collapse>
-                    </Grid>
+                    {!isCompleting &&
+                    <Grow in appear>
+                        <Grid item xs={12} sm={8}>
+                            <CartContent isError={isError} isLoading={isLoading} items={items || []}
+                                         onRemove={() => refetch()} onUpdate={() => refetch()}/>
+                        </Grid>
+                    </Grow>}
                     <Grid item xs={12} sm>
                         <Stack spacing={2}>
-                            <CartSummary isError={isError} isLoading={isLoading} items={items || []}/>
-                            <Button onClick={toggle} variant={isCompleting ? "outlined" : "contained"}>
+                            <CartSummary isError={isError} isLoading={isLoading} items={items || []}/>{
+                            !isLoading && !isError &&
+                            <Button disabled={items.length < 1} onClick={toggle}
+                                    variant={isCompleting ? "outlined" : "contained"}>
                                 {isCompleting ? "Back" : "Continue"}
-                            </Button>
+                            </Button>}
                         </Stack>
                     </Grid>
+                    {isCompleting &&
+                    <Grow in appear>
+                        <Grid item xs={12} sm={8}>
+                            <OrderForm/>
+                        </Grid>
+                    </Grow>}
                 </Grid>
             </Container>
             <BGCPromoGearFooter/>
