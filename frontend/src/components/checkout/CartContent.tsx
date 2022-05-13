@@ -1,7 +1,7 @@
 import CartItem from "types/CartItem";
 import {Card, Stack} from "react-bootstrap";
 import React from "react";
-import CartContentItem from "components/cart/CartContentItem";
+import CartContentItem from "components/checkout/CartContentItem";
 import {LinearProgress} from "@mui/material";
 
 type CartContentProps = {

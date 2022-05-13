@@ -1,6 +1,6 @@
 import * as React from "react";
 import axios from "axios";
-import {Alert, AlertColor, CircularProgress, Container, Grid} from "@mui/material";
+import {Alert, AlertColor, CircularProgress, Container, Grid, Skeleton} from "@mui/material";
 
 import Category from "types/Category";
 import ProductCard, {LoadingCard} from "./product_card/ProductCard";
@@ -82,7 +82,7 @@ function Store() {
                         <h3>Promotional Gear</h3>
                     </Grid>
                     <Grid item xs={12}>{
-                        isLoadingCategories && <div><CircularProgress/></div>
+                        isLoadingCategories && <Skeleton variant={"rectangular"} height={"3em"}/>
                         || isErrorCategories && "Failed to load categories."
                         || <CategorySelection categories={categories} onChange={handleCategoryChange}/>}
                     </Grid>

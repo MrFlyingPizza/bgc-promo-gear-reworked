@@ -1,7 +1,7 @@
 import * as React from "react";
 import CartItem from "types/CartItem";
-import {Badge, Card, ListGroup, ListGroupItem} from "react-bootstrap";
-import {Button, Chip, Fade, LinearProgress, Tooltip} from "@mui/material";
+import {Badge, Card, ListGroup} from "react-bootstrap";
+import {Chip, Fade, LinearProgress, Tooltip} from "@mui/material";
 
 type CartSummaryProps = {
     items: CartItem[],
@@ -30,9 +30,6 @@ function CartSummary({items, isLoading, isError}: CartSummaryProps) {
                         </Tooltip>)}
                     </ListGroup.Item>
                 </Fade>))}
-                <ListGroupItem>
-                    <Button variant={"contained"}>Continue to Order</Button>
-                </ListGroupItem>
             </ListGroup>
         }
         </Card>

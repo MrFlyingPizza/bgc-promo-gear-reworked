@@ -1,0 +1,57 @@
+import * as React from "react";
+import axios from "axios";
+import CartSummary from "./CartSummary";
+import CartItem from "types/CartItem";
+import {useQuery} from "react-query";
+import CartContent from "components/checkout/CartContent";
+import BGCPromoGearHeader from "components/shared/BGCPromoGearHeader";
+import BGCPromoGearFooter from "components/shared/BGCPromoGearFooter";
+import {Button, Collapse, Container, Grid, Stack} from "@mui/material";
+import {useState} from "react";
+import OrderForm from "components/checkout/OrderForm";
+
+function Checkout() {
+
+    const {isLoading, isError, data: items, refetch} = useQuery("cart_items", () =>
+        axios.get("/api/users/me/cart_items").then<CartItem[]>(response => response.data.cartItems));
+
+    const [isCompleting, setIsCompleting] = useState(false);
+
+    function toggle() {
+        setIsCompleting(!isCompleting);
+    }
+
+    return (
+        <>
+            <BGCPromoGearHeader/>
+            <Container className={"mt-5 mb-5 min-vh-100"}>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={8}>
+                        <Collapse in={isCompleting}>
+                            <div>
+                                <OrderForm/>
+                            </div>
+                        </Collapse>
+                        <Collapse in={!isCompleting}>
+                            <div>
+                                <CartContent isError={isError} isLoading={isLoading} items={items || []}
+                                             onRemove={() => refetch()} onUpdate={() => refetch()}/>
+                            </div>
+                        </Collapse>
+                    </Grid>
+                    <Grid item xs={12} sm>
+                        <Stack spacing={2}>
+                            <CartSummary isError={isError} isLoading={isLoading} items={items || []}/>
+                            <Button onClick={toggle} variant={isCompleting ? "outlined" : "contained"}>
+                                {isCompleting ? "Back" : "Continue"}
+                            </Button>
+                        </Stack>
+                    </Grid>
+                </Grid>
+            </Container>
+            <BGCPromoGearFooter/>
+        </>
+    );
+}
+
+export default Checkout;

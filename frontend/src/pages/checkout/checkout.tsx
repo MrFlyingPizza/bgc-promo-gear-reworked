@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
-import Checkout from "components/cart/Checkout";
+import Checkout from "components/checkout/Checkout";
 import {QueryClient, QueryClientProvider} from "react-query";
 
 const queryClient = new QueryClient();
