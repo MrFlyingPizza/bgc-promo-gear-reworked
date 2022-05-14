@@ -1,7 +1,7 @@
-import React, {useState} from "react";
+import React, {ChangeEvent, useState} from "react";
 import {Card, ListGroup} from "react-bootstrap";
 import {
-    Box, Collapse,
+    Box, Button, Collapse,
     FormControl, Grid, Grow,
     InputLabel,
     LinearProgress,
@@ -26,14 +26,23 @@ const OrderForm = () => {
     const [selectedLocationIndex, setSelectedLocationIndex] = useState("");
     const [selectedOrderType, setSelectedOrderType] = useState("");
     const [selectedRequiredDate, setSelectedRequiredDate] = useState(Date.now());
+    const [recipientInfo, setRecipientInfo] = useState("");
 
-    function handleLocationChange(event: SelectChangeEvent) {
-        setSelectedLocationIndex(event.target.value);
+    function handleLocationChange({target: {value}}: SelectChangeEvent) {
+        setSelectedLocationIndex(value);
     }
 
-    function handleOrderTypeChange(event: SelectChangeEvent) {
-        setSelectedOrderType(event.target.value);
+    function handleOrderTypeChange({target: {value}}: SelectChangeEvent) {
+        setSelectedOrderType(value);
     }
+
+    function handleRecipientInfoChange({target: {value}}: ChangeEvent<HTMLInputElement>) {
+        setRecipientInfo(value);
+    }
+
+    const canContinue = selectedOrderType
+        && selectedLocationIndex
+        && (selectedOrderType == OrderType.REGULAR || selectedRequiredDate && recipientInfo);
 
     return (
         <Card>
@@ -45,7 +54,7 @@ const OrderForm = () => {
                     || isError && <span>Could not load options.</span>
                     ||
                     <FormControl fullWidth>
-                        <InputLabel id={"office-location-select-label"}>Office Location</InputLabel>
+                        <InputLabel id={"office-location-select-label"}>Office Location *</InputLabel>
                         <Select labelId={"office-location-select-label"} value={selectedLocationIndex}
                                 label={"Office Location"} onChange={handleLocationChange}>
                             <MenuItem value={""}>None</MenuItem>{officeLocations.map(({name}, index) => (
@@ -56,7 +65,7 @@ const OrderForm = () => {
                 <ListGroup.Item>
                     <h6>What type of order would you like to submit?</h6>
                     <FormControl fullWidth>
-                        <InputLabel id={"order-type-select-label"}>Order Type</InputLabel>
+                        <InputLabel id={"order-type-select-label"}>Order Type *</InputLabel>
                         <Select labelId={"order-type-select-label"} value={selectedOrderType}
                                 label={"Order Type"} onChange={handleOrderTypeChange}>
                             <MenuItem value={""}>None</MenuItem>
@@ -70,11 +79,11 @@ const OrderForm = () => {
                         <Box component={"form"}>
                             <Grid container spacing={2}>
                                 <Grid item xs={"auto"}>
-                                    <TextField label={"Recipient Info"}/>
+                                    <TextField label={"Recipient Info *"} onChange={handleRecipientInfoChange}/>
                                 </Grid>
                                 <Grid item xs={"auto"}>
                                     <DatePicker
-                                        label="Required Date"
+                                        label="Date Required By *"
                                         value={selectedRequiredDate}
                                         minDate={Date.now()}
                                         onChange={(newValue) => {
@@ -91,6 +100,9 @@ const OrderForm = () => {
                     <h6>Order Comments</h6>
                     <TextField fullWidth label={"Comments"} multiline rows={4}
                                placeholder={"Comments about your order."}/>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                    <Button disabled={!canContinue} variant={"contained"}>Continue</Button>
                 </ListGroup.Item>
             </ListGroup>
         </Card>
