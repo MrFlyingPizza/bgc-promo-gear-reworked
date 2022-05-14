@@ -2,11 +2,13 @@ import React, {useState} from "react";
 import {Card, ListGroup} from "react-bootstrap";
 import {
     Box, Collapse,
-    FormControl, Grid, InputLabel,
+    FormControl, Grid, Grow,
+    InputLabel,
     LinearProgress,
     MenuItem,
     Select,
-    SelectChangeEvent, TextField
+    SelectChangeEvent, Stack,
+    TextField
 } from "@mui/material";
 import {useQuery} from "react-query";
 import axios from "axios";
@@ -42,9 +44,9 @@ const OrderForm = () => {
                     isLoading && <LinearProgress/>
                     || isError && <span>Could not load options.</span>
                     ||
-                    <FormControl sx={{minWidth: 300}}>
+                    <FormControl fullWidth>
                         <InputLabel id={"office-location-select-label"}>Office Location</InputLabel>
-                        <Select autoWidth labelId={"office-location-select-label"} value={selectedLocationIndex}
+                        <Select labelId={"office-location-select-label"} value={selectedLocationIndex}
                                 label={"Office Location"} onChange={handleLocationChange}>
                             <MenuItem value={""}>None</MenuItem>{officeLocations.map(({name}, index) => (
                             <MenuItem key={index} value={index}>{name}</MenuItem>))}
@@ -53,9 +55,9 @@ const OrderForm = () => {
                 </ListGroup.Item>
                 <ListGroup.Item>
                     <h6>What type of order would you like to submit?</h6>
-                    <FormControl sx={{minWidth: 300}}>
+                    <FormControl fullWidth>
                         <InputLabel id={"order-type-select-label"}>Order Type</InputLabel>
-                        <Select autoWidth labelId={"order-type-select-label"} value={selectedOrderType}
+                        <Select labelId={"order-type-select-label"} value={selectedOrderType}
                                 label={"Order Type"} onChange={handleOrderTypeChange}>
                             <MenuItem value={""}>None</MenuItem>
                             <MenuItem value={OrderType.REGULAR}>Regular</MenuItem>
