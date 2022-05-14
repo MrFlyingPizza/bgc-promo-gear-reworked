@@ -1,19 +1,18 @@
 import React, {useState} from "react";
 import {Card, ListGroup} from "react-bootstrap";
 import {
-    Box,
-    FormControl, Grow,
-    InputLabel,
+    Box, Collapse,
+    FormControl, Grid, InputLabel,
     LinearProgress,
     MenuItem,
     Select,
-    SelectChangeEvent,
-    TextField
+    SelectChangeEvent, TextField
 } from "@mui/material";
 import {useQuery} from "react-query";
 import axios from "axios";
 import OfficeLocation from "types/OfficeLocation";
 import OrderType from "types/OrderType";
+import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 
 type OrderFormProps = {};
 
@@ -22,8 +21,9 @@ const OrderForm = () => {
     const {isLoading, isError, data: officeLocations} = useQuery("locations", () =>
         axios.get("/api/office_locations").then<OfficeLocation[]>(({data}) => data.officeLocations));
 
-    const [selectedLocationIndex, setSelectedLocationIndex] = useState("0");
+    const [selectedLocationIndex, setSelectedLocationIndex] = useState("");
     const [selectedOrderType, setSelectedOrderType] = useState("");
+    const [selectedRequiredDate, setSelectedRequiredDate] = useState(Date.now());
 
     function handleLocationChange(event: SelectChangeEvent) {
         setSelectedLocationIndex(event.target.value);
@@ -63,16 +63,28 @@ const OrderForm = () => {
                             <MenuItem value={OrderType.EVENT}>Event</MenuItem>
                         </Select>
                     </FormControl>
-                </ListGroup.Item>{(selectedOrderType == OrderType.CLIENT || selectedOrderType == OrderType.EVENT) && (
-                    <Grow in appear>
-                        <ListGroup.Item>
-                            <h6>Please provide {selectedOrderType} order extra information.</h6>
-                            <Box component={"form"}>
-                                <TextField/>
-                                <TextField/>
-                            </Box>
-                        </ListGroup.Item>
-                    </Grow>)}
+                    <Collapse in={selectedOrderType == OrderType.CLIENT || selectedOrderType == OrderType.EVENT}>
+                        <h6>Please provide additional client/event information.</h6>
+                        <Box component={"form"}>
+                            <Grid container spacing={2}>
+                                <Grid item xs={"auto"}>
+                                    <TextField label={"Recipient Info"}/>
+                                </Grid>
+                                <Grid item xs={"auto"}>
+                                    <DatePicker
+                                        label="Basic example"
+                                        value={selectedRequiredDate}
+                                        minDate={Date.now()}
+                                        onChange={(newValue) => {
+                                            setSelectedRequiredDate(newValue);
+                                        }}
+                                        renderInput={(params) => <TextField {...params} />}
+                                    />
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </Collapse>
+                </ListGroup.Item>
             </ListGroup>
         </Card>
     );
