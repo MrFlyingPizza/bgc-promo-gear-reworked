@@ -74,7 +74,7 @@ const OrderForm = () => {
                                 </Grid>
                                 <Grid item xs={"auto"}>
                                     <DatePicker
-                                        label="Basic example"
+                                        label="Required Date"
                                         value={selectedRequiredDate}
                                         minDate={Date.now()}
                                         onChange={(newValue) => {
@@ -86,6 +86,11 @@ const OrderForm = () => {
                             </Grid>
                         </Box>
                     </Collapse>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                    <h6>Order Comments</h6>
+                    <TextField fullWidth label={"Comments"} multiline rows={4}
+                               placeholder={"Comments about your order."}/>
                 </ListGroup.Item>
             </ListGroup>
         </Card>
