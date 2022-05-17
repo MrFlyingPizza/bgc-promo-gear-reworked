@@ -78,6 +78,7 @@ public class GeneralOrderResponse {
     private final String submitterComments;
     private final String fulfillerComments;
     private final NestedOfficeLocation location;
+    private final Instant createdDate;
     private final Instant completedDate;
     private final List<NestedOrderItem> items;
 }
