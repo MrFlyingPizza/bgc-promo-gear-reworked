@@ -45,7 +45,7 @@ public class StoreViewController {
 
     @GetMapping("orders")
     public String showMyOrdersPage(){
-        return "error_pages/constructionStore";
+        return "/store_pages/orders";
     }
 
 }
