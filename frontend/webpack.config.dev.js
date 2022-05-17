@@ -8,6 +8,7 @@ module.exports = {
         checkout: './src/pages/checkout/checkout.tsx',
         store: './src/pages/store/store.tsx',
         product: './src/pages/product/product.tsx',
+        orders: './src/pages/orders/orders.tsx'
     },
     devtool: 'inline-source-map',
     watchOptions: {

@@ -8,6 +8,7 @@ module.exports = {
         cart: './src/pages/checkout/checkout.tsx',
         store: './src/pages/store/store.tsx',
         product: './src/pages/product/product.tsx',
+        orders: './src/pages/orders/orders.tsx'
     },
     watchOptions: {
         aggregateTimeout: 25000,
