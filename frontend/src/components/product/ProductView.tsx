@@ -48,7 +48,13 @@ function ProductView({productId}: { productId: number }) {
         return axios.get<Product>(`/api/products/${productId}`).then(({data: product}) => {
             selectionPropertyValues.current = makeSelectionPropertyValues(product);
             product.variants.length == 1 && setCurrentVariant(product.variants[0]);
-            setImages(product.variants.filter(variant => variant.image && true).map(variant => variant.image));
+            const newImageMap = new Map(images);
+            product.variants.forEach(({image}) => {
+                if (image) {
+                    newImageMap.set(image.id, image);
+                }
+            })
+            setImages(newImageMap);
             return product;
         });
     }
@@ -105,15 +111,14 @@ function ProductView({productId}: { productId: number }) {
     //endregion
 
     //region Carousel Control
-    const [images, setImages] = useState<ProductImage[]>([]);
+    const [images, setImages] = useState<Map<number, ProductImage>>(new Map());
     const indexedImageIds = useRef([]);
     const [activeIndex, setActiveIndex] = useState(0);
 
     const carousel = (
         <Carousel activeIndex={activeIndex} variant={"dark"} interval={null}
-                  onSelect={index => setActiveIndex(index)}
-        >{images.map((image) => {
-            indexedImageIds.current.push(image.id);
+                  onSelect={index => setActiveIndex(index)}>{Array.from(images).map(([id, image]) => {
+            indexedImageIds.current.push(id);
             return (
                 <Carousel.Item key={image.id}>
                     <img className={"d-block w-100 img-fluid"} key={image.id} src={image.src} alt={image.alt}/>
@@ -124,7 +129,8 @@ function ProductView({productId}: { productId: number }) {
     );
 
     useEffect(() => {
-        const activeIndex = currentVariant?.image && indexedImageIds.current.findIndex((imageId) => imageId == currentVariant.image.id);
+        const activeIndex = currentVariant?.image &&
+            indexedImageIds.current.findIndex((imageId) => imageId == currentVariant.image.id);
         activeIndex > -1 && setActiveIndex(activeIndex);
     }, [currentVariant]);
     //endregion
@@ -141,7 +147,7 @@ function ProductView({productId}: { productId: number }) {
                         {isLoading && <CircularProgress/>}
                         {isError && <span>This product could not be found.</span>}
                         <Row>{
-                            (images && images.length > 0) &&
+                            (images && images.size > 0) &&
                             <Col md>
                                 {carousel}
                             </Col>}
@@ -156,9 +162,7 @@ function ProductView({productId}: { productId: number }) {
                                             selectionPropertyValues &&
                                             <Accordion.Item eventKey={"0"}>
                                                 <Accordion.Header><h6>Options</h6></Accordion.Header>
-                                                <Accordion.Body>
-                                                    <AvailabilityLabel availability={currentVariant?.availability}
-                                                                       otherText={NO_SELECTION_TEXT}/>{
+                                                <Accordion.Body>{
                                                     product.variants.length > 1 &&
                                                     <ProductOptionSelection
                                                         onChange={handleSelectionChange}
@@ -168,10 +172,11 @@ function ProductView({productId}: { productId: number }) {
                                                     />}
                                                     <Button disabled={!currentVariant}
                                                             startIcon={<AddShoppingCartSharpIcon/>}
-                                                            onClick={() => setDialogOpen(true)}
-                                                    >
+                                                            onClick={() => setDialogOpen(true)}>
                                                         Add to cart
                                                     </Button>
+                                                    <AvailabilityLabel availability={currentVariant?.availability}
+                                                                       otherText={NO_SELECTION_TEXT}/>
                                                 </Accordion.Body>
                                             </Accordion.Item>}
                                             <Accordion.Item eventKey={"1"}>

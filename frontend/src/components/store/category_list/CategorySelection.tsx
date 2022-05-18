@@ -1,21 +1,29 @@
 import Category from "types/Category";
-import {Divider, List} from "@mui/material";
-import CategorySelectionGroup from "components/store/category_list/CategorySelectionGroup";
+import {Accordion, AccordionDetails, AccordionSummary, Divider, Grid} from "@mui/material";
+import CategorySelectionGroup, {
+    CategorySelectionCallback
+} from "components/store/category_list/CategorySelectionGroup";
 import React from "react";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 type CategorySelectionProps = {
     categories: Category[],
-    onChange: (selectedIds: number[]) => void
+    onChange: CategorySelectionCallback
 };
 
 const CategorySelection = ({categories, onChange}: CategorySelectionProps) => {
     return (
-        <List>{categories.map(category =>
-            <React.Fragment key={category.id}>
-                <Divider/>
-                <CategorySelectionGroup category={category} onSelect={onChange}/>
-            </React.Fragment>)}
-        </List>
+        <Accordion>
+            <AccordionSummary expandIcon={<ExpandMoreIcon/>}>Categories</AccordionSummary>
+            <AccordionDetails>
+                <Grid container>{categories.map(category =>
+                    <Grid item xs={12} sm={6} md={"auto"} key={category.id}>
+                        <Divider/>
+                        <CategorySelectionGroup category={category} onChange={onChange}/>
+                    </Grid>)}
+                </Grid>
+            </AccordionDetails>
+        </Accordion>
     )
 }
 

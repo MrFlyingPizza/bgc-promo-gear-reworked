@@ -1,31 +1,28 @@
 import * as React from "react";
 import {useState} from "react";
 import Product from "types/Product";
-import {Card, Container} from "react-bootstrap";
 import ProductVariantAvailability from "types/ProductVariantAvailability";
-import ProductCardImage from "components/store/product_card/ProductCardImage";
 import VariantSelection from "components/store/product_card/VariantSelection";
 import AvailabilityLabel from "components/shared/AvailabilityLabel";
-import {Skeleton, Stack} from "@mui/material";
+import {Card, CardActionArea, CardContent, CardMedia, Fade, Skeleton, Stack} from "@mui/material";
+import placeholderSrc from "components/shared/PlaceholderImage";
 
 export const LoadingCard = () => {
     return (
-        <React.Fragment>
+        <Fade in appear>
             <Stack spacing={2}>
                 <Skeleton variant={"rectangular"} height={300}/>
                 <Skeleton variant={"text"}/>
-                <Container className={"d-flex flex-wrap justify-content-center"}>
-                    <Stack spacing={2} direction={"row"}>
-                        <Skeleton variant={"circular"} width={24} height={24}/>
-                        <Skeleton variant={"circular"} width={24} height={24}/>
-                        <Skeleton variant={"circular"} width={24} height={24}/>
-                    </Stack>
-                </Container>
+                <Stack spacing={2} direction={"row"}>
+                    <Skeleton variant={"circular"} width={24} height={24}/>
+                    <Skeleton variant={"circular"} width={24} height={24}/>
+                    <Skeleton variant={"circular"} width={24} height={24}/>
+                </Stack>
                 <Skeleton variant={"text"}/>
                 <Skeleton variant={"text"}/>
                 <Skeleton variant={"text"} width={"60%"}/>
             </Stack>
-        </React.Fragment>
+        </Fade>
     )
 }
 
@@ -51,15 +48,16 @@ function ProductCard({product}: { product: Product }) {
 
     return (
         <Card>
-            <AvailabilityLabel availability={shownVariant.availability} otherText={"Availability Unknown"}/>
-            <ProductCardImage image={shownVariant.image} href={href}/>
-            <Card.Body>
-                <Card.Title className={"text-center"}>
-                    <a href={href} className={"text-decoration-none"}>{product.name}</a>
-                </Card.Title>
-                <VariantSelection initialVariant={shownVariant} variants={product.variants} onChange={value => setShownVariant(value)}/>
-                <Card.Text style={{maxHeight: "4.5em"}} className={"line-clamp text-center"}>{product.description}</Card.Text>
-            </Card.Body>
+            <CardActionArea onClick={() => location.href = href}>
+                <CardMedia component={"img"} height={300} image={shownVariant.image?.src || placeholderSrc()}/>
+            </CardActionArea>
+            <CardContent>
+                <h5>{product.name}</h5>
+                <AvailabilityLabel availability={shownVariant.availability} otherText={"Availability Unknown"}/>
+                <VariantSelection initialVariant={shownVariant} variants={product.variants}
+                                  onChange={value => setShownVariant(value)}/>
+                <p style={{maxHeight: "4.5em"}} className={"line-clamp text-center"}>{product.description}</p>
+            </CardContent>
         </Card>
     )
 }

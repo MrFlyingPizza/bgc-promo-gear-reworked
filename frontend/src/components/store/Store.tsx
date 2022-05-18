@@ -1,16 +1,15 @@
 import * as React from "react";
 import axios from "axios";
-import {Accordion, AccordionDetails, AccordionSummary, Alert, AlertColor, CircularProgress} from "@mui/material";
+import {Alert, AlertColor, Container, Grid, Skeleton} from "@mui/material";
 
-import Product from "types/Product";
 import Category from "types/Category";
 import ProductCard, {LoadingCard} from "./product_card/ProductCard";
-import {useQuery} from "react-query";
-import {Card, Col, Container, Row} from "react-bootstrap";
+import {useQueries, useQuery, UseQueryResult} from "react-query";
 import BGCPromoGearHeader from "components/shared/BGCPromoGearHeader";
 import BGCPromoGearFooter from "components/shared/BGCPromoGearFooter";
 import CategorySelection from "components/store/category_list/CategorySelection";
-import {useEffect, useState} from "react";
+import {useState} from "react";
+import Product from "types/Product";
 
 type StoreAlertProps = {
     id: number,
@@ -21,7 +20,13 @@ type StoreAlertProps = {
 
 function Store() {
 
-    const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
+    const [selectedCategoryIds, setSelectedCategoryIds] = useState<Set<number>>(new Set());
+
+    function handleCategoryChange(previousCategoryIds: number[], updatedCategoryIds: number[]) {
+        previousCategoryIds.forEach(id => selectedCategoryIds.delete(id));
+        updatedCategoryIds.forEach(id => selectedCategoryIds.add(id));
+        setSelectedCategoryIds(new Set(selectedCategoryIds));
+    }
 
     //region Alert Control
     const [alerts, setAlerts] = useState<StoreAlertProps[]>([]);
@@ -44,93 +49,66 @@ function Store() {
         isLoading: isLoadingCategories,
         isError: isErrorCategories,
         data: categories
-    } = useQuery("categories", () => axios.get("/api/categories").then<Category[]>(response => response.data.categories));
+    } = useQuery("categories", () => axios.get("/api/categories")
+        .then<Category[]>(response => response.data.categories.filter(({parent}: Category) => !parent))
+    );
 
     //region Product Fetching
-    // const [isLoadingProducts, setIsLoadingProducts] = useState(true);
-    // const [products, setProducts] = useState<Product[]>([]);
-    //
-    // async function fetchProductsByCategoryId(categoryId: number) {
-    //     axios.get("/api/products/", {params: {"category.id": categoryId}}).then<Product>(({data}) => {
-    //         setProducts([...products, data]);
-    //         return data;
-    //     }).catch(() => addAlert({
-    //         id: categoryId,
-    //         severity: "error",
-    //         content: "",
-    //         onClose: () => removeAlert(categoryId)
-    //     }));
-    // }
-    //
-    // useEffect(() => {
-    //     selectedCategoryIds.forEach(selectedId => {
-    //         const params = {"category.id": selectedId};
-    //         axios.get("/api/products/", {params: params})
-    //     })
-    // }, [selectedCategoryIds]);
+    const productQueries: UseQueryResult<Product[]>[] = useQueries(selectedCategoryIds.size > 0 ?
+        Array.from(selectedCategoryIds).map(categoryId => ({
+            queryKey: ["products", categoryId],
+            queryFn: () => {
+                return axios.get("/api/products", {params: {"category.id": categoryId}})
+                    .then<Product[]>(({data}) => data.products);
+            }
+        })) : [{
+            queryKey: ["products", null],
+            queryFn: () => {
+                return axios.get("/api/products").then<Product[]>(({data}) => data.products);
+            }
+        }]
+    );
+
     //endregion
 
-    const {
-        isLoading: isLoadingProducts,
-        isError: isErrorProducts,
-        data: products
-    } = useQuery("products", () => axios.get("/api/products").then<Product[]>(response => response.data.products));
-
-    const cardSize = {xs: 12, sm: 6, md: 12, lg: 6, xl: 4, xxl: 3};
+    const cardSize = {xs: 12, sm: 6, md: 4, lg: 3};
 
     return (
         <>
             <BGCPromoGearHeader/>
-            <Container fluid className={"mt-5 mb-5 min-vh-100 justify-content-center"}>
-                <Row>
-                    <Col>
-                        <Row>
-                            <h3>Promotional Gear</h3>
-                        </Row>
-                        <Row>
-                            <Col sm={12} md={5} lg={4} xxl={3}>
-                                <Card className={"shadow-sm"}>
-                                    <Card.Body>
-                                        <Card.Title>Filters</Card.Title>
-                                        <Accordion>
-                                            <AccordionSummary>Categories</AccordionSummary>
-                                            <AccordionDetails>{
-                                                isLoadingCategories && <div><CircularProgress/></div>
-                                                || isErrorCategories && "Failed to load categories."
-                                                || <CategorySelection categories={categories} onChange={console.log}/>}
-                                            </AccordionDetails>
-                                        </Accordion>
-                                    </Card.Body>
-                                </Card>
-                            </Col>
-                            <Col>
-                                <Card className={"shadow-sm"}>
-                                    <Card.Body>
-                                        <Row>{alerts.map(({id, severity, onClose, content}) =>
-                                            <Alert key={id} severity={severity} onClose={() => onClose()}>
-                                                {content}
-                                            </Alert>)}
-                                        </Row>
-                                        <Row>{isLoadingProducts &&
-                                            Array.from({length: 4}, (v, i) => (
-                                                <Col key={i} xs={12} {...cardSize}>
-                                                    <Row>
-                                                        <LoadingCard key={i}/>
-                                                    </Row>
-                                                </Col>
-                                            ))
-                                            || products?.length > 0 && products.map(item => (
-                                                <Col key={item.id} {...cardSize}>
-                                                    <ProductCard key={item.id} product={item}/>
-                                                </Col>))
-                                            || <span>No items found.</span>}
-                                        </Row>
-                                    </Card.Body>
-                                </Card>
-                            </Col>
-                        </Row>
-                    </Col>
-                </Row>
+            <Container className={"mt-5 mb-5 min-vh-100"}>
+                <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                        <h3>Promotional Gear</h3>
+                    </Grid>
+                    <Grid item xs={12}>{
+                        isLoadingCategories && <Skeleton variant={"rectangular"} height={"3em"}/>
+                        || isErrorCategories && "Failed to load categories."
+                        || <CategorySelection categories={categories} onChange={handleCategoryChange}/>}
+                    </Grid>
+                    <Grid item xs={12}>{alerts.map(({id, severity, onClose, content}) =>
+                        <Alert key={id} severity={severity} onClose={() => onClose()}>
+                            {content}
+                        </Alert>)}
+                    </Grid>
+                    {
+                        productQueries.map(({data: products, isLoading, isError}, index) =>
+                            <React.Fragment key={index}>{
+                                isLoading &&
+                                <Grid item xs={12} {...cardSize}>
+                                    <LoadingCard/>
+                                </Grid>
+                                || isError && <Alert severity={"error"}>Failed to load products.</Alert>
+                                || products && products.map(product =>
+                                    <Grid item key={product.id} {...cardSize}>
+                                        <ProductCard product={product}/>
+                                    </Grid>
+                                )
+                            }
+                            </React.Fragment>
+                        ) || <Alert severity={"info"}>No product found.</Alert>
+                    }
+                </Grid>
             </Container>
             <BGCPromoGearFooter/>
         </>

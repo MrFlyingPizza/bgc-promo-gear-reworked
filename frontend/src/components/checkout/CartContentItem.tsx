@@ -54,26 +54,26 @@ const CartContentItem = (
     return (
         <Fade in={true} appear={true}>
             <Card>{(isUpdating || isDeleting) &&
-                <div className={"position-absolute top-50 start-50 translate-middle"}>
-                    <CircularProgress/>
-                </div>}
+            <div className={"position-absolute top-50 start-50 translate-middle"}>
+                <CircularProgress/>
+            </div>}
                 <Card.Body>{
                     <Row>
                         <Col md={3}>
                             <Row>
                                 <Container fluid>
                                     <AvailabilityBadge availability={availability}>{image &&
-                                        <Image className={"w-100 h-auto img-fluid"} src={image.src}
-                                               alt={image.alt}/>
-                                        || <Image className={"w-100 h-auto img-fluid"} src={placeholderSrc()}
-                                                  alt={"placeholder image"}/>}
+                                    <Image className={"w-100 h-auto img-fluid"} src={image.src}
+                                           alt={image.alt}/>
+                                    || <Image className={"w-100 h-auto img-fluid"} src={placeholderSrc()}
+                                              alt={"placeholder image"}/>}
                                     </AvailabilityBadge>
                                 </Container>
                             </Row>
                         </Col>
                         <Col md={6}>
                             <Row className={"mt-2"}>
-                                <h4>{name}</h4>
+                                <h5>{name}</h5>
                             </Row>{
                             options.length > 0 &&
                             <Row>
@@ -87,15 +87,15 @@ const CartContentItem = (
                         <Col md={3}>
                             <Row className={"mt-2"}>
                                 <Col sm={6} md={12}>
-                                    <TextField disabled={isUpdating} label="Quantity" value={quantity} type="number"
-                                               variant="standard" error={quantity < 1}
-                                               helperText={quantity < 1 && "Must be at least 1."}
-                                               inputProps={{min: 1}}
+                                    <TextField disabled={isDeleting || isUpdating} label="Quantity" value={quantity}
+                                               type="number" variant="standard" error={quantity < 1}
+                                               helperText={quantity < 1 && "Must be at least 1."} inputProps={{min: 1}}
                                                onChange={event => setQuantity(parseInt(event.target.value))}
                                                onBlur={() => quantity > 0 && updateItem({quantity: quantity})}/>
                                 </Col>
                                 <Col sm={6} md={12}>
-                                    <Button disabled={isDeleting} onClick={() => deleteItem()}>Remove</Button>
+                                    <Button disabled={isDeleting || isUpdating}
+                                            onClick={() => deleteItem()}>Remove</Button>
                                 </Col>
                             </Row>
                         </Col>

@@ -1,6 +1,10 @@
 package ca.bgcengineering.promogearreworked.persistence.entities;
 
 import lombok.*;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -75,17 +79,21 @@ public class Order {
     private OfficeLocation location;
 
     @Column(name = "created_date")
+    @CreatedDate
     private Instant createdDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by")
+    @CreatedBy
     private User createdBy;
 
     @Column(name = "last_modified_date")
+    @LastModifiedDate
     private Instant lastModifiedDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "last_modified_by")
+    @LastModifiedBy
     private User lastModifiedBy;
 
     @Column(name = "completed_date")

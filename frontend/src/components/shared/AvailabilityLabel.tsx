@@ -13,7 +13,7 @@ const AvailabilityLabel = ({availability, otherText}: AvailabilityLabelProps) =>
 
     const AvailabilityChip = ({label, color}: { label: string, color: Colors }) => {
         return (
-            <Chip className={"availability-label"} label={label} variant={"filled"} size={"small"} color={color}/>
+            <Chip label={label} variant={"filled"} size={"small"} color={color}/>
         )
     }
 

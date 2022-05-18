@@ -1,28 +1,34 @@
 import {Checkbox, Collapse, List, ListItem, ListItemButton, ListItemIcon, ListItemText} from "@mui/material";
-import React, {useEffect} from "react";
+import React, {useEffect, useRef} from "react";
 import {useState} from "react";
 import Category from "types/Category";
 import {ExpandLess, ExpandMore} from "@mui/icons-material";
 
+export type CategorySelectionCallback = (previousSelectedIds: number[], selectedIds: number[]) => void;
+
 type CategorySelectionGroupProps = {
     category: Category,
-    onSelect: (selectedIds: number[]) => void
+    onChange: CategorySelectionCallback
 };
 
 const CategorySelectionGroup = (
     {
-        category: {id: parentId, name: parentName, subcategories},
-        onSelect
+        category: {id: parentId, name: parentName, subcategories}, onChange
     }: CategorySelectionGroupProps
 ) => {
 
     const categories = [...subcategories, {id: parentId, name: subcategories.length > 0 ? "Other" : "All"}];
 
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
+    const previousSelectedIds = useRef<number[]>();
     const [open, setOpen] = useState(false);
 
-    useEffect(() => onSelect(selectedIds), [selectedIds]);
+    useEffect(() => {
+        previousSelectedIds.current && onChange(previousSelectedIds.current, selectedIds);
+        previousSelectedIds.current = selectedIds;
+    }, [selectedIds]);
 
+    //region Selection Control
     function isSelected(id: number) {
         return selectedIds.indexOf(id) > -1;
     }
@@ -50,13 +56,14 @@ const CategorySelectionGroup = (
     function isIndeterminate() {
         return !isAllSelected() && selectedIds.length > 0;
     }
+    //endregion
 
     function toggle() {
         setOpen(!open);
     }
 
     return (
-        <>
+        <List>
             <ListItem disableGutters disablePadding>
                 <Collapse orientation={"horizontal"} in={open} timeout={"auto"} unmountOnExit>
                     <ListItemIcon>
@@ -80,7 +87,7 @@ const CategorySelectionGroup = (
                     </ListItemButton>))}
                 </List>
             </Collapse>
-        </>
+        </List>
     );
 }
 

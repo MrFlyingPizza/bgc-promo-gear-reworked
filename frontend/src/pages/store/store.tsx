@@ -2,8 +2,6 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
 import Store from "components/store/Store";
 import {QueryClient, QueryClientProvider} from "react-query";
-import BGCPromoGearHeader from "components/shared/BGCPromoGearHeader";
-import BGCPromoGearFooter from "components/shared/BGCPromoGearFooter";
 
 const queryClient = new QueryClient({
     defaultOptions: {
