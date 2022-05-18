@@ -15,23 +15,6 @@ public class StoreViewController {
         return "store_pages/store";
     }
 
-    /*
-    @GetMapping("/product")
-    public String showProductPage(Model model, @RequestParam int id){
-        return "store_pages/product_listing";
-    }
-
-    @GetMapping("cart")
-    public String showCartPage(){
-        return "store_pages/new_cart";
-    }
-
-    @GetMapping("checkout")
-    public String showCheckoutOrderPage(){
-        return "store_pages/checkout";
-    }
-    */
-
     @GetMapping("/product/{productId}")
     public String showProductPage(Model model, @PathVariable Long productId){
         model.addAttribute("productId", productId);
@@ -39,7 +22,7 @@ public class StoreViewController {
     }
 
     @GetMapping("checkout")
-    public String showCartPage(){
+    public String showCheckoutPage(){
         return "/store_pages/checkout";
     }
 
