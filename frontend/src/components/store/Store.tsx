@@ -1,6 +1,6 @@
 import * as React from "react";
 import axios from "axios";
-import {Alert, AlertColor, CircularProgress, Container, Grid, Skeleton} from "@mui/material";
+import {Alert, AlertColor, Container, Grid, Skeleton} from "@mui/material";
 
 import Category from "types/Category";
 import ProductCard, {LoadingCard} from "./product_card/ProductCard";
@@ -91,16 +91,22 @@ function Store() {
                             {content}
                         </Alert>)}
                     </Grid>
-                    {productQueries.map(({data: products, isLoading, isError}) =>
-                        isLoading &&
-                        <Grid item xs={12} {...cardSize}>
-                            <LoadingCard/>
-                        </Grid>
-                        || isError && <Alert severity={"error"}>Failed to load products.</Alert>
-                        || products && products.map(product =>
-                            <Grid item key={product.id} {...cardSize}>
-                                <ProductCard product={product}/>
-                            </Grid>)) || <Alert severity={"info"}>No product found.</Alert>
+                    {
+                        productQueries.map(({data: products, isLoading, isError}, index) =>
+                            <React.Fragment key={index}>{
+                                isLoading &&
+                                <Grid item xs={12} {...cardSize}>
+                                    <LoadingCard/>
+                                </Grid>
+                                || isError && <Alert severity={"error"}>Failed to load products.</Alert>
+                                || products && products.map(product =>
+                                    <Grid item key={product.id} {...cardSize}>
+                                        <ProductCard product={product}/>
+                                    </Grid>
+                                )
+                            }
+                            </React.Fragment>
+                        ) || <Alert severity={"info"}>No product found.</Alert>
                     }
                 </Grid>
             </Container>
