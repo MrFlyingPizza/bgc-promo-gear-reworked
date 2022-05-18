@@ -41,7 +41,7 @@ const OrderForm = () => {
     }
 
     const canContinue = selectedOrderType
-        && selectedLocationIndex
+        && selectedLocationIndex !== ""
         && (selectedOrderType == OrderType.REGULAR || selectedRequiredDate && recipientInfo);
 
     return (
