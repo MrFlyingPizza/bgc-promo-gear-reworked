@@ -15,9 +15,9 @@ const OrderCard = ({order}: OrderCardProps) => {
         <Card>
             <Card.Header>
                 Order #{order.id}
-                <div className="position-absolute top-0 end-0">
+                <span className={"ms-2"}>
                     <OrderStatusLabel status={order.status}/>
-                </div>
+                </span>
             </Card.Header>
             <Card.Body>
                 <Grid container spacing={2}>
