@@ -1,7 +1,10 @@
 import React from "react";
 import Order from "types/Order";
-import {Card, ListGroup} from "react-bootstrap";
-import {Divider} from "@mui/material";
+import {Accordion, Card} from "react-bootstrap";
+import {Grid} from "@mui/material";
+import OrderCardDetails from "components/orders/OrderCardDetails";
+import OrderCardContent from "components/orders/OrderCardContent";
+import OrderStatusLabel from "components/shared/OrderStatusLabel";
 
 type OrderCardProps = {
     order: Order
@@ -12,28 +15,33 @@ const OrderCard = ({order}: OrderCardProps) => {
         <Card>
             <Card.Header>
                 Order #{order.id}
+                <div className="position-absolute top-0 end-0">
+                    <OrderStatusLabel status={order.status}/>
+                </div>
             </Card.Header>
             <Card.Body>
-                <ListGroup horizontal>
-                    <ListGroup.Item>
-                        <h6>Submitter</h6>
-                        <span>{order.submitter}</span>
-                    </ListGroup.Item>
-                    <ListGroup.Item>
-                        <h6>Fulfiller</h6>
-                        <span>{order.fulfiller}</span>
-                    </ListGroup.Item>
-                    <ListGroup.Item>
-                        <h6>Office Location</h6>
-                        <span>{order.officeLocation?.name}</span>
-                    </ListGroup.Item>
-                    <ListGroup.Item>
-                        <h6>Created Date</h6>
-                        <span>{order.createdDate?.toDateString()}</span>
-                    </ListGroup.Item>
-                </ListGroup>
-                <Divider/>
-                {order.submitterComments}
+                <Grid container spacing={2}>
+                    <Grid item xs={12} md={4}>
+                        <Accordion defaultActiveKey={"0"}>
+                            <Accordion.Item eventKey={"0"}>
+                                <Accordion.Header>Order Details</Accordion.Header>
+                                <Accordion.Body>
+                                    <OrderCardDetails order={order}/>
+                                </Accordion.Body>
+                            </Accordion.Item>
+                        </Accordion>
+                    </Grid>
+                    <Grid item xs={12} md={8}>
+                        <Accordion defaultActiveKey={"0"}>
+                            <Accordion.Item eventKey={"0"}>
+                                <Accordion.Header>Order Items</Accordion.Header>
+                                <Accordion.Body>
+                                    <OrderCardContent order={order}/>
+                                </Accordion.Body>
+                            </Accordion.Item>
+                        </Accordion>
+                    </Grid>
+                </Grid>
             </Card.Body>
         </Card>
     );

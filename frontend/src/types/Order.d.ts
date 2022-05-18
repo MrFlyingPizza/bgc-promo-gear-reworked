@@ -3,7 +3,7 @@ import OrderType from "types/OrderType";
 import Product from "types/Product";
 import ProductVariant from "types/ProductVariant";
 
-interface OrderOfficeLocation {
+export interface OrderOfficeLocation {
     id: number,
     name: string
 }
@@ -11,7 +11,7 @@ interface OrderOfficeLocation {
 type OrderItemProduct = Pick<Product, "id" | "name" | "category">
 type OrderItemVariant = Omit<ProductVariant, "availability">
 
-interface OrderItem {
+export interface OrderItem {
     product: OrderItemProduct,
     variant: OrderItemVariant,
     quantity: number

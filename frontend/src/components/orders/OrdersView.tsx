@@ -22,9 +22,9 @@ const OrdersView = () => {
                 <Grid spacing={2} container className={"mt-5 mb-5 min-vh-100"}>{
                     isLoading && <Grid item xs={12}><LinearProgress/></Grid>
                     || isError && <Grid item xs={12}>Failed to load orders.</Grid>
-                    || orders.length < 1 && "Could not find any order."
+                    || orders.length < 1 && "No order to show."
                     || orders.map(order => (
-                        <Grid item xs={12}>
+                        <Grid item key={order.id} xs={12}>
                             <OrderCard order={order}/>
                         </Grid>
                     ))
