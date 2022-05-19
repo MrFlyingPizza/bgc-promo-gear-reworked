@@ -7,7 +7,7 @@ import {LocalizationProvider} from '@mui/x-date-pickers';
 
 const queryClient = new QueryClient();
 
-const cartContainer = document.getElementById('cart-root');
+const cartContainer = document.getElementById('checkout-root');
 cartContainer && ReactDOM.createRoot(cartContainer).render(
     <React.StrictMode>
         <QueryClientProvider client={queryClient}>
