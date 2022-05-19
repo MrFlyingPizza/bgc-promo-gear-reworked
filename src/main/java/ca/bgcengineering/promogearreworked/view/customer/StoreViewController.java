@@ -21,12 +21,12 @@ public class StoreViewController {
         return "store_pages/product";
     }
 
-    @GetMapping("checkout")
+    @GetMapping("/checkout")
     public String showCheckoutPage(){
         return "/store_pages/checkout";
     }
 
-    @GetMapping("orders")
+    @GetMapping("/orders")
     public String showMyOrdersPage(){
         return "/store_pages/orders";
     }
