@@ -29,10 +29,6 @@ public abstract class SecuredOrderMapper {
     @Mapping(source = "locationId", target = "location")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "completedDate", ignore = true)
-    @Mapping(target = "createdDate", ignore = true)
-    @Mapping(target = "createdBy", ignore = true)
-    @Mapping(target = "lastModifiedDate", ignore = true)
-    @Mapping(target = "lastModifiedBy", ignore = true)
     @Mapping(target = "extraInfo.orderId", ignore = true)
     @Mapping(target = "extraInfo.order", ignore = true)
     public abstract Order fromCreate(SecuredOrderCreate orderCreate);

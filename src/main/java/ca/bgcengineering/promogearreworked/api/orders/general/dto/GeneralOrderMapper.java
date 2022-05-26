@@ -30,10 +30,6 @@ public abstract class GeneralOrderMapper {
     @Mapping(target = "fulfillerComments", ignore = true)
     @Mapping(target = "fulfiller", ignore = true)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdDate", ignore = true)
-    @Mapping(target = "createdBy", ignore = true)
-    @Mapping(target = "lastModifiedDate", ignore = true)
-    @Mapping(target = "lastModifiedBy", ignore = true)
     @Mapping(target = "completedDate", ignore = true)
     @Mapping(target = "extraInfo", ignore = true)
     public abstract Order fromCreate(GeneralOrderCreate orderCreate);

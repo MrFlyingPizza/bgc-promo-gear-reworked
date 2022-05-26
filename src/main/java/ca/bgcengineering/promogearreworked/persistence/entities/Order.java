@@ -1,5 +1,6 @@
 package ca.bgcengineering.promogearreworked.persistence.entities;
 
+import ca.bgcengineering.promogearreworked.persistence.auditing.Auditable;
 import lombok.*;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -19,7 +20,7 @@ import java.util.Set;
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class Order {
+public class Order extends Auditable {
 
     public enum Status {
         SUBMITTED((short) 0),
@@ -77,24 +78,6 @@ public class Order {
     @ManyToOne(optional = false)
     @JoinColumn(name = "location_id", nullable = false)
     private OfficeLocation location;
-
-    @Column(name = "created_date")
-    @CreatedDate
-    private Instant createdDate;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by")
-    @CreatedBy
-    private User createdBy;
-
-    @Column(name = "last_modified_date")
-    @LastModifiedDate
-    private Instant lastModifiedDate;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "last_modified_by")
-    @LastModifiedBy
-    private User lastModifiedBy;
 
     @Column(name = "completed_date")
     private Instant completedDate;
