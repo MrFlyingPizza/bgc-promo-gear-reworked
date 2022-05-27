@@ -1,7 +1,7 @@
-import React, {ChangeEvent, useState} from "react";
+import React, {ChangeEvent, useCallback, useState} from "react";
 import {Card, ListGroup} from "react-bootstrap";
 import {
-    Box, Button, Collapse, Dialog, DialogTitle,
+    Box, Button, CircularProgress, Collapse, Dialog, DialogTitle,
     FormControl, Grid, InputLabel,
     LinearProgress, MenuItem,
     Select,
@@ -12,10 +12,14 @@ import axios from "axios";
 import OfficeLocation from "types/OfficeLocation";
 import OrderType from "types/OrderType";
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
+import Order from "types/Order";
+import orderType from "types/OrderType";
+import OrderResultDialog from "components/checkout/OrderResultDialog";
 
 interface OrderCreate {
     comments: string,
     locationId: number,
+    type: OrderType,
     extraInfo: {
         recipientInfo: string,
         requiredDate: Date
@@ -28,6 +32,20 @@ const OrderForm = () => {
     const [selectedOrderType, setSelectedOrderType] = useState("");
     const [selectedRequiredDate, setSelectedRequiredDate] = useState(Date.now());
     const [recipientInfo, setRecipientInfo] = useState("");
+    const [comments, setComments] = useState<string>("");
+
+    const handleOrderSubmit = useCallback(() => {
+        const submission: OrderCreate = {
+            locationId: officeLocations[parseInt(selectedLocationIndex)].id,
+            type: selectedOrderType ? OrderType[selectedOrderType as keyof typeof OrderType] : null,
+            comments: comments,
+            extraInfo: selectedOrderType == OrderType.CLIENT || selectedOrderType == OrderType.EVENT ? {
+                recipientInfo: recipientInfo,
+                requiredDate: new Date(selectedRequiredDate)
+            } : null
+        }
+        postOrderCreate(submission);
+    }, [selectedLocationIndex, orderType, recipientInfo, selectedRequiredDate, selectedOrderType]);
 
     const {
         isLoading: isOfficeLocationsLoading,
@@ -36,12 +54,19 @@ const OrderForm = () => {
     } = useQuery("locations", () =>
         axios.get("/api/office_locations").then<OfficeLocation[]>(({data}) => data.officeLocations));
 
+    // todo make use of submission error
     const {
         isLoading: isSubmissionLoading,
         isError: isSubmissionError,
-        mutate: submitOrder
+        mutate: postOrderCreate
     } = useMutation((orderCreate: OrderCreate) => {
-        return axios.post("/api/orders", orderCreate);
+        return axios.post("/api/orders", orderCreate).then<Order[]>(({data}) => data.orders);
+    }, {
+        onSuccess: data => {
+            setOrderResult(data);
+            closeDialog();
+        },
+        onError: error => console.error(error)
     });
 
     function handleLocationChange({target: {value}}: SelectChangeEvent) {
@@ -56,6 +81,10 @@ const OrderForm = () => {
         setRecipientInfo(value);
     }
 
+    function handleCommentsChange({target: {value}}: ChangeEvent<HTMLInputElement>) {
+        setComments(value);
+    }
+
     const canContinue = selectedOrderType
         && selectedLocationIndex !== ""
         && (selectedOrderType == OrderType.REGULAR || selectedRequiredDate && recipientInfo);
@@ -66,42 +95,58 @@ const OrderForm = () => {
         bigItem: boolean
     }
 
-    const [open, setOpen] = useState(false);
+    const [isAgreementOpen, setIsAgreementOpen] = useState(false);
     const [agreements, setAgreements] = useState<OrderFormAgreements>({bigItem: false, personal: false});
 
     function openDialog() {
-        setOpen(true);
+        setIsAgreementOpen(true);
     }
 
     function closeDialog() {
-        setOpen(false);
+        setIsAgreementOpen(false);
     }
 
     const insufficientAgreement = Object.entries(agreements).some(([, isAgreed]) => !isAgreed);
 
     //endregion
 
+    //region Order Result Modal Controls
+    const [orderResult, setOrderResult] = useState<Order[]>();
+
+    function clearOrderResult() {
+        setOrderResult(null);
+    }
+
+    //endregion
+
     return (
         <>
-            <Dialog open={open} onClose={closeDialog}>
+            <OrderResultDialog orders={orderResult} open={!!orderResult} onClose={clearOrderResult}/>
+            <Dialog open={isAgreementOpen} onClose={closeDialog}>
                 <DialogTitle>Order Agreement</DialogTitle>
                 <ListGroup>
                     <ListGroup.Item>
                         <h6>Do you agree that this item is for yourself only?</h6>
-                        <Button variant={agreements.personal ? "contained" : "outlined"} onClick={() => setAgreements({
+                        <Button variant={agreements.personal ? "outlined" : "contained"} onClick={() => setAgreements({
                             ...agreements,
                             personal: !agreements.personal
                         })}>Agree</Button>
                     </ListGroup.Item>
                     <ListGroup.Item>
                         <h6>Are you aware that you can only request 1 big item every 12 months?</h6>
-                        <Button variant={agreements.bigItem ? "contained" : "outlined"} onClick={() => setAgreements({
+                        <Button variant={agreements.bigItem ? "outlined" : "contained"} onClick={() => setAgreements({
                             ...agreements,
                             bigItem: !agreements.bigItem
                         })}>Agree</Button>
                     </ListGroup.Item>
                     <ListGroup.Item>
-                        <Button disabled={insufficientAgreement} variant={"contained"}>Submit Order</Button>
+                        <Button disabled={insufficientAgreement || isSubmissionLoading} variant={"contained"}
+                                onClick={handleOrderSubmit}>
+                            Submit Order
+                            {
+                                isSubmissionLoading && <CircularProgress/>
+                            }
+                        </Button>
                     </ListGroup.Item>
                 </ListGroup>
             </Dialog>
@@ -129,7 +174,7 @@ const OrderForm = () => {
                             <Select labelId={"order-type-select-label"} value={selectedOrderType}
                                     label={"Order Type"} onChange={handleOrderTypeChange}>
                                 <MenuItem value={""}>None</MenuItem>
-                                <MenuItem value={OrderType.REGULAR}>Regular</MenuItem>
+                                <MenuItem value={OrderType.REGULAR}>Personal</MenuItem>
                                 <MenuItem value={OrderType.CLIENT}>Client</MenuItem>
                                 <MenuItem value={OrderType.EVENT}>Event</MenuItem>
                             </Select>
@@ -159,7 +204,7 @@ const OrderForm = () => {
                     <ListGroup.Item>
                         <h6>Order Comments</h6>
                         <TextField fullWidth label={"Comments"} multiline rows={4}
-                                   placeholder={"Comments about your order."}/>
+                                   placeholder={"Comments about your order."} onChange={handleCommentsChange}/>
                     </ListGroup.Item>
                     <ListGroup.Item>
                         <Button disabled={!canContinue} variant={"contained"} onClick={openDialog}>Continue</Button>
