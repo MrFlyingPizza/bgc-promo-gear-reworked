@@ -26,8 +26,8 @@ export default interface Order {
     type: OrderType,
     submitterComments: string,
     fulfillerComments: string,
-    officeLocation: OrderOfficeLocation,
-    createdDate: Date,
-    completedDate: Date,
+    location: OrderOfficeLocation,
+    createdDate: string,
+    completedDate: string,
     items: OrderItem[]
 }
