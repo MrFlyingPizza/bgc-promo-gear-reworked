@@ -1,5 +1,6 @@
 package ca.bgcengineering.promogearreworked.api.orders.general.dto;
 
+import ca.bgcengineering.promogearreworked.api.orders.constraints.SufficientCredit;
 import ca.bgcengineering.promogearreworked.api.orders.constraints.ValidClientOrEventExtraInfo;
 import ca.bgcengineering.promogearreworked.api.orders.constraints.Waitlistable;
 import ca.bgcengineering.promogearreworked.api.shared.validation.constraints.officelocationexists.OfficeLocationExists;
@@ -21,6 +22,7 @@ import java.util.List;
 @Getter
 @Builder(toBuilder = true)
 @ValidClientOrEventExtraInfo
+@SufficientCredit
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class GeneralOrderCreate {
 
