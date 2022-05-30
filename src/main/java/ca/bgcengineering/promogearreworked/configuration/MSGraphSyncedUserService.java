@@ -1,21 +1,15 @@
 package ca.bgcengineering.promogearreworked.configuration;
 
+import ca.bgcengineering.promogearreworked.persistence.repositories.UserRepository;
 import com.azure.spring.aad.webapp.AADOAuth2UserService;
 import com.azure.spring.autoconfigure.aad.AADAuthenticationProperties;
-import ca.bgcengineering.promogearreworked.persistence.repositories.UserRepository;
 import com.microsoft.graph.models.User;
 import com.microsoft.graph.requests.GraphServiceClient;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.oidc.OidcIdToken;
-import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 
-import java.time.Clock;
-import java.util.Collection;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -41,6 +35,7 @@ public class MSGraphSyncedUserService extends AADOAuth2UserService {
             throw new OAuth2AuthenticationException("Could not obtain the information for the user to be authenticated.");
         }
         assert graphUser.id != null; // this should never be null as specified by Microsoft documentation.
+        // TODO: 2022-05-30 Throw authentication exception and deny authentication if email not present
         UUID oid = UUID.fromString(graphUser.id);
         ca.bgcengineering.promogearreworked.persistence.entities.User dbUser = userRepo.findByOid(oid).map(user -> {
             user.setDisplayName(graphUser.displayName);
