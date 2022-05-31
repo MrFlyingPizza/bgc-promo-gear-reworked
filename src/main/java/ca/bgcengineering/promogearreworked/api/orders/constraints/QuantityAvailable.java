@@ -12,7 +12,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = {
         GeneralOrderQuantityAvailableCreateValidator.class
 })
-public @interface OrderItemAvailable {
+public @interface QuantityAvailable {
     String message() default "{dto_validation.constraints.QuantityAvailable}";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};

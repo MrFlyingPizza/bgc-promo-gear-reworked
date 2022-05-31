@@ -1,6 +1,6 @@
 package ca.bgcengineering.promogearreworked.api.orders.general.dto.validator;
 
-import ca.bgcengineering.promogearreworked.api.orders.constraints.OrderItemAvailable;
+import ca.bgcengineering.promogearreworked.api.orders.constraints.QuantityAvailable;
 import ca.bgcengineering.promogearreworked.persistence.entities.GlobalInventoryLevel;
 import ca.bgcengineering.promogearreworked.persistence.repositories.GlobalInventoryLevelRepository;
 import ca.bgcengineering.promogearreworked.api.orders.general.dto.GeneralOrderCreate;
@@ -10,7 +10,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.Optional;
 
-public class GeneralOrderQuantityAvailableCreateValidator implements ConstraintValidator<OrderItemAvailable, GeneralOrderCreate.NestedOrderItem> {
+public class GeneralOrderQuantityAvailableCreateValidator implements ConstraintValidator<QuantityAvailable, GeneralOrderCreate.NestedOrderItem> {
 
     @Autowired
     private GlobalInventoryLevelRepository globalInventoryLevelRepo;
