@@ -29,6 +29,6 @@ public class GeneralOrderBigItemQuantityLimitCreateValidator implements Constrai
                 totalBigItemQuantity += item.getQuantity();
             }
         }
-        return totalBigItemQuantity > defaults.getBigItemOrderQuantityLimit();
+        return totalBigItemQuantity <= defaults.getBigItemOrderQuantityLimit();
     }
 }
