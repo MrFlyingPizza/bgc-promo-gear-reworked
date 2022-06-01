@@ -1,5 +1,6 @@
 package ca.bgcengineering.promogearreworked.api.orders.general.dto;
 
+import ca.bgcengineering.promogearreworked.api.orders.constraints.BigItemQuantityLimit;
 import ca.bgcengineering.promogearreworked.api.orders.constraints.SufficientCredit;
 import ca.bgcengineering.promogearreworked.api.orders.constraints.ValidClientOrEventExtraInfo;
 import ca.bgcengineering.promogearreworked.api.orders.constraints.Waitlistable;
@@ -23,6 +24,7 @@ import java.util.List;
 @Builder(toBuilder = true)
 @ValidClientOrEventExtraInfo
 @SufficientCredit
+@BigItemQuantityLimit
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class GeneralOrderCreate {
 
