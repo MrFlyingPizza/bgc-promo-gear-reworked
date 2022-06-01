@@ -12,5 +12,6 @@ public class StoreDefaultsConfig {
 
     private final BigDecimal startingCredits = new BigDecimal(500);
     private final Duration bigItemWaitDuration = Duration.ofDays(365);
+    private final int bigItemOrderQuantityLimit = 1;
 
 }
