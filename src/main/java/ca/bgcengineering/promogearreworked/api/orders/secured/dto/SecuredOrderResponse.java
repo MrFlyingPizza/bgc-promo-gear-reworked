@@ -84,6 +84,9 @@ public class SecuredOrderResponse {
             private final NestedCategory category;
         }
 
+        private final NestedProduct product;
+        private final NestedProductVariant variant;
+        private final Integer quantity;
     }
 
     private final Long id;

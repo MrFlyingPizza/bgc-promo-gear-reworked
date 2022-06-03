@@ -6,7 +6,10 @@ import ca.bgcengineering.promogearreworked.persistence.entities.OrderItem;
 import ca.bgcengineering.promogearreworked.persistence.repositories.OrderExtraInfoRepository;
 import ca.bgcengineering.promogearreworked.persistence.repositories.OrderItemRepository;
 import ca.bgcengineering.promogearreworked.persistence.repositories.OrderRepository;
+import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,9 +72,19 @@ public class OrderService {
         return orderRepo.findAllBySubmitterId(userId);
     }
 
+    public Page<Order> getOrders(Predicate predicate, Pageable pageable) {
+        assert predicate != null && pageable != null;
+        return orderRepo.findAll(predicate, pageable);
+    }
+
     public Order getOrder(Long userId, Long orderId) {
         assert userId != null && orderId != null;
         return orderRepo.findBySubmitterIdAndId(userId, orderId);
+    }
+
+    public Order getOrder(Long orderId) {
+        assert orderId != null;
+        return orderRepo.findById(orderId).orElseThrow(OrderNotFoundException::new);
     }
 
 }
