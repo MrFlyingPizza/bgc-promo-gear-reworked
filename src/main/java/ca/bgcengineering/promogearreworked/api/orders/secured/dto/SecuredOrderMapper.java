@@ -33,6 +33,11 @@ public abstract class SecuredOrderMapper {
     @Mapping(target = "extraInfo.order", ignore = true)
     public abstract Order fromCreate(SecuredOrderCreate orderCreate);
 
+    @Mapping(target = "completedDate", ignore = true)
+    public abstract Order fromPartialUpdate(SecuredOrderPartialUpdate orderPartialUpdate, @MappingTarget Order order);
+
+    public abstract Order fromUpdate(SecuredOrderUpdate orderUpdate, @MappingTarget Order order);
+
     public abstract SecuredOrderResponse toResponse(Order order);
 
     @Mapping(source = "variantId", target = "variant")
