@@ -1,0 +1,15 @@
+import * as ReactDOM from "react-dom/client";
+import React from "react";
+import {QueryClient, QueryClientProvider} from "react-query";
+import OrdersView from "components/orders/OrdersView";
+
+const ordersContainer = document.getElementById('admin-orders-root');
+
+const queryClient = new QueryClient();
+ordersContainer && ReactDOM.createRoot(ordersContainer).render(
+    <React.StrictMode>
+        <QueryClientProvider client={queryClient}>
+            <OrdersView/>
+        </QueryClientProvider>
+    </React.StrictMode>
+);
