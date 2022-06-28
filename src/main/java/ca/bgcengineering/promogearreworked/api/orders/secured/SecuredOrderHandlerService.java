@@ -28,6 +28,8 @@ public class SecuredOrderHandlerService {
 
     Order handleOrderGet(Long orderId) {
         return service.getOrder(orderId);
+    }
+
     Order handleOrderPartialUpdate(@Valid SecuredOrderPartialUpdate orderPartialUpdate) {
         return service.updateOrder(orderPartialUpdate.getId(), orderPartialUpdate, mapper::fromPartialUpdate);
     }
