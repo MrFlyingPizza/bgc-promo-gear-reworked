@@ -31,16 +31,21 @@ public class SecuredOrderPartialUpdate {
     @UserExists
     private final Long recipientId;
 
+    @UserExists
+    private final Long fulfillerId;
+
     @JsonCreator
     public SecuredOrderPartialUpdate(@JsonProperty("status") Order.Status status,
                                      @JsonProperty("type") Order.Type type,
                                      @JsonProperty("fulfillerComments") String fulfillerComments,
                                      @JsonProperty("locationId") Long locationId,
-                                     @JsonProperty("recipientId") Long recipientId) {
+                                     @JsonProperty("recipientId") Long recipientId,
+                                     @JsonProperty("fulfillerId") Long fulfillerId) {
         this.status = status;
         this.type = type;
         this.fulfillerComments = fulfillerComments;
         this.locationId = locationId;
         this.recipientId = recipientId;
+        this.fulfillerId = fulfillerId;
     }
 }

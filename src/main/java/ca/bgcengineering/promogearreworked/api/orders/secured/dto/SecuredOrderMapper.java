@@ -33,9 +33,24 @@ public abstract class SecuredOrderMapper {
     @Mapping(target = "extraInfo.order", ignore = true)
     public abstract Order fromCreate(SecuredOrderCreate orderCreate);
 
+    @Mapping(source = "recipientId", target = "recipient")
+    @Mapping(source = "fulfillerId", target = "fulfiller")
+    @Mapping(source = "locationId", target = "location")
+    @Mapping(target = "submitterComments", ignore = true)
+    @Mapping(target = "submitter", ignore = true)
+    @Mapping(target = "items", ignore = true)
+    @Mapping(target = "extraInfo", ignore = true)
     @Mapping(target = "completedDate", ignore = true)
     public abstract Order fromPartialUpdate(SecuredOrderPartialUpdate orderPartialUpdate, @MappingTarget Order order);
 
+    @Mapping(source = "recipientId", target = "recipient")
+    @Mapping(source = "fulfillerId", target = "fulfiller")
+    @Mapping(source = "locationId", target = "location")
+    @Mapping(target = "submitterComments", ignore = true)
+    @Mapping(target = "submitter", ignore = true)
+    @Mapping(target = "items", ignore = true)
+    @Mapping(target = "extraInfo", ignore = true)
+    @Mapping(target = "completedDate", ignore = true)
     public abstract Order fromUpdate(SecuredOrderUpdate orderUpdate, @MappingTarget Order order);
 
     public abstract SecuredOrderResponse toResponse(Order order);

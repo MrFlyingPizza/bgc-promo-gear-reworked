@@ -24,8 +24,7 @@ public class SecuredOrderHandlerService {
     }
 
     Order handleOrderUpdate(@Valid SecuredOrderUpdate orderUpdate) {
-        // TODO: 2022-06-12 implement
-        return null;
+        return service.updateOrder(orderUpdate.getId(), orderUpdate, mapper::fromUpdate);
     }
 
 }

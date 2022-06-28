@@ -2,10 +2,7 @@ package ca.bgcengineering.promogearreworked.api.orders.secured;
 
 import ca.bgcengineering.promogearreworked.api.orders.OrderService;
 import ca.bgcengineering.promogearreworked.api.orders.exceptions.OrderNotFoundException;
-import ca.bgcengineering.promogearreworked.api.orders.secured.dto.SecuredOrderCreate;
-import ca.bgcengineering.promogearreworked.api.orders.secured.dto.SecuredOrderMapper;
-import ca.bgcengineering.promogearreworked.api.orders.secured.dto.SecuredOrderPartialUpdate;
-import ca.bgcengineering.promogearreworked.api.orders.secured.dto.SecuredOrderResponse;
+import ca.bgcengineering.promogearreworked.api.orders.secured.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +19,15 @@ public class SecuredOrderController {
     @PostMapping
     private SecuredOrderResponse createOrder(SecuredOrderCreate orderCreate) {
         return null;
+    }
+
+    @PutMapping("/{orderId}")
+    private SecuredOrderResponse updateOrder(@PathVariable Long orderId, SecuredOrderUpdate orderUpdate) {
+        if (!service.checkOrderExists(orderId)) {
+            throw new OrderNotFoundException();
+        }
+        orderUpdate.setId(orderId);
+        return mapper.toResponse(handlerService.handleOrderUpdate(orderUpdate));
     }
 
     @PatchMapping("/{orderId}")
