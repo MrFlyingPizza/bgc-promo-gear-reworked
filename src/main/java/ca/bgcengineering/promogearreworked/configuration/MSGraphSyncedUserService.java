@@ -1,10 +1,11 @@
 package ca.bgcengineering.promogearreworked.configuration;
 
 import ca.bgcengineering.promogearreworked.persistence.repositories.UserRepository;
-import com.azure.spring.aad.webapp.AADOAuth2UserService;
-import com.azure.spring.autoconfigure.aad.AADAuthenticationProperties;
+import com.azure.spring.cloud.autoconfigure.aad.implementation.webapp.AadOAuth2UserService;
+import com.azure.spring.cloud.autoconfigure.aad.properties.AadAuthenticationProperties;
 import com.microsoft.graph.models.User;
 import com.microsoft.graph.requests.GraphServiceClient;
+import okhttp3.Request;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -13,15 +14,15 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 @Service
-public class MSGraphSyncedUserService extends AADOAuth2UserService {
+public class MSGraphSyncedUserService extends AadOAuth2UserService {
 
     private final UserRepository userRepo;
-    private final GraphServiceClient graphClient;
+    private final GraphServiceClient<Request> graphClient;
     private final StoreDefaultsConfig storeDefaults;
 
-    public MSGraphSyncedUserService(AADAuthenticationProperties properties,
+    public MSGraphSyncedUserService(AadAuthenticationProperties properties,
                                     UserRepository userRepo,
-                                    GraphServiceClient graphClient, StoreDefaultsConfig storeDefaults) {
+                                    GraphServiceClient<Request> graphClient, StoreDefaultsConfig storeDefaults) {
         super(properties);
         this.userRepo = userRepo;
         this.graphClient = graphClient;
