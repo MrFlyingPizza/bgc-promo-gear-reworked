@@ -3,19 +3,24 @@ spring:
     open-in-view: true
   profiles:
     active: prod
+  cloud:
+    azure:
+      active-directory:
+        enabled: true
+        profile:
+          tenant-id: 13b20fb1-7751-4ce4-ab35-5178f6ec731b
+        credential:
+          client-id: 858cfe4c-4558-49d8-b598-49eea8a6eee7
+          client-secret: ~cn7Q~mEcpGMZf07Pn7n4bZAcP~2A3-jqyALQ
+
+      storage:
+        account-name: promogearsa
+        account-key: npSOkSh9vCSXMsqkDpr2EYAOIePDNDM3KqdWYXetxKO81hSWebivWSqxqcE+gSuyIXSTsxhp5Ii0A3scH/v/9g==
+        blob:
+          endpoint: https://promogearsa.blob.core.windows.net/
+
 springdoc:
   use-fqn: true
-azure:
-  storage:
-    # all 3 of these values are needed for blob storage client to be auto-configured
-    account-name: promogearsa
-    account-key: npSOkSh9vCSXMsqkDpr2EYAOIePDNDM3KqdWYXetxKO81hSWebivWSqxqcE+gSuyIXSTsxhp5Ii0A3scH/v/9g==
-    blob-endpoint: https://promogearsa.blob.core.windows.net/
-
-  activedirectory:
-    client-id: 858cfe4c-4558-49d8-b598-49eea8a6eee7
-    tenant-id: 13b20fb1-7751-4ce4-ab35-5178f6ec731b
-    client-secret: ~cn7Q~mEcpGMZf07Pn7n4bZAcP~2A3-jqyALQ
 
 ---
 spring:
