@@ -22,23 +22,23 @@ enum InventoryModifiers {
     SUBMITTED(Order.Status.SUBMITTED, new InventoryModifier() {
         @Override
         public void apply(InventoryModificationWrapper changes) {
-            changes.addToReserved();
+            changes.addToReserved().removeFromAvailable();
         }
 
         @Override
         public void negate(InventoryModificationWrapper changes) {
-            changes.removeFromReserved();
+            changes.removeFromReserved().addToAvailable();
         }
     }),
     PROCESSING(Order.Status.PROCESSING, new InventoryModifier() {
         @Override
         public void apply(InventoryModificationWrapper changes) {
-            changes.addToReserved();
+            changes.addToReserved().removeFromAvailable();
         }
 
         @Override
         public void negate(InventoryModificationWrapper changes) {
-            changes.removeFromReserved();
+            changes.removeFromReserved().addToAvailable();
         }
     }),
     COMPLETED(Order.Status.COMPLETED, new InventoryModifier() {

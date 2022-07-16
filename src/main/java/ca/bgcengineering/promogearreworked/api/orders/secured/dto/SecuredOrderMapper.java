@@ -1,11 +1,9 @@
 package ca.bgcengineering.promogearreworked.api.orders.secured.dto;
 
-import ca.bgcengineering.promogearreworked.api.inventorylevels.inventorylevel.secured.dto.SecuredInventoryLevelBatchResponse;
 import ca.bgcengineering.promogearreworked.persistence.entities.*;
 import ca.bgcengineering.promogearreworked.persistence.repositories.OfficeLocationRepository;
 import ca.bgcengineering.promogearreworked.persistence.repositories.ProductVariantRepository;
 import ca.bgcengineering.promogearreworked.persistence.repositories.UserRepository;
-import org.aspectj.lang.annotation.After;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -91,15 +89,15 @@ public abstract class SecuredOrderMapper {
     }
 
     protected ProductVariant mapVariantFromId(Long variantId) {
-        return variantId == null || variantId == 0 ? null : variantRepo.getById(variantId);
+        return variantId == null || variantId == 0 ? null : variantRepo.getReferenceById(variantId);
     }
 
     protected OfficeLocation mapLocationFromId(Long locationId) {
-        return locationId == null || locationId == 0 ? null : locationRepo.getById(locationId);
+        return locationId == null || locationId == 0 ? null : locationRepo.getReferenceById(locationId);
     }
 
     protected User mapUserFromId(Long userId) {
-        return userId == null || userId == 0 ? null : userRepo.getById(userId);
+        return userId == null || userId == 0 ? null : userRepo.getReferenceById(userId);
     }
 
 }
