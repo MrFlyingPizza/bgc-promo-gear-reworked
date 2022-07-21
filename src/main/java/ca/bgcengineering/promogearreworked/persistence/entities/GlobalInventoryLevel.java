@@ -28,6 +28,6 @@ public class GlobalInventoryLevel {
     private ProductVariant variant;
 
     public Integer getApparentQuantity() {
-        return totalAvailableQuantity - totalReservedQuantity - totalNeededQuantity - variant.getWaitListThreshold();
+        return totalAvailableQuantity - totalNeededQuantity - variant.getWaitListThreshold();
     }
 }
