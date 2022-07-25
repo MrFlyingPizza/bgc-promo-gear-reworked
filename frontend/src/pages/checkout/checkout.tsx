@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
 import Checkout from "components/checkout/Checkout";
-import {QueryClient, QueryClientProvider} from "react-query";
+import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
 import {LocalizationProvider} from '@mui/x-date-pickers';
 

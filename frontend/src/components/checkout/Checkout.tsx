@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import CartSummary from "./CartSummary";
 import CartItem from "types/CartItem";
-import {useQuery} from "react-query";
+import {useQuery} from "@tanstack/react-query";
 import CartContent from "components/checkout/CartContent";
 import BGCPromoGearHeader from "components/shared/BGCPromoGearHeader";
 import BGCPromoGearFooter from "components/shared/BGCPromoGearFooter";
@@ -22,7 +22,7 @@ enum CartErrorCode {
 
 function Checkout() {
 
-    const {isLoading, isError, data: items, refetch} = useQuery("cart_items", () =>
+    const {isLoading, isError, data: items, refetch} = useQuery(["cart_items"], () =>
         axios.get("/api/users/me/cart_items").then<CartItem[]>(response => response.data.cartItems));
 
     const [isCompleting, setIsCompleting] = useState(false);

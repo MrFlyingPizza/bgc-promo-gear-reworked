@@ -4,7 +4,7 @@ import {Alert, AlertColor, Container, Grid, Skeleton} from "@mui/material";
 
 import Category from "types/Category";
 import ProductCard, {LoadingCard} from "./product_card/ProductCard";
-import {useQueries, useQuery, UseQueryResult} from "react-query";
+import {useQueries, useQuery, UseQueryResult} from "@tanstack/react-query";
 import BGCPromoGearHeader from "components/shared/BGCPromoGearHeader";
 import BGCPromoGearFooter from "components/shared/BGCPromoGearFooter";
 import CategorySelection from "components/store/category_list/CategorySelection";
@@ -49,25 +49,26 @@ function Store() {
         isLoading: isLoadingCategories,
         isError: isErrorCategories,
         data: categories
-    } = useQuery("categories", () => axios.get("/api/categories")
+    } = useQuery(["categories"], () => axios.get("/api/categories")
         .then<Category[]>(response => response.data.categories.filter(({parent}: Category) => !parent))
     );
 
     //region Product Fetching
-    const productQueries: UseQueryResult<Product[]>[] = useQueries(selectedCategoryIds.size > 0 ?
-        Array.from(selectedCategoryIds).map(categoryId => ({
-            queryKey: ["products", categoryId],
-            queryFn: () => {
-                return axios.get("/api/products", {params: {"category.id": categoryId}})
-                    .then<Product[]>(({data}) => data.products);
-            }
-        })) : [{
-            queryKey: ["products", null],
-            queryFn: () => {
-                return axios.get("/api/products").then<Product[]>(({data}) => data.products);
-            }
-        }]
-    );
+    const productQueries: UseQueryResult<Product[]>[] = useQueries({
+        queries: selectedCategoryIds.size > 0 ?
+            Array.from(selectedCategoryIds).map(categoryId => ({
+                queryKey: ["products", categoryId],
+                queryFn: () => {
+                    return axios.get("/api/products", {params: {"category.id": categoryId}})
+                        .then<Product[]>(({data}) => data.products);
+                }
+            })) : [{
+                queryKey: ["products", null],
+                queryFn: () => {
+                    return axios.get("/api/products").then<Product[]>(({data}) => data.products);
+                }
+            }]
+    });
 
     //endregion
 

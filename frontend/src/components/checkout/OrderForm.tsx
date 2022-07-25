@@ -7,7 +7,7 @@ import {
     Select,
     SelectChangeEvent, TextField
 } from "@mui/material";
-import {useMutation, useQuery} from "react-query";
+import {useMutation, useQuery} from "@tanstack/react-query";
 import axios from "axios";
 import OfficeLocation from "types/OfficeLocation";
 import OrderType from "types/OrderType";
@@ -51,7 +51,7 @@ const OrderForm = () => {
         isLoading: isOfficeLocationsLoading,
         isError: isOfficeLocationsError,
         data: officeLocations
-    } = useQuery("locations", () =>
+    } = useQuery(["locations"], () =>
         axios.get("/api/office_locations").then<OfficeLocation[]>(({data}) => data.officeLocations));
 
     // todo make use of submission error

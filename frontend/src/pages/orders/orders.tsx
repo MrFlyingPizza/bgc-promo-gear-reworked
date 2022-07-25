@@ -1,6 +1,6 @@
 import * as ReactDOM from "react-dom/client";
 import React from "react";
-import {QueryClient, QueryClientProvider} from "react-query";
+import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import OrdersView from "components/orders/OrdersView";
 
 const ordersContainer = document.getElementById('orders-root');
