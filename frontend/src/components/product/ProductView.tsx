@@ -15,7 +15,7 @@ import {
 } from "components/product/option_selection/helpers";
 import AddShoppingCartSharpIcon from '@mui/icons-material/AddShoppingCartSharp';
 import QuantityDialog from "components/product/QuantityDialog";
-import {useQuery} from "react-query";
+import {useQuery} from "@tanstack/react-query";
 import Product from "types/Product";
 import ProductImage from "types/ProductImage";
 import ProductVariant from "types/ProductVariant";
@@ -59,7 +59,7 @@ function ProductView({productId}: { productId: number }) {
         });
     }
 
-    const {isLoading, isError, data: product} = useQuery<Product>('product', fetchProduct, {retry: false});
+    const {isLoading, isError, data: product} = useQuery<Product>(['product'], fetchProduct, {retry: false});
 
     //region Snackbar Control
     const [alert, setAlert] = useState<AlertContent>();

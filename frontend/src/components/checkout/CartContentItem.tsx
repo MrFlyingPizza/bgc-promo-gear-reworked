@@ -1,5 +1,5 @@
 import CartItem from "types/CartItem";
-import {useMutation} from "react-query";
+import {useMutation} from "@tanstack/react-query";
 import axios from "axios";
 import {useRef, useState} from "react";
 import {Card, Col, Container, Image, Row, Stack} from "react-bootstrap";
