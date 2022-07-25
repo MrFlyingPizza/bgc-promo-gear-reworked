@@ -1,6 +1,9 @@
 spring:
   jpa:
     open-in-view: true
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
   profiles:
     active: prod
   cloud:
@@ -29,14 +32,11 @@ spring:
       on-profile: prod
   datasource:
     url: jdbc:postgresql://psql-promo-gear.postgres.database.azure.com:5432/postgres?user=promogearadmin@psql-promo-gear&password=wR13mUPDNoznYz&sslmode=require
-    driver-class-name: org.postgresql.Driver
 ---
 spring:
   config:
     activate:
       on-profile: test
   datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:test;MODE=PostgreSQL
-  jpa:
-    database-platform: org.hibernate.dialect.PostgreSQL95Dialect
+    url: jdbc:h2:~/test;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+
