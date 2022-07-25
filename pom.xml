@@ -15,7 +15,7 @@
     <description>BGC Engineering Inc.'s promotional gear store application. Version 3</description>
     <properties>
         <skipTests>
-            true
+            false
         </skipTests>
         <java.version>17</java.version>
         <spring-cloud-azure.version>4.3.0</spring-cloud-azure.version>
