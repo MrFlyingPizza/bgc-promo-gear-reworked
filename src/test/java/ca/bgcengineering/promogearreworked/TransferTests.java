@@ -4,17 +4,17 @@ import ca.bgcengineering.promogearreworked.persistence.entities.*;
 import ca.bgcengineering.promogearreworked.persistence.repositories.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
-import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@DataJpaTest
+@SpringBootTest
 @ActiveProfiles("test")
-public class TransferPersistenceTests {
+public class TransferTests {
 
     @Autowired
     TransferRepository transferRepo;
@@ -30,6 +30,9 @@ public class TransferPersistenceTests {
 
     @Autowired
     OfficeLocationRepository officeLocationRepo;
+
+    @Autowired
+    InventoryLevelRepository inventoryRepo;
 
     @Test
     void saveTransfer() {
@@ -54,8 +57,13 @@ public class TransferPersistenceTests {
         destination.setCountry(testString);
         destination.setZipCode(testString);
 
+        officeLocationRepo.saveAndFlush(origin);
+        officeLocationRepo.saveAndFlush(destination);
+
         var category = new Category();
         category.setName(testString);
+
+        categoryRepo.saveAndFlush(category);
 
         var product = new Product();
         product.setName(testString);
@@ -67,29 +75,48 @@ public class TransferPersistenceTests {
         product.setIsWaitListEnabled(false);
         product.setCategory(category);
 
+        productRepo.saveAndFlush(product);
+
         var variant = new ProductVariant();
         variant.setProduct(product);
         variant.setWaitListThreshold(0);
         variant.setIsInUse(false);
 
+        variantRepo.saveAndFlush(variant);
+
+        var originInventory = new InventoryLevel();
+        originInventory.setLocationId(origin.getId());
+        originInventory.setVariantId(variant.getId());
+        originInventory.setAvailableQuantity(10);
+
+        var destinationInventory = new InventoryLevel();
+        destinationInventory.setLocationId(destination.getId());
+        destinationInventory.setVariantId(variant.getId());
+        destinationInventory.setAvailableQuantity(0);
+
+        inventoryRepo.saveAndFlush(originInventory);
+        inventoryRepo.saveAndFlush(destinationInventory);
+
         var transfer = new Transfer();
-
-        transfer.setOrigin(origin);
-        transfer.setDestination(destination);
-        transfer.setQuantity(1);
         transfer.setVariant(variant);
-
-        categoryRepo.save(category);
-
-        productRepo.save(product);
-
-        variantRepo.save(variant);
-
-        officeLocationRepo.saveAll(List.of(origin, destination));
+        transfer.setDestination(destination);
+        transfer.setOrigin(origin);
+        transfer.setQuantity(1);
+        var comments = "test test";
+        transfer.setComments(comments);
 
         transferRepo.save(transfer);
 
-        assertNotNull(transferRepo.getReferenceById(transfer.getId()));
+        var newTransfer = transferRepo.findById(transfer.getId()).orElseThrow();
+
+        assertNotNull(transfer);
+        assertEquals(transfer.getVariant().getId(), variant.getId());
+        assertEquals(transfer.getDestination().getId(), destination.getId());
+        assertEquals(transfer.getOrigin().getId(), origin.getId());
+        assertEquals(transfer.getQuantity(), newTransfer.getQuantity());
+        assertEquals(transfer.getComments(), comments);
+        assertEquals(newTransfer.getComments(), comments);
+        assertEquals(transfer.getComments(), newTransfer.getComments());
     }
 
 }

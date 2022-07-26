@@ -154,6 +154,11 @@
             <artifactId>querydsl-jpa</artifactId>
             <version>${querydsl.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.kuros</groupId>
+            <artifactId>random-jpa</artifactId>
+            <version>1.0.5</version>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>

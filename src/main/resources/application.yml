@@ -39,4 +39,6 @@ spring:
       on-profile: test
   datasource:
     url: jdbc:h2:~/test;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
-
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
