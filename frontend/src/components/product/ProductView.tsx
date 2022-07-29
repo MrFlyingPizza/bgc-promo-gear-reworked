@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import {CSSProperties, useEffect, useRef, useState} from "react";
 import axios from "axios";
 import {Button, CircularProgress} from "@mui/material";
 import React from "react";
@@ -115,18 +115,26 @@ function ProductView({productId}: { productId: number }) {
     const indexedImageIds = useRef([]);
     const [activeIndex, setActiveIndex] = useState(0);
 
+    type Styles = {carouselImage : CSSProperties};
+    const styles : Styles = {
+        carouselImage:  {
+            maxHeight: '60vh',
+            objectFit: 'contain',
+        },
+    }
     const carousel = (
         <Carousel activeIndex={activeIndex} variant={"dark"} interval={null}
                   onSelect={index => setActiveIndex(index)}>{Array.from(images).map(([id, image]) => {
             indexedImageIds.current.push(id);
             return (
                 <Carousel.Item key={image.id}>
-                    <img className={"d-block w-100 img-fluid"} key={image.id} src={image.src} alt={image.alt}/>
+                    <img className={"d-block w-100 img-fluid"} key={image.id} style={styles.carouselImage} src={image.src} alt={image.alt}/>
                 </Carousel.Item>
             );
         })}
         </Carousel>
     );
+
 
     useEffect(() => {
         const activeIndex = currentVariant?.image &&

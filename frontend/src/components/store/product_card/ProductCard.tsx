@@ -47,11 +47,11 @@ function ProductCard({product}: { product: Product }) {
     const href = `/store/product/${product.id}`;
 
     return (
-        <Card>
+        <Card sx={{height: '100%'}}>
             <CardActionArea onClick={() => location.href = href}>
                 <CardMedia component={"img"} height={300} image={shownVariant.image?.src || placeholderSrc()}/>
             </CardActionArea>
-            <CardContent>
+            <CardContent >
                 <h5>{product.name}</h5>
                 <AvailabilityLabel availability={shownVariant.availability} otherText={"Availability Unknown"}/>
                 <VariantSelection initialVariant={shownVariant} variants={product.variants}

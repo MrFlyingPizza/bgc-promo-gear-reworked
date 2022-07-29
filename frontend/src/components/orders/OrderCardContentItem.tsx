@@ -1,4 +1,4 @@
-import React from "react";
+import React, {CSSProperties} from "react";
 import {Card} from "react-bootstrap";
 import {OrderItem} from "types/Order";
 import {Chip, Grid, Tooltip} from "@mui/material";
@@ -6,6 +6,14 @@ import placeholderSrc from "components/shared/PlaceholderImage";
 
 type OrderCardContentItemProps = {
     orderItem: OrderItem
+};
+
+type Styles = {image : CSSProperties};
+const styles : Styles = {
+    image:  {
+        maxHeight: '150px',
+        objectFit: 'contain',
+    },
 };
 
 const OrderCardContentItem = ({orderItem: {variant, product, quantity}}: OrderCardContentItemProps) => {
@@ -16,8 +24,8 @@ const OrderCardContentItem = ({orderItem: {variant, product, quantity}}: OrderCa
                     <Grid item xs={12} sm={4}>
                         {
                             variant.image &&
-                            <Card.Img src={variant.image.src} alt={variant.image.alt}/>
-                            || <Card.Img src={placeholderSrc()} alt={"Placeholder image."}/>
+                            <Card.Img src={variant.image.src} alt={variant.image.alt} style={styles.image}/>
+                            || <Card.Img src={placeholderSrc()} alt={"Placeholder image."} style={styles.image}/>
                         }
                     </Grid>
                     <Grid item xs={12} sm={8}>

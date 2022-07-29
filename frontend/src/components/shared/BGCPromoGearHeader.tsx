@@ -15,16 +15,16 @@ const BGCPromoGearHeader = () => {
                      style={{paddingTop: 13}}>
                     <ul className="navbar-nav me-auto">
                         <li className="nav-item dropdown"><a className="dropdown-toggle nav-link" aria-expanded="false"
-                                                             data-bs-toggle="dropdown">about</a>
+                                                             data-bs-toggle="dropdown">About</a>
                             <div className="dropdown-menu"><a className="dropdown-item" href="/faq">FAQ</a><a
                                 className="dropdown-item" href="/guidelines">guidelines</a><a className="dropdown-item"
-                                                                                              href="/product_care">product
-                                care</a><a className="dropdown-item" href="/warranty">warranty</a><a
-                                className="dropdown-item" href="/team">meet the team</a></div>
+                                                                                              href="/product_care">Product
+                                care</a><a className="dropdown-item" href="/warranty">Warranty</a><a
+                                className="dropdown-item" href="/team">Meet the team</a></div>
                         </li>
-                        <li className="nav-item"><a className="nav-link" href="/store">store</a></li>
-                        <li className="nav-item"><a className="nav-link" href="/store/orders">orders</a></li>
-                        <li className="nav-item"><a className="nav-link" href="/management/panel">management</a></li>
+                        <li className="nav-item"><a className="nav-link" href="/store">Store</a></li>
+                        <li className="nav-item"><a className="nav-link" href="/store/orders">Orders</a></li>
+                        <li className="nav-item"><a className="nav-link" href="/management/panel">Management</a></li>
                     </ul>
                     <span
                         className="d-md-flex d-lg-flex justify-content-md-start align-items-md-end align-items-lg-center navbar-text actions"
